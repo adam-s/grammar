@@ -8,6 +8,7 @@ import {
   nodeOver,
   setFunction,
   setVerbType,
+  setVoice,
   wrap,
   type BuildState,
 } from './builder.ts';
@@ -174,6 +175,18 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
         `${sentence.id}/${reading.id}: cannot choose ${want}`,
       );
       state = setVerbType(state, created, want);
+
+      // Voice is a second answer on the same node. Only ask for it when the
+      // authored reading says passive — `active` is the standing answer, so
+      // clicking it would be a step a learner never has to take.
+      if (source.voice === 'passive') {
+        const voice = optionFor(state, sentence.words, created, 'voice:passive');
+        assert.ok(
+          voice && isPickable(voice),
+          `${sentence.id}/${reading.id}: cannot choose the passive`,
+        );
+        state = setVoice(state, created, 'passive');
+      }
     }
 
     // Some functions depend on siblings (indirect object follows direct object,

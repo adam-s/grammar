@@ -11,7 +11,7 @@
  * is in charge where. Walking up to the nearest enclosing clause is the whole
  * of that question.
  */
-import type { ConstituentMap, VerbType } from './types.ts';
+import type { ConstituentMap, VerbType, Voice } from './types.ts';
 
 /** `S` and `Cl` are the clause forms: each owns one subject/predicate pair. */
 const CLAUSE_FORMS = ['S', 'Cl'] as const;
@@ -91,8 +91,8 @@ export function headVerbOf(cs: ConstituentMap, vpId: string): string | null {
 }
 
 /**
- * The verb type in force for `id`, or null while nothing above it is
- * classified.
+ * The `V` whose frame is in force for `id`, or null while nothing above it
+ * answers.
  *
  * Walks up and stops at the first thing that answers: a clause answers through
  * its predicate, and a `VP` answers directly through its head. The `VP` case is
@@ -101,21 +101,32 @@ export function headVerbOf(cs: ConstituentMap, vpId: string): string | null {
  * labelled, and refusing to answer there would make "object of which verb?"
  * unanswerable at exactly the moment it is being asked.
  */
-export function governingVerbType(cs: ConstituentMap, id: string): VerbType | null {
+export function governingVerb(cs: ConstituentMap, id: string): string | null {
   let cur = cs[id]?.parent ?? null;
   let guard = 0;
   while (cur && guard++ < 200) {
-    if (isClauseNode(cs, cur)) {
-      const verb = verbOfClause(cs, cur);
-      return verb ? (cs[verb]?.verbType ?? null) : null;
-    }
+    if (isClauseNode(cs, cur)) return verbOfClause(cs, cur);
     if (cs[cur]?.form === 'VP') {
       const verb = headVerbOf(cs, cur);
-      if (verb) return cs[verb]?.verbType ?? null;
+      if (verb) return verb;
     }
     cur = cs[cur]?.parent ?? null;
   }
   return null;
+}
+
+export function governingVerbType(cs: ConstituentMap, id: string): VerbType | null {
+  const verb = governingVerb(cs, id);
+  return verb ? (cs[verb]?.verbType ?? null) : null;
+}
+
+/**
+ * Active or passive where `id` sits. Absent means active, so this never
+ * returns null — a verb nobody has marked is doing the ordinary thing.
+ */
+export function governingVoice(cs: ConstituentMap, id: string): Voice {
+  const verb = governingVerb(cs, id);
+  return verb ? (cs[verb]?.voice ?? 'active') : 'active';
 }
 
 /** Every `V` leaf, in surface order. One per clause once a tree is finished. */

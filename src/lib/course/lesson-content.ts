@@ -79,7 +79,7 @@ export function citedSentenceIds(doc: LessonDoc): string[] {
 
 const INTRODUCTION: LessonDoc = {
   id: '01-introduction',
-  lede: 'Words get the credit. Grammar does the carpentry: it is how a sentence is put together.',
+  lede: 'A quick look under the hood of sentence structure.',
   blocks: [
     { kind: 'hero', sentenceId: 'fix-garden-path' },
     {
@@ -92,7 +92,7 @@ const INTRODUCTION: LessonDoc = {
 
     {
       kind: 'credit',
-      text: "Heavily influenced by Max Morenberg's _Doing Grammar_, which holds that you learn grammar by doing it.",
+      text: "Max Morenberg's _Doing Grammar_ supplied the method: begin with the sentence, then work out how it is built.",
     },
 
     {

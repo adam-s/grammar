@@ -11,6 +11,9 @@
  * component, and a beat that lands in the wrong order is a failing test rather
  * than something you have to catch by eye.
  */
+import type { BuildState } from '../grammar/builder.ts';
+import { layout } from '../grammar/layout.ts';
+import type { Word } from '../grammar/types.ts';
 import type { RenderStep } from './sentence-renderer.ts';
 
 /** What the figure is doing at a given moment. */
@@ -40,6 +43,15 @@ export type Timing = {
   /** Held after the last commit before the loop restarts. */
   rest: number;
 };
+
+/**
+ * Reserve the completed tree's depth for the whole performance. Each replay
+ * state then shares one word baseline and one artboard height, so building the
+ * tree cannot move the lesson copy below it.
+ */
+export function frameDepth(finished: BuildState, words: Word[]): number {
+  return layout(finished.constituents, words).maxDepth;
+}
 
 /**
  * Deliberately uneven. Equal gaps read as a machine; a longer pause on `aim`

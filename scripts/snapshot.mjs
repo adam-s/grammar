@@ -19,12 +19,19 @@
  * Everything lands in .snapshots/<label>/ with a summary.json. Exits non-zero
  * when something is wrong.
  *
+ * Sweep frames are cropped to the drawn tree plus any open palette, and shot at
+ * 1.5x rather than 2x. These are read by a model as often as by a person, and a
+ * model pays per pixel: full-frame 2x was 2880x1800 for a tree occupying a
+ * fifth of it. Cropping costs nothing in evidence and about an eighth in
+ * tokens. `--scale=2` when a detail is genuinely in question.
+ *
  * Usage (dev server must already be running):
  *   node scripts/snapshot.mjs [--url=http://localhost:5173]
  *                             [--label=iter-01]
  *                             [--sentence=fix-garden-path]
  *                             [--action=label-sweep] [--every=6]
  *                             [--viewport=desktop|tablet|mobile]
+ *                             [--scale=1.5]
  */
 import { chromium } from 'playwright-core';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
@@ -51,6 +58,14 @@ const ACTION = args.action ?? null;
 const ONLY = args.sentence ?? null;
 const EVERY = Number(args.every ?? 6);
 const SWEEP_VIEWPORT = args.viewport ?? 'desktop';
+/**
+ * Pixels per CSS pixel. 2 is crisp and four times the data; these frames are
+ * read as often by a model as by a person, and a model pays for every pixel.
+ * 1.5 keeps the 7.5px qualifier marks legible at a bit over a third of the
+ * cost. `--scale=2` restores the old output when a detail is genuinely in
+ * question.
+ */
+const SHOT_SCALE = Number(args.scale ?? 1.5);
 const OUT = resolve(ROOT, '.snapshots', LABEL);
 mkdirSync(OUT, { recursive: true });
 
@@ -84,10 +99,10 @@ function chromiumExecutable() {
   throw new Error('no cached Chromium found — run: npx playwright install chromium');
 }
 
-async function newPage(browser, viewport) {
+async function newPage(browser, viewport, scale = SHOT_SCALE) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
-    deviceScaleFactor: 2,
+    deviceScaleFactor: scale,
     isMobile: viewport.name === 'mobile',
     hasTouch: viewport.name !== 'desktop',
   });
@@ -101,6 +116,53 @@ async function newPage(browser, viewport) {
   );
   page.on('response', (r) => r.status() >= 400 && errors.network.push({ url: r.url(), status: r.status() }));
   return { page, errors };
+}
+
+/**
+ * The box worth photographing: the drawn tree, plus the palette when it is
+ * open, plus whatever `also` names.
+ *
+ * Sweep screenshots exist to be looked at, and most of a sweep frame is empty
+ * canvas and app chrome. Cropping to the content cuts a 1440x900 frame to
+ * something like 900x400 — a quarter of the pixels, and the quarter that
+ * carries the answer. Returns null when nothing is drawn yet, and the caller
+ * falls back to the whole page.
+ */
+async function contentClip(page, also = []) {
+  const box = await page.evaluate((extra) => {
+    const parts = [
+      ...document.querySelectorAll('svg.diagram text, svg.diagram line'),
+      ...document.querySelectorAll('.popup'),
+      ...extra.flatMap((sel) => [...document.querySelectorAll(sel)]),
+    ];
+    let x1 = Infinity;
+    let y1 = Infinity;
+    let x2 = -Infinity;
+    let y2 = -Infinity;
+    for (const el of parts) {
+      const r = el.getBoundingClientRect();
+      if (r.width <= 0 && r.height <= 0) continue;
+      x1 = Math.min(x1, r.left);
+      y1 = Math.min(y1, r.top);
+      x2 = Math.max(x2, r.right);
+      y2 = Math.max(y2, r.bottom);
+    }
+    return Number.isFinite(x1) ? { x1, y1, x2, y2 } : null;
+  }, also);
+  if (!box) return null;
+
+  const pad = 20;
+  const x = Math.max(0, Math.floor(box.x1 - pad));
+  const y = Math.max(0, Math.floor(box.y1 - pad));
+  const width = Math.min(page.viewportSize().width - x, Math.ceil(box.x2 - box.x1) + pad * 2);
+  const height = Math.min(page.viewportSize().height - y, Math.ceil(box.y2 - box.y1) + pad * 2);
+  return width > 40 && height > 40 ? { x, y, width, height } : null;
+}
+
+/** A sweep screenshot: cropped to the content when there is any. */
+async function shot(page, path, also = []) {
+  const clip = await contentClip(page, also);
+  await page.screenshot({ path, ...(clip ? { clip } : {}) });
 }
 
 async function handle(page) {
@@ -276,7 +338,7 @@ async function labelSweep(browser, sentenceId) {
     }
     if (n % EVERY === 0) {
       const name = `${sentenceId}-${vp.name}-sel-${String(n).padStart(2, '0')}.png`;
-      await page.screenshot({ path: resolve(OUT, name) });
+      await shot(page, resolve(OUT, name));
       shots.push(name);
     }
   }
@@ -354,7 +416,7 @@ async function buildSweep(browser, sentenceId) {
     if (i % EVERY === 0 || i === plan.length - 1) {
       await page.waitForTimeout(160);
       const name = `${sentenceId}-build-${String(i).padStart(2, '0')}.png`;
-      await page.screenshot({ path: resolve(OUT, name) });
+      await shot(page, resolve(OUT, name));
       shots.push(name);
     }
   }

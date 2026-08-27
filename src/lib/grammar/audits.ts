@@ -12,17 +12,12 @@
 import {
   clauseNodes,
   governingVerbType,
+  governingVoice,
   isCoordination,
   predicateOf,
   verbOfClause,
 } from './clause.ts';
-import {
-  licenses,
-  HEAD_BEARING,
-  LONG,
-  REQUIRED_BY_VERB_TYPE,
-  SLOTS_BY_VERB_TYPE,
-} from './rules.ts';
+import { licenses, hasPassive, requiredFor, slotsFor, HEAD_BEARING, LONG } from './rules.ts';
 import {
   CLAUSE_FUNCTIONS,
   isPhraseForm,
@@ -231,6 +226,7 @@ export function auditLicensing(ctx: Ctx): string[] {
     const v = licenses(c.function, {
       parentForm: parent.form,
       verbType: governingVerbType(ctx.cs, id),
+      voice: governingVoice(ctx.cs, id),
       siblings,
       childForm: c.form,
     });
@@ -278,16 +274,34 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
       (x): x is ClauseFunction => x != null && (CLAUSE_FUNCTIONS as readonly string[]).includes(x),
     );
 
-  const permitted = SLOTS_BY_VERB_TYPE[vt];
+  const voice = ctx.cs[verbId!]!.voice ?? 'active';
+  const said = voice === 'passive' ? `a passive ${LONG[vt]} verb` : `a ${LONG[vt]} verb`;
+
+  if (voice === 'passive') {
+    if (!hasPassive(vt)) {
+      f.push(
+        `${where} is marked passive, but a ${LONG[vt]} verb has no object to move ` +
+          'into the subject, so it has no passive',
+      );
+    }
+    // *was repaired*, not *repaired*. A participle with no helping verb in
+    // front of it is a different structure — a reduced relative — and building
+    // one needs a gap where the subject would be (docs/model-gaps.md).
+    if (!vp.children.some((k) => ctx.cs[k]?.function === 'auxiliary')) {
+      f.push(`${where} is marked passive but has no helping verb: the passive needs "be"`);
+    }
+  }
+
+  const permitted = slotsFor(vt, voice);
   for (const fn of filled) {
     if (fn === 'adverbial') continue;
     if (!permitted.includes(fn)) {
-      f.push(`this is recorded as a ${LONG[vt]} verb, but the predicate has a ${label(fn)}`);
+      f.push(`this is recorded as ${said}, but the predicate has ${a(label(fn))}`);
     }
   }
-  for (const need of REQUIRED_BY_VERB_TYPE[vt]) {
+  for (const need of requiredFor(vt, voice)) {
     if (!filled.includes(need)) {
-      f.push(`a ${LONG[vt]} verb needs a ${label(need)}, and the predicate has none`);
+      f.push(`${said} needs ${a(label(need))}, and the predicate has none`);
     }
   }
   // The S V O A / obligatory-adverbial rule: `be` is satisfied by a subject
@@ -360,6 +374,9 @@ export function auditReading(reading: Reading, words: Word[]): AuditReport {
   return { ok: all.length === 0, failures, all };
 }
 
+/** "an object complement", not "a object complement". These strings are read. */
+const a = (noun: string): string => `${/^[aeiou]/i.test(noun) ? 'an' : 'a'} ${noun}`;
+
 /** Plain-language name for a function, for messages a learner may read. */
 export function label(fn: Func): string {
   switch (fn) {
@@ -371,6 +388,8 @@ export function label(fn: Func): string {
       return 'subject complement';
     case 'objectComplement':
       return 'object complement';
+    case 'auxiliary':
+      return 'helping verb';
     default:
       return fn;
   }

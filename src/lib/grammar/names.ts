@@ -9,7 +9,7 @@
  * `title` attribute would be inaccessible on touch and fragile by keyboard.
  */
 import { label } from './audits.ts';
-import type { ClauseKind, Form, Func, VerbType } from './types.ts';
+import type { ClauseKind, Form, Func, VerbType, Voice } from './types.ts';
 
 export { label };
 
@@ -61,8 +61,19 @@ export const VERB_TYPE_NAME: Record<VerbType, string> = {
   Vc: 'object-complement verb',
 };
 
-export const verbTypeMark = (type: VerbType): string => VERB_TYPE_MARK[type];
-export const verbTypeName = (type: VerbType): string => VERB_TYPE_NAME[type];
+/**
+ * The verb's mark, and its voice when that is not the ordinary one.
+ *
+ * Voice rides the verb-type mark rather than claiming a third corner. It is a
+ * refinement of the same answer — a passive transitive verb is still
+ * transitive — and without it on the node a passive reads as a transitive verb
+ * that lost its object, which is the confusion the mark exists to prevent.
+ */
+export const verbTypeMark = (type: VerbType, voice: Voice = 'active'): string =>
+  voice === 'passive' ? `${VERB_TYPE_MARK[type]} pass` : VERB_TYPE_MARK[type];
+
+export const verbTypeName = (type: VerbType, voice: Voice = 'active'): string =>
+  voice === 'passive' ? `passive ${VERB_TYPE_NAME[type]}` : VERB_TYPE_NAME[type];
 
 /** Compact right-hand qualifiers for the four clause subtypes. */
 export const CLAUSE_KIND_MARK: Record<ClauseKind, string> = {
@@ -96,6 +107,7 @@ export const FUNCTION_MARK: Record<Func, string> = {
   objectComplement: 'OC',
   adverbial: 'A',
   head: 'H',
+  auxiliary: 'Help',
   determiner: 'D',
   premodifier: 'Pre',
   postmodifier: 'Post',
@@ -145,6 +157,7 @@ export const FUNCTION_TEST: Record<Func, string> = {
   objectComplement: 'renames or describes the direct object',
   adverbial: 'how, when, where, or why',
   head: 'the word the phrase is named after',
+  auxiliary: 'is, have, will — the main verb still follows it',
   determiner: 'the, a, this, my — points the noun out',
   premodifier: 'sits before the head and narrows it',
   postmodifier: 'sits after the head and narrows it',

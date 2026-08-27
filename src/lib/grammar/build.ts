@@ -20,6 +20,7 @@ import type {
   ReadingStatus,
   Upos,
   VerbType,
+  Voice,
   Word,
   WordForm,
 } from './types.ts';
@@ -36,6 +37,8 @@ export interface SpecNode {
   obligatory?: boolean;
   /** On a `V` leaf. */
   verbType?: VerbType;
+  /** On a `V` leaf. Omitted means active. */
+  voice?: Voice;
   /** On a clause node. */
   clauseType?: ClauseType;
 }
@@ -131,6 +134,7 @@ export function build(
       if (node.obligatory) self.obligatory = true;
       if (node.clauseKind) self.clauseKind = node.clauseKind;
       if (node.verbType) self.verbType = node.verbType;
+      if (node.voice === 'passive') self.voice = 'passive';
       if (node.clauseType) self.clauseType = node.clauseType;
       return { id, lo: i, hi: i };
     }
@@ -147,6 +151,7 @@ export function build(
     if (node.obligatory) self.obligatory = true;
     if (node.clauseKind) self.clauseKind = node.clauseKind;
     if (node.verbType) self.verbType = node.verbType;
+    if (node.voice === 'passive') self.voice = 'passive';
     if (node.clauseType) self.clauseType = node.clauseType;
     return { id, lo, hi };
   };

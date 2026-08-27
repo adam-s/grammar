@@ -2,7 +2,7 @@ import { verbs } from './clause.ts';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
-import { FIXTURES, vbe, vint, vtr } from './fixtures.ts';
+import { FIXTURES, auxiliaryChain, passive, vbe, vint, vtr } from './fixtures.ts';
 import type { Reading, SentenceEntry } from './types.ts';
 
 const clone = <T>(x: T): T => structuredClone(x);
@@ -173,5 +173,69 @@ describe('the obligatory-adverbial decision (S V O A)', () => {
       report.failures.verbType!.join(' '),
       /subject complement or an adverbial it requires/,
     );
+  });
+});
+
+describe('the passive', () => {
+  const verbOf = (r: Reading) => verbs(r.constituents)[0]!;
+
+  it('a passive transitive verb needs no direct object', () => {
+    // The whole point of the change. Under the active table this reading
+    // failed with "a transitive verb needs a direct object".
+    const report = auditReading(passive.readings[0]!, passive.words);
+    assert.equal(report.ok, true, report.all.join(' | '));
+  });
+
+  it('drop the voice and the same tree stops making sense', () => {
+    const { r, s } = broken(passive, (r) => {
+      delete r.constituents[verbOf(r)]!.voice;
+    });
+    const report = auditReading(r, s.words);
+    assert.equal(report.ok, false);
+    assert.match(report.all.join(' | '), /needs a direct object/);
+  });
+
+  it('a verb with no object to move has no passive', () => {
+    const { r, s } = broken(vint, (r) => {
+      r.constituents[verbOf(r)]!.voice = 'passive';
+    });
+    const report = auditReading(r, s.words);
+    assert.equal(report.ok, false);
+    assert.match(report.all.join(' | '), /no object to move into the subject/);
+  });
+
+  it('the passive needs "be": a bare participle is a different structure', () => {
+    const { r, s } = broken(auxiliaryChain, (r) => {
+      // *The mechanic has been repairing the engine* → claim it is passive.
+      // It has helping verbs, so this only fails on the object it still has.
+      r.constituents[verbOf(r)]!.voice = 'passive';
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /but the predicate has a direct object/);
+
+    const bare = broken(passive, (r) => {
+      const vp = idOf(r, (c) => c.form === 'VP');
+      const aux = idOf(r, (c) => c.function === 'auxiliary');
+      r.constituents[vp]!.children = r.constituents[vp]!.children.filter((k) => k !== aux);
+      const np = idOf(r, (c) => c.function === 'subject');
+      r.constituents[np]!.children.push(aux);
+      r.constituents[aux]!.parent = np;
+      r.constituents[aux]!.function = 'postmodifier';
+    });
+    // Structure moves, so this is only about the message the verb audit gives.
+    assert.match(
+      auditReading(bare.r, bare.s.words).all.join(' | '),
+      /passive but has no helping verb/,
+    );
+  });
+
+  it('a passive object-complement verb keeps its complement', () => {
+    // *He was considered reliable* — the object became the subject, the
+    // complement stayed. This is the table, checked directly.
+    const { r, s } = broken(passive, (r) => {
+      r.constituents[verbOf(r)]!.verbType = 'Vc';
+    });
+    const report = auditReading(r, s.words);
+    assert.equal(report.ok, false);
+    assert.match(report.all.join(' | '), /needs an object complement/);
   });
 });

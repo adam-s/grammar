@@ -32,11 +32,10 @@
   import type { Selection } from '../grammar/options.ts';
   import { emptyBuild } from '../grammar/builder.ts';
   import type { SentenceEntry, Span } from '../grammar/types.ts';
-  import { layout } from '../grammar/layout.ts';
   import { observeStageSize } from '../workspace/stage-resize.ts';
   import { fit, type Size } from '../workspace/viewport.ts';
   import { Workspace, setWorkspace } from '../workspace/workspace.svelte.ts';
-  import { beatAt, duration, script, stateIndexFor } from './hero-script.ts';
+  import { beatAt, duration, frameDepth, script, stateIndexFor } from './hero-script.ts';
   import { replaySentence } from './sentence-renderer.ts';
 
   type Props = { sentence: SentenceEntry };
@@ -63,14 +62,8 @@
   const beats = $derived(script(steps));
   const total = $derived(duration(steps));
   const finished = $derived(replaySentence(sentence).final);
-
-  /**
-   * A high-water mark, exactly as the workspace keeps one: the picture grows as
-   * the tree deepens and never shrinks back, so undoing a step does not reflow
-   * everything under it. Reserving the finished depth up front instead would
-   * open a hole above the sentence that stays empty for most of the pass.
-   */
-  let depth = $state(0);
+  /** One frame for the whole loop: neither the words nor the following prose move. */
+  const depth = $derived(frameDepth(finished, sentence.words));
 
   let elapsed = $state(0);
   let running = $state(false);
@@ -125,25 +118,10 @@
   const avoid = $derived(wordRowRect(build.constituents, sentence.words, depth));
   const content = $derived(diagramSize(build.constituents, sentence.words, depth));
 
-  /**
-   * The figure is as tall as the tree needs plus room for the palette, so it
-   * starts compact and grows. A stage sized for the finished tree from the
-   * first frame would open a hole under the title and hold it there for most of
-   * the pass; `depth` only ever grows, so this only ever grows too.
-   */
+  /** The finished frame is reserved before the first label lands. */
   const stageH = $derived(
     Math.min(MAX_H, Math.max(MIN_H, HEADROOM + Math.min(content.h, MAX_H - HEADROOM))),
   );
-
-  $effect(() => {
-    const grown = layout(build.constituents, sentence.words).maxDepth;
-    if (grown > depth) depth = grown;
-  });
-
-  // Each pass starts from a bare sentence, so the reservation starts over too.
-  $effect(() => {
-    if (beat?.index === 0) depth = 0;
-  });
 
   const ws = setWorkspace(new Workspace());
   let stage = $state<HTMLDivElement | null>(null);
@@ -256,10 +234,8 @@
 
   .stage {
     position: relative;
-    /* Height is set from the tree; the transition makes it grow rather than
-       jump. Tall enough for the real palette at its real size — shrinking that
-       would make this a picture of the app rather than the app. */
-    transition: height 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    /* The completed tree's height is reserved from the first frame, so this
+       never pushes the lesson copy around while the replay runs. */
     overflow: hidden;
     opacity: 0;
     transition: opacity 260ms ease;

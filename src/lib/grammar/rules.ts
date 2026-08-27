@@ -7,7 +7,7 @@
  * constraints for the answer menu: a learner must be able to try a plausible
  * role before answering the separate verb-type question.
  */
-import type { ClauseFunction, Form, Func, VerbType } from './types.ts';
+import type { ClauseFunction, Form, Func, VerbType, Voice } from './types.ts';
 
 export type Verdict =
   { state: 'allowed' } | { state: 'disabled'; reason: string } | { state: 'hidden' };
@@ -23,6 +23,8 @@ export interface LicenseContext {
   verbType: VerbType | null;
   /** Functions already filled among the prospective siblings. */
   siblings: readonly Func[];
+  /** Active or passive. Omitted means active. */
+  voice?: Voice;
   /**
    * Form of the child being licensed, when known. Only `head` needs it, and it
    * needs it badly: a verb phrase's head is a verb, so without this the menu
@@ -53,10 +55,60 @@ export const REQUIRED_BY_VERB_TYPE: Record<VerbType, readonly ClauseFunction[]> 
   Vc: ['directObject', 'objectComplement'],
 };
 
+/**
+ * What the passive does to a frame: it promotes one object into the subject
+ * slot, so that object is gone from the predicate and is no longer required.
+ *
+ * Which object moves depends on the verb. A transitive verb loses its only
+ * one. A two-object verb may promote either — *He was given the keys* keeps a
+ * direct object, *The keys were given him* keeps none — so the direct object
+ * stays permitted and nothing is required. An object-complement verb loses the
+ * object and keeps the complement: *He was considered reliable*.
+ *
+ * `Vbe`, `Vlink` and `Vint` have no object to promote, so they have no passive.
+ */
+export const PASSIVE_SLOTS_BY_VERB_TYPE: Record<VerbType, readonly ClauseFunction[]> = {
+  Vbe: [],
+  Vlink: [],
+  Vint: [],
+  Vtr: [],
+  Vg: ['directObject'],
+  Vc: ['objectComplement'],
+};
+
+export const PASSIVE_REQUIRED_BY_VERB_TYPE: Record<VerbType, readonly ClauseFunction[]> = {
+  Vbe: [],
+  Vlink: [],
+  Vint: [],
+  Vtr: [],
+  Vg: [],
+  Vc: ['objectComplement'],
+};
+
+/** The three verb types with an object to promote. */
+export const PASSIVE_VERB_TYPES: readonly VerbType[] = ['Vtr', 'Vg', 'Vc'];
+
+export const hasPassive = (vt: VerbType): boolean => PASSIVE_VERB_TYPES.includes(vt);
+
+/** The slots a verb permits, given what it is and which voice it is in. */
+export function slotsFor(vt: VerbType, voice: Voice = 'active'): readonly ClauseFunction[] {
+  return voice === 'passive' ? PASSIVE_SLOTS_BY_VERB_TYPE[vt] : SLOTS_BY_VERB_TYPE[vt];
+}
+
+/** The slots a verb requires, given what it is and which voice it is in. */
+export function requiredFor(vt: VerbType, voice: Voice = 'active'): readonly ClauseFunction[] {
+  return voice === 'passive' ? PASSIVE_REQUIRED_BY_VERB_TYPE[vt] : REQUIRED_BY_VERB_TYPE[vt];
+}
+
 const UNCLASSIFIED = 'Classify the verb first — its type decides which slots exist.';
+
+/** Why a slot is gone once the sentence is in the passive. */
+const PROMOTED =
+  'In the passive, what the verb acted on is already the subject — it cannot also sit here.';
 
 export function licenses(fn: Func, ctx: LicenseContext): Verdict {
   const { parentForm: p, verbType: vt, siblings } = ctx;
+  const voice = ctx.voice ?? 'active';
   const has = (f: Func) => siblings.includes(f);
   const childIs = (...forms: Form[]) => !ctx.childForm || forms.includes(ctx.childForm);
 
@@ -75,8 +127,8 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (p !== 'VP') return HIDDEN;
       if (!childIs('NP', 'Cl')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
-      if (!SLOTS_BY_VERB_TYPE[vt].includes('directObject')) {
-        return no(`A ${LONG[vt]} verb takes no direct object.`);
+      if (!slotsFor(vt, voice).includes('directObject')) {
+        return no(voice === 'passive' ? PROMOTED : `A ${LONG[vt]} verb takes no direct object.`);
       }
       return has('directObject') ? no('This verb already has a direct object.') : ALLOWED;
 
@@ -85,6 +137,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!childIs('NP')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       if (vt !== 'Vg') return no(`A ${LONG[vt]} verb takes no indirect object.`);
+      if (voice === 'passive') return no(PROMOTED);
       if (!has('directObject')) {
         return no('An indirect object only appears alongside a direct object.');
       }
@@ -94,7 +147,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (p !== 'VP') return HIDDEN;
       if (!childIs('NP', 'AdjP')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
-      if (!SLOTS_BY_VERB_TYPE[vt].includes('subjectComplement')) {
+      if (!slotsFor(vt, voice).includes('subjectComplement')) {
         return no(`Only "be" and linking verbs take a subject complement.`);
       }
       return has('subjectComplement') ? no('This verb already has a subject complement.') : ALLOWED;
@@ -107,7 +160,9 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!childIs('NP', 'AdjP')) return HIDDEN;
       if (vt !== null && vt !== 'Vc') return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
-      if (!has('directObject')) {
+      // In the passive the direct object has become the subject, so the
+      // complement describes something that is no longer inside the predicate.
+      if (!has('directObject') && voice !== 'passive') {
         return no('An object complement describes the direct object — find that first.');
       }
       return has('objectComplement') ? no('This verb already has an object complement.') : ALLOWED;
@@ -125,6 +180,18 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       }
       return ALLOWED;
     }
+
+    // A helping verb sits inside the verb phrase it helps. It is NOT the head:
+    // *was repaired* is one verb doing one job, and the job belongs to
+    // *repaired*. Nor is it a premodifier — a premodifier narrows its head,
+    // and *has* does not narrow *repaired*, it tenses it.
+    //
+    // Unlike every other function here it may repeat, because English stacks
+    // them: *had been being repaired* is four words and one verb.
+    case 'auxiliary':
+      if (p !== 'VP') return HIDDEN;
+      if (!childIs('Aux')) return HIDDEN;
+      return ALLOWED;
 
     case 'determiner':
       return p === 'NP' ? ALLOWED : HIDDEN;
@@ -208,7 +275,10 @@ export const HEAD_BEARING: readonly Form[] = ['NP', 'VP', 'PP', 'AdjP', 'AdvP'];
  */
 export const HEAD_FORMS: Record<string, readonly Form[]> = {
   NP: ['N', 'Pron', 'Num', 'NP'],
-  VP: ['V', 'Aux', 'VP'],
+  // Not `Aux`. A verb phrase is named after its main verb, and an auxiliary is
+  // never that — in *was repaired* the phrase is about *repaired*. Auxiliaries
+  // hang off the phrase under the `auxiliary` function instead.
+  VP: ['V', 'VP'],
   PP: ['P', 'PP'],
   AdjP: ['Adj', 'AdjP'],
   AdvP: ['Adv', 'AdvP'],

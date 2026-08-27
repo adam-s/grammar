@@ -2,7 +2,15 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { gardenPath, vint } from '../grammar/fixtures.ts';
-import { DEFAULT_TIMING, beatAt, duration, script, stateIndexFor } from './hero-script.ts';
+import { layout } from '../grammar/layout.ts';
+import {
+  DEFAULT_TIMING,
+  beatAt,
+  duration,
+  frameDepth,
+  script,
+  stateIndexFor,
+} from './hero-script.ts';
 import { replaySentence } from './sentence-renderer.ts';
 
 const steps = replaySentence(vint).steps;
@@ -63,6 +71,17 @@ test('the rest at the end holds the finished diagram', () => {
   const last = beatAt(beats, total - 1, total)!;
   assert.equal(last.phase, 'commit');
   assert.equal(last.step, steps.length - 1);
+});
+
+test('every frame keeps the finished word baseline', () => {
+  const replay = replaySentence(gardenPath);
+  const depth = frameDepth(replay.final, gardenPath.words);
+  const baselines = replay.steps.map(
+    ({ state }) => layout(state.constituents, gardenPath.words, { minDepth: depth }).height,
+  );
+
+  assert.equal(new Set(baselines).size, 1);
+  assert.equal(baselines[0], layout(replay.final.constituents, gardenPath.words).height);
 });
 
 test('an empty replay produces nothing rather than throwing', () => {

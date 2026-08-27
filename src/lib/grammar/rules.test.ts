@@ -271,3 +271,109 @@ describe('clause-role form agreement', () => {
     });
   }
 });
+
+describe('a helping verb belongs to the verb, not beside it', () => {
+  const under = (parentForm: Form, childForm: Form, siblings: Func[] = []) =>
+    licenses('auxiliary', { parentForm, verbType: 'Vtr', siblings, childForm }).state;
+
+  it('an Aux inside a verb phrase is a helping verb', () => {
+    assert.equal(under('VP', 'Aux'), 'allowed');
+  });
+
+  it('it repeats, because English stacks them', () => {
+    assert.equal(under('VP', 'Aux', ['auxiliary', 'auxiliary']), 'allowed');
+  });
+
+  it('only an Aux may be one', () => {
+    assert.equal(under('VP', 'V'), 'hidden');
+    assert.equal(under('VP', 'NP'), 'hidden');
+  });
+
+  it('nothing outside a verb phrase has one', () => {
+    for (const parent of ['S', 'Cl', 'NP', 'PP', 'AdjP', 'AdvP'] as Form[]) {
+      assert.equal(under(parent, 'Aux'), 'hidden', `${parent} should have no helping verb`);
+    }
+  });
+
+  it('an auxiliary cannot head the phrase it helps', () => {
+    // *was repaired* is one verb, and the phrase is about *repaired*. Letting
+    // `was` head it would leave the main verb unclassifiable — the clause's
+    // verb type is read off the head.
+    const v = licenses('head', {
+      parentForm: 'VP',
+      verbType: null,
+      siblings: [],
+      childForm: 'Aux',
+    });
+    assert.equal(v.state, 'disabled');
+    assert.match(v.state === 'disabled' ? v.reason : '', /head of a verb phrase is a verb/);
+  });
+});
+
+describe('the passive moves one object into the subject', () => {
+  const slot = (fn: Func, verbType: VerbType, voice: 'active' | 'passive', siblings: Func[] = []) =>
+    licenses(fn, { parentForm: 'VP', verbType, voice, siblings, childForm: 'NP' }).state;
+
+  it('a transitive verb loses its only object', () => {
+    assert.equal(slot('directObject', 'Vtr', 'active'), 'allowed');
+    assert.equal(slot('directObject', 'Vtr', 'passive'), 'disabled');
+  });
+
+  it('a two-object verb keeps one, because either may be the one promoted', () => {
+    assert.equal(slot('directObject', 'Vg', 'passive'), 'allowed');
+    assert.equal(slot('indirectObject', 'Vg', 'passive', ['directObject']), 'disabled');
+  });
+
+  it('an object-complement verb keeps its complement and loses the object', () => {
+    assert.equal(
+      licenses('objectComplement', {
+        parentForm: 'VP',
+        verbType: 'Vc',
+        voice: 'passive',
+        siblings: [],
+        childForm: 'AdjP',
+      }).state,
+      'allowed',
+      'the complement no longer waits for a direct object that has left the predicate',
+    );
+    assert.equal(slot('directObject', 'Vc', 'passive'), 'disabled');
+  });
+
+  it('the reason names the promotion rather than the verb type', () => {
+    const v = licenses('directObject', {
+      parentForm: 'VP',
+      verbType: 'Vtr',
+      voice: 'passive',
+      siblings: [],
+      childForm: 'NP',
+    });
+    assert.match(v.state === 'disabled' ? v.reason : '', /already the subject/);
+  });
+
+  it('omitting voice means active, so nothing already written changes meaning', () => {
+    assert.equal(
+      licenses('directObject', {
+        parentForm: 'VP',
+        verbType: 'Vtr',
+        siblings: [],
+        childForm: 'NP',
+      }).state,
+      'allowed',
+    );
+  });
+
+  it('a learner may still TRY the direct object and be told no by the grader', () => {
+    // Menu affordance, not licensing: whether this passive has an object is
+    // the question being asked, so the row stays actionable until graded.
+    assert.equal(
+      hypothesizes('directObject', {
+        parentForm: 'VP',
+        verbType: 'Vtr',
+        voice: 'passive',
+        siblings: [],
+        childForm: 'NP',
+      }).state,
+      'allowed',
+    );
+  });
+});

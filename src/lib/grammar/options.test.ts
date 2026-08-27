@@ -369,11 +369,44 @@ describe('the live question is the one on screen', () => {
     assert.equal(p.step, 'verb-type');
     assert.equal(group(p, 'word-class')!.answered?.form, 'V');
     // …and it is asked directly after the word class, not below the phrase
-    // forms: classifying the verb is the spine of the course.
+    // forms: classifying the verb is the spine of the course. Voice follows
+    // the type because it refines it — a verb has to have an object before
+    // the question of moving that object into the subject means anything.
     assert.deepEqual(
       p.groups.map((g) => g.id),
-      ['word-class', 'verb-type', 'phrase-form', 'function'],
+      ['word-class', 'verb-type', 'voice', 'phrase-form', 'function'],
     );
+  });
+
+  it('voice never interrupts: active is the answer until someone changes it', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
+    assert.equal(group(p, 'voice')!.answered?.voice, 'active');
+    assert.notEqual(p.step, 'voice', 'an unasked question should not take the step');
+  });
+
+  it('the passive is offered but blocked until the verb has an object to move', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    const before = group(optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! }), 'voice')!;
+    const passive = before.options.find((o) => o.voice === 'passive')!;
+    assert.equal(passive.state, 'blocked', 'the row stays visible so the choice is learnable');
+    assert.match(passive.note ?? '', /Classify the verb first/);
+
+    s = setOnlyVerbType(s, 'Vint');
+    const intransitive = group(
+      optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! }),
+      'voice',
+    )!;
+    assert.equal(intransitive.options.find((o) => o.voice === 'passive')!.state, 'blocked');
+
+    s = setOnlyVerbType(s, 'Vtr');
+    const transitive = group(
+      optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! }),
+      'voice',
+    )!;
+    assert.equal(transitive.options.find((o) => o.voice === 'passive')!.state, 'available');
   });
 
   it('moves on again once the verb type is settled', () => {

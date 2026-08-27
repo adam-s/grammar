@@ -33,7 +33,7 @@
  * the content must satisfy cannot drift apart.
  */
 import { canWrap, hypothesisFor, nodeOver, roots, type BuildState, type Span } from './builder.ts';
-import { VERB_TYPE_MENU } from './rules.ts';
+import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { FORM_TEST, FUNCTION_TEST, formName, label } from './names.ts';
 import {
@@ -44,6 +44,7 @@ import {
   type Form,
   type Func,
   type VerbType,
+  type Voice,
   type Word,
 } from './types.ts';
 
@@ -114,6 +115,7 @@ export interface LabelOption {
   /** The required SVA variety of an adverbial, represented on the same function. */
   obligatory?: boolean;
   verbType?: VerbType;
+  voice?: Voice;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -365,6 +367,46 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     })),
   };
 
+  /**
+   * Active or passive. Shown for every verb, because the group's inventory is
+   * fixed even when half of it is unavailable — a learner who never sees the
+   * passive row does not learn that the choice exists.
+   *
+   * `active` is chosen from the start, so this group never becomes the step and
+   * never interrupts. Voice is a refinement of an answer already given, not a
+   * question every verb has to be asked.
+   */
+  const voice: OptionGroup = {
+    id: 'voice',
+    question: 'Who is doing it?',
+    notes: 'always',
+    options: [
+      {
+        key: 'voice:active',
+        label: 'active',
+        note: 'the subject does it — “The mechanic repaired the engine”',
+        state: (c.voice === 'passive' ? 'available' : 'chosen') as OptionState,
+        voice: 'active' as Voice,
+      },
+      {
+        key: 'voice:passive',
+        label: 'passive',
+        note:
+          c.verbType == null
+            ? 'Classify the verb first — only a verb with an object has a passive.'
+            : !hasPassive(c.verbType)
+              ? 'This verb has no object to move into the subject, so it has no passive.'
+              : 'the subject has it done to it — “The engine was repaired”',
+        state: (c.verbType != null && hasPassive(c.verbType)
+          ? c.voice === 'passive'
+            ? 'chosen'
+            : 'available'
+          : 'blocked') as OptionState,
+        voice: 'passive' as Voice,
+      },
+    ],
+  };
+
   const groups: OptionGroup[] = isWord
     ? [
         {
@@ -373,7 +415,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
           notes: 'ondemand',
           options: build(WORD_FORMS, false),
         },
-        ...(c.form === 'V' ? [verbType] : []),
+        ...(c.form === 'V' ? [verbType, voice] : []),
         {
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',

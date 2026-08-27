@@ -27,6 +27,7 @@
     type OptionGroup,
     type Panel,
   } from './options.ts';
+  import { menuOptionState } from './panel-presentation.ts';
 
   export interface Verdict {
     kind: 'correct' | 'alternate' | 'wrong';
@@ -397,8 +398,9 @@
           {#each sections as s (s.name)}
             {#if s.name}<h3>{s.name}</h3>{/if}
             {#each s.options as o (o.key)}
+              {@const rowState = menuOptionState(o.state)}
               <button
-                class="option {o.state}"
+                class="option {rowState}"
                 class:pointed={shown?.key === o.key}
                 data-option={o.key}
                 type="button"
@@ -417,7 +419,6 @@
                 onkeydown={(e) => optionKey(e, o)}
               >
                 <span class="option-label">
-                  {#if o.hotkey}<kbd>{o.hotkey}</kbd>{/if}
                   <span>{o.label}</span>
                 </span>
                 {#if o.state === 'chosen'}<Check size={13} strokeWidth={2.25} />{/if}
@@ -642,10 +643,6 @@
   .option.pointed {
     background: color-mix(in oklab, var(--ink) 8%, transparent);
     outline: 0;
-  }
-  .option.suggested {
-    border-left-color: var(--accent);
-    font-weight: 600;
   }
   .option.chosen {
     background: color-mix(in oklab, var(--accent) 15%, transparent);

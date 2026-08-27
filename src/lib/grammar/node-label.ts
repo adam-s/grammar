@@ -7,7 +7,7 @@ import {
   verbTypeMark,
   verbTypeName,
 } from './names.ts';
-import type { ClauseKind, Form, Func, VerbType } from './types.ts';
+import type { ClauseKind, Form, Func, VerbType, Voice } from './types.ts';
 
 /** Everything visible around the primary form label of one diagram node. */
 export interface NodeLabelValue {
@@ -15,6 +15,8 @@ export interface NodeLabelValue {
   function?: Func | null;
   obligatory?: boolean;
   verbType?: VerbType | null;
+  /** Only meaningful beside `verbType`. Absent means active. */
+  voice?: Voice | null;
   clauseKind?: ClauseKind | null;
 }
 
@@ -57,15 +59,16 @@ export function nodeLabelOffsets(form: Form): { functionX: number; subtypeX: num
 export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
   const fnMark = value.function ? functionMark(value.function, value.obligatory === true) : null;
   const fnName = value.function ? functionName(value.function, value.obligatory === true) : null;
+  const voice = value.voice ?? 'active';
   const subtypeMark =
     value.form === 'V' && value.verbType
-      ? verbTypeMark(value.verbType)
+      ? verbTypeMark(value.verbType, voice)
       : value.form === 'Cl' && value.clauseKind
         ? clauseKindMark(value.clauseKind)
         : null;
   const subtypeName =
     value.form === 'V' && value.verbType
-      ? verbTypeName(value.verbType)
+      ? verbTypeName(value.verbType, voice)
       : value.form === 'Cl' && value.clauseKind
         ? clauseKindName(value.clauseKind)
         : null;

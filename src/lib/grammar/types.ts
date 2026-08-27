@@ -102,6 +102,13 @@ export type ClauseFunction =
 
 export type PhraseInternalFunction =
   | 'head'
+  /**
+   * A helping verb, inside the verb phrase it helps: *was __repaired__*,
+   * *__has been__ repairing*. It is not the head — Morenberg treats the whole
+   * run as one verb doing one job — and it repeats, because English stacks
+   * them.
+   */
+  | 'auxiliary'
   | 'determiner'
   | 'premodifier'
   | 'postmodifier'
@@ -124,6 +131,7 @@ export const CLAUSE_FUNCTIONS: readonly ClauseFunction[] = [
 ];
 export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'head',
+  'auxiliary',
   'determiner',
   'premodifier',
   'postmodifier',
@@ -136,6 +144,21 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
 /** The spine of the course. Six, in Morenberg's order. */
 export type VerbType = 'Vbe' | 'Vlink' | 'Vint' | 'Vtr' | 'Vg' | 'Vc';
 export const VERB_TYPES: readonly VerbType[] = ['Vbe', 'Vlink', 'Vint', 'Vtr', 'Vg', 'Vc'];
+
+/**
+ * Active or passive.
+ *
+ * *The mechanic repaired the engine* and *The engine was repaired* describe the
+ * same event and put different things in the subject, so voice is a fact about
+ * the sentence, not about its meaning. Recorded on the verb rather than on the
+ * clause for the same reason `verbType` is: a learner names the verb long
+ * before the clause above it exists, and a sentence can hold one passive clause
+ * inside an active one.
+ *
+ * Absent means active. Only a verb that takes an object has a passive.
+ */
+export type Voice = 'active' | 'passive';
+export const VOICES: readonly Voice[] = ['active', 'passive'];
 
 /** Quirk et al. clause type, stored alongside — the mainstream anchor. */
 export type ClauseType = 'SV' | 'SVO' | 'SVC' | 'SVA' | 'SVOO' | 'SVOC' | 'SVOA';
@@ -175,6 +198,13 @@ export interface Constituent {
    * `clause.ts` for how a constituent finds the verb that governs it.
    */
   verbType?: VerbType;
+  /**
+   * For `form: 'V'` — active or passive. Absent means active.
+   *
+   * The passive moves an object into the subject slot, so it changes which
+   * slots the verb's own frame still requires. `rules.ts` holds that table.
+   */
+  voice?: Voice;
   /** For a clause node (`S` or `Cl`): the slot pattern its verb produced. */
   clauseType?: ClauseType;
   /**

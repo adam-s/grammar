@@ -12,9 +12,17 @@ import {
 import { CLAUSE_KINDS } from './node-variants.ts';
 
 test('every verb type has a compact, distinct diagram mark', () => {
-  const marks = VERB_TYPES.map(verbTypeMark);
+  const marks = VERB_TYPES.map((type) => verbTypeMark(type));
   assert.equal(new Set(marks).size, VERB_TYPES.length);
   assert.ok(marks.every((mark) => mark.length <= 2));
+});
+
+test('the passive is written on the verb, not left for the reader to infer', () => {
+  // A passive transitive verb with no direct object looks like a mistake
+  // unless the node says why the object is missing.
+  assert.equal(verbTypeMark('Vtr', 'passive'), 'T pass');
+  assert.equal(verbTypeName('Vtr', 'passive'), 'passive transitive verb');
+  assert.equal(verbTypeMark('Vtr', 'active'), verbTypeMark('Vtr'), 'active adds nothing');
 });
 
 test('the transitive mark stays terse while its accessible name stays complete', () => {

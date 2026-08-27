@@ -16,7 +16,7 @@
 import { verbs } from './clause.ts';
 import { label } from './audits.ts';
 import type { BuildState, Span } from './builder.ts';
-import type { Constituent, Form, Func, Reading, SentenceEntry, VerbType } from './types.ts';
+import type { Constituent, Form, Func, Reading, SentenceEntry, VerbType, Voice } from './types.ts';
 
 export type Outcome =
   | { kind: 'correct'; readingId: string }
@@ -233,6 +233,37 @@ export function gradeVerbType(sentence: SentenceEntry, wordIndex: number, type: 
   };
 }
 
+/** The formal test for voice: turn it round and see which noun moves. */
+export const VOICE_TEST =
+  'Ask who is doing it. If the doer is not the subject — or is missing — it is passive.';
+
+/**
+ * Is `voice` right for the verb at `wordIndex`?
+ *
+ * Keyed on the word, like the verb type and for the same reason: one sentence
+ * can hold a passive clause inside an active one.
+ */
+export function gradeVoice(sentence: SentenceEntry, wordIndex: number, voice: Voice): Outcome {
+  for (const r of ordered(sentence)) {
+    const verb = verbs(r.constituents).find((id) => r.constituents[id]!.span[0] === wordIndex);
+    if (verb && (r.constituents[verb]!.voice ?? 'active') === voice) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return {
+    kind: 'wrong',
+    reason: voice === 'passive' ? 'This one is not passive.' : 'This one is passive.',
+    test: VOICE_TEST,
+  };
+}
+
 export type Hint =
   | { level: 1; text: string }
   | { level: 2; text: string; narrowTo: number }
@@ -300,6 +331,11 @@ function compare(build: BuildState, reading: Reading): string[] {
         `the verb at word ${want.span[0]} is ${want.verbType ?? 'unclassified'}, ` +
           `not ${got ?? 'unclassified'}`,
       );
+    }
+    const wantVoice = want.voice ?? 'active';
+    const gotVoice = mineVerb ? (build.constituents[mineVerb]!.voice ?? 'active') : 'active';
+    if (gotVoice !== wantVoice) {
+      out.push(`the verb at word ${want.span[0]} is ${wantVoice}, not ${gotVoice}`);
     }
   }
   return out;

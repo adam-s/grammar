@@ -43,6 +43,7 @@ const FUNCTION_FORM: Record<Func, Form> = {
   objectComplement: 'AdjP',
   adverbial: 'AdvP',
   head: 'Pron',
+  auxiliary: 'Aux',
   determiner: 'Det',
   premodifier: 'Adj',
   postmodifier: 'PP',

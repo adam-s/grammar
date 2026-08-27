@@ -33,6 +33,7 @@
     nodeOver,
     setFunction,
     setVerbType,
+    setVoice,
     stacksOver,
     unwrap,
     wrap,
@@ -41,9 +42,11 @@
   import {
     PLAIN,
     VERB_TYPE_TEST,
+    VOICE_TEST,
     gradeForm,
     gradeFunction,
     gradeVerbType,
+    gradeVoice,
     type Outcome,
   } from '$lib/grammar/grader.ts';
   import { layout } from '$lib/grammar/layout.ts';
@@ -255,7 +258,9 @@
                   step.choice.func === 'adverbial' && step.choice.obligatory
                   ? 'func:obligatoryAdverbial'
                   : `func:${step.choice.func}`
-                : `vt:${step.choice.verbType}`,
+                : step.choice.voice !== undefined
+                  ? `voice:${step.choice.voice}`
+                  : `vt:${step.choice.verbType}`,
         })),
       reset,
     };
@@ -438,6 +443,29 @@
         build = setFunction(build, selection.id, o.func, o.obligatory ?? false);
         closeIfComplete();
       } else {
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
+    if (o.voice && selection.kind === 'node') {
+      // Graded against the verb that was selected, like the type above it: a
+      // sentence can hold a passive clause inside an active one.
+      const at = build.constituents[selection.id]?.span[0];
+      const outcome = at === undefined ? null : gradeVoice(sentence, at, o.voice);
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setVoice(build, selection.id, o.voice);
+        verdict = {
+          kind: 'correct',
+          text: o.voice === 'passive' ? 'Yes — this one is passive.' : 'Yes — this one is active.',
+        };
+        closeIfComplete();
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: outcome?.reason ?? 'Not that voice here.',
+          test: outcome?.test ?? VOICE_TEST,
+        };
         reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
       }
       return;

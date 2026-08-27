@@ -20,10 +20,10 @@
  * verb-frame correctness is left to the grader so construction order never
  * reveals or hides an answer.
  */
-import { governingVerbType, verbs } from './clause.ts';
+import { governingVerb, governingVerbType, governingVoice, verbs } from './clause.ts';
 import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm } from './types.ts';
-import type { Constituent, ConstituentMap, Form, Func, VerbType, Word } from './types.ts';
+import type { Constituent, ConstituentMap, Form, Func, VerbType, Voice, Word } from './types.ts';
 
 export interface BuildState {
   constituents: ConstituentMap;
@@ -274,6 +274,22 @@ export function setVerbType(state: BuildState, id: string, verbType: VerbType | 
 }
 
 /**
+ * Put one verb in the active or the passive.
+ *
+ * Voice sits on the same `V` leaf as the type, for the same reason: a sentence
+ * can hold a passive clause inside an active one, and one answer per sentence
+ * could not say that.
+ */
+export function setVoice(state: BuildState, id: string, voice: Voice): BuildState {
+  const c = state.constituents[id];
+  if (!c || c.form !== 'V') return state;
+  const cs = cloneMap(state.constituents);
+  if (voice === 'active') delete cs[id]!.voice;
+  else cs[id]!.voice = voice;
+  return { ...state, constituents: cs };
+}
+
+/**
  * Classify the one verb in a single-clause build.
  *
  * A convenience, and deliberately a no-op when the build has more than one verb:
@@ -301,6 +317,12 @@ export function verbTypeFor(state: BuildState, id: string): VerbType | null {
 function looseVerbType(state: BuildState): VerbType | null {
   const all = verbs(state.constituents);
   return all.length === 1 ? (state.constituents[all[0]!]!.verbType ?? null) : null;
+}
+
+/** The voice a not-yet-parented node would answer to. Absent means active. */
+function looseVoice(state: BuildState): Voice {
+  const all = verbs(state.constituents);
+  return all.length === 1 ? (state.constituents[all[0]!]!.voice ?? 'active') : 'active';
 }
 
 /** Remove a node, returning its children to the top level. Never orphans a word. */
@@ -378,6 +400,7 @@ function functionContext(state: BuildState, id: string, fn: Func): LicenseContex
       return {
         parentForm,
         verbType: looseVerbType(state),
+        voice: looseVoice(state),
         siblings,
         childForm: c.form,
       };
@@ -392,6 +415,9 @@ function functionContext(state: BuildState, id: string, fn: Func): LicenseContex
   return {
     parentForm: parent.form,
     verbType: governingVerbType(state.constituents, id) ?? looseVerbType(state),
+    voice: governingVerb(state.constituents, id)
+      ? governingVoice(state.constituents, id)
+      : looseVoice(state),
     siblings,
     childForm: c.form,
   };

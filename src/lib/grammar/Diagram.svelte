@@ -280,6 +280,7 @@
         function: c.function,
         obligatory: c.obligatory,
         verbType: c.verbType,
+        voice: c.voice,
         clauseKind: c.clauseKind,
       })}
       {@const labelWidth = nodeLabelWidth({
@@ -287,6 +288,7 @@
         function: c.function,
         obligatory: c.obligatory,
         verbType: c.verbType,
+        voice: c.voice,
         clauseKind: c.clauseKind,
       })}
       {@const on =
@@ -346,6 +348,7 @@
           function={c.function}
           obligatory={c.obligatory}
           verbType={c.verbType}
+          voice={c.voice}
           clauseKind={c.clauseKind}
         />
       </g>

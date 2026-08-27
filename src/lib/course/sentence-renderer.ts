@@ -7,6 +7,7 @@ import {
   emptyBuild,
   setFunction,
   setVerbType,
+  setVoice,
   wrap,
   type BuildState,
   type Span,
@@ -18,10 +19,11 @@ import {
   type Func,
   type SentenceEntry,
   type VerbType,
+  type Voice,
 } from '../grammar/types.ts';
 
 export type RenderStep = {
-  kind: 'form' | 'function' | 'verb-type';
+  kind: 'form' | 'function' | 'verb-type' | 'voice';
   canonicalId: string | null;
   state: BuildState;
   /** The words the decision is about — what a learner would have selected. */
@@ -29,7 +31,7 @@ export type RenderStep = {
   /** The node in `state` the decision landed on. */
   nodeId: string;
   /** The palette option a learner would have clicked to produce this step. */
-  choice: { form?: Form; func?: Func; obligatory?: boolean; verbType?: VerbType };
+  choice: { form?: Form; func?: Func; obligatory?: boolean; verbType?: VerbType; voice?: Voice };
 };
 
 export type SentenceReplay = { steps: RenderStep[]; final: BuildState };
@@ -102,6 +104,21 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
       nodeId,
       choice: { verbType },
     });
+
+    // Active is the standing answer, so only a passive verb costs a step. A
+    // replay that clicked `active` on every verb would show a learner doing
+    // work they never have to do.
+    if (reading.constituents[canonicalId]!.voice === 'passive') {
+      state = setVoice(state, nodeId, 'passive');
+      steps.push({
+        kind: 'voice',
+        canonicalId,
+        state,
+        span: reading.constituents[canonicalId]!.span,
+        nodeId,
+        choice: { voice: 'passive' },
+      });
+    }
   }
 
   // A function can depend on a sibling already being established. Repeated
