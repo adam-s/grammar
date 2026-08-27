@@ -1,0 +1,6 @@
+.svelte-kit
+build
+dist
+node_modules
+src/lib/components/ui
+package-lock.json
