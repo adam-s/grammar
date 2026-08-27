@@ -195,10 +195,14 @@ describe('grading a whole build', () => {
   });
 
   it('flags a group the answer does not have', () => {
-    const s = wrap(complete(), vtr.words, [1, 2], 'NP');
+    // An NP over “She repaired”, which is a group a learner can really build
+    // and the answer really lacks.
+    let s = wrap(emptyBuild(), vtr.words, [0, 0], 'Pron');
+    s = wrap(s, vtr.words, [1, 1], 'V');
+    s = wrap(s, vtr.words, [0, 1], 'NP');
     const { wrong } = gradeBuild(s, vtr);
     assert.ok(
-      wrong.some((w) => /extra/.test(w)),
+      wrong.some((w) => /extra NP over words 0–1/.test(w)),
       wrong.join(' | '),
     );
   });

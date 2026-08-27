@@ -20,7 +20,7 @@ import {
   wrap,
   type BuildState,
 } from './builder.ts';
-import { vtr } from './fixtures.ts';
+import { punctuation, vtr } from './fixtures.ts';
 import type { Reading, Word } from './types.ts';
 
 const W = vtr.words; // She repaired the engine.
@@ -374,5 +374,44 @@ describe('a clause may stack over a phrase of the same words', () => {
     assert.equal(s.constituents[cl]!.form, 'Cl');
     assert.deepEqual(s.constituents[cl]!.children, [vp]);
     assert.equal(s.constituents[vp]!.form, 'VP', 'the predicate survives underneath');
+  });
+});
+
+describe('grouping around punctuation', () => {
+  const words = punctuation.words;
+
+  it('punctuation cannot be named, and the menu says why once', () => {
+    const comma = words.findIndex((w) => w.text === ',');
+    const v = canWrap(emptyBuild(), words, [comma, comma]);
+    assert.equal(v.state, 'disabled');
+    assert.match(v.state === 'disabled' ? v.reason : '', /not one of the parts/);
+  });
+
+  it('a run may be grouped over a comma without labelling it first', () => {
+    let s = emptyBuild();
+    for (const i of [0, 3, 7]) s = wrap(s, words, [i, i], 'Det');
+    for (const i of [1, 4, 8]) s = wrap(s, words, [i, i], 'N');
+    for (const i of [2, 9]) s = wrap(s, words, [i, i], 'V');
+    s = wrap(s, words, [6, 6], 'Conj');
+    assert.equal(canWrap(s, words, [0, 9]).state, 'allowed');
+  });
+
+  it('the group it makes stops at the last real word', () => {
+    let s = wrap(emptyBuild(), words, [9, 9], 'V');
+    // Sweep past the closing period; the VP should still end at "started".
+    s = wrap(s, words, [9, 10], 'VP');
+    const vp = Object.keys(s.constituents).find((id) => s.constituents[id]!.form === 'VP')!;
+    assert.deepEqual(s.constituents[vp]!.span, [9, 9]);
+  });
+
+  it('nothing loose inside means nothing to group', () => {
+    // Words already held by one node cannot be regrouped from underneath it.
+    let s = wrap(emptyBuild(), words, [7, 7], 'Det');
+    s = wrap(s, words, [8, 8], 'N');
+    s = wrap(s, words, [7, 8], 'NP');
+    const v = canWrap(s, words, [7, 8]);
+    assert.equal(v.state, 'allowed', 'the same span is a relabel, which is allowed');
+    const inside = canWrap(wrap(s, words, [9, 9], 'V'), words, [8, 9]);
+    assert.equal(inside.state, 'disabled', 'half of a group plus its neighbour is a cut');
   });
 });

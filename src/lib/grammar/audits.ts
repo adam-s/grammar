@@ -21,6 +21,7 @@ import { licenses, hasPassive, requiredFor, slotsFor, HEAD_BEARING, LONG } from 
 import {
   CLAUSE_FUNCTIONS,
   isPhraseForm,
+  isPunctuation,
   isWordForm,
   type ClauseFunction,
   type Constituent,
@@ -120,7 +121,14 @@ export function auditStructure(ctx: Ctx): string[] {
 
 /* ------------------------------------------------------------------- 1: coverage */
 
-/** Every word appears in exactly one leaf. No word dropped, none duplicated. */
+/**
+ * Every word appears in exactly one leaf. No word dropped, none duplicated.
+ *
+ * Except punctuation, which appears in none. A comma marks the sentence rather
+ * than being part of what it is built from, so it has no form to take and no
+ * node to sit in — and a diagram that gave it one would be claiming something
+ * false about English.
+ */
 export function auditCoverage(ctx: Ctx): string[] {
   const f: string[] = [];
   const count = new Map<number, number>();
@@ -130,8 +138,13 @@ export function auditCoverage(ctx: Ctx): string[] {
   }
   for (let i = 0; i < ctx.words.length; i++) {
     const n = count.get(i) ?? 0;
-    if (n === 0) f.push(`"${ctx.words[i]!.text}" (word ${i}) is not in the diagram`);
-    else if (n > 1) f.push(`"${ctx.words[i]!.text}" (word ${i}) appears in ${n} places`);
+    const word = ctx.words[i]!;
+    if (isPunctuation(word)) {
+      if (n > 0) f.push(`"${word.text}" (word ${i}) is punctuation, so it belongs in no node`);
+      continue;
+    }
+    if (n === 0) f.push(`"${word.text}" (word ${i}) is not in the diagram`);
+    else if (n > 1) f.push(`"${word.text}" (word ${i}) appears in ${n} places`);
   }
   return f;
 }
@@ -178,7 +191,12 @@ export function auditContiguity(ctx: Ctx): string[] {
     if (leaves.length === 0) continue;
     const lo = Math.min(...leaves);
     const hi = Math.max(...leaves);
-    if (leaves.length !== hi - lo + 1) {
+    // Counted over the words a node could hold. A comma inside a run is not a
+    // hole in the run: *the engine, which stalled,* is contiguous even though
+    // two of its indices are punctuation.
+    let span = 0;
+    for (let i = lo; i <= hi; i++) if (!isPunctuation(ctx.words[i]!)) span++;
+    if (leaves.length !== span) {
       f.push(`"${id}" (${c.form}) skips a word — a constituent is a run of words with no gaps`);
     }
     if (c.span[0] !== lo || c.span[1] !== hi) {

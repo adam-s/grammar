@@ -2,7 +2,7 @@ import { verbs } from './clause.ts';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
-import { FIXTURES, auxiliaryChain, passive, vbe, vint, vtr } from './fixtures.ts';
+import { FIXTURES, auxiliaryChain, passive, punctuation, vbe, vint, vtr } from './fixtures.ts';
 import type { Reading, SentenceEntry } from './types.ts';
 
 const clone = <T>(x: T): T => structuredClone(x);
@@ -237,5 +237,38 @@ describe('the passive', () => {
     const report = auditReading(r, s.words);
     assert.equal(report.ok, false);
     assert.match(report.all.join(' | '), /needs an object complement/);
+  });
+});
+
+describe('punctuation is in the sentence and not in the tree', () => {
+  it('a comma and a period need no node, and the reading still passes', () => {
+    const report = auditReading(punctuation.readings[0]!, punctuation.words);
+    assert.equal(report.ok, true, report.all.join(' | '));
+    const marks = punctuation.words.filter((w) => w.upos === 'PUNCT');
+    assert.deepEqual(
+      marks.map((w) => w.text),
+      [',', '.'],
+    );
+  });
+
+  it('a comma inside a run is not a hole in the run', () => {
+    // The S covers words 0–9 with a comma at 5. Contiguity counts the words a
+    // node could hold, so this is a run with no gaps.
+    const r = punctuation.readings[0]!;
+    const root = Object.keys(r.constituents).find((id) => r.constituents[id]!.parent === null)!;
+    assert.deepEqual(r.constituents[root]!.span, [0, 9]);
+    assert.equal(auditReading(r, punctuation.words).failures.contiguity, undefined);
+  });
+
+  it('putting punctuation in a node is an error, not a shrug', () => {
+    const { r, s } = broken(punctuation, (r) => {
+      const conj = idOf(r, (c) => c.function === 'coordinator');
+      // Point the conjunction's leaf at the comma instead.
+      r.constituents[conj]!.word = 5;
+      r.constituents[conj]!.span = [5, 5];
+    });
+    const report = auditReading(r, s.words);
+    assert.equal(report.ok, false);
+    assert.match(report.all.join(' | '), /is punctuation, so it belongs in no node/);
   });
 });

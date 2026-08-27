@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
 import { FIXTURES, ambiguous, vtr } from './fixtures.ts';
 import { layout } from './layout.ts';
-import { canonicalReading } from './types.ts';
+import { canonicalReading, isPunctuation } from './types.ts';
 
 describe('layout', () => {
   for (const s of FIXTURES) {
@@ -19,9 +19,11 @@ describe('layout', () => {
       const r = canonicalReading(s);
       const res = layout(r.constituents, s.words);
       const wordIdx = res.leaves.map((id) => r.constituents[id]!.word);
+      // Every word but the punctuation, which is drawn in the word row and has
+      // no leaf above it — it marks the sentence rather than being part of it.
       assert.deepEqual(
         wordIdx,
-        s.words.map((w) => w.i),
+        s.words.filter((w) => !isPunctuation(w)).map((w) => w.i),
       );
     });
 

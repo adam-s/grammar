@@ -22,7 +22,7 @@
  */
 import { governingVerb, governingVerbType, governingVoice, verbs } from './clause.ts';
 import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
-import { isPhraseForm } from './types.ts';
+import { isPhraseForm, isPunctuation } from './types.ts';
 import type { Constituent, ConstituentMap, Form, Func, VerbType, Voice, Word } from './types.ts';
 
 export interface BuildState {
@@ -152,8 +152,17 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
   if (a < 0 || b >= words.length || a > b) return { state: 'hidden' };
 
   if (a === b) {
-    // A single word is always available: name it, rename it, or wrap it in a
-    // one-word phrase. Which of those happens is decided by the form chosen.
+    // Punctuation is in the sentence and not in the tree. There is no word
+    // class it could take, so every option is refused with the same reason
+    // rather than one of them being wrong.
+    if (isPunctuation(words[a]!)) {
+      return {
+        state: 'disabled',
+        reason: 'Punctuation marks the sentence; it is not one of the parts it is built from.',
+      };
+    }
+    // Otherwise a single word is always available: name it, rename it, or wrap
+    // it in a one-word phrase. Which of those happens the chosen form decides.
     return { state: 'allowed' };
   }
 
@@ -174,6 +183,10 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
   }
 
   for (let i = a; i <= b; i++) {
+    // Punctuation inside the run is skipped, not waited for. It never gets a
+    // node, so requiring one would make *the mechanic repaired the engine, and
+    // the car started* impossible to group at the top.
+    if (isPunctuation(words[i]!)) continue;
     if (rootAt(state, i) === null) {
       return {
         state: 'disabled',
@@ -181,6 +194,26 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
       };
     }
   }
+
+  // Grouping puts a new node over nodes that are currently loose. If one node
+  // already covers all of these words and more, there is nothing loose in here
+  // to group, and the pick would have done nothing at all.
+  const covering = roots(state).find((id) => {
+    const s = state.constituents[id]!.span;
+    return s[0] <= a && s[1] >= b && !(s[0] === a && s[1] === b);
+  });
+  if (covering) {
+    const s = state.constituents[covering]!.span;
+    const text = words
+      .slice(s[0], s[1] + 1)
+      .map((w) => w.text)
+      .join(' ');
+    return {
+      state: 'disabled',
+      reason: `These words are already inside “${text}”. Ungroup it first.`,
+    };
+  }
+
   return { state: 'allowed' };
 }
 
@@ -238,8 +271,14 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   }
 
   const kids = roots({ ...state, constituents: cs }).filter((id) => inSpan(span, cs[id]!.span[0]));
+  if (kids.length === 0) return state;
+  // The node's extent is what it actually holds, not what the pointer swept.
+  // A selection that runs over the closing period should produce a sentence
+  // that ends at the last word, not one that claims the period.
+  const lo = Math.min(...kids.map((k) => cs[k]!.span[0]));
+  const hi = Math.max(...kids.map((k) => cs[k]!.span[1]));
   const id = `c${++seq}`;
-  cs[id] = { form, function: null, parent: null, children: kids, span: [a, b] };
+  cs[id] = { form, function: null, parent: null, children: kids, span: [lo, hi] };
   for (const k of kids) cs[k]!.parent = id;
   return { constituents: cs, seq };
 }
@@ -428,7 +467,11 @@ export function isComplete(state: BuildState, words: Word[]): boolean {
   const r = roots(state);
   if (r.length !== 1) return false;
   const s = state.constituents[r[0]!]!.span;
-  return s[0] === 0 && s[1] === words.length - 1;
+  // Punctuation is never inside the tree, so a finished sentence runs from the
+  // first real word to the last one rather than to the end of the token list.
+  const real = words.filter((w) => !isPunctuation(w)).map((w) => w.i);
+  if (real.length === 0) return false;
+  return s[0] === real[0] && s[1] === real.at(-1);
 }
 
 /** A snapshot the renderer can draw — the same shape a frozen Reading carries. */

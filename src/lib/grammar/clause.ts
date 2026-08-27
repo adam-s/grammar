@@ -60,9 +60,16 @@ export function clauseOf(cs: ConstituentMap, id: string): string | null {
  * outer `S` has coordinates where an ordinary clause has a subject and a
  * predicate. It has no verb of its own, so asking what kind of verb it has is
  * the wrong question — the two clauses inside it answer separately.
+ *
+ * Keyed on the joining word rather than on the coordinates. One stray
+ * `coordinate` child should not switch off the verb-type audit for a whole
+ * clause; the presence of *and* is the claim that this node is a join. The cost
+ * is that a join made with a comma alone — *the engine stalled, the car
+ * stopped* — is not recognised, and cannot be until punctuation has a home
+ * (docs/model-gaps.md).
  */
 export function isCoordination(cs: ConstituentMap, id: string): boolean {
-  return (cs[id]?.children ?? []).some((k) => cs[k]?.function === 'coordinate');
+  return (cs[id]?.children ?? []).some((k) => cs[k]?.function === 'coordinator');
 }
 
 /** The predicate VP of a clause, if the learner has named one. */

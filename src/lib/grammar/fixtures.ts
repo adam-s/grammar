@@ -7,7 +7,7 @@
  * the engine can be finished and proved while the pipeline is still being
  * built (see docs/slices/README.md, the de-risking note).
  */
-import { build, n, textOf, w, type BuiltReading } from './build.ts';
+import { build, n, pt, textOf, w, type BuiltReading } from './build.ts';
 import type { SentenceEntry } from './types.ts';
 
 function sentence(
@@ -466,9 +466,9 @@ export const deepNesting = sentence(
  * has no verb of its own and is not asked what kind it has; each clause inside
  * answers for itself.
  *
- * The join is honest about what it cannot yet say: *and* is labelled a
- * coordinate along with the clauses it joins, because there is no `coordinator`
- * function to give it. That gap is recorded in docs/model-gaps.md.
+ * *and* is the coordinator: it does the joining, and is not one of the things
+ * joined. Labelling it a coordinate alongside them said this sentence had three
+ * parts where it has two.
  */
 export const coordination = sentence(
   'fix-coordination',
@@ -490,7 +490,7 @@ export const coordination = sentence(
             ],
             { clauseType: 'SV' },
           ),
-          w('Conj', 'coordinate', 'and'),
+          w('Conj', 'coordinator', 'and'),
           n(
             'Cl',
             'coordinate',
@@ -657,6 +657,67 @@ export const passive = sentence(
   ['Vtr', 'passive', 'auxiliary', 'voice'],
 );
 
+/* -- punctuation — The mechanic repaired the engine, and the car started.
+ *
+ * Punctuation is in the sentence and not in the tree. The comma and the period
+ * are words a learner can see and click; neither takes a label, and no node
+ * covers either. That is not a simplification — a comma is not a word class,
+ * and a diagram that gave it one would be claiming something false.
+ *
+ * Both positions are here on purpose. The period is easy: it falls off the end.
+ * The comma is the hard one, because it sits between two coordinates, and
+ * `auditContiguity` has to agree that a run of words with a comma in the middle
+ * is still a run with no gaps.
+ */
+export const punctuation = sentence(
+  'fix-punctuation',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'mechanic')]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr' }),
+                n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'engine')]),
+              ]),
+            ],
+            { clauseType: 'SVO' },
+          ),
+          pt(','),
+          w('Conj', 'coordinator', 'and'),
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'car')]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'started', { lemma: 'start', verbType: 'Vint' }),
+              ]),
+            ],
+            { clauseType: 'SV' },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The repair is why the car started.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'Vint', 'coordination', 'punctuation', 'two-clause'],
+);
+
 /** Every good fixture. All must pass all seven audits. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -673,6 +734,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   adverbialClause,
   auxiliaryChain,
   passive,
+  punctuation,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

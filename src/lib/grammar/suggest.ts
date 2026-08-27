@@ -207,6 +207,8 @@ const BE = ['is', 'am', 'are', 'was', 'were', 'be', 'been', 'being'];
 
 /** Suggestions for a ONE-WORD selection, best first. */
 function forWord(word: Word): Suggestion[] {
+  // Punctuation takes no label, so there is nothing to point at.
+  if (word.upos === 'PUNCT') return [];
   const w = word.text.toLowerCase().replace(/[^a-z']/g, '');
   const out: Suggestion[] = [];
 

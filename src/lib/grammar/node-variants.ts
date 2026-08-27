@@ -49,6 +49,7 @@ const FUNCTION_FORM: Record<Func, Form> = {
   postmodifier: 'PP',
   complement: 'NP',
   coordinate: 'Subord',
+  coordinator: 'Conj',
   appositive: 'NP',
   marker: 'Subord',
 };

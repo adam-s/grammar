@@ -113,6 +113,7 @@ export const FUNCTION_MARK: Record<Func, string> = {
   postmodifier: 'Post',
   complement: 'C',
   coordinate: 'Co',
+  coordinator: 'Cj',
   appositive: 'App',
   marker: 'Mk',
 };
@@ -163,6 +164,7 @@ export const FUNCTION_TEST: Record<Func, string> = {
   postmodifier: 'sits after the head and narrows it',
   complement: 'completes the preposition or adjective',
   coordinate: 'joined to an equal by and / but / or',
+  coordinator: 'and, but, or — the word doing the joining',
   appositive: 'renames the noun beside it',
   marker: 'introduces the clause and joins it on',
 };

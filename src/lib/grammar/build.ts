@@ -26,7 +26,8 @@ import type {
 } from './types.ts';
 
 export interface SpecNode {
-  form: Form;
+  /** null only for a punctuation token, which has no form because it has no node. */
+  form: Form | null;
   function: Func | null;
   children: SpecNode[];
   /** Leaf only. */
@@ -41,6 +42,11 @@ export interface SpecNode {
   voice?: Voice;
   /** On a clause node. */
   clauseType?: ClauseType;
+  /**
+   * A punctuation token: a word in the sentence with no node above it.
+   * It contributes to the word list and to nothing else.
+   */
+  punct?: true;
 }
 
 /** A phrase node. */
@@ -56,6 +62,17 @@ export function n(
 /** A word leaf. */
 export function w(form: WordForm, fn: Func, text: string, extra: Partial<SpecNode> = {}): SpecNode {
   return { form, function: fn, children: [], text, ...extra };
+}
+
+/**
+ * A punctuation token. It joins the sentence and not the diagram.
+ *
+ * Written as a child of the node it sits inside, because that is where it sits
+ * in the sentence; `build` emits the word and then leaves it out of the tree,
+ * so no node ever claims it.
+ */
+export function pt(text: string): SpecNode {
+  return { form: null, function: null, children: [], text, punct: true };
 }
 
 const UPOS_OF: Record<WordForm, Upos> = {
@@ -107,11 +124,24 @@ export function build(
   const words: Word[] = [];
   let seq = 0;
 
-  const visit = (node: SpecNode, parent: string | null): { id: string; lo: number; hi: number } => {
+  const visit = (
+    node: SpecNode,
+    parent: string | null,
+  ): { id: string; lo: number; hi: number } | null => {
+    if (node.punct) {
+      words.push({
+        i: words.length,
+        text: node.text ?? '?',
+        upos: 'PUNCT',
+        xpos: node.text === ',' ? ',' : '.',
+        lemma: node.text ?? '?',
+      });
+      return null;
+    }
     const id = `c${++seq}`;
     // Reserve the slot before recursing so children can name their parent.
     const self: Constituent = {
-      form: node.form,
+      form: node.form!,
       function: node.function,
       parent,
       children: [],
@@ -143,6 +173,7 @@ export function build(
     let hi = -Infinity;
     for (const kid of node.children) {
       const r = visit(kid, id);
+      if (!r) continue; // punctuation: emitted as a word, never as a child
       self.children.push(r.id);
       lo = Math.min(lo, r.lo);
       hi = Math.max(hi, r.hi);

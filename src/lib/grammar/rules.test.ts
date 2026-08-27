@@ -377,3 +377,19 @@ describe('the passive moves one object into the subject', () => {
     );
   });
 });
+
+describe('the joining word is not one of the things joined', () => {
+  const at = (parentForm: Form, childForm: Form, siblings: Func[] = []) =>
+    licenses('coordinator', { parentForm, verbType: null, siblings, childForm }).state;
+
+  it('only a conjunction may join', () => {
+    assert.equal(at('S', 'Conj'), 'allowed');
+    assert.equal(at('NP', 'Conj'), 'allowed');
+    assert.equal(at('S', 'Cl'), 'hidden');
+    assert.equal(at('NP', 'N'), 'hidden');
+  });
+
+  it('it repeats: *A and B and C* has two', () => {
+    assert.equal(at('NP', 'Conj', ['coordinator', 'coordinate', 'coordinate']), 'allowed');
+  });
+});

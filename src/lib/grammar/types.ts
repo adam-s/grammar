@@ -114,6 +114,8 @@ export type PhraseInternalFunction =
   | 'postmodifier'
   | 'complement'
   | 'coordinate'
+  /** The word that joins the coordinates: *and*, *but*, *or*. Not one of them. */
+  | 'coordinator'
   | 'appositive'
   /** The word that introduces a clause: *__that__ he left*, *__because__ it broke*. */
   | 'marker';
@@ -137,6 +139,7 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'postmodifier',
   'complement',
   'coordinate',
+  'coordinator',
   'appositive',
   'marker',
 ];
@@ -301,6 +304,18 @@ export interface GlossaryEntry {
 export type Glossary = Record<string, GlossaryEntry>;
 
 /* --------------------------------------------------------------- helpers */
+
+/**
+ * Punctuation is in the sentence and not in the tree.
+ *
+ * A comma is not a word class and not a constituent — it marks the sentence
+ * rather than being part of what the sentence is built from. So it stays
+ * visible and selectable, takes no label, and every rule that says "every word"
+ * means every word but these.
+ */
+export function isPunctuation(word: Word): boolean {
+  return word.upos === 'PUNCT';
+}
 
 /** A word leaf is a constituent that wraps exactly one word. */
 export function isLeaf(c: Constituent): boolean {

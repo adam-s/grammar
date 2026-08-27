@@ -218,6 +218,15 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
 
     case 'coordinate':
       return ALLOWED;
+
+    // The joining word is not one of the things joined. *and* in *the engine
+    // stalled and the car stopped* is doing the joining, so labelling it a
+    // coordinate says the sentence has three parts where it has two.
+    //
+    // It may repeat — *A and B and C* has two — and it sits wherever
+    // coordinates sit, which is anywhere.
+    case 'coordinator':
+      return childIs('Conj') ? ALLOWED : HIDDEN;
   }
 }
 
