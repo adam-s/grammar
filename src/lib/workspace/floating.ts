@@ -47,10 +47,18 @@ export function placeFloating(
   const cost = (p: FloatingPosition) => overflow(p) + overlapArea(box(p), avoid) * 10;
   const best = candidates.reduce((a, b) => (cost(b) < cost(a) ? b : a));
 
-  if (best.side === 'below' || best.side === 'above') {
-    best.x = Math.max(edge, Math.min(Math.max(edge, stage.w - popup.w - edge), best.x));
-  } else {
-    best.y = Math.max(edge, Math.min(Math.max(edge, stage.h - popup.h - edge), best.y));
-  }
+  // Clamp BOTH axes, not just the cross one.
+  //
+  // The side is chosen by least overflow, which means the winner may still
+  // overflow — every side does, when the anchor is high in a short stage. The
+  // old clamp only tidied the axis the side did not choose, so an `above`
+  // placement kept its negative `y` and the surface was drawn off the top,
+  // where its container clips it. Sliding it back is better than losing it: the
+  // learner can still read a panel that has moved, and cannot read one that is
+  // cut in half.
+  const clamp = (v: number, extent: number, size: number) =>
+    Math.max(edge, Math.min(Math.max(edge, extent - size - edge), v));
+  best.x = clamp(best.x, stage.w, popup.w);
+  best.y = clamp(best.y, stage.h, popup.h);
   return best;
 }

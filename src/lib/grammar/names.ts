@@ -102,6 +102,7 @@ export const FUNCTION_MARK: Record<Func, string> = {
   complement: 'C',
   coordinate: 'Co',
   appositive: 'App',
+  marker: 'Mk',
 };
 
 export const functionMark = (fn: Func, obligatory = false): string =>
@@ -150,4 +151,5 @@ export const FUNCTION_TEST: Record<Func, string> = {
   complement: 'completes the preposition or adjective',
   coordinate: 'joined to an equal by and / but / or',
   appositive: 'renames the noun beside it',
+  marker: 'introduces the clause and joins it on',
 };

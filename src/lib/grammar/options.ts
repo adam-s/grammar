@@ -360,7 +360,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       key: `vt:${v.type}`,
       label: v.label,
       note: v.example,
-      state: (state.verbType === v.type ? 'chosen' : 'available') as OptionState,
+      state: (c.verbType === v.type ? 'chosen' : 'available') as OptionState,
       verbType: v.type,
     })),
   };

@@ -130,7 +130,7 @@
   import { formName } from './names.ts';
   import { nodeLabelParts, nodeLabelWidth } from './node-label.ts';
   import NodeLabel from './NodeLabel.svelte';
-  import { hueSlot, type Form, type Span, type VerbType } from './types.ts';
+  import { hueSlot, type Form, type Span } from './types.ts';
   import type { Selection } from './options.ts';
   import { PHONE_QUERY, useMediaQuery } from '../workspace/responsive.svelte.ts';
   import { getWorkspace } from '../workspace/workspace.svelte.ts';
@@ -138,7 +138,6 @@
   type Props = {
     words: Word[];
     constituents: ConstituentMap;
-    verbType?: VerbType | null;
     selection: Selection;
     /** Valid node candidates underneath a marquee that has not committed yet. */
     marqueeIds?: string[];
@@ -156,7 +155,6 @@
   let {
     words,
     constituents,
-    verbType = null,
     selection,
     marqueeIds = [],
     draft = null,
@@ -281,14 +279,14 @@
         form: c.form,
         function: c.function,
         obligatory: c.obligatory,
-        verbType,
+        verbType: c.verbType,
         clauseKind: c.clauseKind,
       })}
       {@const labelWidth = nodeLabelWidth({
         form: c.form,
         function: c.function,
         obligatory: c.obligatory,
-        verbType,
+        verbType: c.verbType,
         clauseKind: c.clauseKind,
       })}
       {@const on =
@@ -347,7 +345,7 @@
           form={c.form}
           function={c.function}
           obligatory={c.obligatory}
-          {verbType}
+          verbType={c.verbType}
           clauseKind={c.clauseKind}
         />
       </g>

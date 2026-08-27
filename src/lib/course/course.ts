@@ -10,7 +10,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 1,
         stage: 'Frame',
         title: 'Introduction',
-        sentenceIds: ['fix-vint', 'fix-vtr'],
+        sentenceIds: ['fix-vint', 'fix-vtr', 'fix-garden-path'],
       },
       {
         id: '02-sentence-frame',

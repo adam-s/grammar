@@ -11,7 +11,8 @@
     "lint": "eslint . && prettier --check \"src/**/*.{ts,svelte,css}\"",
     "format": "prettier --write \"src/**/*.{ts,svelte,css}\"",
     "test": "node --test \"src/lib/**/*.test.ts\"",
-    "all": "npm run lint && npm run check && npm run test && npm run build"
+    "all": "npm run lint && npm run check && npm run test && npm run build",
+    "snapshot": "node scripts/snapshot.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
@@ -24,6 +25,7 @@
     "eslint-plugin-svelte": "^3.12.4",
     "globals": "^16.4.0",
     "playwright": "^1.62.1",
+    "playwright-core": "^1.62.1",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "svelte": "^5.56.1",

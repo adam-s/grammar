@@ -2,13 +2,34 @@
  * Build a finished sentence through the same operations available to a learner.
  * The answer supplies decisions, but its tree is never handed to the renderer.
  */
-import { emptyBuild, setFunction, setVerbType, wrap, type BuildState } from '../grammar/builder.ts';
-import { canonicalReading, type Constituent, type SentenceEntry } from '../grammar/types.ts';
+import { verbs } from '../grammar/clause.ts';
+import {
+  emptyBuild,
+  setFunction,
+  setVerbType,
+  wrap,
+  type BuildState,
+  type Span,
+} from '../grammar/builder.ts';
+import {
+  canonicalReading,
+  type Constituent,
+  type Form,
+  type Func,
+  type SentenceEntry,
+  type VerbType,
+} from '../grammar/types.ts';
 
 export type RenderStep = {
   kind: 'form' | 'function' | 'verb-type';
   canonicalId: string | null;
   state: BuildState;
+  /** The words the decision is about — what a learner would have selected. */
+  span: Span;
+  /** The node in `state` the decision landed on. */
+  nodeId: string;
+  /** The palette option a learner would have clicked to produce this step. */
+  choice: { form?: Form; func?: Func; obligatory?: boolean; verbType?: VerbType };
 };
 
 export type SentenceReplay = { steps: RenderStep[]; final: BuildState };
@@ -56,11 +77,32 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
     }
     const generatedId = `c${state.seq}`;
     generated.set(canonicalId, generatedId);
-    steps.push({ kind: 'form', canonicalId, state });
+    steps.push({
+      kind: 'form',
+      canonicalId,
+      state,
+      span: constituent.span,
+      nodeId: generatedId,
+      choice: { form: constituent.form },
+    });
   }
 
-  state = setVerbType(state, reading.verbType);
-  steps.push({ kind: 'verb-type', canonicalId: null, state });
+  // One classification per clause, in surface order, so a sentence with an
+  // embedded clause is replayed the way a learner would work through it.
+  for (const canonicalId of verbs(reading.constituents)) {
+    const verbType = reading.constituents[canonicalId]!.verbType;
+    if (!verbType) continue;
+    const nodeId = generated.get(canonicalId)!;
+    state = setVerbType(state, nodeId, verbType);
+    steps.push({
+      kind: 'verb-type',
+      canonicalId,
+      state,
+      span: reading.constituents[canonicalId]!.span,
+      nodeId,
+      choice: { verbType },
+    });
+  }
 
   // A function can depend on a sibling already being established. Repeated
   // passes let the builder's licensing rules decide the order without a second
@@ -78,7 +120,14 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
         continue;
       }
       state = next;
-      steps.push({ kind: 'function', canonicalId, state });
+      steps.push({
+        kind: 'function',
+        canonicalId,
+        state,
+        span: constituent.span,
+        nodeId: generated.get(canonicalId)!,
+        choice: { func: constituent.function!, obligatory: constituent.obligatory === true },
+      });
       progressed = true;
     }
 

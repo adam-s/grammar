@@ -49,6 +49,7 @@ const FUNCTION_FORM: Record<Func, Form> = {
   complement: 'NP',
   coordinate: 'Subord',
   appositive: 'NP',
+  marker: 'Subord',
 };
 
 const bareForms: NodeVariant[] = [...PHRASE_FORMS, ...WORD_FORMS].map((form) => ({

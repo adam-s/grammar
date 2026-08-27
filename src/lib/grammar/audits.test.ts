@@ -1,3 +1,4 @@
+import { verbs } from './clause.ts';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
@@ -33,7 +34,11 @@ describe('good fixtures', () => {
   }
 
   it('covers all six verb types', () => {
-    const types = new Set(FIXTURES.flatMap((s) => s.readings.map((r) => r.verbType)));
+    const types = new Set(
+      FIXTURES.flatMap((s) =>
+        s.readings.flatMap((r) => verbs(r.constituents).map((id) => r.constituents[id]!.verbType)),
+      ),
+    );
     assert.deepEqual([...types].sort(), ['Vbe', 'Vc', 'Vg', 'Vint', 'Vlink', 'Vtr']);
   });
 
@@ -105,8 +110,8 @@ describe('bad fixtures — each fails its intended audit', () => {
 
   it('5 verbType: recorded Vg with no indirect object', () => {
     const { r, s } = broken(vtr, (r) => {
-      r.verbType = 'Vg';
-      r.clauseType = 'SVOO';
+      const verb = verbs(r.constituents)[0]!;
+      r.constituents[verb]!.verbType = 'Vg';
     });
     const report = auditReading(r, s.words);
     assert.equal(report.ok, false);

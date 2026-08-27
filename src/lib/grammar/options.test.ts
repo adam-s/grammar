@@ -5,7 +5,7 @@ import {
   nodeOver,
   roots,
   setFunction,
-  setVerbType,
+  setOnlyVerbType,
   wrap,
   type BuildState,
 } from './builder.ts';
@@ -40,7 +40,7 @@ function built(): BuildState {
   s = wrap(s, W, [3, 3], 'N');
   s = wrap(s, W, [2, 3], 'NP');
   s = wrap(s, W, [1, 3], 'VP');
-  return setVerbType(s, 'Vtr');
+  return setOnlyVerbType(s, 'Vtr');
 }
 
 describe('the panel is furniture — its inventory does not move', () => {
@@ -136,7 +136,6 @@ describe('states carry the message', () => {
     const state: BuildState = {
       constituents: reading.constituents,
       seq: Object.keys(reading.constituents).length,
-      verbType: reading.verbType,
     };
     const vp = Object.keys(state.constituents).find(
       (id) => state.constituents[id]!.form === 'VP' && state.constituents[id]!.parent !== null,
@@ -190,7 +189,7 @@ describe('completion closes only terminal decisions', () => {
     const verb = nodeOver(s, [1, 1])!;
 
     assert.equal(isPanelComplete(optionsFor(s, W, { kind: 'node', id: verb })), false);
-    s = setVerbType(s, 'Vtr');
+    s = setOnlyVerbType(s, 'Vtr');
     assert.equal(isPanelComplete(optionsFor(s, W, { kind: 'node', id: verb })), false);
   });
 });
@@ -380,7 +379,7 @@ describe('the live question is the one on screen', () => {
   it('moves on again once the verb type is settled', () => {
     let s = emptyBuild();
     s = wrap(s, W, [1, 1], 'V');
-    s = setVerbType(s, 'Vtr');
+    s = setOnlyVerbType(s, 'Vtr');
     const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
     assert.equal(group(p, 'verb-type')!.answered?.verbType, 'Vtr');
     assert.equal(p.step, 'phrase-form');

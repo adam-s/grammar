@@ -82,7 +82,7 @@ function assertMenuMatchesBuilder(state: BuildState, sentence: SentenceEntry, pa
     for (const option of panel.groups.flatMap((group) => group.options)) {
       if (!option.verbType || !isPickable(option)) continue;
       assert.equal(
-        setVerbType(state, option.verbType).verbType,
+        setVerbType(state, id, option.verbType).constituents[id]!.verbType,
         option.verbType,
         `${path}: ${option.key} should apply`,
       );
@@ -120,13 +120,12 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
         const fn = reading.constituents[child]!.function!;
         return licenseFor(state, learnerId.get(child)!, fn).state === 'allowed';
       });
-      assert.notEqual(
-        index,
-        -1,
-        `${sentence.id}/${reading.id}: no prospective order for ${prospective
-          .map((child) => reading.constituents[child]!.function)
-          .join(', ')}`,
-      );
+      // Nothing legal yet is not a failure. Once a sentence holds more than one
+      // verb, a loose node cannot say which clause it will join, so "object of
+      // WHICH verb" has no answer until the clause is drawn. Those roles are
+      // picked up by the pass below, after the parent exists — the deferral is
+      // the point, and `settle` still proves every role is reachable.
+      if (index === -1) break;
       const child = prospective.splice(index, 1)[0]!;
       const canonical = reading.constituents[child]!;
       const id = learnerId.get(child)!;
@@ -168,12 +167,13 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     learnerId.set(sourceId, created);
 
     if (source.form === 'V') {
-      const verbType = optionFor(state, sentence.words, created, `vt:${reading.verbType}`);
+      const want = source.verbType!;
+      const verbType = optionFor(state, sentence.words, created, `vt:${want}`);
       assert.ok(
         verbType && isPickable(verbType),
-        `${sentence.id}/${reading.id}: cannot choose ${reading.verbType}`,
+        `${sentence.id}/${reading.id}: cannot choose ${want}`,
       );
-      state = setVerbType(state, reading.verbType);
+      state = setVerbType(state, created, want);
     }
 
     // Some functions depend on siblings (indirect object follows direct object,

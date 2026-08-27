@@ -107,7 +107,9 @@ export type PhraseInternalFunction =
   | 'postmodifier'
   | 'complement'
   | 'coordinate'
-  | 'appositive';
+  | 'appositive'
+  /** The word that introduces a clause: *__that__ he left*, *__because__ it broke*. */
+  | 'marker';
 
 export type Func = ClauseFunction | PhraseInternalFunction;
 
@@ -128,6 +130,7 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'complement',
   'coordinate',
   'appositive',
+  'marker',
 ];
 
 /** The spine of the course. Six, in Morenberg's order. */
@@ -165,6 +168,16 @@ export interface Constituent {
   /** For `form: 'Cl'`. */
   clauseKind?: ClauseKind;
   /**
+   * For `form: 'V'` — which of Morenberg's six this verb is.
+   *
+   * Stored on the verb rather than on the sentence because a sentence can hold
+   * more than one clause, and each clause's verb licenses its own slots. See
+   * `clause.ts` for how a constituent finds the verb that governs it.
+   */
+  verbType?: VerbType;
+  /** For a clause node (`S` or `Cl`): the slot pattern its verb produced. */
+  clauseType?: ClauseType;
+  /**
    * S V O A / obligatory-adverbial decision (docs/taxonomy.md §2). An
    * obligatory adverbial is one the verb REQUIRES — drop it and the sentence
    * breaks: *The keys are on the table*, *She put the book on the shelf*.
@@ -191,8 +204,6 @@ export interface Reading {
   gloss: string;
   /** For `status: 'blocked'` — why the surrounding passage rules it out. */
   blockedBy?: string;
-  verbType: VerbType;
-  clauseType: ClauseType;
   constituents: ConstituentMap;
 }
 

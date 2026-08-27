@@ -42,6 +42,20 @@ test('the inventory covers every function mark and obligatory adverbial', () => 
   assert.deepEqual(covered, expected);
 });
 
+/* The mark test above compares label strings, so a variant whose host form went
+   missing still passes it while rendering a node with no form at all. Adding a
+   function without giving it a host is caught by the type system; this catches
+   it in the suite too, which is where docs/node-variants.md says it is caught. */
+test('every variant carries a real form to hang its qualifier on', () => {
+  for (const variant of NODE_VARIANTS) {
+    assert.ok(variant.form, `variant "${variant.id}" has no form`);
+    assert.ok(
+      ([...PHRASE_FORMS, ...WORD_FORMS] as string[]).includes(variant.form),
+      `variant "${variant.id}" has form "${variant.form}", which is not in the inventory`,
+    );
+  }
+});
+
 test('every verb and clause subtype is exercised with marks on both sides', () => {
   for (const verbType of VERB_TYPES) {
     const variant = NODE_VARIANTS.find((entry) => entry.verbType === verbType);

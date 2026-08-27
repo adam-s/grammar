@@ -14,13 +14,14 @@ import {
   setFunction,
   smallestCovering,
   stackOver,
-  setVerbType,
+  setOnlyVerbType,
+  stacksOver,
   unwrap,
   wrap,
   type BuildState,
 } from './builder.ts';
 import { vtr } from './fixtures.ts';
-import type { Reading } from './types.ts';
+import type { Reading, Word } from './types.ts';
 
 const W = vtr.words; // She repaired the engine.
 
@@ -102,7 +103,7 @@ describe('grouping', () => {
 
 describe('functions follow an actual or prospective parent', () => {
   it('a top-level VP can be named as the prospective predicate before S exists', () => {
-    let s = setVerbType(labelled(), 'Vtr');
+    let s = setOnlyVerbType(labelled(), 'Vtr');
     s = wrap(s, W, [2, 3], 'NP');
     s = wrap(s, W, [1, 3], 'VP');
     const vp = roots(s).find((id) => s.constituents[id]!.form === 'VP')!;
@@ -144,7 +145,7 @@ describe('functions follow an actual or prospective parent', () => {
   });
 
   it('a top-level object NP can be named before its VP is drawn', () => {
-    let s = setVerbType(labelled(), 'Vtr');
+    let s = setOnlyVerbType(labelled(), 'Vtr');
     s = wrap(s, W, [2, 3], 'NP');
     const object = roots(s).find(
       (id) => s.constituents[id]!.form === 'NP' && s.constituents[id]!.span[0] === 2,
@@ -158,7 +159,7 @@ describe('functions follow an actual or prospective parent', () => {
   });
 
   it('prospective VP roles still obey verb type and sibling dependencies', () => {
-    let s = setVerbType(labelled(), 'Vg');
+    let s = setOnlyVerbType(labelled(), 'Vg');
     s = wrap(s, W, [0, 0], 'NP');
     s = wrap(s, W, [2, 3], 'NP');
     const nps = roots(s).filter((id) => s.constituents[id]!.form === 'NP');
@@ -166,7 +167,7 @@ describe('functions follow an actual or prospective parent', () => {
     s = setFunction(s, nps[1]!, 'directObject');
     assert.equal(licenseFor(s, nps[0]!, 'indirectObject').state, 'allowed');
 
-    s = setVerbType(s, 'Vint');
+    s = setOnlyVerbType(s, 'Vint');
     assert.equal(licenseFor(s, nps[0]!, 'directObject').state, 'disabled');
   });
 
@@ -184,19 +185,19 @@ describe('functions follow an actual or prospective parent', () => {
     assert.equal(hypothesisFor(s, np, 'directObject').state, 'allowed');
     s = setFunction(s, np, 'directObject');
     assert.equal(s.constituents[np]!.function, 'directObject');
-    s = setVerbType(s, 'Vint');
+    s = setOnlyVerbType(s, 'Vint');
     assert.match(
       (licenseFor(s, np, 'directObject') as { reason: string }).reason,
       /intransitive verb takes no direct object/,
     );
-    s = setVerbType(s, 'Vtr');
+    s = setOnlyVerbType(s, 'Vtr');
     assert.equal(licenseFor(s, np, 'directObject').state, 'allowed');
   });
 });
 
 describe('a completed build satisfies the audits', () => {
   it('builds "She repaired the engine." bottom-up and passes all seven', () => {
-    let s = setVerbType(labelled(), 'Vtr');
+    let s = setOnlyVerbType(labelled(), 'Vtr');
 
     // "She" is a one-word noun phrase; "the engine" is a two-word one.
     s = wrap(s, W, [0, 0], 'NP');
@@ -222,8 +223,6 @@ describe('a completed build satisfies the audits', () => {
       id: 'r1',
       status: 'canonical',
       gloss: 'She fixed the engine.',
-      verbType: 'Vtr',
-      clauseType: 'SVO',
       constituents: s.constituents,
     };
     const report = auditReading(reading, W);
@@ -231,7 +230,7 @@ describe('a completed build satisfies the audits', () => {
   });
 
   it('every function the learner assigned was licensed at the time', () => {
-    let s = setVerbType(labelled(), 'Vtr');
+    let s = setOnlyVerbType(labelled(), 'Vtr');
     s = wrap(s, W, [0, 0], 'NP');
     s = wrap(s, W, [2, 3], 'NP');
     s = wrap(s, W, [1, 3], 'VP');
@@ -286,7 +285,7 @@ describe('state held in a reactive proxy', () => {
 
 describe('levels — a span of words names a stack, not a node', () => {
   function nested() {
-    let s = setVerbType(labelled(), 'Vtr');
+    let s = setOnlyVerbType(labelled(), 'Vtr');
     s = wrap(s, W, [3, 3], 'NP'); // NP over the single noun "engine"
     return s;
   }
@@ -325,5 +324,55 @@ describe('levels — a span of words names a stack, not a node', () => {
     s = wrap(s, W, [0, 3], 'S');
     const top = roots(s)[0]!;
     assert.equal(parentOf(s, top), null);
+  });
+});
+
+describe('a clause may stack over a phrase of the same words', () => {
+  const W: Word[] = [
+    { i: 0, text: 'raced', upos: 'VERB', xpos: 'VBD', lemma: 'race' },
+    { i: 1, text: 'past', upos: 'ADP', xpos: 'IN', lemma: 'past' },
+  ];
+
+  it('a clause form stacks; every other form replaces', () => {
+    const vp = {
+      form: 'VP' as const,
+      function: null,
+      parent: null,
+      children: [],
+      span: [0, 1] as [number, number],
+    };
+    assert.equal(stacksOver(vp, 'Cl'), true, 'a reduced relative needs Cl over VP');
+    assert.equal(stacksOver(vp, 'S'), true);
+    assert.equal(stacksOver(vp, 'NP'), false, 'renaming a phrase must stay a rename');
+    assert.equal(stacksOver(vp, 'VP'), false, 'picking the same form is not a new layer');
+  });
+
+  it('a word leaf is never stacked over — one-word phrases go through wrap', () => {
+    const leaf = {
+      form: 'V' as const,
+      function: null,
+      parent: null,
+      children: [],
+      span: [0, 0] as [number, number],
+      word: 0,
+    };
+    assert.equal(stacksOver(leaf, 'Cl'), false);
+  });
+
+  it('nothing selected stacks over nothing', () => {
+    assert.equal(stacksOver(undefined, 'Cl'), false);
+  });
+
+  it('the stacked clause keeps the phrase underneath it', () => {
+    let s = wrap(emptyBuild(), W, [0, 0], 'V');
+    s = wrap(s, W, [1, 1], 'P');
+    s = wrap(s, W, [0, 1], 'VP');
+    const vp = roots(s)[0]!;
+    assert.equal(stacksOver(s.constituents[vp], 'Cl'), true);
+    s = wrap(s, W, [0, 1], 'Cl');
+    const cl = roots(s)[0]!;
+    assert.equal(s.constituents[cl]!.form, 'Cl');
+    assert.deepEqual(s.constituents[cl]!.children, [vp]);
+    assert.equal(s.constituents[vp]!.form, 'VP', 'the predicate survives underneath');
   });
 });

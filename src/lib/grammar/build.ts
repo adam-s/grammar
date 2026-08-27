@@ -34,6 +34,10 @@ export interface SpecNode {
   lemma?: string;
   clauseKind?: ClauseKind;
   obligatory?: boolean;
+  /** On a `V` leaf. */
+  verbType?: VerbType;
+  /** On a clause node. */
+  clauseType?: ClauseType;
 }
 
 /** A phrase node. */
@@ -93,8 +97,6 @@ export function build(
     id: string;
     status: ReadingStatus;
     gloss: string;
-    verbType: VerbType;
-    clauseType: ClauseType;
     blockedBy?: string;
   },
 ): BuiltReading {
@@ -128,6 +130,8 @@ export function build(
       self.span = [i, i];
       if (node.obligatory) self.obligatory = true;
       if (node.clauseKind) self.clauseKind = node.clauseKind;
+      if (node.verbType) self.verbType = node.verbType;
+      if (node.clauseType) self.clauseType = node.clauseType;
       return { id, lo: i, hi: i };
     }
 
@@ -142,6 +146,8 @@ export function build(
     self.span = [lo, hi];
     if (node.obligatory) self.obligatory = true;
     if (node.clauseKind) self.clauseKind = node.clauseKind;
+    if (node.verbType) self.verbType = node.verbType;
+    if (node.clauseType) self.clauseType = node.clauseType;
     return { id, lo, hi };
   };
 
@@ -152,8 +158,6 @@ export function build(
       id: meta.id,
       status: meta.status,
       gloss: meta.gloss,
-      verbType: meta.verbType,
-      clauseType: meta.clauseType,
       constituents: cs,
       ...(meta.blockedBy ? { blockedBy: meta.blockedBy } : {}),
     },

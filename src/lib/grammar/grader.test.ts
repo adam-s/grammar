@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { emptyBuild, setFunction, setVerbType, wrap } from './builder.ts';
+import { emptyBuild, setFunction, setOnlyVerbType, wrap } from './builder.ts';
 import { ambiguous, vbe, vtr } from './fixtures.ts';
 import { gradeBuild, gradeForm, gradeFunction, hintFor, type Outcome } from './grader.ts';
 import type { Form, Func, Span } from './types.ts';
@@ -152,9 +152,9 @@ describe('the hint ladder', () => {
 
 describe('grading a whole build', () => {
   function complete() {
-    let s = setVerbType(emptyBuild(), 'Vtr');
-    s = wrap(s, vtr.words, [0, 0], 'Pron');
+    let s = wrap(emptyBuild(), vtr.words, [0, 0], 'Pron');
     s = wrap(s, vtr.words, [1, 1], 'V');
+    s = setOnlyVerbType(s, 'Vtr');
     s = wrap(s, vtr.words, [2, 2], 'Det');
     s = wrap(s, vtr.words, [3, 3], 'N');
     s = wrap(s, vtr.words, [0, 0], 'NP');
@@ -182,17 +182,16 @@ describe('grading a whole build', () => {
   });
 
   it('names what is missing when the build is incomplete', () => {
-    let s = setVerbType(emptyBuild(), 'Vtr');
-    s = wrap(s, vtr.words, [0, 0], 'Pron');
+    const s = wrap(emptyBuild(), vtr.words, [0, 0], 'Pron');
     const { readingId, wrong } = gradeBuild(s, vtr);
     assert.equal(readingId, null);
     assert.ok(wrong.some((w) => /missing/.test(w)));
   });
 
   it('names the wrong verb type', () => {
-    const s = setVerbType(complete(), 'Vint');
+    const s = setOnlyVerbType(complete(), 'Vint');
     const { wrong } = gradeBuild(s, vtr);
-    assert.ok(wrong.some((w) => /verb is Vtr, not Vint/.test(w)));
+    assert.ok(wrong.some((w) => /verb at word 1 is Vtr, not Vint/.test(w)));
   });
 
   it('flags a group the answer does not have', () => {

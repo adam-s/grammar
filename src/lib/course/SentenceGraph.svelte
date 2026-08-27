@@ -18,6 +18,7 @@
     type Size,
     type Viewport,
   } from '../workspace/viewport.ts';
+  import { refitsFigure } from './figure-camera.ts';
   import { replaySentence } from './sentence-renderer.ts';
 
   type Props = { sentence: SentenceEntry };
@@ -33,6 +34,7 @@
   let stageSize = $state<Size>({ w: 0, h: 0 });
   let viewport = $state<Viewport>(IDENTITY);
   let ready = $state(false);
+  let hovered = $state(false);
   let mousePointer = $state<number | null>(null);
   const touches = new SvelteMap<number, Point>();
   let lastTouch: Point | null = null;
@@ -53,13 +55,20 @@
     if (stageSize.w > 0 && stageSize.h > 0) viewport = fitted();
   }
 
-  function local(e: PointerEvent): Point {
+  function local(e: MouseEvent): Point {
     const box = stage!.getBoundingClientRect();
     return { x: e.clientX - box.left, y: e.clientY - box.top };
   }
 
   function zoom(dir: 1 | -1, focus: Point = { x: stageSize.w / 2, y: stageSize.h / 2 }) {
     viewport = zoomTo(viewport, nextStop(viewport.z, dir), focus);
+  }
+
+  /** Double-click is the one zoom-in that needs no controls and no focus. */
+  function ondblclick(e: MouseEvent) {
+    if ((e.target as Element).closest('.controls')) return;
+    e.preventDefault();
+    zoom(1, local(e));
   }
 
   function onpointerdown(e: PointerEvent) {
@@ -128,6 +137,16 @@
     }
   }
 
+  const typing = (t: EventTarget | null) =>
+    t instanceof HTMLElement &&
+    (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
+
+  function onwindowkeydown(e: KeyboardEvent) {
+    if (!refitsFigure(e, { hovered, typing: typing(e.target) })) return;
+    e.preventDefault();
+    reset();
+  }
+
   onMount(() => {
     if (!stage) return;
     return observeStageSize(stage, (size) => {
@@ -137,6 +156,8 @@
     });
   });
 </script>
+
+<svelte:window onkeydown={onwindowkeydown} />
 
 <section class="sentence-graph" aria-label={sentence.text}>
   <!-- svelte-ignore a11y_no_noninteractive_tabindex (the camera itself supports keyboard zoom) -->
@@ -148,6 +169,9 @@
     role="application"
     aria-label="Pan and zoom diagram: {sentence.text}"
     tabindex="0"
+    {ondblclick}
+    onpointerenter={() => (hovered = true)}
+    onpointerleave={() => (hovered = false)}
     {onpointerdown}
     {onpointermove}
     onpointerup={onpointerend}
@@ -158,7 +182,6 @@
       <Diagram
         words={sentence.words}
         constituents={build.constituents}
-        verbType={build.verbType}
         selection={emptySelection}
         interactive={false}
         onpick={ignorePick}
@@ -181,7 +204,7 @@
 
   .stage {
     position: relative;
-    height: clamp(310px, 52vh, 560px);
+    height: var(--graph-h, clamp(310px, 52vh, 560px));
     overflow: hidden;
     background: transparent;
     cursor: grab;

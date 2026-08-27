@@ -13,6 +13,9 @@
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
   import { tick } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
+  import { page } from '$app/state';
 
   import Workspace from '$lib/workspace/Workspace.svelte';
   import type { RailItem } from '$lib/workspace/Rail.svelte';
@@ -30,11 +33,19 @@
     nodeOver,
     setFunction,
     setVerbType,
+    stacksOver,
     unwrap,
     wrap,
   } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
-  import { PLAIN, gradeForm, gradeFunction, type Outcome } from '$lib/grammar/grader.ts';
+  import {
+    PLAIN,
+    VERB_TYPE_TEST,
+    gradeForm,
+    gradeFunction,
+    gradeVerbType,
+    type Outcome,
+  } from '$lib/grammar/grader.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
   import { FORM_TEST, FUNCTION_TEST, label } from '$lib/grammar/names.ts';
@@ -47,14 +58,17 @@
     type LabelOption,
     type Selection,
   } from '$lib/grammar/options.ts';
-  import { canonicalReading, type Form, type Span } from '$lib/grammar/types.ts';
+  import type { Form, Span } from '$lib/grammar/types.ts';
   import type { Rect } from '$lib/workspace/viewport.ts';
+  import { replaySentence } from '$lib/course/sentence-renderer.ts';
   import {
     COURSE_STAGES,
     CourseContents,
+    Lesson,
     LessonSentenceList,
     SentenceGraphs,
     lessonById,
+    lessonDoc,
   } from '$lib/course';
 
   const ws = new WorkspaceState();
@@ -69,12 +83,16 @@
 
   /* ------------------------------------------------------------- the work */
 
-  let lessonId = $state('01-introduction');
+  const routeLessonId = $derived(page.params.lessonId ?? '01-introduction');
+  const lessonId = $derived(lessonById(routeLessonId).id);
   let middleView = $state<'lesson' | 'diagram'>('lesson');
   const lesson = $derived(lessonById(lessonId));
   const lessonSentences = $derived(
     lesson.sentenceIds.map((id) => FIXTURES.find((sentence) => sentence.id === id)!),
   );
+  /** A lesson with authored prose reads as a document; one without still shows
+      its finished diagrams, so an unwritten lesson is visibly unwritten. */
+  const doc = $derived(lessonDoc(lessonId));
   let sentenceId = $state('fix-vtr');
   const sentence = $derived(FIXTURES.find((s) => s.id === sentenceId)!);
   const words = $derived(sentence.words);
@@ -164,6 +182,87 @@
   const choices = $derived(
     blockRejectedOptions(optionsFor(build, words, selection), rejected[targetKey] ?? {}),
   );
+
+  /**
+   * Handle for `scripts/snapshot.mjs` to drive this page.
+   *
+   * It exposes the SAME functions the interface calls — `pick` is the one a
+   * click runs, `choices` is what the palette is showing — so a sweep exercises
+   * the real path rather than a parallel one written for testing. Anything a
+   * driver could do here, a person can do with a pointer.
+   */
+  $effect(() => {
+    const w = window as unknown as Record<string, unknown>;
+    w['__grammar'] = {
+      get sentenceId() {
+        return sentenceId;
+      },
+      get lessonId() {
+        return lessonId;
+      },
+      get view() {
+        return middleView;
+      },
+      sentenceIds: FIXTURES.map((s) => s.id),
+      get words() {
+        return words.map((x) => x.text);
+      },
+      get selection() {
+        return selection;
+      },
+      get build() {
+        return { constituents: build.constituents, seq: build.seq };
+      },
+      get panel() {
+        return choices;
+      },
+      get verdict() {
+        return verdict;
+      },
+      openSentence: (id: string) => openSentence(id),
+      selectSpan: (span: Span) => {
+        verdict = null;
+        const node = nodeOver(build, span);
+        selection = node ? { kind: 'node', id: node } : { kind: 'span', span };
+      },
+      selectNode: (id: string) => {
+        verdict = null;
+        selection = { kind: 'node', id };
+      },
+      /** Click an option by key, through the same handler the palette uses. */
+      pick: (key: string) => {
+        const hit = choices.groups.flatMap((g) => g.options).find((o) => o.key === key);
+        if (!hit) return { ok: false, reason: `no option ${key}` };
+        pick(hit);
+        return { ok: true };
+      },
+      /**
+       * The ordered decisions that build this sentence, as selections and
+       * option keys. It comes from the answer, which is exactly why it is only
+       * a driver hook: nothing in the interface may read it.
+       */
+      plan: () =>
+        replaySentence(sentence).steps.map((step) => ({
+          kind: step.kind,
+          span: step.span,
+          nodeId: step.nodeId,
+          key:
+            step.choice.form !== undefined
+              ? `form:${step.choice.form}`
+              : step.choice.func !== undefined
+                ? // The required S V A adverbial is a distinct row, because it is
+                  // a distinct claim about the verb.
+                  step.choice.func === 'adverbial' && step.choice.obligatory
+                  ? 'func:obligatoryAdverbial'
+                  : `func:${step.choice.func}`
+                : `vt:${step.choice.verbType}`,
+        })),
+      reset,
+    };
+    return () => {
+      delete w['__grammar'];
+    };
+  });
 
   /* --------------------------------------------------------------- events */
 
@@ -256,11 +355,24 @@
     verdict = null;
   }
 
+  let previousRouteLessonId = $state('');
+  $effect(() => {
+    if (routeLessonId === previousRouteLessonId) return;
+    previousRouteLessonId = routeLessonId;
+    middleView = 'lesson';
+    closePalette();
+  });
+
   function selectLesson(id: string, closeDrawer?: () => void) {
-    lessonId = id;
     middleView = 'lesson';
     closePalette();
     closeDrawer?.();
+    if (id !== lessonId) {
+      void goto(resolve('/lessons/[lessonId]', { lessonId: id }), {
+        noScroll: true,
+        keepFocus: true,
+      });
+    }
   }
 
   function openSentence(id: string, closeDrawer?: () => void) {
@@ -299,9 +411,10 @@
       const nodeId = selection.kind === 'node' ? selection.id : null;
       const cur = nodeId ? build.constituents[nodeId] : undefined;
       // Replacing a loose phrase means removing it first; `wrap` would
-      // otherwise stack a second node on the same words.
-      if (nodeId && cur && cur.word === undefined && cur.parent === null) {
-        next = unwrap(next, nodeId);
+      // otherwise stack a second node on the same words. A clause over a phrase
+      // is the exception, because that stack is the only way to write one.
+      if (nodeId && cur && cur.parent === null && !stacksOver(cur, o.form)) {
+        if (cur.word === undefined) next = unwrap(next, nodeId);
       }
       build = wrap(next, words, span, o.form);
       grew();
@@ -330,23 +443,30 @@
       return;
     }
 
-    if (o.verbType) {
-      const right = canonicalReading(sentence).verbType;
-      if (o.verbType === right) {
-        build = setVerbType(build, o.verbType);
+    if (o.verbType && selection.kind === 'node') {
+      // A sentence can hold more than one verb, so the answer is graded against
+      // the verb that was selected rather than against the sentence.
+      const at = build.constituents[selection.id]?.span[0];
+      const outcome = at === undefined ? null : gradeVerbType(sentence, at, o.verbType);
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setVerbType(build, selection.id, o.verbType);
         verdict = { kind: 'correct', text: `Yes — this verb is ${LONG[o.verbType]}.` };
         closeIfComplete();
       } else {
         verdict = {
           kind: 'wrong',
-          text: `Not ${LONG[o.verbType]} here.`,
-          test: 'Ask what must follow the verb for the sentence to be complete.',
+          text: outcome?.reason ?? `Not ${LONG[o.verbType]} here.`,
+          test: outcome?.test ?? VERB_TYPE_TEST,
         };
         reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
       }
     }
   }
 </script>
+
+<svelte:head>
+  <title>{lesson.title} · Grammar</title>
+</svelte:head>
 
 <Workspace
   {items}
@@ -406,13 +526,16 @@
   {/snippet}
 
   {#if middleView === 'lesson'}
-    <SentenceGraphs sentences={lessonSentences} />
+    {#if doc}
+      <Lesson {lesson} {doc} onstart={(id) => openSentence(id)} />
+    {:else}
+      <SentenceGraphs sentences={lessonSentences} />
+    {/if}
   {:else}
     <div class="board" style="left:0; top:0; width:{frame.w}px; height:{frame.h}px">
       <Diagram
         {words}
         constituents={build.constituents}
-        verbType={build.verbType}
         {marqueeIds}
         {selection}
         {draft}

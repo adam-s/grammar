@@ -10,6 +10,13 @@
  * by a learner being told why a menu item is greyed out.
  */
 import {
+  clauseNodes,
+  governingVerbType,
+  isCoordination,
+  predicateOf,
+  verbOfClause,
+} from './clause.ts';
+import {
   licenses,
   HEAD_BEARING,
   LONG,
@@ -223,7 +230,7 @@ export function auditLicensing(ctx: Ctx): string[] {
       .filter((x): x is Func => x != null);
     const v = licenses(c.function, {
       parentForm: parent.form,
-      verbType: ctx.reading.verbType,
+      verbType: governingVerbType(ctx.cs, id),
       siblings,
       childForm: c.form,
     });
@@ -236,14 +243,32 @@ export function auditLicensing(ctx: Ctx): string[] {
 
 /* --------------------------------------------------------- 5: verb-type agreement */
 
-/** The recorded verb type matches the set of slots actually filled. */
+/**
+ * Every clause's recorded verb type matches the slots that clause actually
+ * filled. A sentence can hold several clauses, and each one answers for itself.
+ */
 export function auditVerbType(ctx: Ctx): string[] {
   const f: string[] = [];
   if (ctx.root === null) return f;
-  const vt = ctx.reading.verbType;
-  const vpId = ctx.cs[ctx.root]!.children.find((k) => ctx.cs[k]?.function === 'predicate');
+  for (const clause of clauseNodes(ctx.cs)) f.push(...auditOneClause(ctx, clause));
+  return f;
+}
+
+function auditOneClause(ctx: Ctx, clauseId: string): string[] {
+  const f: string[] = [];
+  // A coordination joins clauses; it does not predicate anything itself, so it
+  // has no verb to classify. The clauses inside it are checked on their own.
+  if (isCoordination(ctx.cs, clauseId)) return f;
+  const where = ctx.cs[clauseId]!.form === 'S' ? 'the sentence' : `the clause "${clauseId}"`;
+  const verbId = verbOfClause(ctx.cs, clauseId);
+  const vt = verbId ? (ctx.cs[verbId]!.verbType ?? null) : null;
+  const vpId = predicateOf(ctx.cs, clauseId);
   if (!vpId) {
-    f.push('the sentence has no predicate, so its verb type cannot be checked');
+    f.push(`${where} has no predicate, so its verb type cannot be checked`);
+    return f;
+  }
+  if (vt === null) {
+    f.push(`${where} has no classified verb — every clause records what kind its verb is`);
     return f;
   }
   const vp = ctx.cs[vpId]!;

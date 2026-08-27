@@ -13,9 +13,10 @@
  * An *illegal* structure is not a fourth outcome, because S04 makes it
  * unbuildable: the menu offers only what `rules.ts` licenses.
  */
+import { verbs } from './clause.ts';
 import { label } from './audits.ts';
 import type { BuildState, Span } from './builder.ts';
-import type { Constituent, Form, Func, Reading, SentenceEntry } from './types.ts';
+import type { Constituent, Form, Func, Reading, SentenceEntry, VerbType } from './types.ts';
 
 export type Outcome =
   | { kind: 'correct'; readingId: string }
@@ -198,6 +199,40 @@ export function gradeFunction(
  *   2 — the menu narrowed to three, one of them right
  *   3 — the test as a BUTTON that performs the substitution and shows the result
  */
+/**
+ * Is `type` the right classification for the verb at `wordIndex`?
+ *
+ * Keyed on the word rather than on the sentence: two clauses mean two verbs and
+ * two independent answers, and *The horse raced past the barn fell* is wrong in
+ * a different way at each of them. Ambiguity still resolves through the ordered
+ * readings, so an alternate reading that classifies the verb differently is an
+ * alternate rather than a miss.
+ */
+/** The formal test for a verb type: what the sentence still needs after the verb. */
+export const VERB_TYPE_TEST =
+  'Say the subject and the verb, then stop. What must follow for it to be a sentence?';
+
+export function gradeVerbType(sentence: SentenceEntry, wordIndex: number, type: VerbType): Outcome {
+  for (const r of ordered(sentence)) {
+    const verb = verbs(r.constituents).find((id) => r.constituents[id]!.span[0] === wordIndex);
+    if (verb && r.constituents[verb]!.verbType === type) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return {
+    kind: 'wrong',
+    reason: `Not ${PLAIN[type] ?? type} here.`,
+    test: VERB_TYPE_TEST,
+  };
+}
+
 export type Hint =
   | { level: 1; text: string }
   | { level: 2; text: string; narrowTo: number }
@@ -252,8 +287,20 @@ function compare(build: BuildState, reading: Reading): string[] {
       out.push(`extra ${t.form} over words ${t.span[0]}–${t.span[1]}`);
     }
   }
-  if (build.verbType !== reading.verbType) {
-    out.push(`the verb is ${reading.verbType}, not ${build.verbType ?? 'unclassified'}`);
+  // Each clause answers for its own verb, so compare verb by verb rather than
+  // once for the sentence.
+  for (const theirVerb of verbs(reading.constituents)) {
+    const want = reading.constituents[theirVerb]!;
+    const mineVerb = verbs(build.constituents).find(
+      (id) => build.constituents[id]!.span[0] === want.span[0],
+    );
+    const got = mineVerb ? (build.constituents[mineVerb]!.verbType ?? null) : null;
+    if (got !== (want.verbType ?? null)) {
+      out.push(
+        `the verb at word ${want.span[0]} is ${want.verbType ?? 'unclassified'}, ` +
+          `not ${got ?? 'unclassified'}`,
+      );
+    }
   }
   return out;
 }

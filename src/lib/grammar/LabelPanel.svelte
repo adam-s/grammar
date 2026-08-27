@@ -44,6 +44,21 @@
     /** A protected world-space region, normally the complete sentence row. */
     avoid?: Rect | null;
     verdict?: Verdict | null;
+    /**
+     * Show an option as if the pointer were on it, by option key.
+     *
+     * For a demonstration that drives this panel rather than a person driving
+     * it. The lesson hero shows the real palette doing real work, so it needs
+     * to say where the pointer is; everything else about the panel stays
+     * identical, which is the point.
+     */
+    pointerOn?: string | null;
+    /**
+     * A driven panel is watched, not used. It must not claim the keyboard or
+     * close on a click elsewhere, or a demonstration on a reading page would
+     * swallow keystrokes meant for the page.
+     */
+    interactive?: boolean;
     onpick: (option: LabelOption) => void;
     onhover?: (option: LabelOption | null) => void;
     onclose?: () => void;
@@ -56,6 +71,8 @@
     fit = false,
     avoid = null,
     verdict = null,
+    pointerOn = null,
+    interactive = true,
     onpick,
     onhover,
     onclose,
@@ -81,7 +98,13 @@
     panel.groups.find((g) => g.id === panel.step)?.options.filter((o) => o.state === 'suggested') ??
       [],
   );
-  const detail = $derived(pointed ?? reachable[cursor] ?? suggestions[0] ?? null);
+  /** A driven pointer wins over the real one, and neither exists at rest. */
+  const shown = $derived(
+    pointerOn
+      ? (panel.groups.flatMap((g) => g.options).find((o) => o.key === pointerOn) ?? null)
+      : pointed,
+  );
+  const detail = $derived(shown ?? reachable[cursor] ?? suggestions[0] ?? null);
 
   $effect(() => {
     void panel.subject;
@@ -200,6 +223,7 @@
     ) {
       return;
     }
+    if (!interactive) return;
     if (e.key === 'Escape' && anchor) {
       e.preventDefault();
       onclose?.();
@@ -214,6 +238,7 @@
   }
 
   function outside(e: PointerEvent) {
+    if (!interactive) return;
     if (root && !root.contains(e.target as Node)) onclose?.();
   }
 
@@ -374,6 +399,7 @@
             {#each s.options as o (o.key)}
               <button
                 class="option {o.state}"
+                class:pointed={shown?.key === o.key}
                 data-option={o.key}
                 type="button"
                 role="option"
@@ -612,7 +638,8 @@
     gap: 6px;
   }
   .option:hover,
-  .option:focus-visible {
+  .option:focus-visible,
+  .option.pointed {
     background: color-mix(in oklab, var(--ink) 8%, transparent);
     outline: 0;
   }

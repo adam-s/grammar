@@ -49,6 +49,9 @@
   --radius: 0.5rem;
   --font-sans: 'Inter var', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  /* The middle switches to this while it shows a lesson, so reading feels
+     like opening a book inside a tool. Chrome and diagram labels stay sans. */
+  --font-serif: 'Source Serif 4', 'Iowan Old Style', Charter, Georgia, serif;
 
   /* ---- shadcn contract, expressed in the tokens above ----------------- */
   --background: var(--panel);
@@ -151,6 +154,7 @@
   --radius-lg: var(--radius);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
 }
 
 @layer base {

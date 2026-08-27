@@ -20,6 +20,7 @@
  * verb-frame correctness is left to the grader so construction order never
  * reveals or hides an answer.
  */
+import { governingVerbType, verbs } from './clause.ts';
 import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm } from './types.ts';
 import type { Constituent, ConstituentMap, Form, Func, VerbType, Word } from './types.ts';
@@ -28,10 +29,9 @@ export interface BuildState {
   constituents: ConstituentMap;
   /** Monotonic id counter. Ids are never reused, so tween identity is stable. */
   seq: number;
-  verbType: VerbType | null;
 }
 
-export const emptyBuild = (): BuildState => ({ constituents: {}, seq: 0, verbType: null });
+export const emptyBuild = (): BuildState => ({ constituents: {}, seq: 0 });
 
 /**
  * Deep-copy a constituent map.
@@ -184,6 +184,26 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
   return { state: 'allowed' };
 }
 
+/**
+ * Does picking `form` over a span already held by `current` mean "put a new
+ * node above this one" rather than "I named this wrong"?
+ *
+ * Same-span stacking is rare and it is not optional: a clause with no subject —
+ * the reduced relative in *the horse **raced past the barn** fell* — is a `Cl`
+ * whose only child is a `VP` over the very same words. `auditLicensing` insists
+ * a clause's predicate is a `VP`, so there is nowhere else for that layer to
+ * live.
+ *
+ * Kept deliberately narrow. Every other same-span pick stays a relabel, because
+ * a learner correcting "I meant NP, not VP" is far commoner than one building a
+ * second layer, and the menu cannot yet ask which was meant. The general
+ * affordance is recorded in docs/model-gaps.md.
+ */
+export function stacksOver(current: Constituent | undefined, form: Form): boolean {
+  if (!current || current.word !== undefined) return false;
+  return (form === 'Cl' || form === 'S') && current.form !== form;
+}
+
 /** Create (or relabel) a node over `span` with `form`. Pure. */
 export function wrap(state: BuildState, words: Word[], span: Span, form: Form): BuildState {
   const [a, b] = span;
@@ -206,7 +226,7 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
       const id = `c${++seq}`;
       cs[id] = { form, function: null, parent: null, children: [leaf], span: [a, a] };
       cs[leaf]!.parent = id;
-      return { constituents: cs, seq, verbType: state.verbType };
+      return { constituents: cs, seq };
     }
     if (leaf) {
       cs[leaf]!.form = form;
@@ -214,14 +234,14 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
     }
     const id = `c${++seq}`;
     cs[id] = { form, function: null, parent: null, children: [], span: [a, a], word: a };
-    return { constituents: cs, seq, verbType: state.verbType };
+    return { constituents: cs, seq };
   }
 
   const kids = roots({ ...state, constituents: cs }).filter((id) => inSpan(span, cs[id]!.span[0]));
   const id = `c${++seq}`;
   cs[id] = { form, function: null, parent: null, children: kids, span: [a, b] };
   for (const k of kids) cs[k]!.parent = id;
-  return { constituents: cs, seq, verbType: state.verbType };
+  return { constituents: cs, seq };
 }
 
 /** Assign a function already accepted by the grader as a compatible hypothesis. */
@@ -240,8 +260,47 @@ export function setFunction(
   return { ...state, constituents: cs };
 }
 
-export function setVerbType(state: BuildState, verbType: VerbType | null): BuildState {
-  return { ...state, verbType };
+/**
+ * Classify one verb. `id` is the `V` leaf, so a sentence with two clauses gets
+ * two independent answers rather than one that has to serve both.
+ */
+export function setVerbType(state: BuildState, id: string, verbType: VerbType | null): BuildState {
+  const c = state.constituents[id];
+  if (!c || c.form !== 'V') return state;
+  const cs = cloneMap(state.constituents);
+  if (verbType === null) delete cs[id]!.verbType;
+  else cs[id]!.verbType = verbType;
+  return { ...state, constituents: cs };
+}
+
+/**
+ * Classify the one verb in a single-clause build.
+ *
+ * A convenience, and deliberately a no-op when the build has more than one verb:
+ * with two clauses the question "what kind of verb is it" has two answers, and
+ * real interaction always names the node the learner selected.
+ */
+export function setOnlyVerbType(state: BuildState, verbType: VerbType | null): BuildState {
+  const all = verbs(state.constituents);
+  return all.length === 1 ? setVerbType(state, all[0]!, verbType) : state;
+}
+
+/** The verb type in force where this node sits. */
+export function verbTypeFor(state: BuildState, id: string): VerbType | null {
+  return governingVerbType(state.constituents, id);
+}
+
+/**
+ * The verb a not-yet-parented node would answer to.
+ *
+ * A clause role can be chosen before its S exists, so there is no clause to
+ * walk up to yet. While the tree has a single verb that verb is unambiguous;
+ * once there are two, nothing on a loose node says which clause it will join,
+ * so the answer is null and the licensing rules fall back to "unclassified".
+ */
+function looseVerbType(state: BuildState): VerbType | null {
+  const all = verbs(state.constituents);
+  return all.length === 1 ? (state.constituents[all[0]!]!.verbType ?? null) : null;
 }
 
 /** Remove a node, returning its children to the top level. Never orphans a word. */
@@ -318,7 +377,7 @@ function functionContext(state: BuildState, id: string, fn: Func): LicenseContex
         .filter((value): value is Func => value != null && prospectiveParent(value) === parentForm);
       return {
         parentForm,
-        verbType: state.verbType,
+        verbType: looseVerbType(state),
         siblings,
         childForm: c.form,
       };
@@ -332,7 +391,7 @@ function functionContext(state: BuildState, id: string, fn: Func): LicenseContex
     .filter((x): x is Func => x != null);
   return {
     parentForm: parent.form,
-    verbType: state.verbType,
+    verbType: governingVerbType(state.constituents, id) ?? looseVerbType(state),
     siblings,
     childForm: c.form,
   };

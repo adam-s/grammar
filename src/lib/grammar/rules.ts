@@ -141,6 +141,14 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     case 'appositive':
       return p === 'NP' ? ALLOWED : HIDDEN;
 
+    // The word that introduces a clause and is not part of what it says.
+    // Only a clause has one, and only a subordinator can be one — a marker is
+    // not the clause's head, and giving it any other role misdescribes it.
+    case 'marker':
+      if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('Subord')) return HIDDEN;
+      return has('marker') ? no('This clause already has an introducing word.') : ALLOWED;
+
     case 'coordinate':
       return ALLOWED;
   }
