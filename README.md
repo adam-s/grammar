@@ -29,10 +29,12 @@ are vendored and excluded from lint — treat them as third-party until you deli
 ## Layout
 
 ```
+src/lib/grammar/      the subject: taxonomy, licensing rules, build state, layout,
+                      grading, and the panel's option model
 src/lib/workspace/    the full-screen shell: rail, panel, canvas, inspector, toolbar
 src/lib/components/ui/ shadcn-svelte, vendored
 src/lib/theme.css     every colour and metric in the app, once
-src/routes/           the app; +page.svelte holds the placeholder scene
+src/routes/           the app; +page.svelte is selection and wiring only
 docs/                 design
 ```
 
@@ -43,6 +45,45 @@ where something is is a pure function of a `Viewport`, so `npm test` can prove i
 browser. The Svelte components own events and pixels and decide nothing. When a bug turns out to be
 arithmetic, it should be reproducible in a `node --test` case — that is the whole point of the
 split.
+
+## Labelling
+
+Select words on the canvas; name them from the right-hand panel. That panel is
+the one thing this build does differently from its predecessor, which used a
+popup over the sentence.
+
+Moving the chooser out of a popup forces a different model, because a popup can
+hide an option that does not apply — it is gone a moment later and you never had
+a map of it to disturb — and a permanent column cannot. If rows appear and vanish
+as the selection moves, the single advantage of a fixed surface, that you learn
+where things are, is exactly what you lose. So:
+
+- **A group's inventory is complete and fixed in order.** All thirteen word
+  classes, always. What varies is each option's *state*, not its presence.
+- **Which groups show follows the shape of the selection** — the one thing the
+  learner can already see. One word asks what the word is; a run of words asks
+  what the phrase is; a node that exists also asks what it does.
+- **Suggestions are highlighted in place, never floated to the top.** They keep
+  their seat and gain an accent rail, their evidence, and a number key.
+- **A blocked option keeps its reason, visibly.** The rule you just met is the
+  lesson; it must not be a tooltip.
+- **Functions are contingent, so they *are* filtered.** `rules.ts` already draws
+  the line: `hidden` means "never here" and is omitted, `disabled` means "not
+  yet" and is shown with its reason.
+
+Two things fall out of the panel that the popup could not do at all: hovering a
+label draws what it would produce, on the words it would produce it over; and a
+second question — verb type, function — is just a second group rather than a
+drill-down or a mode change.
+
+`src/lib/grammar/options.ts` is the authority, and its tests are the
+specification.
+
+### The one-rule-set property
+
+`rules.ts` decides what may sit where. `audits.ts` runs it over frozen content,
+and the panel runs it over the learner's half-built structure. Teaching through
+affordance is only honest if those are the same predicates, so they are.
 
 ## The workspace
 

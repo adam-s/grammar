@@ -28,12 +28,21 @@
 
   --success: oklch(0.62 0.15 152);
   --failure: oklch(0.58 0.2 25);
-  --caution: oklch(0.72 0.15 75);
+  --caution: oklch(0.66 0.14 62);
+
+  /* One hue per phrase form, so a constituent's kind is legible before its
+     label is read. s0..s5 = NP VP PP AdjP AdvP Cl. */
+  --s0: oklch(0.55 0.14 245);
+  --s1: oklch(0.52 0.14 150);
+  --s2: oklch(0.55 0.15 310);
+  --s3: oklch(0.58 0.14 55);
+  --s4: oklch(0.55 0.11 200);
+  --s5: oklch(0.55 0.15 5);
 
   /* ---- metrics -------------------------------------------------------- */
   --rail-w: 3.5rem;
   --panel-w: 17.5rem;
-  --inspector-w: 15.5rem;
+  --inspector-w: 19.5rem;
   --topbar-h: 2.75rem;
 
   --radius: 0.5rem;
@@ -83,7 +92,14 @@
 
   --success: oklch(0.72 0.15 152);
   --failure: oklch(0.68 0.19 25);
-  --caution: oklch(0.82 0.15 78);
+  --caution: oklch(0.8 0.13 72);
+
+  --s0: oklch(0.72 0.13 245);
+  --s1: oklch(0.73 0.14 150);
+  --s2: oklch(0.74 0.13 310);
+  --s3: oklch(0.78 0.12 55);
+  --s4: oklch(0.75 0.1 200);
+  --s5: oklch(0.72 0.13 5);
 
   --destructive-foreground: oklch(0.2 0 0);
 }
@@ -106,6 +122,12 @@
   --color-success: var(--success);
   --color-failure: var(--failure);
   --color-caution: var(--caution);
+  --color-s0: var(--s0);
+  --color-s1: var(--s1);
+  --color-s2: var(--s2);
+  --color-s3: var(--s3);
+  --color-s4: var(--s4);
+  --color-s5: var(--s5);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

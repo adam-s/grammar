@@ -1,0 +1,429 @@
+/**
+ * What the label panel offers — the replacement for the old popup menu.
+ *
+ * ## Why a panel changes the model, not just the position
+ *
+ * A popup can hide an option that does not apply, because the popup is gone a
+ * moment later and the learner never had a mental map of it to disturb. A
+ * PERSISTENT panel cannot: if rows appear and vanish as the selection moves,
+ * the one advantage of a fixed surface — that you learn where things are — is
+ * exactly what you lose. So the rules here are stability rules first.
+ *
+ *   1. **A group's inventory is complete and its order never changes.**
+ *      All thirteen word classes, always, in the same order. What varies is
+ *      each option's STATE, not its presence.
+ *
+ *   2. **Which GROUPS show follows the shape of the selection**, which is the
+ *      one thing the learner can see for themselves: one word asks "what is
+ *      this word?", a run of words asks "what is this phrase?", an existing
+ *      node also asks "and what does it do?".
+ *
+ *   3. **Suggestions are highlighted in place, never floated to the top.**
+ *      The old chooser grew a `Likely here` group above the taxonomy, which
+ *      moved the furniture on every selection. Here a suggestion keeps its
+ *      seat and gains an accent, its evidence, and a number key. The eye is
+ *      drawn without the list shifting.
+ *
+ *   4. **A blocked option keeps its reason, visibly.** The rule the learner
+ *      just met IS the lesson; it must not be a tooltip.
+ *
+ *   5. **Functions are contingent, so they are filtered.** A subject is not a
+ *      thing that can ever sit inside a prepositional phrase, and offering it
+ *      greyed out would teach a slot that never exists. `rules.ts` already
+ *      draws this line for us: `hidden` means "never here" and is omitted,
+ *      `disabled` means "not yet / not any more" and is shown with its reason.
+ *
+ * Availability comes from `rules.ts` and `builder.ts` — the same predicates
+ * `audits.ts` runs over frozen content — so what a learner may pick and what
+ * the content must satisfy cannot drift apart.
+ */
+import { canWrap, licenseFor, nodeOver, roots, type BuildState, type Span } from './builder.ts';
+import { VERB_TYPE_MENU } from './rules.ts';
+import { suggest } from './suggest.ts';
+import { FORM_TEST, FUNCTION_TEST, formName, label } from './names.ts';
+import {
+  CLAUSE_FUNCTIONS,
+  PHRASE_FORMS,
+  PHRASE_INTERNAL_FUNCTIONS,
+  WORD_FORMS,
+  type Form,
+  type Func,
+  type VerbType,
+  type Word,
+} from './types.ts';
+
+/**
+ * `idle`      nothing is selected — readable, so the label set is learnable by
+ *             exposure, but nothing can be picked yet
+ * `suggested` the evidence in the sentence points here; carries a number key
+ * `available` legal for this selection
+ * `chosen`    already applied to this selection
+ * `blocked`   illegal right now, and `note` says why
+ * `untaught`  outside the chapter's scope; shown so the shape of the whole
+ *             taxonomy stays visible, but not pickable
+ */
+export type OptionState = 'idle' | 'suggested' | 'available' | 'chosen' | 'blocked' | 'untaught';
+
+/** The states a click may act on. */
+export const PICKABLE: readonly OptionState[] = ['suggested', 'available', 'chosen'];
+
+export const isPickable = (o: LabelOption): boolean => PICKABLE.includes(o.state);
+
+export interface LabelOption {
+  key: string;
+  label: string;
+  /**
+   * The formal test, the evidence, or the reason it is blocked — whichever
+   * applies. Always rendered; never a tooltip.
+   */
+  note?: string;
+  state: OptionState;
+  /** Number key, assigned to suggestions only. */
+  hotkey?: string;
+  form?: Form;
+  func?: Func;
+  verbType?: VerbType;
+  /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
+  rank?: number;
+}
+
+export interface OptionGroup {
+  id: string;
+  /** The question this group answers, in the learner's language. */
+  question: string;
+  options: LabelOption[];
+}
+
+export interface Panel {
+  /** The words under the selection, quoted. Empty when nothing is selected. */
+  subject: string;
+  /** One line saying what to do next. */
+  prompt: string;
+  groups: OptionGroup[];
+  /** How many options are marked `suggested`. */
+  suggested: number;
+  /** Set when the SELECTION itself cannot be labelled, whatever the label. */
+  blocked?: string;
+}
+
+/** Which labels a chapter has taught. Absent means "everything". */
+export interface ChapterScope {
+  forms?: readonly Form[];
+  functions?: readonly Func[];
+}
+
+export type Selection =
+  { kind: 'none' } | { kind: 'span'; span: Span } | { kind: 'node'; id: string };
+
+/* ------------------------------------------------------------------ util */
+
+const quote = (words: Word[], span: Span): string =>
+  `“${words
+    .slice(span[0], span[1] + 1)
+    .map((w) => w.text)
+    .join(' ')}”`;
+
+const inScope = <T>(x: T, allowed?: readonly T[]): boolean => !allowed || allowed.includes(x);
+
+/* ---------------------------------------------------------------- panels */
+
+export function optionsFor(
+  state: BuildState,
+  words: Word[],
+  sel: Selection,
+  scope: ChapterScope = {},
+): Panel {
+  switch (sel.kind) {
+    case 'none':
+      return idlePanel(scope);
+    case 'span':
+      return spanPanel(state, words, sel.span, scope);
+    case 'node':
+      return nodePanel(state, words, sel.id, scope);
+  }
+}
+
+/**
+ * Nothing selected. The panel still shows the whole inventory, resting — the
+ * label set is worth meeting before you need it, and an empty right-hand column
+ * teaches nothing.
+ */
+function idlePanel(scope: ChapterScope): Panel {
+  return {
+    subject: '',
+    prompt: 'Select a word, or drag across a run of words.',
+    suggested: 0,
+    groups: [
+      {
+        id: 'word-class',
+        question: 'What is a word?',
+        options: WORD_FORMS.map((f) =>
+          formOption(f, inScope(f, scope.forms) ? 'idle' : 'untaught'),
+        ),
+      },
+      {
+        id: 'phrase-form',
+        question: 'What is a run of words?',
+        options: PHRASE_FORMS.map((f) =>
+          formOption(f, inScope(f, scope.forms) ? 'idle' : 'untaught'),
+        ),
+      },
+    ],
+  };
+}
+
+function formOption(f: Form, state: OptionState, note?: string): LabelOption {
+  return {
+    key: `form:${f}`,
+    label: formName(f),
+    note: note ?? FORM_TEST[f],
+    state,
+    form: f,
+  };
+}
+
+/** A run of words with no node over it yet: only "what is it?" can be asked. */
+function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterScope): Panel {
+  const single = span[0] === span[1];
+  const verdict = canWrap(state, words, span);
+  const blocked = verdict.state === 'disabled' ? verdict.reason : undefined;
+
+  // A one-word phrase is built OVER a labelled word, so the word class comes
+  // first. This is the rule the old chooser expressed by silently doing
+  // nothing when you picked `Noun phrase` on an unnamed word.
+  const leaf = roots(state).find((id) => state.constituents[id]!.word === span[0]);
+  const needsWordClass = single && !leaf ? `Name what ${quote(words, span)} is first.` : undefined;
+
+  const existing = nodeOver(state, span);
+  const chosenForm = existing ? state.constituents[existing]!.form : null;
+
+  const evidence = new Map(suggest(words, span).map((s) => [s.form, s.evidence]));
+
+  const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
+    forms.map((f) => {
+      if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
+      if (blocked) return formOption(f, 'blocked', blocked);
+      if (phrase && needsWordClass) return formOption(f, 'blocked', needsWordClass);
+      if (f === chosenForm) return formOption(f, 'chosen');
+      const why = evidence.get(f);
+      return formOption(f, why ? 'suggested' : 'available', why);
+    });
+
+  const groups: OptionGroup[] = single
+    ? [
+        {
+          id: 'word-class',
+          question: `What is ${quote(words, span)}?`,
+          options: build(WORD_FORMS, false),
+        },
+        {
+          id: 'phrase-form',
+          question: 'Or is it a one-word phrase?',
+          options: build(
+            PHRASE_FORMS.filter((f) => f !== 'S'),
+            true,
+          ),
+        },
+      ]
+    : [
+        {
+          id: 'phrase-form',
+          // A run of words is never a part of speech, so the word classes are
+          // not merely disabled here — the question is a different one.
+          question: `What is ${quote(words, span)}?`,
+          options: build(PHRASE_FORMS, false),
+        },
+      ];
+
+  return withHotkeys({
+    subject: quote(words, span),
+    prompt: blocked ?? 'Name it, then say what it does.',
+    groups,
+    suggested: 0,
+    ...(blocked ? { blocked } : {}),
+  });
+}
+
+/**
+ * An existing node. Its form can be revised, its function can be set, and if it
+ * is a verb its type is a THIRD question — asked here as a third group rather
+ * than as a drill-down, because a panel has room to ask two things at once and
+ * a popup did not.
+ */
+function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterScope): Panel {
+  const c = state.constituents[id];
+  if (!c) return idlePanel(scope);
+
+  const subject = quote(words, c.span);
+  const isWord = c.word !== undefined;
+  const evidence = new Map(suggest(words, c.span).map((s) => [s.form, s.evidence]));
+
+  /**
+   * Once a node is inside a group, changing what it IS would change what the
+   * group is made of. Renaming a single word is safe — the word stays where it
+   * is — but re-forming a phrase, or wrapping a word in a new one, is not.
+   * So the option stays visible and says what to do instead.
+   */
+  const locked = c.parent !== null;
+  const UNGROUP = 'Ungroup what it is inside before changing what it is.';
+
+  const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
+    forms.map((f) => {
+      if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
+      if (f === c.form) return formOption(f, 'chosen');
+      if (locked && (phrase || !isWord)) return formOption(f, 'blocked', UNGROUP);
+      const why = evidence.get(f);
+      return formOption(f, why ? 'suggested' : 'available', why);
+    });
+
+  const groups: OptionGroup[] = isWord
+    ? [
+        { id: 'word-class', question: `What is ${subject}?`, options: build(WORD_FORMS, false) },
+        {
+          id: 'phrase-form',
+          question: 'Or is it a one-word phrase?',
+          options: build(
+            PHRASE_FORMS.filter((f) => f !== 'S'),
+            true,
+          ),
+        },
+      ]
+    : [{ id: 'phrase-form', question: `What is ${subject}?`, options: build(PHRASE_FORMS, false) }];
+
+  if (c.form === 'V') {
+    groups.push({
+      id: 'verb-type',
+      // The spine of the course, and a genuinely separate decision: first "is
+      // it a verb?", then "what kind?". As a sibling group both stay readable.
+      question: 'What kind of verb is it?',
+      options: VERB_TYPE_MENU.map((v) => ({
+        key: `vt:${v.type}`,
+        label: v.label,
+        note: v.example,
+        state: (state.verbType === v.type ? 'chosen' : 'available') as OptionState,
+        verbType: v.type,
+      })),
+    });
+  }
+
+  groups.push(functionGroup(state, id, subject, scope));
+
+  return withHotkeys({
+    subject,
+    prompt:
+      c.parent === null
+        ? 'Group it with its neighbours, or say what it is.'
+        : 'Say what it does inside its group.',
+    groups,
+    suggested: 0,
+  });
+}
+
+/**
+ * The functions this node may take. Contingent on the parent, so this list IS
+ * filtered — see rule 5 in the module note. `hidden` disappears, `disabled`
+ * stays and shows why.
+ */
+function functionGroup(
+  state: BuildState,
+  id: string,
+  subject: string,
+  scope: ChapterScope,
+): OptionGroup {
+  const c = state.constituents[id]!;
+  const current = c.function;
+
+  const options: LabelOption[] = [];
+  for (const fn of [...CLAUSE_FUNCTIONS, ...PHRASE_INTERNAL_FUNCTIONS]) {
+    if (!inScope(fn, scope.functions)) continue;
+    const verdict = licenseFor(state, id, fn);
+    if (verdict.state === 'hidden') continue;
+    options.push({
+      key: `func:${fn}`,
+      label: label(fn),
+      note: verdict.state === 'disabled' ? verdict.reason : FUNCTION_TEST[fn],
+      state: fn === current ? 'chosen' : verdict.state === 'disabled' ? 'blocked' : 'available',
+      func: fn,
+    });
+  }
+
+  return { id: 'function', question: `What does ${subject} do?`, options };
+}
+
+/**
+ * Number keys go to suggestions only, and the key is part of the highlight
+ * rather than decoration on top of it: the shortlist is the thing you can reach
+ * without the mouse. Everything else is a click or the filter field.
+ */
+function withHotkeys(panel: Panel): Panel {
+  let n = 0;
+  const groups = panel.groups.map((g) => ({
+    ...g,
+    options: g.options.map((o) =>
+      o.state === 'suggested' && n < 9 ? { ...o, hotkey: String(++n) } : o,
+    ),
+  }));
+  return { ...panel, groups, suggested: n };
+}
+
+/* ---------------------------------------------------------------- filter */
+
+/**
+ * Ranked, not merely filtered, and the reason is concrete: "transitive" is a
+ * substring of "intransitive", so plain substring matching put the cursor on
+ * the OPPOSITE verb type from the one the learner typed.
+ */
+const score = (o: LabelOption, q: string): number => {
+  const l = o.label.toLowerCase();
+  if (l.startsWith(q)) return 0;
+  if (l.split(/\s+/).some((w) => w.startsWith(q))) return 1;
+  if (l.includes(q)) return 2;
+  if ((o.note ?? '').toLowerCase().includes(q)) return 3;
+  if (o.key.toLowerCase().includes(q)) return 4;
+  return Infinity;
+};
+
+/** Filtering is the one thing allowed to reorder: the learner asked for it. */
+export function filterPanel(panel: Panel, query: string): Panel {
+  const q = query.trim().toLowerCase();
+  if (!q) return panel;
+  const groups = panel.groups
+    .map((g) => ({
+      ...g,
+      options: g.options
+        .map((o, i) => ({ o, i, s: score(o, q) }))
+        .filter((x) => x.s !== Infinity)
+        .sort((a, b) => a.s - b.s || a.i - b.i)
+        .map((x) => ({ ...x.o, rank: x.s })),
+    }))
+    .filter((g) => g.options.length > 0);
+  return { ...panel, groups };
+}
+
+/** Every option a click or key may act on, in visual order. */
+export function pickable(panel: Panel): LabelOption[] {
+  return panel.groups.flatMap((g) => g.options.filter(isPickable));
+}
+
+/** Index into `pickable()` of the best match — where the cursor belongs. */
+export function bestIndex(options: LabelOption[]): number {
+  let best = -1;
+  let bestRank = Infinity;
+  for (let i = 0; i < options.length; i++) {
+    const r = options[i]!.rank ?? Infinity;
+    if (best === -1 && r === Infinity) best = i;
+    if (r < bestRank) {
+      bestRank = r;
+      best = i;
+    }
+  }
+  return Math.max(0, best);
+}
+
+/** The option a number key selects. */
+export function byHotkey(panel: Panel, key: string): LabelOption | null {
+  for (const g of panel.groups) {
+    for (const o of g.options) if (o.hotkey === key) return o;
+  }
+  return null;
+}

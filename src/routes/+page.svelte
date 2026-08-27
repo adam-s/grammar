@@ -1,31 +1,48 @@
 <script lang="ts">
   /**
-   * The workspace, with a placeholder scene on it.
+   * Label a sentence: select words on the canvas, name them from the panel.
    *
-   * The scene is deliberately the smallest thing that proves the surface is
-   * real: a frame in world space, words that hit-test, a selection that reaches
-   * the inspector. It encodes no decision about how labelling will work — see
-   * docs/labeling-patterns.md, which is the question this shell exists to let
-   * us answer.
+   * The one departure from the previous implementation is where the chooser
+   * lives. It used to be a popup over the sentence; here it is the right-hand
+   * column, permanently. `src/lib/grammar/options.ts` carries the reasoning and
+   * the stability rules that follow from that move — in short, a panel that
+   * stays put has to stop hiding things.
+   *
+   * This route owns selection and wiring. Every decision — what may be picked,
+   * what a pick does to the structure, whether it was right — belongs to
+   * `src/lib/grammar/`, which is browser-free and tested under `node --test`.
    */
-  import FileText from '@lucide/svelte/icons/file-text';
   import Type from '@lucide/svelte/icons/type';
   import Tag from '@lucide/svelte/icons/tag';
   import Layers from '@lucide/svelte/icons/layers';
   import Settings from '@lucide/svelte/icons/settings';
-  import Search from '@lucide/svelte/icons/search';
+  import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 
-  import Field from '$lib/workspace/Field.svelte';
-  import Section from '$lib/workspace/Section.svelte';
   import Workspace from '$lib/workspace/Workspace.svelte';
   import type { RailItem } from '$lib/workspace/Rail.svelte';
-  import { formatZoom } from '$lib/workspace/viewport.ts';
   import { Workspace as WorkspaceState } from '$lib/workspace/workspace.svelte.ts';
+
+  import Diagram, { diagramSize } from '$lib/grammar/Diagram.svelte';
+  import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
+  import {
+    emptyBuild,
+    nodeOver,
+    setFunction,
+    setVerbType,
+    unwrap,
+    wrap,
+  } from '$lib/grammar/builder.ts';
+  import { FIXTURES } from '$lib/grammar/fixtures.ts';
+  import { PLAIN, gradeForm, gradeFunction, type Outcome } from '$lib/grammar/grader.ts';
+  import { layout } from '$lib/grammar/layout.ts';
+
+  import { LONG } from '$lib/grammar/rules.ts';
+  import { optionsFor, type LabelOption, type Selection } from '$lib/grammar/options.ts';
+  import { canonicalReading, type Form, type Span } from '$lib/grammar/types.ts';
 
   const ws = new WorkspaceState();
 
   const items: RailItem[] = [
-    { id: 'file', label: 'File', icon: FileText },
     { id: 'sentences', label: 'Sentences', icon: Type },
     { id: 'labels', label: 'Labels', icon: Tag },
     { id: 'layers', label: 'Layers', icon: Layers },
@@ -33,177 +50,183 @@
   ];
   let active = $state('sentences');
 
-  /* ------------------------------------------------------------- the scene */
+  /* ------------------------------------------------------------- the work */
 
-  const LIBRARY = [
-    { id: 'moby', source: 'Melville, Moby-Dick', text: 'Call me Ishmael.' },
-    {
-      id: 'walden',
-      source: 'Thoreau, Walden',
-      text: 'I went to the woods because I wished to live deliberately.',
-    },
-    {
-      id: 'tale',
-      source: 'Dickens, A Tale of Two Cities',
-      text: 'It was the best of times, it was the worst of times.',
-    },
-    {
-      id: 'pride',
-      source: 'Austen, Pride and Prejudice',
-      text: 'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.',
-    },
-  ];
+  let sentenceId = $state('fix-vtr');
+  const sentence = $derived(FIXTURES.find((s) => s.id === sentenceId)!);
+  const words = $derived(sentence.words);
 
-  let sentenceId = $state('walden');
-  let query = $state('');
+  let build = $state(emptyBuild());
+  let selection = $state<Selection>({ kind: 'none' });
+  let draft = $state<Span | null>(null);
+  let preview = $state<Form | null>(null);
+  let verdict = $state<Verdict | null>(null);
+  /** High-water mark: the picture grows as the tree deepens, and never shrinks
+      back, so undoing one step does not re-flow everything the learner built. */
+  let depthMark = $state(0);
 
-  const sentence = $derived(LIBRARY.find((s) => s.id === sentenceId)!);
-  const shown = $derived(
-    LIBRARY.filter((s) => (s.text + s.source).toLowerCase().includes(query.trim().toLowerCase())),
-  );
+  const choices = $derived(optionsFor(build, words, selection));
+  const frame = $derived(diagramSize(build.constituents, words, depthMark));
 
-  /** Punctuation is its own token: it is a thing a diagram has to account for. */
-  const tokens = $derived(
-    sentence.text.match(/[\w'’-]+|[^\s\w]/g)?.map((text, i) => ({ id: `w${i}`, text })) ?? [],
-  );
-
-  /** World units. The frame is the only thing with an absolute position. */
-  const FRAME = { x: 0, y: 0, w: 760, h: 300 };
-
-  let els = $state<Record<string, HTMLElement>>({});
-
-  /** Inside `.world`, layout offsets already are world coordinates. */
-  const selectedRect = $derived.by(() => {
-    const id = ws.selection[0];
-    const el = id ? els[id] : undefined;
-    if (!el) return null;
-    return {
-      x: FRAME.x + el.offsetLeft,
-      y: FRAME.y + el.offsetTop,
-      w: el.offsetWidth,
-      h: el.offsetHeight,
-    };
-  });
-
-  const selectedToken = $derived(tokens.find((t) => t.id === ws.selection[0]));
-
-  function pick(id: string, e: MouseEvent) {
-    if (ws.panning) return;
-    ws.select(id, e.shiftKey);
+  function reset() {
+    build = emptyBuild();
+    selection = { kind: 'none' };
+    draft = null;
+    preview = null;
+    verdict = null;
+    depthMark = 0;
   }
 
   $effect(() => {
     void sentenceId;
-    ws.clearSelection();
+    reset();
   });
+
+  /** The span a pick applies to, whichever way the selection was made. */
+  const targetSpan = $derived.by<Span | null>(() => {
+    if (selection.kind === 'span') return selection.span;
+    if (selection.kind === 'node') return build.constituents[selection.id]?.span ?? null;
+    return null;
+  });
+
+  /* --------------------------------------------------------------- events */
+
+  function ondraft(span: Span | null, done: boolean) {
+    draft = span;
+    if (!done) return;
+    draft = null;
+    verdict = null;
+    if (!span) return;
+    // Words that already carry a node select the NODE, so the same gesture
+    // moves the learner from "what is it?" to "what does it do?" without a mode
+    // change — the panel simply gains a group.
+    const id = nodeOver(build, span);
+    selection = id ? { kind: 'node', id } : { kind: 'span', span };
+  }
+
+  function toVerdict(o: Outcome, what: string): Verdict {
+    if (o.kind === 'correct') return { kind: 'correct', text: `Yes — ${what}.` };
+    if (o.kind === 'alternate') {
+      return {
+        kind: 'alternate',
+        text: `Also correct, but it means something else: ${o.gloss}`,
+        test: `Here it means: ${o.canonicalGloss}`,
+      };
+    }
+    return { kind: 'wrong', text: o.reason, test: o.test };
+  }
+
+  function grew() {
+    depthMark = Math.max(depthMark, layout(build.constituents, words).maxDepth);
+  }
+
+  function pick(o: LabelOption) {
+    const span = targetSpan;
+    if (!span) return;
+
+    if (o.form) {
+      const outcome = gradeForm(sentence, span, o.form);
+      verdict = toVerdict(outcome, `that is ${PLAIN[o.form] ?? o.form}`);
+      // A wrong answer never enters the structure. The diagram is a record of
+      // what the learner has established, not of what they have tried.
+      if (outcome.kind === 'wrong') return;
+
+      let next = build;
+      const nodeId = selection.kind === 'node' ? selection.id : null;
+      const cur = nodeId ? build.constituents[nodeId] : undefined;
+      // Replacing a loose phrase means removing it first; `wrap` would
+      // otherwise stack a second node on the same words.
+      if (nodeId && cur && cur.word === undefined && cur.parent === null) {
+        next = unwrap(next, nodeId);
+      }
+      build = wrap(next, words, span, o.form);
+      grew();
+      const id = nodeOver(build, span);
+      if (id) selection = { kind: 'node', id };
+      return;
+    }
+
+    if (o.func && selection.kind === 'node') {
+      const c = build.constituents[selection.id]!;
+      const outcome = gradeFunction(sentence, c.span, c.form, o.func);
+      verdict = toVerdict(outcome, `it is the ${o.label}`);
+      if (outcome.kind !== 'wrong') build = setFunction(build, selection.id, o.func);
+      return;
+    }
+
+    if (o.verbType) {
+      const right = canonicalReading(sentence).verbType;
+      if (o.verbType === right) {
+        build = setVerbType(build, o.verbType);
+        verdict = { kind: 'correct', text: `Yes — this verb is ${LONG[o.verbType]}.` };
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: `Not ${LONG[o.verbType]} here.`,
+          test: 'Ask what must follow the verb for the sentence to be complete.',
+        };
+      }
+    }
+  }
 </script>
 
-<Workspace {items} {ws} bind:active content={FRAME} tabs={['Design', 'Rules']}>
+<Workspace {items} {ws} bind:active content={frame} tabs={['Label']}>
   {#snippet panel(section)}
     {#if section === 'sentences'}
-      <div class="search">
-        <Search size={13} strokeWidth={1.75} aria-hidden="true" />
-        <input bind:value={query} placeholder="Search sentences" aria-label="Search sentences" />
-      </div>
-
       <ul class="lines">
-        {#each shown as line (line.id)}
+        {#each FIXTURES as s (s.id)}
           <li>
             <button
               class="line"
-              class:on={line.id === sentenceId}
+              class:on={s.id === sentenceId}
               type="button"
-              aria-current={line.id === sentenceId ? 'true' : undefined}
-              onclick={() => (sentenceId = line.id)}
+              aria-current={s.id === sentenceId ? 'true' : undefined}
+              onclick={() => (sentenceId = s.id)}
             >
-              <span class="text">{line.text}</span>
-              <span class="src">{line.source}</span>
+              <span class="text">{s.text}</span>
+              <span class="tags">{s.features.join(' · ')}</span>
             </button>
           </li>
         {/each}
-        {#if shown.length === 0}
-          <li class="empty">nothing matches “{query}”</li>
-        {/if}
       </ul>
+      <button class="reset" type="button" onclick={reset}>
+        <RotateCcw size={12} strokeWidth={1.75} aria-hidden="true" />
+        Start this sentence again
+      </button>
     {:else}
       <p class="empty">
-        Nothing here yet. This panel is a seam, not a feature — see
-        <code>src/routes/+page.svelte</code>.
+        Nothing here yet — see <code>src/routes/+page.svelte</code>.
       </p>
     {/if}
   {/snippet}
 
   {#snippet inspector()}
-    {#if selectedToken && selectedRect}
-      <Section title="Token">
-        <Field label="Text" value={selectedToken.text} glyph="T" span />
-      </Section>
-      <Section title="Position">
-        <Field label="X position" value={Math.round(selectedRect.x)} glyph="X" />
-        <Field label="Y position" value={Math.round(selectedRect.y)} glyph="Y" />
-      </Section>
-      <Section title="Dimensions">
-        <Field label="Width" value={Math.round(selectedRect.w)} glyph="W" />
-        <Field label="Height" value={Math.round(selectedRect.h)} glyph="H" />
-      </Section>
-      <Section title="Label" open={false}>
-        <p class="note">Undecided. This is the whole open question.</p>
-      </Section>
-    {:else}
-      <Section title="Frame">
-        <Field label="Width" value={FRAME.w} glyph="W" />
-        <Field label="Height" value={FRAME.h} glyph="H" />
-        <Field label="Tokens" value={tokens.length} glyph="#" />
-        <Field label="Zoom" value={formatZoom(ws.viewport.z)} glyph="Z" />
-      </Section>
-      <p class="note">Click a word on the canvas.</p>
-    {/if}
+    <LabelPanel
+      panel={choices}
+      {verdict}
+      onpick={pick}
+      onhover={(o) => (preview = o?.form ?? null)}
+    />
   {/snippet}
 
-  <!-- The scene, in world coordinates. -->
-  <div
-    class="frame"
-    style="left:{FRAME.x}px; top:{FRAME.y}px; width:{FRAME.w}px; height:{FRAME.h}px"
-  >
-    <span class="framelabel">{sentence.source}</span>
-    <p class="sentence">
-      {#each tokens as t (t.id)}
-        <button
-          bind:this={els[t.id]}
-          class="word"
-          class:on={ws.isSelected(t.id)}
-          type="button"
-          aria-pressed={ws.isSelected(t.id)}
-          onclick={(e) => pick(t.id, e)}>{t.text}</button
-        >
-      {/each}
-    </p>
+  <div class="board" style="left:0; top:0; width:{frame.w}px; height:{frame.h}px">
+    <Diagram
+      {words}
+      constituents={build.constituents}
+      {selection}
+      {draft}
+      {preview}
+      minDepth={depthMark}
+      onpick={(s) => {
+        verdict = null;
+        selection = s;
+      }}
+      {ondraft}
+    />
   </div>
 </Workspace>
 
 <style>
-  /* ---- panel ------------------------------------------------------------ */
-  .search {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 4px 4px 8px;
-    padding: 0 8px;
-    height: 28px;
-    border-radius: var(--radius-sm);
-    background: var(--sunken);
-    color: var(--ink-faint);
-  }
-  .search input {
-    flex: 1;
-    min-width: 0;
-    border: 0;
-    background: transparent;
-    color: var(--ink);
-    font: inherit;
-    font-size: 11px;
-    outline: none;
-  }
   .lines {
     margin: 0;
     padding: 0;
@@ -228,86 +251,52 @@
     background: color-mix(in oklab, var(--accent) 18%, transparent);
   }
   .text {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-size: 11px;
+    display: block;
+    font-size: 12px;
     color: var(--ink);
   }
-  .src {
+  .tags {
     display: block;
     margin-top: 2px;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     color: var(--ink-faint);
   }
-  .empty,
-  .note {
-    margin: 8px;
-    color: var(--ink-faint);
+  .reset {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 8px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
     font-size: 11px;
-    line-height: 1.5;
+    cursor: default;
   }
-  /* Inside a Section the note is a grid cell and supplies its own inset; on its
-     own in the inspector body it still needs one. */
-  :global(.rows) > .note {
-    grid-column: 1 / -1;
-    margin: 2px 0 0;
+  .reset:hover {
+    color: var(--ink);
+    border-color: var(--border-strong);
+  }
+  .empty {
+    margin: 8px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.5;
   }
   code {
     font-family: var(--font-mono);
     font-size: 10px;
   }
 
-  /* ---- the scene, in world units --------------------------------------- */
-  .frame {
+  .board {
     position: absolute;
     background: var(--artboard);
     border-radius: calc(2px / var(--z));
-    /* A ring rather than a border: a border would be inside the box and change
-       the frame's layout size, which is also its world size. */
     box-shadow:
       0 0 0 calc(1px / var(--z)) var(--border),
       0 calc(2px / var(--z)) calc(16px / var(--z)) oklch(0 0 0 / 22%);
-  }
-  /* Divided by --z so chrome keeps its screen size at any zoom — the label and
-     the selection ring are annotations about the document, not part of it. */
-  .framelabel {
-    position: absolute;
-    left: 0;
-    bottom: 100%;
-    margin-bottom: calc(6px / var(--z));
-    color: var(--ink-faint);
-    font-size: calc(11px / var(--z));
-    white-space: nowrap;
-  }
-  .sentence {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    gap: 4px 2px;
-    margin: 0;
-    height: 100%;
-    padding: 48px;
-    box-sizing: border-box;
-  }
-  .word {
-    padding: 4px 5px;
-    border: 0;
-    border-radius: calc(3px / var(--z));
-    background: transparent;
-    color: var(--ink);
-    font: inherit;
-    font-size: 30px;
-    line-height: 1.25;
-    cursor: default;
-  }
-  .word:hover {
-    background: color-mix(in oklab, var(--accent) 14%, transparent);
-  }
-  .word.on {
-    background: color-mix(in oklab, var(--accent) 26%, transparent);
-    outline: calc(1.5px / var(--z)) solid var(--accent);
   }
 </style>
