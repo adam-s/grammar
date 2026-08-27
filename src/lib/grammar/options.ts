@@ -32,7 +32,7 @@
  * `audits.ts` runs over frozen content — so what a learner may pick and what
  * the content must satisfy cannot drift apart.
  */
-import { canWrap, licenseFor, nodeOver, roots, type BuildState, type Span } from './builder.ts';
+import { canWrap, hypothesisFor, nodeOver, roots, type BuildState, type Span } from './builder.ts';
 import { VERB_TYPE_MENU } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { FORM_TEST, FUNCTION_TEST, formName, label } from './names.ts';
@@ -421,7 +421,7 @@ function functionGroup(
   const options: LabelOption[] = [];
   for (const fn of [...CLAUSE_FUNCTIONS, ...PHRASE_INTERNAL_FUNCTIONS]) {
     if (!inScope(fn, scope.functions)) continue;
-    const verdict = licenseFor(state, id, fn);
+    const verdict = hypothesisFor(state, id, fn);
     if (verdict.state === 'hidden') continue;
     options.push({
       key: `func:${fn}`,

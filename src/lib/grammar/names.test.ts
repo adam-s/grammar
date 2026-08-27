@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { CLAUSE_FUNCTIONS, PHRASE_INTERNAL_FUNCTIONS, VERB_TYPES } from './types.ts';
-import { functionMark, functionName, verbTypeMark, verbTypeName } from './names.ts';
+import {
+  clauseKindMark,
+  clauseKindName,
+  functionMark,
+  functionName,
+  verbTypeMark,
+  verbTypeName,
+} from './names.ts';
+import { CLAUSE_KINDS } from './node-variants.ts';
 
 test('every verb type has a compact, distinct diagram mark', () => {
   const marks = VERB_TYPES.map(verbTypeMark);
@@ -12,6 +20,13 @@ test('every verb type has a compact, distinct diagram mark', () => {
 test('the transitive mark stays terse while its accessible name stays complete', () => {
   assert.equal(verbTypeMark('Vtr'), 'T');
   assert.equal(verbTypeName('Vtr'), 'transitive verb');
+});
+
+test('every clause kind has a compact, distinct diagram mark', () => {
+  const marks = CLAUSE_KINDS.map(clauseKindMark);
+  assert.equal(new Set(marks).size, CLAUSE_KINDS.length);
+  assert.ok(marks.every((mark) => mark.length <= 4));
+  assert.equal(clauseKindName('relative'), 'relative clause');
 });
 
 test('every syntactic function has a compact diagram mark', () => {

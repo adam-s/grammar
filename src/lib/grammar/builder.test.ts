@@ -4,6 +4,7 @@ import { auditReading } from './audits.ts';
 import {
   canWrap,
   emptyBuild,
+  hypothesisFor,
   isComplete,
   licenseFor,
   childContaining,
@@ -180,6 +181,9 @@ describe('functions follow an actual or prospective parent', () => {
       (licenseFor(s, np, 'directObject') as { reason: string }).reason,
       /Classify the verb first/,
     );
+    assert.equal(hypothesisFor(s, np, 'directObject').state, 'allowed');
+    s = setFunction(s, np, 'directObject');
+    assert.equal(s.constituents[np]!.function, 'directObject');
     s = setVerbType(s, 'Vint');
     assert.match(
       (licenseFor(s, np, 'directObject') as { reason: string }).reason,

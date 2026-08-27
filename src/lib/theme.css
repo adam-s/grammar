@@ -160,6 +160,16 @@
     border-color: var(--border);
   }
 
+  /* Scrollbars, form controls and the backdrop behind the page take their cue
+     from this and from nothing else in the stylesheet. The boot script sets it
+     inline as well, so it is right before this file has even parsed. */
+  :root {
+    color-scheme: light;
+  }
+  :root.dark {
+    color-scheme: dark;
+  }
+
   /* The app owns the viewport. Nothing here ever scrolls the page — panels
      scroll internally, and the canvas pans. */
   html,

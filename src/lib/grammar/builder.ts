@@ -8,17 +8,19 @@
  * ## Form on create, function on click
  *
  * A constituent's FORM is intrinsic: "the engine" is a noun phrase whatever it
- * is doing. Its FUNCTION is relational: it is a direct object only once it sits
- * under a verb phrase. So the two are asked at different moments —
+ * is doing. Its FUNCTION is relational. The UI may ask for it before the
+ * containing VP or S is drawn, then preserve the graded answer when that
+ * parent is created —
  *
  *   1. select a span → choose a form → a node exists
- *   2. click a node that now has a parent → choose its function
+ *   2. click the node → choose a compatible function hypothesis
  *
  * That is not a UI convenience. It is Morenberg's form/function separation
- * turned into the interaction, and it is why a function menu can be filtered by
- * the parent at all: at step 1 there is no parent to filter by.
+ * turned into the interaction. Structural form compatibility filters the menu;
+ * verb-frame correctness is left to the grader so construction order never
+ * reveals or hides an answer.
  */
-import { licenses, type Verdict } from './rules.ts';
+import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm } from './types.ts';
 import type { Constituent, ConstituentMap, Form, Func, VerbType, Word } from './types.ts';
 
@@ -222,7 +224,7 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   return { constituents: cs, seq, verbType: state.verbType };
 }
 
-/** Assign a node's function only through the same license used by the menu. */
+/** Assign a function already accepted by the grader as a compatible hypothesis. */
 export function setFunction(
   state: BuildState,
   id: string,
@@ -230,7 +232,7 @@ export function setFunction(
   obligatory = false,
 ): BuildState {
   if (!state.constituents[id]) return state;
-  if (fn !== null && licenseFor(state, id, fn).state !== 'allowed') return state;
+  if (fn !== null && hypothesisFor(state, id, fn).state !== 'allowed') return state;
   const cs = cloneMap(state.constituents);
   cs[id]!.function = fn;
   if (fn === 'adverbial' && obligatory) cs[id]!.obligatory = true;
@@ -281,6 +283,28 @@ function prospectiveParent(fn: Func): Form | null {
 export function licenseFor(state: BuildState, id: string, fn: Func): Verdict {
   const c = state.constituents[id];
   if (!c) return { state: 'hidden' };
+  if (c.parent === null && !prospectiveParent(fn)) return unparentedFunction();
+  const ctx = functionContext(state, id, fn);
+  return ctx ? licenses(fn, ctx) : { state: 'hidden' };
+}
+
+/** Menu affordance: compatible answers stay actionable until graded. */
+export function hypothesisFor(state: BuildState, id: string, fn: Func): Verdict {
+  const c = state.constituents[id];
+  if (!c) return { state: 'hidden' };
+  if (c.parent === null && !prospectiveParent(fn)) return unparentedFunction();
+  const ctx = functionContext(state, id, fn);
+  return ctx ? hypothesizes(fn, ctx) : { state: 'hidden' };
+}
+
+const unparentedFunction = (): Verdict => ({
+  state: 'disabled',
+  reason: 'This is not part of anything yet — group it first, then say what it does.',
+});
+
+function functionContext(state: BuildState, id: string, fn: Func): LicenseContext | null {
+  const c = state.constituents[id];
+  if (!c) return null;
   if (c.parent === null) {
     // Clause roles can be visible before their parent is drawn. Requiring the
     // learner to build VP or S first makes construction order—not grammar—the
@@ -292,29 +316,26 @@ export function licenseFor(state: BuildState, id: string, fn: Func): Verdict {
         .filter((root) => root !== id)
         .map((root) => state.constituents[root]?.function)
         .filter((value): value is Func => value != null && prospectiveParent(value) === parentForm);
-      return licenses(fn, {
+      return {
         parentForm,
         verbType: state.verbType,
         siblings,
         childForm: c.form,
-      });
+      };
     }
-    return {
-      state: 'disabled',
-      reason: 'This is not part of anything yet — group it first, then say what it does.',
-    };
+    return null;
   }
   const parent = state.constituents[c.parent]!;
   const siblings = parent.children
     .filter((k) => k !== id)
     .map((k) => state.constituents[k]?.function)
     .filter((x): x is Func => x != null);
-  return licenses(fn, {
+  return {
     parentForm: parent.form,
     verbType: state.verbType,
     siblings,
     childForm: c.form,
-  });
+  };
 }
 
 /** Structure complete enough to grade: one root that covers every word. */

@@ -1,10 +1,29 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%sveltekit.assets%/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
+    <script>
+      /* Apply the stored theme before the first paint. Without this the page
+         renders in the wrong theme for a frame and then jumps. Keep it inline
+         and dependency-free — a module would arrive too late to help. Anything
+         that is not an explicit choice follows the OS, which is what
+         `readPref` does in theme.ts. */
+      (() => {
+        try {
+          const p = localStorage.getItem('grammar:theme');
+          const dark =
+            p === 'dark' ||
+            (p !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch {
+          /* Blocked site data: fall through to the stylesheet's light default. */
+        }
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

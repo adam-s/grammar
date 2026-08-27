@@ -7,72 +7,95 @@
   import Play from '@lucide/svelte/icons/play';
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
   import ChevronRight from '@lucide/svelte/icons/chevron-right';
+  import ThemeToggle from './ThemeToggle.svelte';
   import { getWorkspace } from './workspace.svelte.ts';
   import { ZOOM_STOPS, formatZoom } from './viewport.ts';
 
   type Props = {
     tabs?: string[];
     tab?: string;
+    kind?: 'properties' | 'navigation';
+    title?: string;
     oncollapse?: () => void;
     children?: Snippet;
   };
-  let { tabs = ['Design'], tab = $bindable(tabs[0]!), oncollapse, children }: Props = $props();
+  let {
+    tabs = ['Design'],
+    tab = $bindable(tabs[0]!),
+    kind = 'properties',
+    title = 'Contents',
+    oncollapse,
+    children,
+  }: Props = $props();
 
   const ws = getWorkspace();
   let zoomOpen = $state(false);
 </script>
 
-<aside class="inspector" aria-label="Properties">
-  <header class="top">
-    <div class="who" aria-hidden="true">A</div>
-    <span class="spacer"></span>
-    <button class="icon" type="button" title="Present" aria-label="Present">
-      <Play size={14} strokeWidth={1.75} />
-    </button>
-    <button class="share" type="button">Share</button>
-    {#if oncollapse}
-      <button class="icon" type="button" aria-label="Collapse right sidebar" onclick={oncollapse}>
-        <ChevronRight size={14} strokeWidth={2} />
-      </button>
-    {/if}
-  </header>
-
-  <div class="tabs">
-    {#each tabs as t (t)}
-      <button class="tab" class:on={tab === t} type="button" onclick={() => (tab = t)}>{t}</button>
-    {/each}
-    <span class="spacer"></span>
-
-    <div class="zoom">
-      <button
-        class="zoombtn"
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={zoomOpen}
-        onclick={() => (zoomOpen = !zoomOpen)}
-      >
-        {formatZoom(ws.viewport.z)}
-        <ChevronDown size={11} strokeWidth={2} />
-      </button>
-      {#if zoomOpen}
-        <ul class="menu" role="listbox" tabindex="-1" onmouseleave={() => (zoomOpen = false)}>
-          {#each ZOOM_STOPS.filter((s) => s >= 0.1 && s <= 8) as s (s)}
-            <li>
-              <button
-                type="button"
-                role="option"
-                aria-selected={Math.abs(ws.viewport.z - s) < 1e-6}
-                onclick={() => {
-                  ws.setZoom(s);
-                  zoomOpen = false;
-                }}>{formatZoom(s)}</button
-              >
-            </li>
-          {/each}
-        </ul>
+<aside class="inspector" aria-label={kind === 'navigation' ? title : 'Properties'}>
+  {#if kind === 'navigation'}
+    <header class="navtop">
+      <h1>{title}</h1>
+      {#if oncollapse}
+        <button class="icon" type="button" aria-label="Collapse right sidebar" onclick={oncollapse}>
+          <ChevronRight size={14} strokeWidth={2} />
+        </button>
       {/if}
+    </header>
+  {:else}
+    <header class="top">
+      <div class="who" aria-hidden="true">A</div>
+      <span class="spacer"></span>
+      <ThemeToggle />
+      <button class="icon" type="button" title="Present" aria-label="Present">
+        <Play size={14} strokeWidth={1.75} />
+      </button>
+      <button class="share" type="button">Share</button>
+      {#if oncollapse}
+        <button class="icon" type="button" aria-label="Collapse right sidebar" onclick={oncollapse}>
+          <ChevronRight size={14} strokeWidth={2} />
+        </button>
+      {/if}
+    </header>
+
+    <div class="tabs">
+      {#each tabs as t (t)}
+        <button class="tab" class:on={tab === t} type="button" onclick={() => (tab = t)}>{t}</button
+        >
+      {/each}
+      <span class="spacer"></span>
+
+      <div class="zoom">
+        <button
+          class="zoombtn"
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={zoomOpen}
+          onclick={() => (zoomOpen = !zoomOpen)}
+        >
+          {formatZoom(ws.viewport.z)}
+          <ChevronDown size={11} strokeWidth={2} />
+        </button>
+        {#if zoomOpen}
+          <ul class="menu" role="listbox" tabindex="-1" onmouseleave={() => (zoomOpen = false)}>
+            {#each ZOOM_STOPS.filter((s) => s >= 0.1 && s <= 8) as s (s)}
+              <li>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={Math.abs(ws.viewport.z - s) < 1e-6}
+                  onclick={() => {
+                    ws.setZoom(s);
+                    zoomOpen = false;
+                  }}>{formatZoom(s)}</button
+                >
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
     </div>
-  </div>
+  {/if}
 
   <div class="body">
     {@render children?.()}
@@ -89,7 +112,8 @@
     border-left: 1px solid var(--border);
   }
   .top,
-  .tabs {
+  .tabs,
+  .navtop {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -98,6 +122,16 @@
   }
   .top {
     height: var(--topbar-h);
+  }
+  .navtop {
+    height: var(--topbar-h);
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .navtop h1 {
+    margin: 0 0 0 4px;
+    font-size: 12px;
+    font-weight: 650;
   }
   .tabs {
     height: 34px;

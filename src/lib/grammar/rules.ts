@@ -2,14 +2,10 @@
  * Licensing rules — the single place that decides whether a function may sit
  * under a parent given the verb type and the siblings already there.
  *
- * Used twice, and that is the point:
- *   - `audits.ts` runs it over frozen content (is this parse legal?)
- *   - the span menu runs it over the learner's partial structure (may they
- *     pick this?), disabling items with the SAME reason string.
- *
- * So the constraint the learner meets in the UI and the constraint the content
- * must satisfy cannot drift apart. Teaching through affordance
- * (docs/interaction.md) is only honest if they are one rule set.
+ * `licenses()` validates committed/frozen grammar. `hypothesizes()` keeps that
+ * structural knowledge but intentionally relaxes verb-frame and prerequisite
+ * constraints for the answer menu: a learner must be able to try a plausible
+ * role before answering the separate verb-type question.
  */
 import type { ClauseFunction, Form, Func, VerbType } from './types.ts';
 
@@ -147,6 +143,50 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
 
     case 'coordinate':
       return ALLOWED;
+  }
+}
+
+/**
+ * May a learner TRY this function for the selected form?
+ *
+ * Unlike `licenses`, this deliberately ignores verb type and prerequisite
+ * siblings. Those are facts the exercise is asking the learner to discover,
+ * not reasons to make an answer look unavailable. It retains only structural
+ * compatibility and already-filled single slots. The grader decides whether
+ * a compatible hypothesis is correct before the builder stores it.
+ */
+export function hypothesizes(fn: Func, ctx: LicenseContext): Verdict {
+  const { parentForm: p, siblings } = ctx;
+  const has = (f: Func) => siblings.includes(f);
+  const childIs = (...forms: Form[]) => !ctx.childForm || forms.includes(ctx.childForm);
+  const once = (f: Func, message: string): Verdict => (has(f) ? no(message) : ALLOWED);
+
+  switch (fn) {
+    case 'subject':
+      if (!CLAUSAL.includes(p) || !childIs('NP', 'Cl')) return HIDDEN;
+      return once('subject', 'This clause already has a subject.');
+    case 'predicate':
+      if (!CLAUSAL.includes(p) || !childIs('VP')) return HIDDEN;
+      return once('predicate', 'This clause already has a predicate.');
+    case 'directObject':
+      if (p !== 'VP' || !childIs('NP', 'Cl')) return HIDDEN;
+      return once('directObject', 'This verb already has a direct object.');
+    case 'indirectObject':
+      if (p !== 'VP' || !childIs('NP')) return HIDDEN;
+      return once('indirectObject', 'This verb already has an indirect object.');
+    case 'subjectComplement':
+      if (p !== 'VP' || !childIs('NP', 'AdjP')) return HIDDEN;
+      return once('subjectComplement', 'This verb already has a subject complement.');
+    case 'objectComplement':
+      if (p !== 'VP' || !childIs('NP', 'AdjP')) return HIDDEN;
+      return once('objectComplement', 'This verb already has an object complement.');
+    case 'adverbial':
+      if (!childIs('AdvP', 'PP', 'NP', 'Cl')) return HIDDEN;
+      return p === 'VP' || CLAUSAL.includes(p) ? ALLOWED : HIDDEN;
+    default:
+      // Phrase-internal functions are structural rather than verb-frame
+      // hypotheses, so their ordinary license is already the right affordance.
+      return licenses(fn, ctx);
   }
 }
 

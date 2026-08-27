@@ -11,7 +11,7 @@
   import Tag from '@lucide/svelte/icons/tag';
   import Layers from '@lucide/svelte/icons/layers';
   import Settings from '@lucide/svelte/icons/settings';
-  import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
+  import BookOpen from '@lucide/svelte/icons/book-open';
   import { tick } from 'svelte';
 
   import Workspace from '$lib/workspace/Workspace.svelte';
@@ -49,6 +49,13 @@
   } from '$lib/grammar/options.ts';
   import { canonicalReading, type Form, type Span } from '$lib/grammar/types.ts';
   import type { Rect } from '$lib/workspace/viewport.ts';
+  import {
+    COURSE_STAGES,
+    CourseContents,
+    LessonSentenceList,
+    SentenceGraphs,
+    lessonById,
+  } from '$lib/course';
 
   const ws = new WorkspaceState();
 
@@ -62,6 +69,12 @@
 
   /* ------------------------------------------------------------- the work */
 
+  let lessonId = $state('01-introduction');
+  let middleView = $state<'lesson' | 'diagram'>('lesson');
+  const lesson = $derived(lessonById(lessonId));
+  const lessonSentences = $derived(
+    lesson.sentenceIds.map((id) => FIXTURES.find((sentence) => sentence.id === id)!),
+  );
   let sentenceId = $state('fix-vtr');
   const sentence = $derived(FIXTURES.find((s) => s.id === sentenceId)!);
   const words = $derived(sentence.words);
@@ -243,6 +256,19 @@
     verdict = null;
   }
 
+  function selectLesson(id: string, closeDrawer?: () => void) {
+    lessonId = id;
+    middleView = 'lesson';
+    closePalette();
+    closeDrawer?.();
+  }
+
+  function openSentence(id: string, closeDrawer?: () => void) {
+    sentenceId = id;
+    middleView = 'diagram';
+    closeDrawer?.();
+  }
+
   /** Close a completed decision, but keep the palette for a real follow-up. */
   function closeIfComplete() {
     if (isPanelComplete(optionsFor(build, words, selection))) closePalette();
@@ -322,29 +348,34 @@
   }
 </script>
 
-<Workspace {items} {ws} bind:active content={frame} {onmarquee} tabs={['Courses']}>
-  {#snippet panel(section)}
+<Workspace
+  {items}
+  {ws}
+  bind:active
+  content={middleView === 'diagram' ? frame : undefined}
+  onmarquee={middleView === 'diagram' ? onmarquee : undefined}
+  tabs={['Course']}
+  inspectorKind="navigation"
+  inspectorTitle="Lessons"
+  surface={middleView === 'diagram' ? 'canvas' : 'document'}
+>
+  {#snippet panel(section, closeDrawer)}
     {#if section === 'sentences'}
-      <ul class="lines">
-        {#each FIXTURES as s (s.id)}
-          <li>
-            <button
-              class="line"
-              class:on={s.id === sentenceId}
-              type="button"
-              aria-current={s.id === sentenceId ? 'true' : undefined}
-              onclick={() => (sentenceId = s.id)}
-            >
-              <span class="text">{s.text}</span>
-              <span class="tags">{s.features.join(' · ')}</span>
-            </button>
-          </li>
-        {/each}
-      </ul>
-      <button class="reset" type="button" onclick={reset}>
-        <RotateCcw size={12} strokeWidth={1.75} aria-hidden="true" />
-        Start this sentence again
+      <button
+        class="lesson-return"
+        type="button"
+        onclick={() => selectLesson(lessonId, closeDrawer)}
+      >
+        <BookOpen size={14} strokeWidth={1.8} />
+        {lesson.title}
       </button>
+      <p class="list-label">Practice sentences</p>
+      <LessonSentenceList
+        sentences={lessonSentences}
+        selectedId={middleView === 'diagram' ? sentenceId : null}
+        onselect={(id) => openSentence(id, closeDrawer)}
+        onreset={reset}
+      />
     {:else}
       <p class="empty">
         Nothing here yet — see <code>src/routes/+page.svelte</code>.
@@ -352,8 +383,12 @@
     {/if}
   {/snippet}
 
-  {#snippet inspector()}
-    <p class="empty">Empty</p>
+  {#snippet inspector(closeDrawer)}
+    <CourseContents
+      stages={COURSE_STAGES}
+      {lessonId}
+      onselect={(id) => selectLesson(id, closeDrawer)}
+    />
   {/snippet}
 
   {#snippet overlay()}
@@ -370,78 +405,55 @@
     />
   {/snippet}
 
-  <div class="board" style="left:0; top:0; width:{frame.w}px; height:{frame.h}px">
-    <Diagram
-      {words}
-      constituents={build.constituents}
-      verbType={build.verbType}
-      {marqueeIds}
-      {selection}
-      {draft}
-      {preview}
-      minDepth={depthMark}
-      onpick={(s) => {
-        verdict = null;
-        selection = s;
-      }}
-      {ondraft}
-    />
-  </div>
+  {#if middleView === 'lesson'}
+    <SentenceGraphs sentences={lessonSentences} />
+  {:else}
+    <div class="board" style="left:0; top:0; width:{frame.w}px; height:{frame.h}px">
+      <Diagram
+        {words}
+        constituents={build.constituents}
+        verbType={build.verbType}
+        {marqueeIds}
+        {selection}
+        {draft}
+        {preview}
+        onpick={(s) => {
+          verdict = null;
+          selection = s;
+        }}
+        {ondraft}
+      />
+    </div>
+  {/if}
 </Workspace>
 
 <style>
-  .lines {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .line {
-    display: block;
+  .lesson-return {
+    display: flex;
+    align-items: center;
     width: 100%;
-    padding: 7px 8px;
+    min-height: 38px;
+    gap: 8px;
+    padding: 0 8px;
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
-    color: inherit;
+    color: var(--accent);
     font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
     text-align: left;
-    cursor: default;
   }
-  .line:hover {
-    background: color-mix(in oklab, var(--ink) 7%, transparent);
+  .lesson-return:hover {
+    background: color-mix(in oklab, var(--accent) 10%, transparent);
   }
-  .line.on {
-    background: color-mix(in oklab, var(--accent) 18%, transparent);
-  }
-  .text {
-    display: block;
-    font-size: 12px;
-    color: var(--ink);
-  }
-  .tags {
-    display: block;
-    margin-top: 2px;
-    font-family: var(--font-mono);
-    font-size: 9.5px;
+  .list-label {
+    margin: 16px 8px 6px;
     color: var(--ink-faint);
-  }
-  .reset {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 10px 8px;
-    padding: 5px 8px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--ink-muted);
-    font: inherit;
-    font-size: 11px;
-    cursor: default;
-  }
-  .reset:hover {
-    color: var(--ink);
-    border-color: var(--border-strong);
+    font-size: 9.5px;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
   .empty {
     margin: 8px;

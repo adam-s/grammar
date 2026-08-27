@@ -4,6 +4,7 @@ export { default as Panel } from './Panel.svelte';
 export { default as Inspector } from './Inspector.svelte';
 export { default as Rail, type RailItem } from './Rail.svelte';
 export { default as Toolbar } from './Toolbar.svelte';
+export { default as ThemeToggle } from './ThemeToggle.svelte';
 export { default as Section } from './Section.svelte';
 export { default as Field } from './Field.svelte';
 export {
@@ -13,3 +14,5 @@ export {
   type ToolId,
 } from './workspace.svelte.ts';
 export * from './viewport.ts';
+export { theme } from './theme.svelte.ts';
+export * from './theme.ts';

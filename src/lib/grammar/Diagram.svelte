@@ -127,7 +127,9 @@
    * never re-flow the picture, and a learner tracking their own bracketing is
    * never made to re-find where they were.
    */
-  import { formName, functionMark, functionName, verbTypeMark, verbTypeName } from './names.ts';
+  import { formName } from './names.ts';
+  import { nodeLabelParts, nodeLabelWidth } from './node-label.ts';
+  import NodeLabel from './NodeLabel.svelte';
   import { hueSlot, type Form, type Span, type VerbType } from './types.ts';
   import type { Selection } from './options.ts';
   import { PHONE_QUERY, useMediaQuery } from '../workspace/responsive.svelte.ts';
@@ -146,8 +148,10 @@
     preview?: Form | null;
     /** Grows only — the picture must not jump as the tree deepens and shallows. */
     minDepth?: number;
-    onpick: (sel: Selection) => void;
-    ondraft: (span: Span | null, done: boolean) => void;
+    /** Read-only renderers use this same diagram without editor controls. */
+    interactive?: boolean;
+    onpick?: (sel: Selection) => void;
+    ondraft?: (span: Span | null, done: boolean) => void;
   };
   let {
     words,
@@ -158,8 +162,9 @@
     draft = null,
     preview = null,
     minDepth = 0,
-    onpick,
-    ondraft,
+    interactive = true,
+    onpick = () => {},
+    ondraft = () => {},
   }: Props = $props();
 
   const phone = useMediaQuery(PHONE_QUERY);
@@ -244,6 +249,7 @@
 
 <svg
   class="diagram"
+  class:readonly={!interactive}
   width={size.w}
   height={size.h}
   viewBox="0 0 {size.w} {size.h}"
@@ -271,50 +277,60 @@
 
     {#each Object.entries(L.nodes) as [id, box] (id)}
       {@const c = constituents[id]!}
-      {@const subtype = c.form === 'V' && verbType ? verbTypeMark(verbType) : null}
-      {@const subtypeName = c.form === 'V' && verbType ? verbTypeName(verbType) : null}
-      {@const functionCode = c.function ? functionMark(c.function, c.obligatory === true) : null}
-      {@const fullFunctionName = c.function
-        ? functionName(c.function, c.obligatory === true)
-        : null}
+      {@const labelParts = nodeLabelParts({
+        form: c.form,
+        function: c.function,
+        obligatory: c.obligatory,
+        verbType,
+        clauseKind: c.clauseKind,
+      })}
+      {@const labelWidth = nodeLabelWidth({
+        form: c.form,
+        function: c.function,
+        obligatory: c.obligatory,
+        verbType,
+        clauseKind: c.clauseKind,
+      })}
       {@const on =
         (selection.kind === 'node' && selection.id === id) ||
         (selection.kind === 'nodes' && selection.ids.includes(id))}
       {@const marquee = marqueeIds.includes(id)}
-      {@const nodeHitW = phone.matches ? Math.max(60, minimumTouchWorld) : 52}
+      {@const nodeHitW = phone.matches
+        ? Math.max(60, labelWidth, minimumTouchWorld)
+        : Math.max(52, labelWidth)}
       {@const nodeHitH = phone.matches ? Math.max(44, minimumTouchWorld) : 26}
-      {@const nodeMarkW = phone.matches ? Math.min(52, 140 / ws.viewport.z) : 52}
-      {@const nodeMarkH = phone.matches ? Math.min(26, 56 / ws.viewport.z) : 26}
+      {@const nodeMarkW = Math.max(52, labelWidth)}
+      {@const nodeMarkH = 28}
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (role and tabindex change together) -->
       <g
         class="node"
         class:on
         class:marquee
         class:leaf={box.isLeaf}
         style="--hue:{hue(c.form)}"
-        role="button"
-        tabindex="0"
-        aria-label="{formName(c.form)}{subtypeName ? `, ${subtypeName}` : ''}{fullFunctionName
-          ? `, ${fullFunctionName}`
-          : ''}"
-        aria-pressed={on}
+        role={interactive ? 'button' : undefined}
+        tabindex={interactive ? 0 : undefined}
+        aria-label={labelParts.accessibleName}
+        aria-pressed={interactive ? on : undefined}
         onpointerdown={(e) => {
+          if (!interactive) return;
           e.stopPropagation();
           onpick({ kind: 'node', id });
         }}
-        onkeydown={(e) => e.key === 'Enter' && onpick({ kind: 'node', id })}
+        onkeydown={(e) => interactive && e.key === 'Enter' && onpick({ kind: 'node', id })}
       >
         {#if !box.isLeaf}
           <line class="bracket" x1={box.left} y1={box.y + 24} x2={box.right} y2={box.y + 24} />
         {/if}
         <title
-          >{formName(c.form)}{subtypeName ? ` · ${subtypeName}` : ''}{fullFunctionName
-            ? ` · ${fullFunctionName}`
-            : ''}</title
+          >{[labelParts.formName, labelParts.subtypeName, labelParts.functionName]
+            .filter(Boolean)
+            .join(' · ')}</title
         >
         <rect
           class="mark"
           x={box.x - nodeMarkW / 2}
-          y={box.y + 11 - nodeMarkH / 2}
+          y={box.y - 4}
           width={nodeMarkW}
           height={nodeMarkH}
         />
@@ -325,17 +341,15 @@
           width={nodeHitW}
           height={nodeHitH}
         />
-        <text class="form" x={box.x} y={box.y + 14}>{c.form}</text>
-        {#if functionCode}
-          <text class="function-mark" x={box.x - 8} y={box.y + 7} aria-hidden="true">
-            {functionCode}
-          </text>
-        {/if}
-        {#if subtype}
-          <text class="verb-subtype" x={box.x + 8} y={box.y + 7} aria-hidden="true">
-            {subtype}
-          </text>
-        {/if}
+        <NodeLabel
+          x={box.x}
+          y={box.y}
+          form={c.form}
+          function={c.function}
+          obligatory={c.obligatory}
+          {verbType}
+          clauseKind={c.clauseKind}
+        />
       </g>
     {/each}
 
@@ -347,18 +361,19 @@
       {@const wordHitW = phone.matches ? Math.max(slot.width, minimumTouchWorld) : slot.width}
       {@const wordHitH = phone.matches ? Math.max(48, minimumTouchWorld) : 30}
       {@const wordMarkH = phone.matches ? 36 / ws.viewport.z : 30}
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (role and tabindex change together) -->
       <g
         class="word"
         class:sel
-        role="button"
-        tabindex="0"
+        role={interactive ? 'button' : undefined}
+        tabindex={interactive ? 0 : undefined}
         aria-label={words[slot.i]!.text}
-        aria-pressed={sel}
-        onpointerdown={(e) => down(slot.i, e)}
-        onpointerenter={() => move(slot.i)}
-        onpointerup={up}
+        aria-pressed={interactive ? sel : undefined}
+        onpointerdown={(e) => interactive && down(slot.i, e)}
+        onpointerenter={() => interactive && move(slot.i)}
+        onpointerup={() => interactive && up()}
         onkeydown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (interactive && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             ondraft([slot.i, slot.i], true);
           }
@@ -400,6 +415,9 @@
   .word .hit {
     pointer-events: all;
   }
+  .diagram.readonly .hit {
+    pointer-events: none;
+  }
 
   text {
     text-anchor: middle;
@@ -415,28 +433,6 @@
     stroke: var(--hue);
     stroke-width: 2;
     stroke-linecap: round;
-  }
-  .node .form {
-    font-size: 13px;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    fill: var(--hue);
-  }
-  .node .verb-subtype {
-    font-size: 8px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    fill: var(--hue);
-    text-anchor: start;
-    pointer-events: none;
-  }
-  .node .function-mark {
-    font-size: 7px;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    fill: var(--hue);
-    text-anchor: end;
-    pointer-events: none;
   }
   .node .hit {
     fill: transparent;

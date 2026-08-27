@@ -212,21 +212,23 @@ describe('every option explains itself', () => {
   it('replaces both with the reason when an option is blocked', () => {
     const s = built();
     const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [2, 3])! });
-    const io = opt(p, 'func:indirectObject')!;
-    assert.equal(io.state, 'blocked');
-    assert.match(io.note ?? '', /transitive/);
+    const head = opt(p, 'func:head')!;
+    assert.equal(head.state, 'blocked');
+    assert.match(head.note ?? '', /head of a verb phrase/i);
   });
 });
 
 describe('functions are contingent, so they are filtered', () => {
-  it('omits what can never apply and blocks what merely does not yet', () => {
+  it('offers compatible hypotheses but still blocks structural impossibilities', () => {
     const s = built();
     const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [2, 3])! });
     // A subject cannot ever sit inside a verb phrase: gone, not greyed.
     assert.equal(opt(p, 'func:subject'), undefined);
-    assert.equal(opt(p, 'func:objectComplement'), undefined);
-    // A direct object is exactly what a transitive verb licenses here.
+    // These are grammatically compatible NP hypotheses. The grader, not a
+    // grey row, tells the learner which one fits this sentence.
     assert.equal(opt(p, 'func:directObject')!.state, 'available');
+    assert.equal(opt(p, 'func:indirectObject')!.state, 'available');
+    assert.equal(opt(p, 'func:objectComplement')!.state, 'available');
     // The head of a verb phrase is a verb, and this is a noun phrase.
     assert.equal(opt(p, 'func:head')!.state, 'blocked');
   });
@@ -251,7 +253,7 @@ describe('functions are contingent, so they are filtered', () => {
   });
 
   it('offers direct object on a top-level NP before the VP is drawn', () => {
-    let s = setVerbType(emptyBuild(), 'Vtr');
+    let s = emptyBuild();
     s = wrap(s, W, [1, 1], 'V');
     s = wrap(s, W, [2, 2], 'Det');
     s = wrap(s, W, [3, 3], 'N');
@@ -261,6 +263,9 @@ describe('functions are contingent, so they are filtered', () => {
 
     assert.equal(opt(p, 'func:subject')!.state, 'available');
     assert.equal(opt(p, 'func:directObject')!.state, 'available');
+    assert.equal(opt(p, 'func:indirectObject')!.state, 'available');
+    assert.equal(opt(p, 'func:subjectComplement')!.state, 'available');
+    assert.equal(opt(p, 'func:objectComplement')!.state, 'available');
   });
 });
 

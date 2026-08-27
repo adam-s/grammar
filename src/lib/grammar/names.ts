@@ -9,7 +9,7 @@
  * `title` attribute would be inaccessible on touch and fragile by keyboard.
  */
 import { label } from './audits.ts';
-import type { Form, Func, VerbType } from './types.ts';
+import type { ClauseKind, Form, Func, VerbType } from './types.ts';
 
 export { label };
 
@@ -63,6 +63,24 @@ export const VERB_TYPE_NAME: Record<VerbType, string> = {
 
 export const verbTypeMark = (type: VerbType): string => VERB_TYPE_MARK[type];
 export const verbTypeName = (type: VerbType): string => VERB_TYPE_NAME[type];
+
+/** Compact right-hand qualifiers for the four clause subtypes. */
+export const CLAUSE_KIND_MARK: Record<ClauseKind, string> = {
+  relative: 'Rel',
+  nominal: 'Nom',
+  adverbial: 'Adv',
+  comparative: 'Comp',
+};
+
+export const CLAUSE_KIND_NAME: Record<ClauseKind, string> = {
+  relative: 'relative clause',
+  nominal: 'nominal clause',
+  adverbial: 'adverbial clause',
+  comparative: 'comparative clause',
+};
+
+export const clauseKindMark = (kind: ClauseKind): string => CLAUSE_KIND_MARK[kind];
+export const clauseKindName = (kind: ClauseKind): string => CLAUSE_KIND_NAME[kind];
 
 /**
  * Compact function marks for diagram nodes. Form stays primary in the centre;

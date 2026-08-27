@@ -29,12 +29,16 @@
     ws?: WorkspaceState;
     active?: string;
     tabs?: string[];
+    inspectorKind?: 'properties' | 'navigation';
+    inspectorTitle?: string;
     /** What ⇧1 and "zoom to fit" should frame. */
     content?: Rect;
+    /** Lessons scroll like documents; diagrams retain the pan-and-zoom canvas. */
+    surface?: 'canvas' | 'document';
     /** Desktop drag-selection rectangle, expressed in world coordinates. */
     onmarquee?: (rect: Rect | null, done: boolean) => void;
-    panel?: Snippet<[string]>;
-    inspector?: Snippet;
+    panel?: Snippet<[string, () => void]>;
+    inspector?: Snippet<[() => void]>;
     /** Screen-space UI that floats above the canvas but does not pan or zoom. */
     overlay?: Snippet;
     children?: Snippet;
@@ -44,7 +48,10 @@
     ws = new WorkspaceState(),
     active = $bindable(items[0]?.id ?? ''),
     tabs,
+    inspectorKind = 'properties',
+    inspectorTitle = 'Contents',
     content,
+    surface = 'canvas',
     onmarquee,
     panel,
     inspector,
@@ -58,6 +65,9 @@
   setWorkspace(ws);
 
   const title = $derived(items.find((i) => i.id === active)?.label ?? '');
+  const rightLabel = $derived(
+    inspectorKind === 'navigation' ? inspectorTitle : (tabs?.[0] ?? 'Details'),
+  );
   let leftOpen = $state(true);
   let rightOpen = $state(true);
   const compact = useMediaQuery(COMPACT_WORKSPACE_QUERY);
@@ -87,6 +97,11 @@
     leftOpen = false;
     rightOpen = false;
   }
+
+  /** Navigation replaces an overlay on compact screens; desktop columns persist. */
+  function closeNavigationDrawers() {
+    if (compact.matches) closeDrawers();
+  }
 </script>
 
 <div
@@ -112,16 +127,22 @@
 
   {#if leftOpen}
     <Panel {title} oncollapse={() => (leftOpen = false)}>
-      {@render panel?.(active)}
+      {@render panel?.(active, closeNavigationDrawers)}
     </Panel>
   {/if}
 
   <main class="stage">
-    <Canvas {content} {onmarquee}>
-      {@render children?.()}
-    </Canvas>
-    <Toolbar {content} />
-    {@render overlay?.()}
+    {#if surface === 'canvas'}
+      <Canvas {content} {onmarquee}>
+        {@render children?.()}
+      </Canvas>
+      <Toolbar {content} />
+      {@render overlay?.()}
+    {:else}
+      <div class="document" role="region" aria-label="Lesson">
+        {@render children?.()}
+      </div>
+    {/if}
     {#if !leftOpen}
       <button class="reopen left" type="button" aria-label="Expand left sidebar" onclick={openLeft}>
         <ChevronRight size={14} strokeWidth={2} />
@@ -135,15 +156,20 @@
         aria-label="Expand right sidebar"
         onclick={openRight}
       >
-        <span>{tabs?.[0] ?? 'Details'}</span>
+        <span>{rightLabel}</span>
         <ChevronLeft size={14} strokeWidth={2} />
       </button>
     {/if}
   </main>
 
   {#if rightVisible}
-    <Inspector {tabs} oncollapse={() => (rightOpen = false)}>
-      {@render inspector?.()}
+    <Inspector
+      {tabs}
+      kind={inspectorKind}
+      title={inspectorTitle}
+      oncollapse={() => (rightOpen = false)}
+    >
+      {@render inspector?.(closeNavigationDrawers)}
     </Inspector>
   {/if}
 </div>
@@ -175,6 +201,13 @@
     position: relative;
     min-width: 0;
     min-height: 0;
+  }
+  .document {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .reopen {
     position: absolute;

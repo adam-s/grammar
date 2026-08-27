@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { licenses } from './rules.ts';
+import { hypothesizes, licenses } from './rules.ts';
 import type { Form, Func, VerbType } from './types.ts';
 
 type Row = {
@@ -191,6 +191,51 @@ describe('head-form agreement', () => {
     assert.equal(
       licenses('head', { parentForm: 'VP', verbType: null, siblings: [] }).state,
       'allowed',
+    );
+  });
+});
+
+describe('answer hypotheses are not gated by verb-frame knowledge', () => {
+  for (const fn of [
+    'directObject',
+    'indirectObject',
+    'subjectComplement',
+    'objectComplement',
+  ] as const) {
+    it(`allows an NP to try ${fn} before the verb frame is complete`, () => {
+      assert.equal(
+        hypothesizes(fn, {
+          parentForm: 'VP',
+          verbType: null,
+          siblings: [],
+          childForm: 'NP',
+        }).state,
+        'allowed',
+      );
+    });
+  }
+
+  it('still hides a role incompatible with the selected form', () => {
+    assert.equal(
+      hypothesizes('directObject', {
+        parentForm: 'VP',
+        verbType: null,
+        siblings: [],
+        childForm: 'V',
+      }).state,
+      'hidden',
+    );
+  });
+
+  it('still blocks a slot already filled by a sibling', () => {
+    assert.equal(
+      hypothesizes('directObject', {
+        parentForm: 'VP',
+        verbType: 'Vtr',
+        siblings: ['directObject'],
+        childForm: 'NP',
+      }).state,
+      'disabled',
     );
   });
 });

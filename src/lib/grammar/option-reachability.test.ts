@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
 import {
   emptyBuild,
+  hypothesisFor,
   licenseFor,
   nodeOver,
   setFunction,
@@ -23,11 +24,11 @@ function optionFor(state: BuildState, words: SentenceEntry['words'], id: string,
     .find((option) => option.key === key);
 }
 
-/** The palette is only a renderer of builder licensing; check that invariant at every state. */
+/** The palette renders hypothesis compatibility; check that invariant at every state. */
 function assertMenuMatchesBuilder(state: BuildState, sentence: SentenceEntry, path: string) {
   for (const id of Object.keys(state.constituents)) {
     for (const fn of FUNCTIONS) {
-      const verdict = licenseFor(state, id, fn);
+      const verdict = hypothesisFor(state, id, fn);
       const option = optionFor(state, sentence.words, id, `func:${fn}`);
       const obligatory =
         fn === 'adverbial'
