@@ -9,53 +9,6 @@ The lesson presentation and data architecture are specified in
 
 ## What a lesson is
 
-The same five parts every time, so nobody spends attention on navigation:
-
-1. **The sentence** — one real sentence, and a question about it you cannot yet
-   answer.
-2. **The idea** — the smallest amount of new vocabulary that answers it. _One_
-   new idea. Not two.
-3. **The worked example** — the same sentence, built step by step, with the
-   learner driving. Nothing auto-plays.
-4. **The problems** — five to eight sentences, escalating, drawn from the same
-   source work as the opener.
-5. **The turn** — one sentence that breaks the rule just taught, previewing the
-   next lesson.
-
-Three constraints on how a lesson is written:
-
-- **Reject notional definitions.** "A noun is a person, place or thing" fails on
-  _justice_, _arrival_, _the fact that he left_. Teach the formal test instead —
-  it is mechanical and it always works. Every label in the app already carries
-  one.
-- **The terse line is authored first.** A lesson has three layers: what is
-  always on screen (about eight words), what is one click away (the glossary
-  entry for the term in play, the procedure with the current step marked), and
-  the full explanation on demand. Generating the short form by truncating the
-  long one reliably produces a bad short form.
-- **Difficulty comes from the corpus, not from the questions.** Sentence
-  complexity is the dial, and it is measurable — token count, clause count, tree
-  depth. Bucket the bank by it and the curve builds itself.
-- **The required path stays short.** A lesson reaches its first action in the
-  first viewport, uses no more than 350 words of required prose, and takes three
-  to five minutes before practice. Copy and visualization budgets live in
-  `../grammar-course-visual-technique.md`; longer context is optional, one click
-  away.
-
-## The sequence
-
-Two traditions disagree about the opening. School grammar starts with subject
-and predicate; Morenberg starts with the verb. They compose if the split is the
-**frame** and the verb is the **engine**: lesson 2 gives the two-part shape,
-lesson 3 finds the pivot, and from there the verb's type predicts everything
-that follows. The other order asks a learner to classify a verb before they know
-what a predicate is.
-
-The sequence below covers the grammar represented by the app. It does not claim
-to cover all of English grammar. Every public label has one lesson where it is
-first taught, and every later lesson may assume only that lesson and the ones
-before it.
-
 ### Stage 1 — See the frame
 
 | #   | Lesson                   | One new idea                                            | The turn                                       |
@@ -379,6 +332,13 @@ that is a trademark question, separate from copyright. Cite influences the
 normal way, in further reading.
 
 ## Prior art
+
+**Max Morenberg, *Doing Grammar* (Oxford), is the pedagogical source.** He
+teaches analysis by having the reader perform it, building each sentence from
+the bottom up and letting the terminology follow the work. The lesson shape here
+comes from that: one sentence, one decision at a time, and a formal test in
+place of a notional definition. The departure is that this is an assessment, so
+it may not show its working the way a textbook can.
 
 The previous attempt is at `~/Projects/Temp/grammar`. Its code is superseded;
 its `docs/` still holds the taxonomy analysis, the chapter shape, and the
