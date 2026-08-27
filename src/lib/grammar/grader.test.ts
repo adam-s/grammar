@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { emptyBuild, setFunction, setVerbType, wrap } from './builder.ts';
-import { ambiguous, vtr } from './fixtures.ts';
+import { ambiguous, vbe, vtr } from './fixtures.ts';
 import { gradeBuild, gradeForm, gradeFunction, hintFor, type Outcome } from './grader.ts';
 import type { Form, Func, Span } from './types.ts';
 
@@ -84,6 +84,15 @@ describe('grading against a single-reading sentence', () => {
       );
       assert.match(out.reason, /\.$/);
     }
+  });
+});
+
+describe('the obligatory-adverbial choice', () => {
+  it('distinguishes a required adverbial from an optional one', () => {
+    assert.equal(gradeFunction(vbe, [3, 5], 'PP', 'adverbial', true).kind, 'correct');
+    const ordinary = gradeFunction(vbe, [3, 5], 'PP', 'adverbial', false);
+    assert.equal(ordinary.kind, 'wrong');
+    if (ordinary.kind === 'wrong') assert.match(ordinary.reason, /obligatory adverbial/);
   });
 });
 

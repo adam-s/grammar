@@ -124,9 +124,22 @@ export function gradeForm(sentence: SentenceEntry, span: Span, form: Form): Outc
 }
 
 /** Did the learner give this constituent the right FUNCTION? */
-export function gradeFunction(sentence: SentenceEntry, span: Span, form: Form, fn: Func): Outcome {
+export function gradeFunction(
+  sentence: SentenceEntry,
+  span: Span,
+  form: Form,
+  fn: Func,
+  obligatory?: boolean,
+): Outcome {
   for (const r of ordered(sentence)) {
-    if (at(r, span).some((c) => c.form === form && c.function === fn)) {
+    if (
+      at(r, span).some(
+        (c) =>
+          c.form === form &&
+          c.function === fn &&
+          (obligatory === undefined || Boolean(c.obligatory) === obligatory),
+      )
+    ) {
       return r.id === sentence.canonicalId
         ? { kind: 'correct', readingId: r.id }
         : {
@@ -136,6 +149,25 @@ export function gradeFunction(sentence: SentenceEntry, span: Span, form: Form, f
             canonicalGloss: canonical(sentence).gloss,
           };
     }
+  }
+  if (
+    fn === 'adverbial' &&
+    obligatory !== undefined &&
+    ordered(sentence).some((r) =>
+      at(r, span).some(
+        (c) => c.form === form && c.function === fn && !!c.obligatory !== obligatory,
+      ),
+    )
+  ) {
+    const words = sentence.words
+      .slice(span[0], span[1] + 1)
+      .map((w) => w.text)
+      .join(' ');
+    return {
+      kind: 'wrong',
+      reason: `“${words}” is ${obligatory ? 'an optional' : 'an obligatory'} adverbial here.`,
+      test: 'Remove it: if the clause becomes incomplete, the adverbial is obligatory.',
+    };
   }
   const truths = new Set(
     ordered(sentence)

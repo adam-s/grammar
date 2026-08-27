@@ -1,15 +1,23 @@
 <script module lang="ts">
   import { layout } from './layout.ts';
+  import {
+    DIAGRAM_PAD,
+    DIAGRAM_ROW,
+    DIAGRAM_WORD_GAP,
+    selectionFocusRect as focusRect,
+  } from './selection-focus.ts';
+  import type { Selection as GrammarSelection } from './options.ts';
   import type { ConstituentMap, Word } from './types.ts';
+  import { bounds, type Rect } from '../workspace/viewport.ts';
 
-  const PAD = 44;
+  const PAD = DIAGRAM_PAD;
   /**
    * Gap between the deepest label row and the words themselves. Generous
    * because the words are set much larger than the labels, and a tag sitting on
    * the word it tags is worse than no tag.
    */
-  const WORD_GAP = 46;
-  const ROW = 54;
+  const WORD_GAP = DIAGRAM_WORD_GAP;
+  const ROW = DIAGRAM_ROW;
 
   /**
    * The artboard the diagram needs, in world units. Exported because the canvas
@@ -20,6 +28,91 @@
   export function diagramSize(cs: ConstituentMap, words: Word[], minDepth = 0) {
     const l = layout(cs, words, { rowHeight: ROW, minDepth });
     return { x: 0, y: 0, w: l.width + PAD * 2, h: l.height + WORD_GAP + 30 + PAD * 2 };
+  }
+
+  /**
+   * The selected thing in world coordinates. A screen-space popup can follow
+   * this through pan and zoom without measuring SVG DOM or scaling itself.
+   */
+  export function selectionRect(
+    cs: ConstituentMap,
+    words: Word[],
+    selection: GrammarSelection,
+    minDepth = 0,
+  ): Rect | null {
+    const l = layout(cs, words, { rowHeight: ROW, minDepth });
+
+    if (selection.kind === 'span') {
+      const lo = l.words[selection.span[0]];
+      const hi = l.words[selection.span[1]];
+      if (!lo || !hi) return null;
+      const wordY = l.height + WORD_GAP;
+      return {
+        x: PAD + lo.left,
+        y: PAD + wordY - 20,
+        w: hi.right - lo.left,
+        h: 30,
+      };
+    }
+
+    if (selection.kind === 'node') {
+      const box = l.nodes[selection.id];
+      if (!box) return null;
+      const width = Math.max(52, box.right - box.left);
+      return {
+        x: PAD + box.x - width / 2,
+        y: PAD + box.y - 2,
+        w: width,
+        h: 26,
+      };
+    }
+
+    if (selection.kind === 'nodes') {
+      const rects = selection.ids.flatMap((id) => {
+        const box = l.nodes[id];
+        if (!box) return [];
+        const width = Math.max(52, box.right - box.left);
+        return [
+          {
+            x: PAD + box.x - width / 2,
+            y: PAD + box.y - 2,
+            w: width,
+            h: 26,
+          },
+        ];
+      });
+      return rects.length > 0 ? bounds(rects) : null;
+    }
+
+    return null;
+  }
+
+  /**
+   * Everything the camera must preserve for a committed selection: its words,
+   * the labels already built over them, and their brackets. This is wider and
+   * taller than the popup anchor by design.
+   */
+  export function selectionFocusRect(
+    cs: ConstituentMap,
+    words: Word[],
+    selection: GrammarSelection,
+    minDepth = 0,
+  ): Rect | null {
+    return focusRect(cs, words, selection, minDepth);
+  }
+
+  /** The complete sentence row is protected from contextual UI, not only the selection. */
+  export function wordRowRect(cs: ConstituentMap, words: Word[], minDepth = 0): Rect | null {
+    const l = layout(cs, words, { rowHeight: ROW, minDepth });
+    const lo = l.words[0];
+    const hi = l.words[l.words.length - 1];
+    if (!lo || !hi) return null;
+    return {
+      x: PAD + lo.left,
+      y: PAD + l.height + WORD_GAP - 20,
+      w: hi.right - lo.left,
+      h: 30,
+    };
   }
 </script>
 
@@ -34,14 +127,19 @@
    * never re-flow the picture, and a learner tracking their own bracketing is
    * never made to re-find where they were.
    */
-  import { formName, label } from './names.ts';
-  import { hueSlot, type Form, type Span } from './types.ts';
+  import { formName, functionMark, functionName, verbTypeMark, verbTypeName } from './names.ts';
+  import { hueSlot, type Form, type Span, type VerbType } from './types.ts';
   import type { Selection } from './options.ts';
+  import { PHONE_QUERY, useMediaQuery } from '../workspace/responsive.svelte.ts';
+  import { getWorkspace } from '../workspace/workspace.svelte.ts';
 
   type Props = {
     words: Word[];
     constituents: ConstituentMap;
+    verbType?: VerbType | null;
     selection: Selection;
+    /** Valid node candidates underneath a marquee that has not committed yet. */
+    marqueeIds?: string[];
     /** Words currently being dragged over, before the selection commits. */
     draft?: Span | null;
     /** The form the panel is hovering: draw what picking it would produce. */
@@ -54,13 +152,21 @@
   let {
     words,
     constituents,
+    verbType = null,
     selection,
+    marqueeIds = [],
     draft = null,
     preview = null,
     minDepth = 0,
     onpick,
     ondraft,
   }: Props = $props();
+
+  const phone = useMediaQuery(PHONE_QUERY);
+  const ws = getWorkspace();
+  /** SVG geometry scales with the camera; counter-scale touch targets so a
+   * fitted sentence still offers a physical 44px target on a narrow phone. */
+  const minimumTouchWorld = $derived(phone.matches ? 44 / ws.viewport.z : 0);
 
   const L = $derived(layout(constituents, words, { rowHeight: ROW, minDepth }));
   const wordY = $derived(L.height + WORD_GAP);
@@ -74,6 +180,7 @@
     if (draft) return draft;
     if (selection.kind === 'span') return selection.span;
     if (selection.kind === 'node') return constituents[selection.id]?.span ?? null;
+    if (selection.kind === 'nodes') return selection.span;
     return null;
   });
 
@@ -144,8 +251,8 @@
   aria-label="Sentence structure"
 >
   <g transform="translate({PAD},{PAD})">
-    <!-- What picking the hovered label would produce. Only a persistent panel
-         can offer this at all: a popup covers the thing it is asking about. -->
+    <!-- What picking the hovered label would produce. The contextual palette
+         protects the word row, so this preview and its source stay visible. -->
     {#if previewBox}
       <g class="preview" style="--hue:{hue(previewBox.form)}">
         <line x1={previewBox.left} y1={previewBox.y} x2={previewBox.right} y2={previewBox.y} />
@@ -164,15 +271,31 @@
 
     {#each Object.entries(L.nodes) as [id, box] (id)}
       {@const c = constituents[id]!}
-      {@const on = selection.kind === 'node' && selection.id === id}
+      {@const subtype = c.form === 'V' && verbType ? verbTypeMark(verbType) : null}
+      {@const subtypeName = c.form === 'V' && verbType ? verbTypeName(verbType) : null}
+      {@const functionCode = c.function ? functionMark(c.function, c.obligatory === true) : null}
+      {@const fullFunctionName = c.function
+        ? functionName(c.function, c.obligatory === true)
+        : null}
+      {@const on =
+        (selection.kind === 'node' && selection.id === id) ||
+        (selection.kind === 'nodes' && selection.ids.includes(id))}
+      {@const marquee = marqueeIds.includes(id)}
+      {@const nodeHitW = phone.matches ? Math.max(60, minimumTouchWorld) : 52}
+      {@const nodeHitH = phone.matches ? Math.max(44, minimumTouchWorld) : 26}
+      {@const nodeMarkW = phone.matches ? Math.min(52, 140 / ws.viewport.z) : 52}
+      {@const nodeMarkH = phone.matches ? Math.min(26, 56 / ws.viewport.z) : 26}
       <g
         class="node"
         class:on
+        class:marquee
         class:leaf={box.isLeaf}
         style="--hue:{hue(c.form)}"
         role="button"
         tabindex="0"
-        aria-label="{formName(c.form)}{c.function ? `, ${c.function}` : ''}"
+        aria-label="{formName(c.form)}{subtypeName ? `, ${subtypeName}` : ''}{fullFunctionName
+          ? `, ${fullFunctionName}`
+          : ''}"
         aria-pressed={on}
         onpointerdown={(e) => {
           e.stopPropagation();
@@ -183,11 +306,35 @@
         {#if !box.isLeaf}
           <line class="bracket" x1={box.left} y1={box.y + 24} x2={box.right} y2={box.y + 24} />
         {/if}
-        <title>{formName(c.form)}{c.function ? ` · ${label(c.function)}` : ''}</title>
-        <rect class="hit" x={box.x - 26} y={box.y - 2} width="52" height="26" />
+        <title
+          >{formName(c.form)}{subtypeName ? ` · ${subtypeName}` : ''}{fullFunctionName
+            ? ` · ${fullFunctionName}`
+            : ''}</title
+        >
+        <rect
+          class="mark"
+          x={box.x - nodeMarkW / 2}
+          y={box.y + 11 - nodeMarkH / 2}
+          width={nodeMarkW}
+          height={nodeMarkH}
+        />
+        <rect
+          class="hit"
+          x={box.x - nodeHitW / 2}
+          y={box.y - (phone.matches ? nodeHitH / 2 - 12 : 2)}
+          width={nodeHitW}
+          height={nodeHitH}
+        />
         <text class="form" x={box.x} y={box.y + 14}>{c.form}</text>
-        {#if c.function}
-          <text class="func" x={box.x} y={box.y + 41}>{label(c.function)}</text>
+        {#if functionCode}
+          <text class="function-mark" x={box.x - 8} y={box.y + 7} aria-hidden="true">
+            {functionCode}
+          </text>
+        {/if}
+        {#if subtype}
+          <text class="verb-subtype" x={box.x + 8} y={box.y + 7} aria-hidden="true">
+            {subtype}
+          </text>
         {/if}
       </g>
     {/each}
@@ -197,6 +344,9 @@
          must never appear or vanish as the structure grows. -->
     {#each L.words as slot (slot.i)}
       {@const sel = inSpan(activeSpan, slot.i)}
+      {@const wordHitW = phone.matches ? Math.max(slot.width, minimumTouchWorld) : slot.width}
+      {@const wordHitH = phone.matches ? Math.max(48, minimumTouchWorld) : 30}
+      {@const wordMarkH = phone.matches ? 36 / ws.viewport.z : 30}
       <g
         class="word"
         class:sel
@@ -214,7 +364,22 @@
           }
         }}
       >
-        <rect x={slot.left} y={wordY - 20} width={slot.width} height="30" rx="4" />
+        <rect
+          class="mark"
+          x={slot.left}
+          y={wordY - wordMarkH / 2 - 5}
+          width={slot.width}
+          height={wordMarkH}
+          rx="4"
+        />
+        <rect
+          class="hit"
+          x={slot.x - wordHitW / 2}
+          y={wordY - (phone.matches ? wordHitH / 2 + 5 : 20)}
+          width={wordHitW}
+          height={wordHitH}
+          rx="4"
+        />
         <text x={slot.x} y={wordY}>{words[slot.i]!.text}</text>
       </g>
     {/each}
@@ -226,6 +391,14 @@
     display: block;
     overflow: visible;
     font-family: var(--font-sans);
+    /* Empty SVG pixels belong to the canvas marquee. Interactive nodes and
+       words opt their dedicated hit rectangles back in below. */
+    pointer-events: none;
+  }
+
+  .node .hit,
+  .word .hit {
+    pointer-events: all;
   }
 
   text {
@@ -249,34 +422,55 @@
     font-weight: 600;
     fill: var(--hue);
   }
-  .node .func {
-    font-size: 11px;
-    fill: var(--ink-muted);
-    font-style: italic;
+  .node .verb-subtype {
+    font-size: 8px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    fill: var(--hue);
+    text-anchor: start;
+    pointer-events: none;
+  }
+  .node .function-mark {
+    font-size: 7px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    fill: var(--hue);
+    text-anchor: end;
+    pointer-events: none;
   }
   .node .hit {
     fill: transparent;
   }
-  .node:hover .hit {
+  .node .mark {
+    fill: transparent;
+  }
+  .node:hover .mark {
     fill: color-mix(in oklab, var(--hue) 14%, transparent);
     rx: 5px;
   }
-  .node.on .hit {
+  .node.on .mark {
     fill: color-mix(in oklab, var(--hue) 22%, transparent);
     stroke: var(--hue);
     rx: 5px;
   }
+  .node.marquee .mark {
+    fill: color-mix(in oklab, var(--accent) 18%, transparent);
+    stroke: var(--accent);
+    stroke-dasharray: 3 2;
+    rx: 5px;
+  }
 
-  .word rect {
+  .word .hit,
+  .word .mark {
     fill: transparent;
   }
   .word text {
     font-size: 17px;
   }
-  .word:hover rect {
+  .word:hover .mark {
     fill: color-mix(in oklab, var(--ink) 8%, transparent);
   }
-  .word.sel rect {
+  .word.sel .mark {
     fill: color-mix(in oklab, var(--accent) 24%, transparent);
     stroke: var(--accent);
     stroke-width: 1;

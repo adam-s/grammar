@@ -62,18 +62,22 @@ const UNCLASSIFIED = 'Classify the verb first — its type decides which slots e
 export function licenses(fn: Func, ctx: LicenseContext): Verdict {
   const { parentForm: p, verbType: vt, siblings } = ctx;
   const has = (f: Func) => siblings.includes(f);
+  const childIs = (...forms: Form[]) => !ctx.childForm || forms.includes(ctx.childForm);
 
   switch (fn) {
     case 'subject':
       if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('NP', 'Cl')) return HIDDEN;
       return has('subject') ? no('This clause already has a subject.') : ALLOWED;
 
     case 'predicate':
       if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('VP')) return HIDDEN;
       return has('predicate') ? no('This clause already has a predicate.') : ALLOWED;
 
     case 'directObject':
       if (p !== 'VP') return HIDDEN;
+      if (!childIs('NP', 'Cl')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       if (!SLOTS_BY_VERB_TYPE[vt].includes('directObject')) {
         return no(`A ${LONG[vt]} verb takes no direct object.`);
@@ -82,6 +86,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
 
     case 'indirectObject':
       if (p !== 'VP') return HIDDEN;
+      if (!childIs('NP')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       if (vt !== 'Vg') return no(`A ${LONG[vt]} verb takes no indirect object.`);
       if (!has('directObject')) {
@@ -91,6 +96,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
 
     case 'subjectComplement':
       if (p !== 'VP') return HIDDEN;
+      if (!childIs('NP', 'AdjP')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       if (!SLOTS_BY_VERB_TYPE[vt].includes('subjectComplement')) {
         return no(`Only "be" and linking verbs take a subject complement.`);
@@ -102,6 +108,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       // for other verb types, so offering it greyed out would teach a slot
       // that is never available.
       if (p !== 'VP') return HIDDEN;
+      if (!childIs('NP', 'AdjP')) return HIDDEN;
       if (vt !== null && vt !== 'Vc') return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       if (!has('directObject')) {
@@ -110,6 +117,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       return has('objectComplement') ? no('This verb already has an object complement.') : ALLOWED;
 
     case 'adverbial':
+      if (!childIs('AdvP', 'PP', 'NP', 'Cl')) return HIDDEN;
       return p === 'VP' || CLAUSAL.includes(p) ? ALLOWED : HIDDEN;
 
     case 'head': {

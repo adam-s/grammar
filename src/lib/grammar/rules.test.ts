@@ -194,3 +194,35 @@ describe('head-form agreement', () => {
     );
   });
 });
+
+describe('clause-role form agreement', () => {
+  const rows: {
+    fn: Func;
+    parentForm: Form;
+    childForm: Form;
+    want: 'allowed' | 'hidden';
+  }[] = [
+    { fn: 'subject', parentForm: 'S', childForm: 'NP', want: 'allowed' },
+    { fn: 'subject', parentForm: 'S', childForm: 'VP', want: 'hidden' },
+    { fn: 'predicate', parentForm: 'S', childForm: 'VP', want: 'allowed' },
+    { fn: 'predicate', parentForm: 'S', childForm: 'NP', want: 'hidden' },
+    { fn: 'directObject', parentForm: 'VP', childForm: 'NP', want: 'allowed' },
+    { fn: 'directObject', parentForm: 'VP', childForm: 'V', want: 'hidden' },
+    { fn: 'adverbial', parentForm: 'VP', childForm: 'PP', want: 'allowed' },
+    { fn: 'adverbial', parentForm: 'VP', childForm: 'V', want: 'hidden' },
+  ];
+
+  for (const row of rows) {
+    it(`${row.childForm} as ${row.fn} under ${row.parentForm} → ${row.want}`, () => {
+      assert.equal(
+        licenses(row.fn, {
+          parentForm: row.parentForm,
+          verbType: 'Vtr',
+          siblings: [],
+          childForm: row.childForm,
+        }).state,
+        row.want,
+      );
+    });
+  }
+});

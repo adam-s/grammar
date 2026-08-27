@@ -6,11 +6,17 @@
   import type { Snippet } from 'svelte';
   import Play from '@lucide/svelte/icons/play';
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
+  import ChevronRight from '@lucide/svelte/icons/chevron-right';
   import { getWorkspace } from './workspace.svelte.ts';
   import { ZOOM_STOPS, formatZoom } from './viewport.ts';
 
-  type Props = { tabs?: string[]; tab?: string; children?: Snippet };
-  let { tabs = ['Design'], tab = $bindable(tabs[0]!), children }: Props = $props();
+  type Props = {
+    tabs?: string[];
+    tab?: string;
+    oncollapse?: () => void;
+    children?: Snippet;
+  };
+  let { tabs = ['Design'], tab = $bindable(tabs[0]!), oncollapse, children }: Props = $props();
 
   const ws = getWorkspace();
   let zoomOpen = $state(false);
@@ -24,6 +30,11 @@
       <Play size={14} strokeWidth={1.75} />
     </button>
     <button class="share" type="button">Share</button>
+    {#if oncollapse}
+      <button class="icon" type="button" aria-label="Collapse right sidebar" onclick={oncollapse}>
+        <ChevronRight size={14} strokeWidth={2} />
+      </button>
+    {/if}
   </header>
 
   <div class="tabs">
@@ -203,5 +214,37 @@
     min-height: 0;
     overflow-y: auto;
     padding-bottom: 16px;
+  }
+
+  @media (max-width: 1100px) {
+    .inspector {
+      position: fixed;
+      z-index: 60;
+      inset: 0 0 0 auto;
+      box-sizing: border-box;
+      width: min(88vw, var(--inspector-w));
+      padding-top: env(safe-area-inset-top);
+      box-shadow: -12px 0 34px oklch(0 0 0 / 38%);
+    }
+    .top {
+      min-height: 52px;
+    }
+    .icon {
+      width: 44px;
+      height: 44px;
+    }
+    .tabs {
+      height: 44px;
+    }
+    .tab,
+    .zoombtn {
+      min-height: 36px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .inspector {
+      bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom));
+    }
   }
 </style>

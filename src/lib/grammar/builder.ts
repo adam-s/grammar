@@ -222,11 +222,19 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   return { constituents: cs, seq, verbType: state.verbType };
 }
 
-/** Assign a node's function. Only meaningful once it has a parent. */
-export function setFunction(state: BuildState, id: string, fn: Func | null): BuildState {
+/** Assign a node's function only through the same license used by the menu. */
+export function setFunction(
+  state: BuildState,
+  id: string,
+  fn: Func | null,
+  obligatory = false,
+): BuildState {
   if (!state.constituents[id]) return state;
+  if (fn !== null && licenseFor(state, id, fn).state !== 'allowed') return state;
   const cs = cloneMap(state.constituents);
   cs[id]!.function = fn;
+  if (fn === 'adverbial' && obligatory) cs[id]!.obligatory = true;
+  else delete cs[id]!.obligatory;
   return { ...state, constituents: cs };
 }
 
@@ -248,6 +256,23 @@ export function unwrap(state: BuildState, id: string): BuildState {
   return { ...state, constituents: cs };
 }
 
+/** Parent implied by a clause role before that parent has been drawn. */
+function prospectiveParent(fn: Func): Form | null {
+  switch (fn) {
+    case 'subject':
+    case 'predicate':
+      return 'S';
+    case 'directObject':
+    case 'indirectObject':
+    case 'subjectComplement':
+    case 'objectComplement':
+    case 'adverbial':
+      return 'VP';
+    default:
+      return null;
+  }
+}
+
 /**
  * Is the function `fn` available for node `id`, given its parent and siblings?
  * Delegates to the same `licenses()` the audits use — one rule set, so what a
@@ -257,6 +282,23 @@ export function licenseFor(state: BuildState, id: string, fn: Func): Verdict {
   const c = state.constituents[id];
   if (!c) return { state: 'hidden' };
   if (c.parent === null) {
+    // Clause roles can be visible before their parent is drawn. Requiring the
+    // learner to build VP or S first makes construction order—not grammar—the
+    // gate. Treat roots with roles from the same prospective parent as siblings;
+    // `wrap` preserves the validated choices when that parent is later created.
+    const parentForm = prospectiveParent(fn);
+    if (parentForm) {
+      const siblings = roots(state)
+        .filter((root) => root !== id)
+        .map((root) => state.constituents[root]?.function)
+        .filter((value): value is Func => value != null && prospectiveParent(value) === parentForm);
+      return licenses(fn, {
+        parentForm,
+        verbType: state.verbType,
+        siblings,
+        childForm: c.form,
+      });
+    }
     return {
       state: 'disabled',
       reason: 'This is not part of anything yet — group it first, then say what it does.',

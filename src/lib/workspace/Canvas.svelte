@@ -16,20 +16,32 @@
    *   ⌘0 / ⇧1                 100% / zoom to fit
    */
   import { onMount, type Snippet } from 'svelte';
+  import { SvelteMap } from 'svelte/reactivity';
+  import { pinch, pinchDelta, type Pinch } from './gesture.ts';
+  import { dragRect, isMarquee } from './marquee.ts';
+  import { observeStageSize } from './stage-resize.ts';
   import { getWorkspace } from './workspace.svelte.ts';
-  import { formatZoom, gridStep, type Rect } from './viewport.ts';
+  import { formatZoom, gridStep, toWorld, type Point, type Rect } from './viewport.ts';
 
   type Props = {
     /** What ⇧1 should frame. Omit and the shortcut is inert. */
     content?: Rect;
+    onmarquee?: (rect: Rect | null, done: boolean) => void;
     children?: Snippet;
   };
-  let { content, children }: Props = $props();
+  let { content, onmarquee, children }: Props = $props();
 
   const ws = getWorkspace();
 
   let stage = $state<HTMLDivElement | null>(null);
+  let framed = $state(false);
   let dragging = $state(false);
+  let marqueeStart = $state<Point | null>(null);
+  let marqueeBox = $state<Rect | null>(null);
+  let marqueePointer = $state<number | null>(null);
+  const touches = new SvelteMap<number, { x: number; y: number }>();
+  let lastTouch: { x: number; y: number } | null = null;
+  let lastPinch: Pinch | null = null;
 
   const vp = $derived(ws.viewport);
 
@@ -48,15 +60,15 @@
 
   onMount(() => {
     if (!stage) return;
-    const ro = new ResizeObserver(([entry]) => {
-      const box = entry!.contentRect;
-      const first = ws.stage.w === 0;
-      ws.stage = { w: box.width, h: box.height };
-      // Open on the work rather than on empty space at the origin.
-      if (first && content) ws.zoomToFit(content);
+    return observeStageSize(stage, (size) => {
+      ws.stage = size;
+      // A resized canvas is a new frame: keep all of the current work centred
+      // and visible after window, orientation, or sidebar changes.
+      if (content) ws.zoomToFit(content);
+      // Publish the correctly measured camera and its contents in one render.
+      // Without this gate, the default 100% camera flashes before fitting.
+      framed = true;
     });
-    ro.observe(stage);
-    return () => ro.disconnect();
   });
 
   /** Pointer position relative to the stage — the only place we touch the DOM box. */
@@ -79,19 +91,91 @@
   }
 
   function onpointerdown(e: PointerEvent) {
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+      const p = local(e);
+      touches.set(e.pointerId, p);
+      stage!.setPointerCapture(e.pointerId);
+      dragging = true;
+      if (touches.size >= 2) {
+        lastPinch = pinch([...touches.values()]);
+        lastTouch = null;
+      } else {
+        lastTouch = p;
+      }
+      return;
+    }
     const middle = e.button === 1;
-    if (!middle && !(ws.panning && e.button === 0)) return;
-    e.preventDefault();
-    dragging = true;
-    stage!.setPointerCapture(e.pointerId);
+    if (middle || (ws.panning && e.button === 0)) {
+      e.preventDefault();
+      dragging = true;
+      stage!.setPointerCapture(e.pointerId);
+      return;
+    }
+    if (e.button === 0 && ws.tool === 'select' && e.target === stage) {
+      e.preventDefault();
+      marqueeStart = local(e);
+      marqueeBox = null;
+      marqueePointer = e.pointerId;
+      onmarquee?.(null, false);
+      stage!.setPointerCapture(e.pointerId);
+    }
+  }
+
+  function worldMarquee(rect: Rect): Rect {
+    const topLeft = toWorld(vp, { x: rect.x, y: rect.y });
+    const bottomRight = toWorld(vp, { x: rect.x + rect.w, y: rect.y + rect.h });
+    return dragRect(topLeft, bottomRight);
   }
 
   function onpointermove(e: PointerEvent) {
+    if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
+      const p = local(e);
+      touches.set(e.pointerId, p);
+      if (touches.size >= 2) {
+        const next = pinch([...touches.values()]);
+        if (lastPinch && next) {
+          const change = pinchDelta(lastPinch, next);
+          ws.pan(change.pan.x, change.pan.y);
+          ws.zoomBy(change.factor, change.focus);
+        }
+        lastPinch = next;
+        lastTouch = null;
+      } else if (lastTouch) {
+        ws.pan(p.x - lastTouch.x, p.y - lastTouch.y);
+        lastTouch = p;
+      }
+      return;
+    }
+    if (marqueeStart && marqueePointer === e.pointerId) {
+      marqueeBox = dragRect(marqueeStart, local(e));
+      onmarquee?.(isMarquee(marqueeBox) ? worldMarquee(marqueeBox) : null, false);
+      return;
+    }
     if (!dragging) return;
     ws.pan(e.movementX, e.movementY);
   }
 
   function endDrag(e: PointerEvent) {
+    if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
+      touches.delete(e.pointerId);
+      if (stage!.hasPointerCapture(e.pointerId)) stage!.releasePointerCapture(e.pointerId);
+      const remaining = [...touches.values()];
+      lastPinch = null;
+      lastTouch = remaining[0] ?? null;
+      dragging = remaining.length > 0;
+      return;
+    }
+    if (marqueeStart && marqueePointer === e.pointerId) {
+      const box = marqueeBox;
+      const cancelled = e.type === 'pointercancel';
+      onmarquee?.(!cancelled && box && isMarquee(box) ? worldMarquee(box) : null, !cancelled);
+      marqueeStart = null;
+      marqueeBox = null;
+      marqueePointer = null;
+      if (stage!.hasPointerCapture(e.pointerId)) stage!.releasePointerCapture(e.pointerId);
+      return;
+    }
     if (!dragging) return;
     dragging = false;
     stage!.releasePointerCapture(e.pointerId);
@@ -130,6 +214,13 @@
       e.preventDefault();
       if (content) ws.zoomToFit(content);
     } else if (e.key === 'Escape') {
+      if (marqueePointer !== null && stage?.hasPointerCapture(marqueePointer)) {
+        stage.releasePointerCapture(marqueePointer);
+      }
+      marqueeStart = null;
+      marqueeBox = null;
+      marqueePointer = null;
+      onmarquee?.(null, false);
       ws.clearSelection();
     } else if (!mod && (e.key === 'v' || e.key === 'V')) {
       ws.tool = 'select';
@@ -148,12 +239,15 @@
 <div
   bind:this={stage}
   class="stage"
+  class:framed
+  class:selecting={!!marqueeStart}
   class:panning={ws.panning}
   class:dragging
   data-surface
   role="application"
   aria-label="Diagram canvas"
   aria-roledescription="pan and zoom surface"
+  aria-busy={!framed}
   {onwheel}
   {onpointerdown}
   onpointerdowncapture={onpointerdownCapture}
@@ -166,6 +260,14 @@
   <div class="world" style={worldStyle}>
     {@render children?.()}
   </div>
+
+  {#if marqueeBox && isMarquee(marqueeBox)}
+    <div
+      class="marquee"
+      style="left:{marqueeBox.x}px; top:{marqueeBox.y}px; width:{marqueeBox.w}px; height:{marqueeBox.h}px"
+      aria-hidden="true"
+    ></div>
+  {/if}
 
   <!-- A live region rather than decoration: without it, zoom is a change no
        assistive technology can perceive. -->
@@ -189,6 +291,9 @@
   .stage.dragging {
     cursor: grabbing;
   }
+  .stage.selecting {
+    cursor: crosshair;
+  }
 
   .grid {
     position: absolute;
@@ -206,6 +311,18 @@
     height: 0;
     transform-origin: 0 0;
     will-change: transform;
+  }
+  .stage:not(.framed) :where(.grid, .world) {
+    visibility: hidden;
+  }
+  .marquee {
+    position: absolute;
+    z-index: 20;
+    box-sizing: border-box;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
+    pointer-events: none;
   }
 
   .sr {

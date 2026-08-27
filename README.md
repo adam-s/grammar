@@ -48,44 +48,39 @@ split.
 
 ## Labelling
 
-Select words on the canvas; name them from the right-hand panel. That panel is
-the one thing this build does differently from its predecessor, which used a
-popup over the sentence.
+Select words on the canvas; name them from the contextual palette anchored to
+the selection. The palette stays in screen space while the diagram pans and
+zooms, and its placement treats the complete sentence row as protected space.
+It may open above, below, or beside the selection, but it must not cover the
+words being analysed.
 
-Moving the chooser out of a popup forces a different model, because a popup can
-hide an option that does not apply — it is gone a moment later and you never had
-a map of it to disturb — and a permanent column cannot. If rows appear and vanish
-as the selection moves, the single advantage of a fixed surface, that you learn
-where things are, is exactly what you lose. So:
+The palette is one object with a shared information header and two equal panes:
+the left pane chooses the grammatical question, and the right pane contains the
+labels for that question. So:
 
 - **A group's inventory is complete and fixed in order.** All thirteen word
   classes, always. What varies is each option's *state*, not its presence.
 - **Which groups show follows the shape of the selection** — the one thing the
   learner can already see. One word asks what the word is; a run of words asks
   what the phrase is; a node that exists also asks what it does.
-- **A settled group collapses to its answer**, so the live question is the one
-  on screen. Completeness is what makes the panel learnable and it is also what
-  makes it long; twenty rows of word classes once stood between a learner and
-  the function group they had just been told to fill. Nothing is removed and the
-  order never changes — reopening a group is one click.
-- **Suggestions are highlighted in place, never floated to the top.** They keep
-  their seat and gain an accent rail, their evidence, and a number key.
-- **A blocked option keeps its reason, visibly.** The rule you just met is the
-  lesson; it must not be a tooltip.
+- **A settled group keeps its answer in the left pane**, while the live question
+  opens on the right. Moving between questions replaces only the right pane.
+- **Suggestions live in the shared header and keep their taxonomy seat.** The
+  header makes the likely action immediate; the row keeps the menu learnable.
+- **Only one explanation is visible at a time.** The header shows the evidence,
+  test, feedback, or blocking reason for the option currently in focus.
 - **Functions are contingent, so they *are* filtered.** `rules.ts` already draws
   the line: `hidden` means "never here" and is omitted, `disabled` means "not
   yet" and is shown with its reason.
 - **Accent means one thing: look here.** Three simultaneous blue treatments read
   as three unrelated emphases. Suggested gets the accent; *chosen* gets a tint
   and a tick; the pointer gets plain grey; focus gets an inset ring.
-- **A note shows by default only where it is the choice.** The six verb types
-  are told apart by their examples, so those always show; thirteen formal tests
-  at once is a wall nobody reads, so those appear on the row you point at.
+- **Descriptions remain accessible without changing row height.** Pointer and
+  keyboard focus both update the fixed information line in the header.
 
-Two things fall out of the panel that the popup could not do at all: hovering a
-label draws what it would produce, on the words it would produce it over; and a
-second question — verb type, function — is just a second group rather than a
-drill-down or a mode change.
+Hovering a label still draws what it would produce on the diagram. Because the
+palette protects the word row instead of sitting on the selection, the preview
+and the source words remain visible together.
 
 A first wrong answer does not hand over the right one. `gradeForm` names the
 truth in its reason, and even its formal test is the test for the right answer —
@@ -100,14 +95,14 @@ specification.
 ### The one-rule-set property
 
 `rules.ts` decides what may sit where. `audits.ts` runs it over frozen content,
-and the panel runs it over the learner's half-built structure. Teaching through
+and the palette runs it over the learner's half-built structure. Teaching through
 affordance is only honest if those are the same predicates, so they are.
 
 ## The workspace
 
-`Workspace.svelte` is a four-column grid that fills the viewport exactly once and never scrolls as
-a unit — panels scroll internally, the canvas pans. It takes three snippets (`panel`, `inspector`,
-and its children as canvas contents) so it stays a shell rather than absorbing the application.
+`Workspace.svelte` fills the viewport exactly once and never scrolls as a unit — panels scroll
+internally, the canvas pans. Its optional `panel`, `inspector`, and screen-space `overlay` snippets
+let a route choose its chrome while its children remain canvas contents.
 
 Canvas children are **ordinary DOM positioned in world units**, not a `<canvas>` bitmap. That keeps
 real text rendering, real focus order, and real screen-reader output, which this project cannot do
@@ -115,6 +110,26 @@ without. A useful consequence: inside `.world`, `offsetLeft` already *is* a worl
 
 Chrome drawn on the canvas — selection rings, frame labels — divides its sizes by `--z` so it keeps
 its screen size at any zoom. Anything that belongs to the document scales normally.
+
+### Responsive workspace
+
+- Above 1100px, both sidebars remain persistent workspace columns.
+- At 1100px and below, the sidebars become mutually exclusive drawers so they never squeeze the
+  diagram. The rail remains available for tablet navigation.
+- At 700px and below, the rail becomes bottom navigation and the contextual palette becomes a
+  one-pane bottom sheet. Categories drill into their labels; tapping a label commits it just as it
+  does on desktop.
+- Phone hit regions counter-scale against the canvas zoom, so fitting a long sentence never makes
+  a word target smaller than 44px.
+
+Breakpoint detection lives in `workspace/responsive.svelte.ts`; floating-menu placement and touch
+gesture arithmetic stay in browser-free utilities with node tests.
+
+Selection visibility follows one camera policy on phones: a single item receives the smallest
+two-axis pan that reveals it, while a multi-word span may zoom out—but never in—until its words,
+labels, and brackets fit above the sheet. `workspace/selection-visibility.ts` plans that move as
+pure geometry and `workspace/camera-motion.ts` animates it, cancelling as soon as the learner pans,
+pinches, or zooms. The sheet reports measured space; it does not own camera arithmetic.
 
 ### Gestures
 

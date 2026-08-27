@@ -1,13 +1,10 @@
 /**
- * What the label panel offers — the replacement for the old popup menu.
+ * What the contextual label palette offers.
  *
- * ## Why a panel changes the model, not just the position
+ * ## A stable taxonomy inside a contextual surface
  *
- * A popup can hide an option that does not apply, because the popup is gone a
- * moment later and the learner never had a mental map of it to disturb. A
- * PERSISTENT panel cannot: if rows appear and vanish as the selection moves,
- * the one advantage of a fixed surface — that you learn where things are — is
- * exactly what you lose. So the rules here are stability rules first.
+ * The palette moves with the selection, but the taxonomy inside it must not
+ * move. Its rules are therefore stability rules first.
  *
  *   1. **A group's inventory is complete and its order never changes.**
  *      All thirteen word classes, always, in the same order. What varies is
@@ -18,14 +15,12 @@
  *      this word?", a run of words asks "what is this phrase?", an existing
  *      node also asks "and what does it do?".
  *
- *   3. **Suggestions are highlighted in place, never floated to the top.**
- *      The old chooser grew a `Likely here` group above the taxonomy, which
- *      moved the furniture on every selection. Here a suggestion keeps its
- *      seat and gains an accent, its evidence, and a number key. The eye is
- *      drawn without the list shifting.
+ *   3. **Suggestions keep their taxonomy seat.** Presentation may repeat them
+ *      in the shared header for a fast action, but the underlying order never
+ *      changes. Suggestions gain evidence and a number key.
  *
- *   4. **A blocked option keeps its reason, visibly.** The rule the learner
- *      just met IS the lesson; it must not be a tooltip.
+ *   4. **A blocked option keeps its reason.** The palette shows one reason at a
+ *      time in its stable information header rather than expanding every row.
  *
  *   5. **Functions are contingent, so they are filtered.** A subject is not a
  *      thing that can ever sit inside a prepositional phrase, and offering it
@@ -69,12 +64,46 @@ export const PICKABLE: readonly OptionState[] = ['suggested', 'available', 'chos
 
 export const isPickable = (o: LabelOption): boolean => PICKABLE.includes(o.state);
 
+/**
+ * Whether the selected item has answered every question the palette can still
+ * ask. This is deliberately derived from the finished panel rather than from
+ * a particular label: subject, direct object, form, and verb type all follow
+ * the same close-or-continue rule.
+ */
+export const isPanelComplete = (panel: Panel): boolean =>
+  panel.groups.every((group) => group.answered || !group.options.some(isPickable));
+
+/**
+ * Turn choices already disproved for this selection into ordinary blocked
+ * options. The grammar inventory stays stable, but a row cannot continue to
+ * look actionable after the grader has refused it.
+ */
+export function blockRejectedOptions(
+  panel: Panel,
+  rejected: Readonly<Record<string, string>>,
+): Panel {
+  const groups = panel.groups.map((group) => ({
+    ...group,
+    options: group.options.map((option) => {
+      const reason = rejected[option.key];
+      return reason
+        ? { ...option, state: 'blocked' as const, note: reason, hotkey: undefined }
+        : option;
+    }),
+  }));
+  return {
+    ...panel,
+    groups,
+    suggested: groups.flatMap((group) => group.options).filter((option) => option.hotkey).length,
+  };
+}
+
 export interface LabelOption {
   key: string;
   label: string;
   /**
    * The formal test, the evidence, or the reason it is blocked — whichever
-   * applies. Always rendered; never a tooltip.
+   * applies. The palette renders the active note in its shared information line.
    */
   note?: string;
   state: OptionState;
@@ -82,6 +111,8 @@ export interface LabelOption {
   hotkey?: string;
   form?: Form;
   func?: Func;
+  /** The required SVA variety of an adverbial, represented on the same function. */
+  obligatory?: boolean;
   verbType?: VerbType;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
@@ -93,7 +124,9 @@ export interface OptionGroup {
   question: string;
   options: LabelOption[];
   /**
-   * Whether a plain option's note is worth a line of its own by default.
+   * Whether a plain option's note is intrinsic teaching content or supporting
+   * reference content. The contextual palette shows one active note at a time;
+   * expanded/reference renderers may use this priority directly.
    *
    * `always` where the note IS the choice — the six verb types are told apart
    * by their example, and the functions by the question that finds them.
@@ -101,7 +134,7 @@ export interface OptionGroup {
    * the name of; thirteen formal tests at once is a wall nobody reads, and one
    * on the row you are pointing at is a lesson.
    *
-   * Notes that carry evidence or a block reason always show, whatever this says.
+   * Notes that carry evidence or a block reason take priority whatever this says.
    */
   notes: 'always' | 'ondemand';
   /** The option already picked here, if any. A group with one is settled. */
@@ -139,7 +172,10 @@ export interface ChapterScope {
 }
 
 export type Selection =
-  { kind: 'none' } | { kind: 'span'; span: Span } | { kind: 'node'; id: string };
+  | { kind: 'none' }
+  | { kind: 'span'; span: Span }
+  | { kind: 'node'; id: string }
+  | { kind: 'nodes'; ids: string[]; span: Span };
 
 /* ------------------------------------------------------------------ util */
 
@@ -166,13 +202,14 @@ export function optionsFor(
       return spanPanel(state, words, sel.span, scope);
     case 'node':
       return nodePanel(state, words, sel.id, scope);
+    case 'nodes':
+      return spanPanel(state, words, sel.span, scope);
   }
 }
 
 /**
- * Nothing selected. The panel still shows the whole inventory, resting — the
- * label set is worth meeting before you need it, and an empty right-hand column
- * teaches nothing.
+ * Nothing selected. This remains a complete model for tests and alternate
+ * renderers; the contextual palette itself stays closed until there is an anchor.
  */
 function idlePanel(scope: ChapterScope): Panel {
   return finish({
@@ -228,11 +265,15 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
 
   const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
     forms.map((f) => {
+      const answered = chosenForm !== null && forms.includes(chosenForm);
       if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
       if (blocked) return formOption(f, 'blocked', blocked);
       if (phrase && needsWordClass) return formOption(f, 'blocked', needsWordClass);
       if (f === chosenForm) return formOption(f, 'chosen');
-      const why = evidence.get(f);
+      // Evidence helps answer an open question. Once this group already has an
+      // answer, promoting a conflicting heuristic makes the current label look
+      // wrong even when it has just been confirmed by the grader.
+      const why = answered ? undefined : evidence.get(f);
       return formOption(f, why ? 'suggested' : 'available', why);
     });
 
@@ -278,8 +319,7 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
 /**
  * An existing node. Its form can be revised, its function can be set, and if it
  * is a verb its type is a THIRD question — asked here as a third group rather
- * than as a drill-down, because a panel has room to ask two things at once and
- * a popup did not.
+ * than as a hidden subtype, because it is a genuinely separate decision.
  */
 function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterScope): Panel {
   const c = state.constituents[id];
@@ -300,10 +340,11 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
 
   const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
     forms.map((f) => {
+      const answered = forms.includes(c.form);
       if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
       if (f === c.form) return formOption(f, 'chosen');
       if (locked && (phrase || !isWord)) return formOption(f, 'blocked', UNGROUP);
-      const why = evidence.get(f);
+      const why = answered ? undefined : evidence.get(f);
       return formOption(f, why ? 'suggested' : 'available', why);
     });
 
@@ -386,9 +427,34 @@ function functionGroup(
       key: `func:${fn}`,
       label: label(fn),
       note: verdict.state === 'disabled' ? verdict.reason : FUNCTION_TEST[fn],
-      state: fn === current ? 'chosen' : verdict.state === 'disabled' ? 'blocked' : 'available',
+      state:
+        fn === current && (fn !== 'adverbial' || c.obligatory !== true)
+          ? 'chosen'
+          : verdict.state === 'disabled'
+            ? 'blocked'
+            : 'available',
       func: fn,
+      ...(fn === 'adverbial' ? { obligatory: false } : {}),
     });
+
+    if (fn === 'adverbial') {
+      options.push({
+        key: 'func:obligatoryAdverbial',
+        label: 'obligatory adverbial',
+        note:
+          verdict.state === 'disabled'
+            ? verdict.reason
+            : 'The verb requires it to complete the sentence; removing it makes the clause incomplete.',
+        state:
+          current === 'adverbial' && c.obligatory === true
+            ? 'chosen'
+            : verdict.state === 'disabled'
+              ? 'blocked'
+              : 'available',
+        func: 'adverbial',
+        obligatory: true,
+      });
+    }
   }
 
   return { id: 'function', question: `What does ${subject} do?`, notes: 'always', options };

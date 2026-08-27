@@ -19,6 +19,7 @@ import {
   type Size,
   type Viewport,
 } from './viewport.ts';
+import { fitPadding } from './stage-resize.ts';
 
 export type ToolId = 'select' | 'hand' | 'frame' | 'text' | 'comment';
 
@@ -38,6 +39,11 @@ export class Workspace {
 
   get center(): Point {
     return { x: this.stage.w / 2, y: this.stage.h / 2 };
+  }
+
+  /** True once the canvas has a real layout box and its camera can be framed. */
+  get stageReady(): boolean {
+    return this.stage.w > 0 && this.stage.h > 0;
   }
 
   isSelected = (id: string): boolean => this.selection.includes(id);
@@ -73,7 +79,7 @@ export class Workspace {
     this.setZoom(nextStop(this.viewport.z, dir), focus);
   };
 
-  zoomToFit = (rect: Rect, padding = 96): void => {
+  zoomToFit = (rect: Rect, padding = fitPadding(this.stage)): void => {
     if (rect.w <= 0 || rect.h <= 0 || this.stage.w === 0) return;
     this.viewport = fit(rect, this.stage, padding);
   };

@@ -25,7 +25,7 @@
   ];
 </script>
 
-<div class="bar" role="toolbar" aria-label="Canvas tools">
+<div class="bar" class:ready={ws.stageReady} role="toolbar" aria-label="Canvas tools">
   {#each tools as t (t.id)}
     {@const on = ws.tool === t.id}
     <button
@@ -93,6 +93,10 @@
     border: 1px solid var(--border);
     border-radius: 13px;
     box-shadow: 0 6px 22px oklch(0 0 0 / 32%);
+    visibility: hidden;
+  }
+  .bar.ready {
+    visibility: visible;
   }
   .btn,
   .pct {
@@ -132,5 +136,19 @@
     height: 18px;
     margin: 0 4px;
     background: var(--border);
+  }
+
+  @media (max-width: 700px) {
+    .bar {
+      bottom: 12px;
+      padding: 4px;
+    }
+    .btn,
+    .pct {
+      height: 44px;
+    }
+    .btn {
+      width: 44px;
+    }
   }
 </style>

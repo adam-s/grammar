@@ -4,12 +4,12 @@
  * The tests are the teaching (docs/pedagogy.md in the previous project): a
  * notional definition — "a noun is a person, place or thing" — fails on
  * *justice*, *arrival*, *the fact that he left*. A formal test is mechanical
- * and always works, so every option in the panel carries one. They are shown
- * permanently, never on hover: a `title` attribute is unreachable by touch and
- * fragile by keyboard, and the reason is the point.
+ * and always works, so every option carries one. The palette exposes the active
+ * test in a stable information line reached by pointer or keyboard focus; a
+ * `title` attribute would be inaccessible on touch and fragile by keyboard.
  */
 import { label } from './audits.ts';
-import type { Form, Func } from './types.ts';
+import type { Form, Func, VerbType } from './types.ts';
 
 export { label };
 
@@ -37,6 +37,60 @@ export const FORM_NAME: Record<string, string> = {
 };
 
 export const formName = (f: Form): string => FORM_NAME[f] ?? String(f);
+
+/**
+ * Compact diagram marks for the six verb patterns. The main `V` remains the
+ * word class; this secondary mark records the subtype without turning the
+ * diagram into prose.
+ */
+export const VERB_TYPE_MARK: Record<VerbType, string> = {
+  Vbe: 'BE',
+  Vlink: 'L',
+  Vint: 'I',
+  Vtr: 'T',
+  Vg: 'G',
+  Vc: 'C',
+};
+
+export const VERB_TYPE_NAME: Record<VerbType, string> = {
+  Vbe: 'be verb',
+  Vlink: 'linking verb',
+  Vint: 'intransitive verb',
+  Vtr: 'transitive verb',
+  Vg: 'two-object verb',
+  Vc: 'object-complement verb',
+};
+
+export const verbTypeMark = (type: VerbType): string => VERB_TYPE_MARK[type];
+export const verbTypeName = (type: VerbType): string => VERB_TYPE_NAME[type];
+
+/**
+ * Compact function marks for diagram nodes. Form stays primary in the centre;
+ * function is a small upper-left qualifier, paired with the verb subtype on
+ * the upper right. Full names remain available to tooltips and assistive tech.
+ */
+export const FUNCTION_MARK: Record<Func, string> = {
+  subject: 'Subj',
+  predicate: 'Pred',
+  directObject: 'DO',
+  indirectObject: 'IO',
+  subjectComplement: 'SC',
+  objectComplement: 'OC',
+  adverbial: 'A',
+  head: 'H',
+  determiner: 'D',
+  premodifier: 'Pre',
+  postmodifier: 'Post',
+  complement: 'C',
+  coordinate: 'Co',
+  appositive: 'App',
+};
+
+export const functionMark = (fn: Func, obligatory = false): string =>
+  fn === 'adverbial' && obligatory ? 'A!' : FUNCTION_MARK[fn];
+
+export const functionName = (fn: Func, obligatory = false): string =>
+  fn === 'adverbial' && obligatory ? 'obligatory adverbial' : label(fn);
 
 /** The substitution or inflection test that settles each form. */
 export const FORM_TEST: Record<string, string> = {

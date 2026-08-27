@@ -99,12 +99,74 @@ describe('grouping', () => {
   });
 });
 
-describe('functions follow the parent, not the node', () => {
-  it('a top-level node cannot be given a function yet', () => {
+describe('functions follow an actual or prospective parent', () => {
+  it('a top-level VP can be named as the prospective predicate before S exists', () => {
+    let s = setVerbType(labelled(), 'Vtr');
+    s = wrap(s, W, [2, 3], 'NP');
+    s = wrap(s, W, [1, 3], 'VP');
+    const vp = roots(s).find((id) => s.constituents[id]!.form === 'VP')!;
+
+    assert.equal(licenseFor(s, vp, 'predicate').state, 'allowed');
+    s = setFunction(s, vp, 'predicate');
+    assert.equal(s.constituents[vp]!.function, 'predicate');
+
+    s = wrap(s, W, [0, 3], 'S');
+    assert.equal(s.constituents[vp]!.function, 'predicate');
+    assert.equal(licenseFor(s, vp, 'predicate').state, 'allowed');
+  });
+
+  it('does not offer a clause role to the wrong top-level form', () => {
     const s = labelled();
-    const v = licenseFor(s, roots(s)[0]!, 'subject');
-    assert.equal(v.state, 'disabled');
-    if (v.state === 'disabled') assert.match(v.reason, /group it first/);
+    const verb = roots(s).find((id) => s.constituents[id]!.form === 'V')!;
+    assert.equal(licenseFor(s, verb, 'subject').state, 'hidden');
+    assert.equal(licenseFor(s, verb, 'predicate').state, 'hidden');
+  });
+
+  it('still waits for a real phrase parent before offering an internal role', () => {
+    const s = labelled();
+    const noun = roots(s).find((id) => s.constituents[id]!.form === 'N')!;
+    const verdict = licenseFor(s, noun, 'head');
+    assert.equal(verdict.state, 'disabled');
+    if (verdict.state === 'disabled') assert.match(verdict.reason, /group it first/);
+    assert.equal(setFunction(s, noun, 'head'), s, 'the builder must reject bypassing the menu');
+  });
+
+  it('prospective clause roles observe the other frontier nodes', () => {
+    let s = labelled();
+    s = wrap(s, W, [0, 0], 'NP');
+    s = wrap(s, W, [2, 3], 'NP');
+    const subjects = roots(s).filter((id) => s.constituents[id]!.form === 'NP');
+    s = setFunction(s, subjects[0]!, 'subject');
+    const other = licenseFor(s, subjects[1]!, 'subject');
+    assert.equal(other.state, 'disabled');
+    if (other.state === 'disabled') assert.match(other.reason, /already has a subject/);
+  });
+
+  it('a top-level object NP can be named before its VP is drawn', () => {
+    let s = setVerbType(labelled(), 'Vtr');
+    s = wrap(s, W, [2, 3], 'NP');
+    const object = roots(s).find(
+      (id) => s.constituents[id]!.form === 'NP' && s.constituents[id]!.span[0] === 2,
+    )!;
+
+    assert.equal(licenseFor(s, object, 'directObject').state, 'allowed');
+    s = setFunction(s, object, 'directObject');
+    s = wrap(s, W, [1, 3], 'VP');
+    assert.equal(s.constituents[object]!.function, 'directObject');
+    assert.equal(licenseFor(s, object, 'directObject').state, 'allowed');
+  });
+
+  it('prospective VP roles still obey verb type and sibling dependencies', () => {
+    let s = setVerbType(labelled(), 'Vg');
+    s = wrap(s, W, [0, 0], 'NP');
+    s = wrap(s, W, [2, 3], 'NP');
+    const nps = roots(s).filter((id) => s.constituents[id]!.form === 'NP');
+    assert.equal(licenseFor(s, nps[0]!, 'indirectObject').state, 'disabled');
+    s = setFunction(s, nps[1]!, 'directObject');
+    assert.equal(licenseFor(s, nps[0]!, 'indirectObject').state, 'allowed');
+
+    s = setVerbType(s, 'Vint');
+    assert.equal(licenseFor(s, nps[0]!, 'directObject').state, 'disabled');
   });
 
   it('under a VP with an unclassified verb, direct object waits for the verb type', () => {

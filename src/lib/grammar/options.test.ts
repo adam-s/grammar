@@ -3,16 +3,19 @@ import { describe, it } from 'node:test';
 import {
   emptyBuild,
   nodeOver,
+  roots,
   setFunction,
   setVerbType,
   wrap,
   type BuildState,
 } from './builder.ts';
-import { vtr } from './fixtures.ts';
+import { ambiguous, vtr } from './fixtures.ts';
 import {
   byHotkey,
+  blockRejectedOptions,
   filterPanel,
   isPickable,
+  isPanelComplete,
   optionsFor,
   pickable,
   type LabelOption,
@@ -70,6 +73,21 @@ describe('the panel is furniture — its inventory does not move', () => {
     assert.equal(group(p, 'word-class'), undefined);
     assert.ok(group(p, 'phrase-form'));
   });
+
+  it('treats adjacent selected nodes as one phrase candidate', () => {
+    let state = emptyBuild();
+    state = wrap(state, W, [1, 1], 'V');
+    state = wrap(state, W, [2, 2], 'Det');
+    state = wrap(state, W, [3, 3], 'N');
+    state = wrap(state, W, [2, 3], 'NP');
+    const ids = Object.keys(state.constituents).filter(
+      (id) => state.constituents[id]!.parent === null,
+    );
+    const p = optionsFor(state, W, { kind: 'nodes', ids, span: [1, 3] });
+    assert.equal(p.subject, '“repaired the engine”');
+    assert.equal(group(p, 'word-class'), undefined);
+    assert.ok(group(p, 'phrase-form'));
+  });
 });
 
 describe('states carry the message', () => {
@@ -113,6 +131,26 @@ describe('states carry the message', () => {
     assert.equal(opt(p, 'form:NP')!.state, 'chosen');
   });
 
+  it('does not highlight a conflicting suggestion after the form is chosen', () => {
+    const reading = ambiguous.readings.find((entry) => entry.id === ambiguous.canonicalId)!;
+    const state: BuildState = {
+      constituents: reading.constituents,
+      seq: Object.keys(reading.constituents).length,
+      verbType: reading.verbType,
+    };
+    const vp = Object.keys(state.constituents).find(
+      (id) => state.constituents[id]!.form === 'VP' && state.constituents[id]!.parent !== null,
+    )!;
+    const p = optionsFor(state, ambiguous.words, { kind: 'node', id: vp });
+
+    assert.equal(opt(p, 'form:VP')!.state, 'chosen');
+    assert.notEqual(opt(p, 'form:NP')!.state, 'suggested');
+    assert.equal(
+      group(p, 'phrase-form')!.options.some((option) => option.state === 'suggested'),
+      false,
+    );
+  });
+
   it('keeps an untaught label visible but out of reach', () => {
     const p = optionsFor(emptyBuild(), W, { kind: 'span', span: [1, 1] }, { forms: ['N', 'V'] });
     const adj = opt(p, 'form:Adj')!;
@@ -120,6 +158,40 @@ describe('states carry the message', () => {
     assert.ok(!isPickable(adj));
     // Still there: the shape of the taxonomy stays visible.
     assert.equal(group(p, 'word-class')!.options.length, WORD_FORMS.length);
+  });
+
+  it('visibly blocks a choice already rejected for this selection', () => {
+    const original = optionsFor(emptyBuild(), W, { kind: 'span', span: [0, 0] });
+    const panel = blockRejectedOptions(original, {
+      'form:N': 'Not a noun here.',
+    });
+
+    assert.equal(opt(panel, 'form:N')!.state, 'blocked');
+    assert.equal(opt(panel, 'form:N')!.note, 'Not a noun here.');
+    assert.equal(isPickable(opt(panel, 'form:N')!), false);
+    assert.equal(isPickable(opt(panel, 'form:Pron')!), true);
+    assert.equal(opt(original, 'form:N')!.state, 'available', 'the source panel is unchanged');
+  });
+});
+
+describe('completion closes only terminal decisions', () => {
+  it('completes a noun phrase once its phrase type and subject role are answered', () => {
+    let s = wrap(emptyBuild(), W, [0, 0], 'Pron');
+    s = wrap(s, W, [0, 0], 'NP');
+    const np = nodeOver(s, [0, 0])!;
+
+    assert.equal(isPanelComplete(optionsFor(s, W, { kind: 'node', id: np })), false);
+    s = setFunction(s, np, 'subject');
+    assert.equal(isPanelComplete(optionsFor(s, W, { kind: 'node', id: np })), true);
+  });
+
+  it('keeps the palette open while another applicable category is unanswered', () => {
+    let s = wrap(emptyBuild(), W, [1, 1], 'V');
+    const verb = nodeOver(s, [1, 1])!;
+
+    assert.equal(isPanelComplete(optionsFor(s, W, { kind: 'node', id: verb })), false);
+    s = setVerbType(s, 'Vtr');
+    assert.equal(isPanelComplete(optionsFor(s, W, { kind: 'node', id: verb })), false);
   });
 });
 
@@ -167,6 +239,28 @@ describe('functions are contingent, so they are filtered', () => {
     assert.ok(fns.length > 0);
     assert.ok(fns.every((o) => o.state === 'blocked'));
     assert.match(fns[0]!.note ?? '', /group it first/i);
+  });
+
+  it('offers predicate as soon as a complete VP is on the clause frontier', () => {
+    const s = built();
+    const vp = roots(s).find((id) => s.constituents[id]!.form === 'VP')!;
+    const p = optionsFor(s, W, { kind: 'node', id: vp });
+
+    assert.equal(opt(p, 'func:predicate')!.state, 'available');
+    assert.equal(opt(p, 'func:subject'), undefined);
+  });
+
+  it('offers direct object on a top-level NP before the VP is drawn', () => {
+    let s = setVerbType(emptyBuild(), 'Vtr');
+    s = wrap(s, W, [1, 1], 'V');
+    s = wrap(s, W, [2, 2], 'Det');
+    s = wrap(s, W, [3, 3], 'N');
+    s = wrap(s, W, [2, 3], 'NP');
+    const object = roots(s).find((id) => s.constituents[id]!.form === 'NP')!;
+    const p = optionsFor(s, W, { kind: 'node', id: object });
+
+    assert.equal(opt(p, 'func:subject')!.state, 'available');
+    assert.equal(opt(p, 'func:directObject')!.state, 'available');
   });
 });
 
