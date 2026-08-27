@@ -92,15 +92,41 @@ export interface OptionGroup {
   /** The question this group answers, in the learner's language. */
   question: string;
   options: LabelOption[];
+  /**
+   * Whether a plain option's note is worth a line of its own by default.
+   *
+   * `always` where the note IS the choice — the six verb types are told apart
+   * by their example, and the functions by the question that finds them.
+   * `ondemand` where it is a reminder about a label the learner already knows
+   * the name of; thirteen formal tests at once is a wall nobody reads, and one
+   * on the row you are pointing at is a lesson.
+   *
+   * Notes that carry evidence or a block reason always show, whatever this says.
+   */
+  notes: 'always' | 'ondemand';
+  /** The option already picked here, if any. A group with one is settled. */
+  answered?: LabelOption | null;
 }
 
 export interface Panel {
   /** The words under the selection, quoted. Empty when nothing is selected. */
   subject: string;
-  /** One line saying what to do next. */
+  /** Guidance that the open group's own question does not already give. */
   prompt: string;
   groups: OptionGroup[];
-  /** How many options are marked `suggested`. */
+  /**
+   * The group that is the live question: the first one still unanswered that
+   * has something pickable in it.
+   *
+   * A complete inventory is what makes the panel learnable, and it is also what
+   * makes it long — twenty rows of word classes stood between a learner and the
+   * function group, which was the thing they had just been told to do. Settled
+   * groups therefore collapse to their answer. Nothing is removed, the order
+   * never changes, and reopening one is a click; but the question you are
+   * actually being asked is on screen.
+   */
+  step: string | null;
+  /** How many options carry a number key. Always within the step group. */
   suggested: number;
   /** Set when the SELECTION itself cannot be labelled, whatever the label. */
   blocked?: string;
@@ -149,14 +175,14 @@ export function optionsFor(
  * teaches nothing.
  */
 function idlePanel(scope: ChapterScope): Panel {
-  return {
+  return finish({
     subject: '',
     prompt: 'Select a word, or drag across a run of words.',
-    suggested: 0,
     groups: [
       {
         id: 'word-class',
         question: 'What is a word?',
+        notes: 'ondemand',
         options: WORD_FORMS.map((f) =>
           formOption(f, inScope(f, scope.forms) ? 'idle' : 'untaught'),
         ),
@@ -164,12 +190,13 @@ function idlePanel(scope: ChapterScope): Panel {
       {
         id: 'phrase-form',
         question: 'What is a run of words?',
+        notes: 'ondemand',
         options: PHRASE_FORMS.map((f) =>
           formOption(f, inScope(f, scope.forms) ? 'idle' : 'untaught'),
         ),
       },
     ],
-  };
+  });
 }
 
 function formOption(f: Form, state: OptionState, note?: string): LabelOption {
@@ -214,11 +241,13 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
         {
           id: 'word-class',
           question: `What is ${quote(words, span)}?`,
+          notes: 'ondemand',
           options: build(WORD_FORMS, false),
         },
         {
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',
+          notes: 'ondemand',
           options: build(
             PHRASE_FORMS.filter((f) => f !== 'S'),
             true,
@@ -231,15 +260,17 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
           // A run of words is never a part of speech, so the word classes are
           // not merely disabled here — the question is a different one.
           question: `What is ${quote(words, span)}?`,
+          notes: 'ondemand',
           options: build(PHRASE_FORMS, false),
         },
       ];
 
-  return withHotkeys({
+  return finish({
     subject: quote(words, span),
-    prompt: blocked ?? 'Name it, then say what it does.',
+    // The open group's question already asks; a second line saying the same
+    // thing in other words is chrome, not guidance.
+    prompt: blocked ?? '',
     groups,
-    suggested: 0,
     ...(blocked ? { blocked } : {}),
   });
 }
@@ -276,46 +307,59 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       return formOption(f, why ? 'suggested' : 'available', why);
     });
 
+  const verbType: OptionGroup = {
+    id: 'verb-type',
+    // A genuinely separate decision: first "is it a verb?", then "what kind?".
+    // As a sibling group both stay readable — and because it sits directly
+    // after the word class, it is the step a freshly-named verb lands on, which
+    // is the order the course teaches.
+    question: 'What kind of verb is it?',
+    notes: 'always',
+    options: VERB_TYPE_MENU.map((v) => ({
+      key: `vt:${v.type}`,
+      label: v.label,
+      note: v.example,
+      state: (state.verbType === v.type ? 'chosen' : 'available') as OptionState,
+      verbType: v.type,
+    })),
+  };
+
   const groups: OptionGroup[] = isWord
     ? [
-        { id: 'word-class', question: `What is ${subject}?`, options: build(WORD_FORMS, false) },
+        {
+          id: 'word-class',
+          question: `What is ${subject}?`,
+          notes: 'ondemand',
+          options: build(WORD_FORMS, false),
+        },
+        ...(c.form === 'V' ? [verbType] : []),
         {
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',
+          notes: 'ondemand',
           options: build(
             PHRASE_FORMS.filter((f) => f !== 'S'),
             true,
           ),
         },
       ]
-    : [{ id: 'phrase-form', question: `What is ${subject}?`, options: build(PHRASE_FORMS, false) }];
-
-  if (c.form === 'V') {
-    groups.push({
-      id: 'verb-type',
-      // The spine of the course, and a genuinely separate decision: first "is
-      // it a verb?", then "what kind?". As a sibling group both stay readable.
-      question: 'What kind of verb is it?',
-      options: VERB_TYPE_MENU.map((v) => ({
-        key: `vt:${v.type}`,
-        label: v.label,
-        note: v.example,
-        state: (state.verbType === v.type ? 'chosen' : 'available') as OptionState,
-        verbType: v.type,
-      })),
-    });
-  }
+    : [
+        {
+          id: 'phrase-form',
+          question: `What is ${subject}?`,
+          notes: 'ondemand',
+          options: build(PHRASE_FORMS, false),
+        },
+      ];
 
   groups.push(functionGroup(state, id, subject, scope));
 
-  return withHotkeys({
+  return finish({
     subject,
-    prompt:
-      c.parent === null
-        ? 'Group it with its neighbours, or say what it is.'
-        : 'Say what it does inside its group.',
+    // The open group's question already asks; a second line saying the same
+    // thing in other words is chrome, not guidance.
+    prompt: c.parent === null && !isWord ? 'Group it with its neighbours to give it a job.' : '',
     groups,
-    suggested: 0,
   });
 }
 
@@ -347,23 +391,55 @@ function functionGroup(
     });
   }
 
-  return { id: 'function', question: `What does ${subject} do?`, options };
+  return { id: 'function', question: `What does ${subject} do?`, notes: 'always', options };
 }
 
 /**
- * Number keys go to suggestions only, and the key is part of the highlight
- * rather than decoration on top of it: the shortlist is the thing you can reach
- * without the mouse. Everything else is a click or the filter field.
+ * Settle a panel: mark what each group has answered, choose the live one, and
+ * hand out the number keys.
+ *
+ * Keys go to suggestions in the STEP group only. A key that reached a row
+ * inside a collapsed group would be a shortcut to something invisible, which is
+ * worse than no shortcut at all.
  */
-function withHotkeys(panel: Panel): Panel {
-  let n = 0;
-  const groups = panel.groups.map((g) => ({
+function finish(draft: Omit<Panel, 'step' | 'suggested'>): Panel {
+  const groups: OptionGroup[] = draft.groups.map((g) => ({
     ...g,
-    options: g.options.map((o) =>
-      o.state === 'suggested' && n < 9 ? { ...o, hotkey: String(++n) } : o,
-    ),
+    answered: g.options.find((o) => o.state === 'chosen') ?? null,
   }));
-  return { ...panel, groups, suggested: n };
+
+  let step: string | null = null;
+  for (const g of groups) {
+    if (!g.answered && g.options.some(isPickable)) {
+      step = g.id;
+      break;
+    }
+  }
+  // Everything settled: rest on the last group that can still be changed, so
+  // revising the most recent decision costs nothing.
+  if (!step) {
+    for (let i = groups.length - 1; i >= 0; i--) {
+      if (groups[i]!.options.some(isPickable)) {
+        step = groups[i]!.id;
+        break;
+      }
+    }
+  }
+  step ??= groups[0]?.id ?? null;
+
+  let n = 0;
+  const keyed = groups.map((g) =>
+    g.id !== step
+      ? g
+      : {
+          ...g,
+          options: g.options.map((o) =>
+            o.state === 'suggested' && n < 9 ? { ...o, hotkey: String(++n) } : o,
+          ),
+        },
+  );
+
+  return { ...draft, groups: keyed, step, suggested: n };
 }
 
 /* ---------------------------------------------------------------- filter */

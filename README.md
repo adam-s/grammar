@@ -63,6 +63,11 @@ where things are, is exactly what you lose. So:
 - **Which groups show follows the shape of the selection** — the one thing the
   learner can already see. One word asks what the word is; a run of words asks
   what the phrase is; a node that exists also asks what it does.
+- **A settled group collapses to its answer**, so the live question is the one
+  on screen. Completeness is what makes the panel learnable and it is also what
+  makes it long; twenty rows of word classes once stood between a learner and
+  the function group they had just been told to fill. Nothing is removed and the
+  order never changes — reopening a group is one click.
 - **Suggestions are highlighted in place, never floated to the top.** They keep
   their seat and gain an accent rail, their evidence, and a number key.
 - **A blocked option keeps its reason, visibly.** The rule you just met is the
@@ -70,11 +75,24 @@ where things are, is exactly what you lose. So:
 - **Functions are contingent, so they *are* filtered.** `rules.ts` already draws
   the line: `hidden` means "never here" and is omitted, `disabled` means "not
   yet" and is shown with its reason.
+- **Accent means one thing: look here.** Three simultaneous blue treatments read
+  as three unrelated emphases. Suggested gets the accent; *chosen* gets a tint
+  and a tick; the pointer gets plain grey; focus gets an inset ring.
+- **A note shows by default only where it is the choice.** The six verb types
+  are told apart by their examples, so those always show; thirteen formal tests
+  at once is a wall nobody reads, so those appear on the row you point at.
 
 Two things fall out of the panel that the popup could not do at all: hovering a
 label draws what it would produce, on the words it would produce it over; and a
 second question — verb type, function — is just a second group rather than a
 drill-down or a mode change.
+
+A first wrong answer does not hand over the right one. `gradeForm` names the
+truth in its reason, and even its formal test is the test for the right answer —
+both teach well when someone is stuck and undo the exercise when they are
+guessing. So a first miss restates the claim just made and lets the learner watch
+it fail: *"Not a number. A number counts or orders: three, first."* The truth
+arrives on the second miss.
 
 `src/lib/grammar/options.ts` is the authority, and its tests are the
 specification.

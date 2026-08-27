@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { emptyBuild, nodeOver, setVerbType, wrap, type BuildState } from './builder.ts';
+import {
+  emptyBuild,
+  nodeOver,
+  setFunction,
+  setVerbType,
+  wrap,
+  type BuildState,
+} from './builder.ts';
 import { vtr } from './fixtures.ts';
 import {
   byHotkey,
@@ -247,5 +254,73 @@ describe('a node inside a group is locked, visibly', () => {
     const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [2, 3])! });
     assert.equal(opt(p, 'form:NP')!.state, 'chosen');
     assert.equal(opt(p, 'form:PP')!.state, 'blocked');
+  });
+});
+
+describe('the live question is the one on screen', () => {
+  it('rests on the form group while the words are unnamed', () => {
+    const p = optionsFor(emptyBuild(), W, { kind: 'span', span: [1, 1] });
+    assert.equal(p.step, 'word-class');
+    assert.equal(group(p, 'word-class')!.answered, null);
+  });
+
+  it('moves to the verb type the moment a verb is named', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
+    assert.equal(p.step, 'verb-type');
+    assert.equal(group(p, 'word-class')!.answered?.form, 'V');
+    // …and it is asked directly after the word class, not below the phrase
+    // forms: classifying the verb is the spine of the course.
+    assert.deepEqual(
+      p.groups.map((g) => g.id),
+      ['word-class', 'verb-type', 'phrase-form', 'function'],
+    );
+  });
+
+  it('moves on again once the verb type is settled', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    s = setVerbType(s, 'Vtr');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
+    assert.equal(group(p, 'verb-type')!.answered?.verbType, 'Vtr');
+    assert.equal(p.step, 'phrase-form');
+  });
+
+  it('skips a group that has nothing pickable in it', () => {
+    // "the" is inside the NP, so it cannot be re-wrapped — but it can be given
+    // a function, and that is where the panel should be.
+    const s = built();
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [2, 2])! });
+    assert.equal(p.step, 'function');
+  });
+
+  it('rests on the last changeable group when everything is answered', () => {
+    let s = built();
+    s = setFunction(s, nodeOver(s, [2, 3])!, 'directObject');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [2, 3])! });
+    assert.equal(group(p, 'function')!.answered?.func, 'directObject');
+    assert.equal(p.step, 'function');
+  });
+
+  it('keeps number keys inside the step group', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
+    const keyed = p.groups.filter((g) => g.options.some((o) => o.hotkey));
+    assert.ok(keyed.every((g) => g.id === p.step));
+  });
+});
+
+describe('a note shows by default only where it is the choice', () => {
+  it('treats the formal tests as reference and the examples as content', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
+    // Thirteen formal tests at once is a wall nobody reads.
+    assert.equal(group(p, 'word-class')!.notes, 'ondemand');
+    // Six verb types are told apart BY their examples.
+    assert.equal(group(p, 'verb-type')!.notes, 'always');
+    assert.equal(group(p, 'function')!.notes, 'always');
   });
 });

@@ -34,6 +34,7 @@
   } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
   import { PLAIN, gradeForm, gradeFunction, type Outcome } from '$lib/grammar/grader.ts';
+  import { FORM_TEST, FUNCTION_TEST, label } from '$lib/grammar/names.ts';
   import { layout } from '$lib/grammar/layout.ts';
 
   import { LONG } from '$lib/grammar/rules.ts';
@@ -61,6 +62,20 @@
   let draft = $state<Span | null>(null);
   let preview = $state<Form | null>(null);
   let verdict = $state<Verdict | null>(null);
+  /**
+   * Misses per span, so a first wrong answer does not hand over the right one.
+   *
+   * `gradeForm` names the truth in its reason — "«are» is not a number, it is a
+   * verb" — and even its formal test is the test for the RIGHT answer, which
+   * ends "then it is a verb". Both teach well when someone is stuck and undo the
+   * exercise when they are guessing.
+   *
+   * So a first miss restates what was just claimed and lets the learner see it
+   * does not fit: "Not a number. A number counts or orders: three, first."
+   * Applying your own test and watching it fail is the skill. The truth arrives
+   * on the second miss, when it has been earned.
+   */
+  let misses = $state<Record<string, number>>({});
   /** High-water mark: the picture grows as the tree deepens, and never shrinks
       back, so undoing one step does not re-flow everything the learner built. */
   let depthMark = $state(0);
@@ -75,6 +90,7 @@
     preview = null;
     verdict = null;
     depthMark = 0;
+    misses = {};
   }
 
   $effect(() => {
@@ -104,7 +120,19 @@
     selection = id ? { kind: 'node', id } : { kind: 'span', span };
   }
 
-  function toVerdict(o: Outcome, what: string): Verdict {
+  /**
+   * @param what   what was confirmed, for a correct answer
+   * @param refused what was rejected, for a first miss — never what is right
+   * @param firstMiss the rejected label's OWN test, so it can be applied and fail
+   * @param key    identifies the thing being answered, so misses accumulate
+   */
+  function toVerdict(
+    o: Outcome,
+    what: string,
+    refused: string,
+    firstMiss: string,
+    key: string,
+  ): Verdict {
     if (o.kind === 'correct') return { kind: 'correct', text: `Yes — ${what}.` };
     if (o.kind === 'alternate') {
       return {
@@ -113,8 +141,14 @@
         test: `Here it means: ${o.canonicalGloss}`,
       };
     }
-    return { kind: 'wrong', text: o.reason, test: o.test };
+    const n = (misses[key] ?? 0) + 1;
+    misses = { ...misses, [key]: n };
+    return n === 1
+      ? { kind: 'wrong', text: `Not ${refused}.`, test: firstMiss }
+      : { kind: 'wrong', text: o.reason, test: o.test };
   }
+
+  const sentenceCase = (t: string) => `${t.charAt(0).toUpperCase()}${t.slice(1).trimEnd()}.`;
 
   function grew() {
     depthMark = Math.max(depthMark, layout(build.constituents, words).maxDepth);
@@ -126,7 +160,14 @@
 
     if (o.form) {
       const outcome = gradeForm(sentence, span, o.form);
-      verdict = toVerdict(outcome, `that is ${PLAIN[o.form] ?? o.form}`);
+      const named = PLAIN[o.form] ?? o.form;
+      verdict = toVerdict(
+        outcome,
+        `that is ${named}`,
+        named,
+        sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`),
+        `form:${span[0]}-${span[1]}`,
+      );
       // A wrong answer never enters the structure. The diagram is a record of
       // what the learner has established, not of what they have tried.
       if (outcome.kind === 'wrong') return;
@@ -149,7 +190,13 @@
     if (o.func && selection.kind === 'node') {
       const c = build.constituents[selection.id]!;
       const outcome = gradeFunction(sentence, c.span, c.form, o.func);
-      verdict = toVerdict(outcome, `it is the ${o.label}`);
+      verdict = toVerdict(
+        outcome,
+        `it is the ${o.label}`,
+        `the ${o.label}`,
+        sentenceCase(`the ${label(o.func)} answers: ${FUNCTION_TEST[o.func]}`),
+        `func:${c.span[0]}-${c.span[1]}`,
+      );
       if (outcome.kind !== 'wrong') build = setFunction(build, selection.id, o.func);
       return;
     }

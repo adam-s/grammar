@@ -86,10 +86,23 @@
     return lo && hi ? { left: lo.left, right: hi.right, x: (lo.x + hi.x) / 2 } : null;
   }
 
+  /**
+   * Where the hovered label would land: one row above whatever already covers
+   * those words. Drawing it at the leaf row put it on top of the tags it would
+   * sit above. Deliberately NOT computed by re-running the layout with a
+   * hypothetical node — that is exact, and it would make the whole tree jump
+   * every time the pointer crossed a row.
+   */
   const previewBox = $derived.by(() => {
     if (!preview || !activeSpan) return null;
     const e = extent(activeSpan);
-    return e ? { ...e, form: preview } : null;
+    if (!e) return null;
+    let top = L.height;
+    for (const [id, box] of Object.entries(L.nodes)) {
+      const c = constituents[id];
+      if (c && c.span[0] >= activeSpan[0] && c.span[1] <= activeSpan[1]) top = Math.min(top, box.y);
+    }
+    return { ...e, form: preview, y: top - ROW * 0.6 };
   });
 
   /* ------------------------------------------------------------ selection */
@@ -135,8 +148,8 @@
          can offer this at all: a popup covers the thing it is asking about. -->
     {#if previewBox}
       <g class="preview" style="--hue:{hue(previewBox.form)}">
-        <line x1={previewBox.left} y1={L.height} x2={previewBox.right} y2={L.height} />
-        <text x={previewBox.x} y={L.height - 10}>{formName(previewBox.form)}</text>
+        <line x1={previewBox.left} y1={previewBox.y} x2={previewBox.right} y2={previewBox.y} />
+        <text x={previewBox.x} y={previewBox.y - 8}>{formName(previewBox.form)}</text>
       </g>
     {/if}
 
