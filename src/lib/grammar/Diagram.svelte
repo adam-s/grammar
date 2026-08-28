@@ -349,7 +349,14 @@
           e.stopPropagation();
           onpick({ kind: 'node', id });
         }}
-        onkeydown={(e) => interactive && e.key === 'Enter' && onpick({ kind: 'node', id })}
+        onkeydown={(e) => {
+          // Space as well as Enter. A thing that says `role="button"` has to
+          // behave like one, and Space is how half of keyboard users press a
+          // button — it also scrolls the page if nobody stops it.
+          if (!interactive || (e.key !== 'Enter' && e.key !== ' ')) return;
+          e.preventDefault();
+          onpick({ kind: 'node', id });
+        }}
       >
         {#if !box.isLeaf}
           <line class="bracket" x1={box.left} y1={box.y + 24} x2={box.right} y2={box.y + 24} />

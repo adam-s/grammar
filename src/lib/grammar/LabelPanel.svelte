@@ -83,6 +83,33 @@
   const phone = useMediaQuery(PHONE_QUERY);
   const visualViewport = useVisualViewport();
   let root = $state<HTMLDivElement | null>(null);
+  /** Where focus was when the palette opened, so it can be given back. */
+  let cameFrom: HTMLElement | null = null;
+
+  /**
+   * A dialog has to take focus and give it back.
+   *
+   * Without this a keyboard user opened the palette and stayed on the diagram:
+   * the dialog announced itself and none of its controls were reachable in
+   * order, and closing it left focus wherever the DOM happened to put it.
+   *
+   * The driven copy in the lesson hero never does this. It is being
+   * demonstrated, not used, and stealing focus from someone reading the page
+   * would be the same bug in the other direction.
+   */
+  $effect(() => {
+    if (!interactive || !root || !anchor) return;
+    const active = document.activeElement;
+    cameFrom = active instanceof HTMLElement ? active : null;
+    if (!root.contains(active)) root.focus({ preventScroll: true });
+    return () => {
+      // Only if focus is still inside the thing that is going away; a learner
+      // who has already clicked elsewhere should be left where they are.
+      if (cameFrom?.isConnected && root?.contains(document.activeElement)) {
+        cameFrom.focus({ preventScroll: true });
+      }
+    };
+  });
   let activeId = $state<string | null>(null);
   let cursor = $state(0);
   let pointed = $state<LabelOption | null>(null);
@@ -348,6 +375,7 @@
     class="popup"
     style="left:{position.x}px;top:{position.y}px"
     role="dialog"
+    tabindex="-1"
     aria-label="Label {panel.subject}"
   >
     <header class="context" class:wrong={verdict?.kind === 'wrong'}>
@@ -371,6 +399,15 @@
           <span class="question">{active.question}</span>
         {/if}
       </div>
+
+      <!-- The teaching loop, spoken. The verdict changes the look of the line
+           below and nothing announced it, so a screen-reader user was graded in
+           silence. Its own region rather than the information line, because
+           that line also carries every note the pointer passes over and
+           announcing those would be noise. -->
+      <p class="sr" role="status" aria-live="polite">
+        {verdict ? [verdict.text, verdict.test].filter(Boolean).join(' ') : ''}
+      </p>
 
       {#if performed}
         <p class="information tryit">
@@ -415,7 +452,11 @@
           </button>
           <span>{GROUP_NAME[active.id] ?? active.question}</span>
         </div>
-        <div class="options" role="listbox">
+        <!-- Buttons, not a listbox. A listbox owns only options, and these are
+             grouped under headings that a learner needs to hear — so the
+             simpler semantics are also the true ones. `aria-pressed` says
+             which answer has been given, which is what `chosen` means. -->
+        <div class="options">
           {#each sections as s (s.name)}
             {#if s.name}<h3>{s.name}</h3>{/if}
             {#each s.options as o (o.key)}
@@ -425,8 +466,7 @@
                 class:pointed={shown?.key === o.key}
                 data-option={o.key}
                 type="button"
-                role="option"
-                aria-selected={o.state === 'chosen'}
+                aria-pressed={o.state === 'chosen'}
                 aria-disabled={!isPickable(o)}
                 onclick={() => choose(o)}
                 onpointerenter={() => {
