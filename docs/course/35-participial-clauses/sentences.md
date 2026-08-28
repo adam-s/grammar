@@ -18,16 +18,16 @@ both cleanly.
 
 | #   | Sentence                                              | The step                               |
 | --- | ----------------------------------------------------- | -------------------------------------- |
-| 1   | The window broken by the storm rattled.               | a reduced relative with an agent       |
-| 2   | The letter written in haste confused us.              | no agent, so the gap is the only clue  |
+| 1   | The child standing by the gate waved.                 | **a present participle**               |
+| 2   | The window broken by the storm rattled.               | a reduced relative with an agent       |
 | 3   | The ledger audited by the inspector vanished.         | a longer inner phrase                  |
-| 4   | The child standing by the gate waved.                 | **a present participle**               |
-| 5   | We crossed the bridge damaged by the flood.           | the participial sits inside an object  |
-| 6   | Damaged by the flood, the bridge closed.              | **at the front of the sentence**       |
-| 7   | The report signed by the surveyor mattered.           | back to the plain case                 |
-| 8   | The board rejected the plan drafted by the committee. | inside an object, longer both sides    |
-| 9   | Those shutters painted in the spring warped.          | a time phrase rather than an agent     |
-| 10  | The map drawn by our guide proved accurate.           | close on the plain case, linking frame |
+| 4   | The report signed by the surveyor mattered.           | back to the plain case                 |
+| 5   | Those shutters painted in the spring warped.          | a time phrase rather than an agent     |
+| 6   | The board rejected the plan drafted by the committee. | inside an object, longer both sides    |
+| 7   | The letter written in haste confused us.              | no agent, so the gap is the only clue  |
+| 8   | We crossed the bridge damaged by the flood.           | the participial sits inside an object  |
+| 9   | The map drawn by our guide proved accurate.           | close on the plain case, linking frame |
+| 10  | Damaged by the flood, the bridge closed.              | **at the front of the sentence**       |
 
 ## Notes
 

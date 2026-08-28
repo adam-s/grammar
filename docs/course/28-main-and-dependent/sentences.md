@@ -15,14 +15,14 @@ one — two variables moving together. Lesson 30 is where that is fixed.
 
 | #   | Sentence                                   | The step                                         |
 | --- | ------------------------------------------ | ------------------------------------------------ |
-| 1   | She knew the belt broke.                   | a clause in the object slot, at its shortest     |
-| 2   | The driver said the engine stalled.        | a verb of saying rather than knowing             |
-| 3   | They assumed the ferry sailed.             | the inner clause is intransitive                 |
-| 4   | He discovered the archive flooded.         | the same, with a longer inner subject            |
-| 5   | The clerk confirmed the deeds existed.     | the outer subject grows                          |
-| 6   | The nurse thought the baby slept.          | both subjects are people, so neither is a clue   |
-| 7   | An inspector noticed the wiring smoked.    | back to a thing as the inner subject             |
-| 8   | The jury accepted the witness hesitated.   | the inner subject could be an object alone       |
+| 1   | The driver said the engine stalled.        | a verb of saying rather than knowing             |
+| 2   | The clerk confirmed the deeds existed.     | the outer subject grows                          |
+| 3   | The nurse thought the baby slept.          | both subjects are people, so neither is a clue   |
+| 4   | An inspector noticed the wiring smoked.    | back to a thing as the inner subject             |
+| 5   | The jury accepted the witness hesitated.   | the inner subject could be an object alone       |
+| 6   | She knew the belt broke.                   | a clause in the object slot, at its shortest     |
+| 7   | They assumed the ferry sailed.             | the inner clause is intransitive                 |
+| 8   | He discovered the archive flooded.         | the same, with a longer inner subject            |
 | 9   | She knew the old belt broke yesterday.     | a premodifier and an adverbial inside the clause |
 | 10  | Our guide said the narrow bridge was safe. | a linking frame inside the embedded clause       |
 

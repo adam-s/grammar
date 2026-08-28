@@ -31,8 +31,46 @@ import {
 } from './shape.ts';
 
 export const LESSON_40 = [
-  svClause(
+  ambiguous(
     'c40-a',
+    40,
+    det('The', 'inspector'),
+    v('photographed', 'photograph', 'Vtr'),
+    'the',
+    'engineer',
+    'in',
+    det('the', 'office'),
+    'The inspector was in the office when the picture was taken.',
+    'The engineer who works in the office.',
+  ),
+  passiveWhy(
+    'c40-b',
+    40,
+    det('The', 'harbour'),
+    passive(v('dredged', 'dredge', 'Vtr'), 'was'),
+    {
+      marker: 'before',
+      subject: det('the', 'season'),
+      verb: v('ended', 'end', 'Vint'),
+      kind: 'adverbial',
+    },
+    'Somebody cleared the harbour bed ahead of the season finishing.',
+  ),
+  clauseSubject(
+    'c40-c',
+    40,
+    {
+      kind: 'nominal',
+      finiteness: 'gerund-participial',
+      verb: v('Reading', 'read', 'Vtr'),
+      object: det('the', 'warning'),
+    },
+    v('prevented', 'prevent', 'Vtr'),
+    adjn('a', 'serious', 'mistake'),
+    'Going through the warning stopped a bad error.',
+  ),
+  svClause(
+    'c40-d',
     40,
     modifiedBy('The', 'inspector', {
       marker: 'who',
@@ -49,56 +87,8 @@ export const LESSON_40 = [
     },
     'The inspector who turned up said the wiring was giving off smoke.',
   ),
-  clauseSubject(
-    'c40-b',
-    40,
-    {
-      kind: 'nominal',
-      finiteness: 'gerund-participial',
-      verb: v('Reading', 'read', 'Vtr'),
-      object: det('the', 'warning'),
-    },
-    v('prevented', 'prevent', 'Vtr'),
-    adjn('a', 'serious', 'mistake'),
-    'Going through the warning stopped a bad error.',
-  ),
-  passiveWhy(
-    'c40-c',
-    40,
-    det('The', 'harbour'),
-    passive(v('dredged', 'dredge', 'Vtr'), 'was'),
-    {
-      marker: 'before',
-      subject: det('the', 'season'),
-      verb: v('ended', 'end', 'Vint'),
-      kind: 'adverbial',
-    },
-    'Somebody cleared the harbour bed ahead of the season finishing.',
-  ),
-  remark(
-    'c40-d',
-    40,
-    'Fortunately',
-    modifiedBy('the', 'visitors', {
-      marker: 'who',
-      subjectGap: true,
-      verb: v('complained', 'complain', 'Vint'),
-      kind: 'relative',
-    }),
-    v('returned', 'return', 'Vint'),
-    'The visitors who objected came back, which is a good thing.',
-  ),
-  joined(
-    'c40-e',
-    40,
-    { subject: det('The', 'station'), verb: passive(v('restored', 'restore', 'Vtr'), 'was') },
-    'and',
-    { subject: det('the', 'town'), verb: v('rejoiced', 'rejoice', 'Vint') },
-    'Somebody put the station back in order and the town was glad.',
-    true,
-  ),
   svClause(
-    'c40-f',
+    'c40-e',
     40,
     modifiedBy('The', 'clerk', {
       marker: 'who',
@@ -115,8 +105,31 @@ export const LESSON_40 = [
     },
     'The clerk who left the post said the deeds had gone missing.',
   ),
-  sv(
+  svoo(
+    'c40-f',
+    40,
+    modifiedBy('The', 'tenant', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('complained', 'complain', 'Vint'),
+      kind: 'relative',
+    }),
+    v('sent', 'send', 'Vg'),
+    det('her', 'landlord'),
+    det('a', 'notice'),
+    'The tenant who objected posted a notice to her landlord.',
+  ),
+  joined(
     'c40-g',
+    40,
+    { subject: det('The', 'station'), verb: passive(v('restored', 'restore', 'Vtr'), 'was') },
+    'and',
+    { subject: det('the', 'town'), verb: v('rejoiced', 'rejoice', 'Vint') },
+    'Somebody put the station back in order and the town was glad.',
+    true,
+  ),
+  sv(
+    'c40-h',
     40,
     modifiedBy('The', 'plan', {
       finiteness: 'participial',
@@ -128,8 +141,21 @@ export const LESSON_40 = [
     v('failed', 'fail', 'Vint'),
     'The plan the committee drew up came to nothing.',
   ),
+  remark(
+    'c40-i',
+    40,
+    'Fortunately',
+    modifiedBy('the', 'visitors', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('complained', 'complain', 'Vint'),
+      kind: 'relative',
+    }),
+    v('returned', 'return', 'Vint'),
+    'The visitors who objected came back, which is a good thing.',
+  ),
   svoClause(
-    'c40-h',
+    'c40-j',
     40,
     det('The', 'guide'),
     v('asked', 'ask', 'Vc'),
@@ -143,31 +169,5 @@ export const LESSON_40 = [
       finiteness: 'infinitival',
     },
     'The guide put it to the visitors that they should stay beyond the door.',
-  ),
-  svoo(
-    'c40-i',
-    40,
-    modifiedBy('The', 'tenant', {
-      marker: 'who',
-      subjectGap: true,
-      verb: v('complained', 'complain', 'Vint'),
-      kind: 'relative',
-    }),
-    v('sent', 'send', 'Vg'),
-    det('her', 'landlord'),
-    det('a', 'notice'),
-    'The tenant who objected posted a notice to her landlord.',
-  ),
-  ambiguous(
-    'c40-j',
-    40,
-    det('The', 'inspector'),
-    v('photographed', 'photograph', 'Vtr'),
-    'the',
-    'engineer',
-    'in',
-    det('the', 'office'),
-    'The inspector was in the office when the picture was taken.',
-    'The engineer who works in the office.',
   ),
 ];

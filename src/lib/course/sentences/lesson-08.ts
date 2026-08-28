@@ -13,24 +13,24 @@
 import { adjn, adv, det, pp, pron, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_08 = [
-  sv('c08-a', 8, det('The', 'baby'), v('slept', 'sleep', 'Vint'), 'The infant was asleep.'),
-  sv('c08-b', 8, det('Those', 'lights'), v('flickered', 'flicker', 'Vint'), 'Those lamps wavered.'),
-  sv(
-    'c08-c',
-    8,
-    det('Several', 'guests'),
-    v('arrived', 'arrive', 'Vint'),
-    'A few visitors turned up.',
-  ),
-  sv('c08-d', 8, det('The', 'tide'), v('turned', 'turn', 'Vint'), 'The sea changed direction.'),
   svPlus(
-    'c08-e',
+    'c08-a',
     8,
     pron('She'),
     v('smiled', 'smile', 'Vint'),
     pp('at', pron('us')),
     'She looked at us with pleasure.',
   ),
+  sv('c08-b', 8, det('The', 'baby'), v('slept', 'sleep', 'Vint'), 'The infant was asleep.'),
+  sv('c08-c', 8, det('Those', 'lights'), v('flickered', 'flicker', 'Vint'), 'Those lamps wavered.'),
+  sv(
+    'c08-d',
+    8,
+    det('Several', 'guests'),
+    v('arrived', 'arrive', 'Vint'),
+    'A few visitors turned up.',
+  ),
+  sv('c08-e', 8, det('The', 'tide'), v('turned', 'turn', 'Vint'), 'The sea changed direction.'),
   svPlus(
     'c08-f',
     8,

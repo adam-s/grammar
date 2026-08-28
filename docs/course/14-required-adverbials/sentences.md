@@ -16,14 +16,14 @@ The fix is matched pairs, the same design lesson 20 already uses successfully.
 | --- | --------------------------------------- | --------------------------------------------------- |
 | 1   | Our keys are on that table.             | _be_ plus a place, which cannot be removed          |
 | 2   | The museum is beside the river.         | the same frame, so the pattern is visible           |
-| 3   | She put the milk in the fridge.         | **a verb that is not _be_**, and an object too      |
-| 4   | She placed some files on the desk.      | a second object-plus-place frame                    |
-| 5   | Those children played outside.          | **an optional adverbial** — the first in the lesson |
-| 6   | She placed the box under the bench.     | required                                            |
-| 7   | She opened the box under the bench.     | **the same words, optional**                        |
-| 8   | A ladder is against the wall.           | back to _be_ after the pair                         |
-| 9   | The driver waited at the depot.         | optional                                            |
-| 10  | The driver put the engine at the depot. | **the same place phrase, required**                 |
+| 3   | A ladder is against the wall.           | back to _be_ after the pair                         |
+| 4   | Those children played outside.          | **an optional adverbial** — the first in the lesson |
+| 5   | The driver waited at the depot.         | optional                                            |
+| 6   | The driver put the engine at the depot. | **the same place phrase, required**                 |
+| 7   | She put the milk in the fridge.         | **a verb that is not _be_**, and an object too      |
+| 8   | She placed some files on the desk.      | a second object-plus-place frame                    |
+| 9   | She placed the box under the bench.     | required                                            |
+| 10  | She opened the box under the bench.     | **the same words, optional**                        |
 
 ## Notes
 

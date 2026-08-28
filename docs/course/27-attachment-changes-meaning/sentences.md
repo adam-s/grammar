@@ -16,15 +16,15 @@ shape, so two of these are that instead.
 
 | #   | Sentence                                              | The step                                          |
 | --- | ----------------------------------------------------- | ------------------------------------------------- |
-| 1   | She watched the boy with the binoculars.              | the classic case — who has the binoculars         |
-| 2   | That guard stopped the man with the torch.            | the same, and both readings are ordinary          |
-| 3   | The reporter interviewed the actor in the garden.     | a place, where both readings still hold           |
-| 4   | We found the key under the mat.                       | short, and the verb reading is the likelier       |
-| 5   | The guide met the old men and women.                  | **a different ambiguity** — how far _old_ reaches |
-| 6   | He painted the shed behind the house.                 | back to attachment, with a plausible tie          |
-| 7   | The nurse carried the tray on a trolley.              | an instrument reading against a location one      |
+| 1   | That guard stopped the man with the torch.            | the same, and both readings are ordinary          |
+| 2   | The reporter interviewed the actor in the garden.     | a place, where both readings still hold           |
+| 3   | The nurse carried the tray on a trolley.              | an instrument reading against a location one      |
+| 4   | The inspector photographed the driver beside the bus. | **two ordinary places** — driver or event         |
+| 5   | She watched the boy with the binoculars.              | the classic case — who has the binoculars         |
+| 6   | We found the key under the mat.                       | short, and the verb reading is the likelier       |
+| 7   | He painted the shed behind the house.                 | back to attachment, with a plausible tie          |
 | 8   | She read the report on the train.                     | lesson 19's sentence, now marked as two-way       |
-| 9   | The inspector photographed the driver beside the bus. | **two ordinary places** — driver or event         |
+| 9   | The guide met the old men and women.                  | **a different ambiguity** — how far _old_ reaches |
 | 10  | They packed the damaged books and maps.               | coordination scope again, on an object            |
 
 ## Notes

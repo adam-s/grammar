@@ -14,16 +14,16 @@ and it is worth protecting.
 
 | #   | Sentence                                             | The step                                        |
 | --- | ---------------------------------------------------- | ----------------------------------------------- |
-| 1   | The kettle boiled and the lights dimmed.             | two intransitive clauses, joined                |
-| 2   | The tide turned but the ferry waited.                | _but_, which sets the halves against each other |
-| 3   | We waited or they left.                              | **_or_**, the third coordinator                 |
+| 1   | We waited or they left.                              | **_or_**, the third coordinator                 |
+| 2   | The kettle boiled and the lights dimmed.             | two intransitive clauses, joined                |
+| 3   | The tide turned but the ferry waited.                | _but_, which sets the halves against each other |
 | 4   | The rain eased and the streets dried.                | the second half is a linking frame              |
-| 5   | The engine stalled and the driver called a mechanic. | one half intransitive, one transitive           |
-| 6   | The clerk read the minute but the board proceeded.   | both halves transitive                          |
-| 7   | The talks resumed and the strike ended.              | back to the plainest join                       |
-| 8   | The snow melted and the river rose.                  | two irregular verbs, short halves               |
-| 9   | That lock rusted and the gate jammed.                | a determiner that is not an article             |
-| 10  | The quartet rehearsed but the audience left.         | close on _but_                                  |
+| 5   | The talks resumed and the strike ended.              | back to the plainest join                       |
+| 6   | The snow melted and the river rose.                  | two irregular verbs, short halves               |
+| 7   | That lock rusted and the gate jammed.                | a determiner that is not an article             |
+| 8   | The quartet rehearsed but the audience left.         | close on _but_                                  |
+| 9   | The engine stalled and the driver called a mechanic. | one half intransitive, one transitive           |
+| 10  | The clerk read the minute but the board proceeded.   | both halves transitive                          |
 
 ## Notes
 

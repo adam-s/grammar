@@ -18,13 +18,13 @@ time the learner meets the replacement itself.
 | 1   | She paused briefly.            | a pronoun filling the subject slot alone |
 | 2   | They quietly agreed.           | plural, and a word before the verb       |
 | 3   | It vanished completely.        | a pronoun with no person behind it       |
-| 4   | We waited outside the station. | the predicate carries the length         |
-| 5   | Someone knocked twice.         | an indefinite pronoun, same slot         |
-| 6   | The man in blue laughed.       | **the phrase**, six words long           |
-| 7   | He laughed.                    | **the pronoun that replaced all of it**  |
-| 8   | Nothing moved upstairs.        | a pronoun that refers to nobody          |
-| 9   | Nobody in the row complained.  | a pronoun with a phrase after it         |
-| 10  | Everyone left before sunset.   | one word standing for a crowd            |
+| 4   | Someone knocked twice.         | an indefinite pronoun, same slot         |
+| 5   | He laughed.                    | **the pronoun that replaced all of it**  |
+| 6   | Nothing moved upstairs.        | a pronoun that refers to nobody          |
+| 7   | Everyone left before sunset.   | one word standing for a crowd            |
+| 8   | We waited outside the station. | the predicate carries the length         |
+| 9   | The man in blue laughed.       | **the phrase**, six words long           |
+| 10  | Nobody in the row complained.  | a pronoun with a phrase after it         |
 
 ## Notes
 

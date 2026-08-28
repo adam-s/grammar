@@ -17,15 +17,15 @@ nothing. Thirty-six lessons of a rule that always worked, and it stops here.
 | #   | Sentence                                    | The step                                      |
 | --- | ------------------------------------------- | --------------------------------------------- |
 | 1   | The contractors dredged the harbour.        | **the active**, so the turn is visible        |
-| 2   | The harbour was dredged by the contractors. | **the same event, turned around**             |
-| 3   | Those deeds were filed.                     | no agent at all — and no active version       |
-| 4   | The guest was given a key.                  | the **indirect** object promoted              |
-| 5   | The driver was considered reliable.         | an object complement kept behind              |
-| 6   | The ledger was audited by the inspector.    | a plain transitive passive with an agent      |
+| 2   | Those deeds were filed.                     | no agent at all — and no active version       |
+| 3   | The path was cleared.                       | agentless again, shortest frame               |
+| 4   | The harbour was dredged by the contractors. | **the same event, turned around**             |
+| 5   | The ledger was audited by the inspector.    | a plain transitive passive with an agent      |
+| 6   | The narrow road was blocked by branches.    | a premodifier inside the promoted subject     |
 | 7   | The gates were closed.                      | **two readings** — a state or a passive event |
-| 8   | The narrow road was blocked by branches.    | a premodifier inside the promoted subject     |
-| 9   | The path was cleared.                       | agentless again, shortest frame               |
-| 10  | Mara was elected captain.                   | an object complement with a name              |
+| 8   | Mara was elected captain.                   | an object complement with a name              |
+| 9   | The driver was considered reliable.         | an object complement kept behind              |
+| 10  | The guest was given a key.                  | the **indirect** object promoted              |
 
 ## Notes
 

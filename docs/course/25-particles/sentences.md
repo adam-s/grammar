@@ -17,16 +17,16 @@ Four tests exist and the built lesson uses none:
 
 | #   | Sentence                            | The step                                           |
 | --- | ----------------------------------- | -------------------------------------------------- |
-| 1   | She switched off the lamp.          | the particle where the built lesson always puts it |
-| 2   | She switched the lamp off.          | **the same words, particle moved**                 |
-| 3   | The crowd cheered him on.           | a second verb, particle first                      |
-| 4   | We wrote down the address.          | **moved again, so item 2 was not a one-off**       |
-| 5   | We wrote the address down.          | a particle                                         |
-| 6   | She looked up the number.           | **the same three words, a preposition**            |
-| 7   | She looked up the chimney.          | a particle in a longer frame                       |
-| 8   | The children picked up the litter.  | **the same shape, a preposition**                  |
+| 1   | The children picked up the litter.  | **the same shape, a preposition**                  |
+| 2   | The clerk took every name down.     | movement over a longer object                      |
+| 3   | She switched off the lamp.          | the particle where the built lesson always puts it |
+| 4   | She switched the lamp off.          | **the same words, particle moved**                 |
+| 5   | The crowd cheered him on.           | a second verb, particle first                      |
+| 6   | We wrote down the address.          | **moved again, so item 2 was not a one-off**       |
+| 7   | We wrote the address down.          | a particle                                         |
+| 8   | She looked up the number.           | **the same three words, a preposition**            |
 | 9   | The children climbed up the ladder. | a pronoun object, which forces the movement        |
-| 10  | The clerk took every name down.     | movement over a longer object                      |
+| 10  | She looked up the chimney.          | a particle in a longer frame                       |
 
 ## Notes
 

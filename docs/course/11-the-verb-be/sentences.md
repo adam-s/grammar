@@ -12,15 +12,15 @@ form-function doctrine in a single lesson. That is kept.
 | #   | Sentence                   | The step                                                    |
 | --- | -------------------------- | ----------------------------------------------------------- |
 | 1   | The answer was obvious.    | _be_ with an adjective, the plainest case                   |
-| 2   | He is a doctor.            | **a noun phrase doing the same job**                        |
-| 3   | These apples are ripe.     | back to an adjective, plural agreement                      |
-| 4   | The winner was a stranger. | a noun phrase again, so the pattern is not chance           |
-| 5   | She is the treasurer.      | a definite complement — it identifies rather than describes |
-| 6   | The bread tasted stale.    | **a linking verb that is not _be_**                         |
-| 7   | The bread was stale.       | **the same words, with _be_**                               |
-| 8   | The evidence was thin.     | after the pair, a plain case again                          |
-| 9   | That building is a museum. | noun phrase, present tense                                  |
-| 10  | The streets were deserted. | an adjective that looks like a past participle              |
+| 2   | These apples are ripe.     | back to an adjective, plural agreement                      |
+| 3   | The winner was a stranger. | a noun phrase again, so the pattern is not chance           |
+| 4   | The bread tasted stale.    | **a linking verb that is not _be_**                         |
+| 5   | The bread was stale.       | **the same words, with _be_**                               |
+| 6   | The evidence was thin.     | after the pair, a plain case again                          |
+| 7   | That building is a museum. | noun phrase, present tense                                  |
+| 8   | The streets were deserted. | an adjective that looks like a past participle              |
+| 9   | He is a doctor.            | **a noun phrase doing the same job**                        |
+| 10  | She is the treasurer.      | a definite complement — it identifies rather than describes |
 
 ## Notes
 

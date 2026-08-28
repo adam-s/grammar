@@ -25,6 +25,17 @@ export const LESSON_35 = [
   sv(
     'c35-a',
     35,
+    modifiedBy('The', 'child', {
+      ...present,
+      verb: v('standing', 'stand', 'Vint'),
+      adverbial: pp('by', det('the', 'gate')),
+    }),
+    v('waved', 'wave', 'Vint'),
+    'The child who was at the gate raised a hand.',
+  ),
+  sv(
+    'c35-b',
+    35,
     modifiedBy('The', 'window', {
       ...past,
       verb: v('broken', 'break', 'Vtr'),
@@ -32,18 +43,6 @@ export const LESSON_35 = [
     }),
     v('rattled', 'rattle', 'Vint'),
     'The window the storm had broken shook.',
-  ),
-  svo(
-    'c35-b',
-    35,
-    modifiedBy('The', 'letter', {
-      ...past,
-      verb: v('written', 'write', 'Vtr'),
-      adverbial: pp('in', bare('haste')),
-    }),
-    v('confused', 'confuse', 'Vtr'),
-    pron('us'),
-    'The letter somebody wrote in a hurry left us puzzled.',
   ),
   sv(
     'c35-c',
@@ -59,41 +58,6 @@ export const LESSON_35 = [
   sv(
     'c35-d',
     35,
-    modifiedBy('The', 'child', {
-      ...present,
-      verb: v('standing', 'stand', 'Vint'),
-      adverbial: pp('by', det('the', 'gate')),
-    }),
-    v('waved', 'wave', 'Vint'),
-    'The child who was at the gate raised a hand.',
-  ),
-  svo(
-    'c35-e',
-    35,
-    pron('We'),
-    v('crossed', 'cross', 'Vtr'),
-    modifiedBy('the', 'bridge', {
-      ...past,
-      verb: v('damaged', 'damage', 'Vtr'),
-      adverbial: pp('by', det('the', 'flood')),
-    }),
-    'We went over the bridge the flood had harmed.',
-  ),
-  participleFirst(
-    'c35-f',
-    35,
-    {
-      verb: v('Damaged', 'damage', 'Vtr'),
-      objectGap: true,
-      adverbial: pp('by', det('the', 'flood')),
-    },
-    det('the', 'bridge'),
-    v('closed', 'close', 'Vint'),
-    'The flood having harmed it, the bridge shut.',
-  ),
-  sv(
-    'c35-g',
-    35,
     modifiedBy('The', 'report', {
       ...past,
       verb: v('signed', 'sign', 'Vtr'),
@@ -102,8 +66,19 @@ export const LESSON_35 = [
     v('mattered', 'matter', 'Vint'),
     'The report the surveyor had put a name to counted.',
   ),
+  sv(
+    'c35-e',
+    35,
+    modifiedBy('Those', 'shutters', {
+      ...past,
+      verb: v('painted', 'paint', 'Vtr'),
+      adverbial: pp('in', det('the', 'spring')),
+    }),
+    v('warped', 'warp', 'Vint'),
+    'The shutters somebody painted in the spring bent out of shape.',
+  ),
   svo(
-    'c35-h',
+    'c35-f',
     35,
     det('The', 'board'),
     v('rejected', 'reject', 'Vtr'),
@@ -114,19 +89,32 @@ export const LESSON_35 = [
     }),
     'The board turned down the plan the committee had drawn up.',
   ),
-  sv(
-    'c35-i',
+  svo(
+    'c35-g',
     35,
-    modifiedBy('Those', 'shutters', {
+    modifiedBy('The', 'letter', {
       ...past,
-      verb: v('painted', 'paint', 'Vtr'),
-      adverbial: pp('in', det('the', 'spring')),
+      verb: v('written', 'write', 'Vtr'),
+      adverbial: pp('in', bare('haste')),
     }),
-    v('warped', 'warp', 'Vint'),
-    'The shutters somebody painted in the spring bent out of shape.',
+    v('confused', 'confuse', 'Vtr'),
+    pron('us'),
+    'The letter somebody wrote in a hurry left us puzzled.',
+  ),
+  svo(
+    'c35-h',
+    35,
+    pron('We'),
+    v('crossed', 'cross', 'Vtr'),
+    modifiedBy('the', 'bridge', {
+      ...past,
+      verb: v('damaged', 'damage', 'Vtr'),
+      adverbial: pp('by', det('the', 'flood')),
+    }),
+    'We went over the bridge the flood had harmed.',
   ),
   svc(
-    'c35-j',
+    'c35-i',
     35,
     modifiedBy('The', 'map', {
       ...past,
@@ -136,5 +124,17 @@ export const LESSON_35 = [
     v('proved', 'prove', 'Vlink'),
     adj('accurate'),
     'The map our guide had made turned out right.',
+  ),
+  participleFirst(
+    'c35-j',
+    35,
+    {
+      verb: v('Damaged', 'damage', 'Vtr'),
+      objectGap: true,
+      adverbial: pp('by', det('the', 'flood')),
+    },
+    det('the', 'bridge'),
+    v('closed', 'close', 'Vint'),
+    'The flood having harmed it, the bridge shut.',
   ),
 ];

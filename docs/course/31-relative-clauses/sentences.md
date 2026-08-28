@@ -14,16 +14,16 @@ hardest to see — which is exactly what `gap` exists to teach.
 
 | #   | Sentence                                             | The step                                        |
 | --- | ---------------------------------------------------- | ----------------------------------------------- |
-| 1   | The engine that stalled was old.                     | a subject gap, at its clearest                  |
-| 2   | Another witness who hesitated returned.              | _who_ rather than _that_, still a subject gap   |
-| 3   | The inspector questioned the driver that complained. | the relative sits inside an object              |
-| 4   | The book that I needed vanished.                     | **an object gap** — the hole moves              |
-| 5   | The book I needed vanished.                          | **the same sentence with the relativizer gone** |
-| 6   | She repaired the gate that the storm damaged.        | an object gap with a fuller inner clause        |
-| 7   | The pipe that froze burst.                           | **item 1 with commas** — and _which_            |
-| 8   | The jury believed the surveyor who testified.        | a relative word that is itself a determiner     |
-| 9   | Those shutters that rattled broke.                   | back to a subject gap, shortest frame           |
-| 10  | The boat that the volunteers repaired sailed.        | the relative inside an object again             |
+| 1   | Another witness who hesitated returned.              | _who_ rather than _that_, still a subject gap   |
+| 2   | The pipe that froze burst.                           | **item 1 with commas** — and _which_            |
+| 3   | Those shutters that rattled broke.                   | back to a subject gap, shortest frame           |
+| 4   | The inspector questioned the driver that complained. | the relative sits inside an object              |
+| 5   | The jury believed the surveyor who testified.        | a relative word that is itself a determiner     |
+| 6   | The boat that the volunteers repaired sailed.        | the relative inside an object again             |
+| 7   | The book that I needed vanished.                     | **an object gap** — the hole moves              |
+| 8   | The book I needed vanished.                          | **the same sentence with the relativizer gone** |
+| 9   | She repaired the gate that the storm damaged.        | an object gap with a fuller inner clause        |
+| 10  | The engine that stalled was old.                     | a subject gap, at its clearest                  |
 
 ## Notes
 

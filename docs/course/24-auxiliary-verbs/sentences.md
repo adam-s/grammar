@@ -19,12 +19,12 @@ when a sentence needs one and has none, which is what proves the category exists
 | 2   | The visitors have waited.               | perfect, everything else held still              |
 | 3   | The visitors are waiting.               | progressive, everything else held still          |
 | 4   | The visitors did wait.                  | **_do_**, which the course has never used        |
-| 5   | The clerk did file the deeds.           | _do_ again, with an object, so it is not a fluke |
-| 6   | She has repaired the gate.              | perfect in a transitive frame                    |
-| 7   | That engine was failing.                | progressive with _be_, not _have_                |
+| 5   | That engine was failing.                | progressive with _be_, not _have_                |
+| 6   | Our guests have been waiting.           | **two auxiliaries**, perfect then progressive    |
+| 7   | The clerk did file the deeds.           | _do_ again, with an object, so it is not a fluke |
 | 8   | A mechanic may have checked the brakes. | **two auxiliaries**, modal then perfect          |
-| 9   | Our guests have been waiting.           | **two auxiliaries**, perfect then progressive    |
-| 10  | The board should approve the plan.      | close on a modal, in a fuller frame              |
+| 9   | The board should approve the plan.      | close on a modal, in a fuller frame              |
+| 10  | She has repaired the gate.              | perfect in a transitive frame                    |
 
 ## Notes
 

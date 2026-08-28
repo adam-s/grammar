@@ -21,9 +21,8 @@ export const LESSON_11 = [
     adj('obvious'),
     'The answer was easy to see.',
   ),
-  svc('c11-b', 11, pron('He'), v('is', 'be', 'Vbe'), det('a', 'doctor'), 'He works in medicine.'),
   svc(
-    'c11-c',
+    'c11-b',
     11,
     det('These', 'apples'),
     v('are', 'be', 'Vbe'),
@@ -31,7 +30,7 @@ export const LESSON_11 = [
     'These apples are ready to eat.',
   ),
   svc(
-    'c11-d',
+    'c11-c',
     11,
     det('The', 'winner'),
     v('was', 'be', 'Vbe'),
@@ -39,15 +38,7 @@ export const LESSON_11 = [
     'Nobody knew who had won.',
   ),
   svc(
-    'c11-e',
-    11,
-    pron('She'),
-    v('is', 'be', 'Vbe'),
-    det('the', 'treasurer'),
-    'She holds the money post.',
-  ),
-  svc(
-    'c11-f',
+    'c11-d',
     11,
     det('The', 'bread'),
     v('tasted', 'taste', 'Vlink'),
@@ -55,7 +46,7 @@ export const LESSON_11 = [
     'The bread had gone dry.',
   ),
   svc(
-    'c11-g',
+    'c11-e',
     11,
     det('The', 'bread'),
     v('was', 'be', 'Vbe'),
@@ -63,7 +54,7 @@ export const LESSON_11 = [
     'The bread had gone dry and hard.',
   ),
   svc(
-    'c11-h',
+    'c11-f',
     11,
     det('The', 'evidence'),
     v('was', 'be', 'Vbe'),
@@ -71,7 +62,7 @@ export const LESSON_11 = [
     'There was little to go on.',
   ),
   svc(
-    'c11-i',
+    'c11-g',
     11,
     det('That', 'building'),
     v('is', 'be', 'Vbe'),
@@ -79,11 +70,20 @@ export const LESSON_11 = [
     'That building holds a collection.',
   ),
   svc(
-    'c11-j',
+    'c11-h',
     11,
     det('The', 'streets'),
     v('were', 'be', 'Vbe'),
     adj('deserted'),
     'Nobody was out on the streets.',
+  ),
+  svc('c11-i', 11, pron('He'), v('is', 'be', 'Vbe'), det('a', 'doctor'), 'He works in medicine.'),
+  svc(
+    'c11-j',
+    11,
+    pron('She'),
+    v('is', 'be', 'Vbe'),
+    det('the', 'treasurer'),
+    'She holds the money post.',
   ),
 ];

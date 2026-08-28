@@ -15,15 +15,15 @@ both name the same thing. That is what separates an appositive from a modifier.
 | #   | Sentence                                          | The step                                    |
 | --- | ------------------------------------------------- | ------------------------------------------- |
 | 1   | The treasurer, a banker, resigned.                | the plainest case, commas and all           |
-| 2   | Our guide Arun waved twice.                       | **no commas** — the relation is still there |
-| 3   | Our guide, Arun, waved twice.                     | **the same words, commas added**            |
-| 4   | The witness, a neighbour, hesitated.              | back to the plain case after the pair       |
-| 5   | The court questioned the surgeon, a stranger.     | an appositive on an object                  |
-| 6   | That ferry, Mermaid, sailed.                      | a name rather than a description            |
-| 7   | The board appointed the engineer, a newcomer.     | inside an object-complement frame           |
-| 8   | Lena, our new captain, explained the route.       | a premodifier inside the appositive         |
+| 2   | The witness, a neighbour, hesitated.              | back to the plain case after the pair       |
+| 3   | That ferry, Mermaid, sailed.                      | a name rather than a description            |
+| 4   | That archive, a cellar, flooded.                  | close on the plain case                     |
+| 5   | Our guide Arun waved twice.                       | **no commas** — the relation is still there |
+| 6   | Our guide, Arun, waved twice.                     | **the same words, commas added**            |
+| 7   | The court questioned the surgeon, a stranger.     | an appositive on an object                  |
+| 8   | The board appointed the engineer, a newcomer.     | inside an object-complement frame           |
 | 9   | The inspector interviewed her brother, a teacher. | a possessive determiner on the first part   |
-| 10  | That archive, a cellar, flooded.                  | close on the plain case                     |
+| 10  | Lena, our new captain, explained the route.       | a premodifier inside the appositive         |
 
 ## Notes
 

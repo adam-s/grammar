@@ -14,15 +14,15 @@ guest_. The thing that can move behind a preposition is the indirect object.
 | #   | Sentence                                   | The step                                           |
 | --- | ------------------------------------------ | -------------------------------------------------- |
 | 1   | The porter handed the guest a key.         | the frame at its clearest                          |
-| 2   | She told the children a story.             | same frame, a verb of saying                       |
-| 3   | The teacher gave the class a warning.      | an abstract second object                          |
-| 4   | The clerk showed a visitor the map.        | **the determiners swap** — indefinite first        |
-| 5   | He wrote his sister the letter.            | a definite direct object                           |
-| 6   | The porter carried the heavy cases.        | **one object** — the count has to be made          |
-| 7   | The porter brought the guests their cases. | two objects, both definite                         |
-| 8   | The guide gave a map to us.                | **the paraphrase** — one object and an adverbial   |
-| 9   | The nurse brought a blanket.               | one object again, unpaired                         |
-| 10  | The coach taught the squad a routine.      | close on the frame, with the article shortcut dead |
+| 2   | The teacher gave the class a warning.      | an abstract second object                          |
+| 3   | The clerk showed a visitor the map.        | **the determiners swap** — indefinite first        |
+| 4   | The porter brought the guests their cases. | two objects, both definite                         |
+| 5   | The nurse brought a blanket.               | one object again, unpaired                         |
+| 6   | The coach taught the squad a routine.      | close on the frame, with the article shortcut dead |
+| 7   | She told the children a story.             | same frame, a verb of saying                       |
+| 8   | He wrote his sister the letter.            | a definite direct object                           |
+| 9   | The guide gave a map to us.                | **the paraphrase** — one object and an adverbial   |
+| 10  | The porter carried the heavy cases.        | **one object** — the count has to be made          |
 
 ## Notes
 

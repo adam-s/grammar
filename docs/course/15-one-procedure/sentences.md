@@ -16,12 +16,12 @@ checking whether the last thing is an adjective.
 | --- | ------------------------------------------- | ---------------------------------------------- |
 | 1   | Those negotiations collapsed.               | intransitive                                   |
 | 2   | The auditor questioned the figures.         | transitive                                     |
-| 3   | The explanation sounded plausible.          | linking                                        |
-| 4   | That chairman was a banker.                 | _be_                                           |
-| 5   | The foreman gave the apprentice a warning.  | two objects                                    |
-| 6   | The inspector declared the building unsafe. | object complement                              |
+| 3   | The foreman gave the apprentice a warning.  | two objects                                    |
+| 4   | They called her a taxi.                     | **counting stops working**                     |
+| 5   | The explanation sounded plausible.          | linking                                        |
+| 6   | That chairman was a banker.                 | _be_                                           |
 | 7   | The archive is below the stairs.            | required adverbial — all seven frames now seen |
-| 8   | They called her a taxi.                     | **counting stops working**                     |
+| 8   | The inspector declared the building unsafe. | object complement                              |
 | 9   | They called her a genius.                   | **the same words, a different type**           |
 | 10  | She put the letter on the desk.             | an object and a required place together        |
 

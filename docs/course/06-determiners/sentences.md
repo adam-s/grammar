@@ -18,15 +18,15 @@ then meets the label on ten unfamiliar words.
 
 | #   | Sentence                    | The step                                         |
 | --- | --------------------------- | ------------------------------------------------ |
-| 1   | The bell rang.              | the commonest determiner of all, named at last   |
-| 2   | A window opened.            | the other article                                |
-| 3   | Those dogs barked.          | a demonstrative — the slot, not the word         |
-| 4   | My phone buzzed loudly.     | a possessive in the same slot                    |
-| 5   | Every seat squeaked.        | a quantity in the same slot                      |
-| 6   | Guests complained.          | **no determiner at all** — the slot can be empty |
-| 7   | Water boiled over.          | an empty slot again, with a mass noun            |
-| 8   | Several boats returned.     | back to a filled slot after two empty ones       |
-| 9   | Most agreed.                | a determiner with no noun after it               |
+| 1   | Most agreed.                | a determiner with no noun after it               |
+| 2   | The bell rang.              | the commonest determiner of all, named at last   |
+| 3   | A window opened.            | the other article                                |
+| 4   | Those dogs barked.          | a demonstrative — the slot, not the word         |
+| 5   | My phone buzzed loudly.     | a possessive in the same slot                    |
+| 6   | Every seat squeaked.        | a quantity in the same slot                      |
+| 7   | Guests complained.          | **no determiner at all** — the slot can be empty |
+| 8   | Water boiled over.          | an empty slot again, with a mass noun            |
+| 9   | Several boats returned.     | back to a filled slot after two empty ones       |
 | 10  | Almost every seat squeaked. | a phrase in the determiner slot                  |
 
 ## Notes

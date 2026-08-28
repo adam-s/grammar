@@ -15,16 +15,16 @@ seven things Stage 5 taught are absent from the lesson meant to gather everythin
 
 | #   | Sentence                                                   | The step                               |
 | --- | ---------------------------------------------------------- | -------------------------------------- |
-| 1   | The inspector who arrived reported that the wiring smoked. | relative inside a nominal frame        |
-| 2   | Reading the warning prevented a serious mistake.           | **a gerund** opens the sentence        |
-| 3   | The harbour was dredged before the season ended.           | **a passive** with an adverbial clause |
-| 4   | Fortunately, the visitors who complained returned.         | **a supplement** opens it              |
-| 5   | The station was restored, and the town rejoiced.           | **passive and coordination**           |
-| 6   | The clerk who resigned claimed that the deeds vanished.    | relative and nominal again             |
-| 7   | The plan drafted by the committee failed.                  | **a participial** and a passive        |
-| 8   | The guide asked the visitors to wait outside.              | **an infinitive with its own subject** |
-| 9   | The tenant who complained sent her landlord a notice.      | relative with two objects              |
-| 10  | The inspector photographed the engineer in the office.     | **two readings**                       |
+| 1   | The inspector photographed the engineer in the office.     | **two readings**                       |
+| 2   | The harbour was dredged before the season ended.           | **a passive** with an adverbial clause |
+| 3   | Reading the warning prevented a serious mistake.           | **a gerund** opens the sentence        |
+| 4   | The inspector who arrived reported that the wiring smoked. | relative inside a nominal frame        |
+| 5   | The clerk who resigned claimed that the deeds vanished.    | relative and nominal again             |
+| 6   | The tenant who complained sent her landlord a notice.      | relative with two objects              |
+| 7   | The station was restored, and the town rejoiced.           | **passive and coordination**           |
+| 8   | The plan drafted by the committee failed.                  | **a participial** and a passive        |
+| 9   | Fortunately, the visitors who complained returned.         | **a supplement** opens it              |
+| 10  | The guide asked the visitors to wait outside.              | **an infinitive with its own subject** |
 
 ## Notes
 

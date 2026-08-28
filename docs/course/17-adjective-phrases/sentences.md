@@ -14,16 +14,16 @@ what is missing is a fixture and a course example, not model capability.
 
 | #   | Sentence                                      | The step                                         |
 | --- | --------------------------------------------- | ------------------------------------------------ |
-| 1   | The answer was perfectly clear.               | a degree word inside the phrase                  |
+| 1   | The lake water felt cold.                     | **a one-word adjective phrase** — the floor case |
 | 2   | The candidate seemed unusually calm.          | the same, after a different linking verb         |
-| 3   | The lake water felt cold.                     | **a one-word adjective phrase** — the floor case |
-| 4   | The box seemed too heavy.                     | a degree word that points forward                |
-| 5   | Those visitors were quite anxious.            | **a complement after the adjective**             |
-| 6   | My neighbour seemed proud of her garden.      | a complement of a different shape                |
-| 7   | The road became dangerously narrow.           | an adverbial after the phrase, not inside it     |
-| 8   | That road grew steadily steeper.              | back to a degree word, comparative adjective     |
-| 9   | The jury found the driver entirely blameless. | the phrase as an object complement               |
-| 10  | The milk tasted slightly sour.                | close on the plain case                          |
+| 3   | The box seemed too heavy.                     | a degree word that points forward                |
+| 4   | The road became dangerously narrow.           | an adverbial after the phrase, not inside it     |
+| 5   | That road grew steadily steeper.              | back to a degree word, comparative adjective     |
+| 6   | The milk tasted slightly sour.                | close on the plain case                          |
+| 7   | The answer was perfectly clear.               | a degree word inside the phrase                  |
+| 8   | Those visitors were quite anxious.            | **a complement after the adjective**             |
+| 9   | My neighbour seemed proud of her garden.      | a complement of a different shape                |
+| 10  | The jury found the driver entirely blameless. | the phrase as an object complement               |
 
 ## Notes
 

@@ -36,14 +36,13 @@ import {
 } from './shape.ts';
 
 export const LESSON_39 = [
-  joined(
+  svo(
     'c39-a',
     39,
-    { subject: adjn('The', 'brass', 'bell'), verb: v('rang', 'ring', 'Vint') },
-    'and',
-    { subject: adjn('the', 'heavy', 'doors'), verb: v('opened', 'open', 'Vint') },
-    'The brass bell sounded and the heavy doors came open.',
-    true,
+    det('The', 'boat'),
+    v('carried', 'carry', 'Vtr'),
+    listOf('NP', bare('food'), bare('water'), 'and', bare('blankets')),
+    'The boat took food, water and blankets on board.',
   ),
   joined(
     'c39-b',
@@ -62,25 +61,27 @@ export const LESSON_39 = [
     'The surveyor sized the field and the clerk wrote it down.',
     true,
   ),
-  sv(
+  joinedThree(
     'c39-c',
     39,
-    apposName('Mara', adjpostmod('our', 'new', 'captain', pp('of', det('the', 'crew')))),
-    v('waved', 'wave', 'Vint'),
-    "Mara, who is the crew's new captain, raised a hand.",
+    { subject: det('The', 'rain'), verb: v('stopped', 'stop', 'Vint') },
+    { subject: det('the', 'clouds'), verb: v('lifted', 'lift', 'Vint') },
+    'and',
+    { subject: bare('children'), verb: v('ran', 'run', 'Vint') },
+    'The rain came to an end, the clouds cleared and children went outside.',
   ),
-  whyFirst(
+  joined(
     'c39-d',
     39,
     {
-      marker: 'Before',
-      subject: adjn('the', 'last', 'bus'),
-      verb: v('arrived', 'arrive', 'Vint'),
-      kind: 'adverbial',
+      subject: det('The', 'mechanic'),
+      verb: v('checked', 'check', 'Vtr'),
+      object: det('the', 'brakes'),
     },
-    det('our', 'guests'),
-    v('gathered', 'gather', 'Vint'),
-    'Our guests came together ahead of the final bus coming in.',
+    'but',
+    { subject: det('the', 'driver'), verb: v('waited', 'wait', 'Vint') },
+    'The mechanic looked at the brakes, and even so the driver stayed put.',
+    true,
   ),
   whyFirst(
     'c39-e',
@@ -95,8 +96,37 @@ export const LESSON_39 = [
     v('entered', 'enter', 'Vint'),
     'The visitors went in at the moment the gate came open.',
   ),
-  sv(
+  whyFirst(
     'c39-f',
+    39,
+    {
+      marker: 'Before',
+      subject: adjn('the', 'last', 'bus'),
+      verb: v('arrived', 'arrive', 'Vint'),
+      kind: 'adverbial',
+    },
+    det('our', 'guests'),
+    v('gathered', 'gather', 'Vint'),
+    'Our guests came together ahead of the final bus coming in.',
+  ),
+  joined(
+    'c39-g',
+    39,
+    { subject: adjn('The', 'brass', 'bell'), verb: v('rang', 'ring', 'Vint') },
+    'and',
+    { subject: adjn('the', 'heavy', 'doors'), verb: v('opened', 'open', 'Vint') },
+    'The brass bell sounded and the heavy doors came open.',
+    true,
+  ),
+  sv(
+    'c39-h',
+    39,
+    apposName('Mara', adjpostmod('our', 'new', 'captain', pp('of', det('the', 'crew')))),
+    v('waved', 'wave', 'Vint'),
+    "Mara, who is the crew's new captain, raised a hand.",
+  ),
+  sv(
+    'c39-i',
     39,
     modifiedBy('The', 'visitors', {
       marker: 'who',
@@ -109,7 +139,7 @@ export const LESSON_39 = [
     'Of the visitors, the ones with no train stayed put.',
   ),
   sv(
-    'c39-g',
+    'c39-j',
     39,
     supplemented('The', 'visitors', {
       marker: 'who',
@@ -119,35 +149,5 @@ export const LESSON_39 = [
     }),
     v('waited', 'wait', 'Vint'),
     'The visitors stayed put, and none of them had a train.',
-  ),
-  joined(
-    'c39-h',
-    39,
-    {
-      subject: det('The', 'mechanic'),
-      verb: v('checked', 'check', 'Vtr'),
-      object: det('the', 'brakes'),
-    },
-    'but',
-    { subject: det('the', 'driver'), verb: v('waited', 'wait', 'Vint') },
-    'The mechanic looked at the brakes, and even so the driver stayed put.',
-    true,
-  ),
-  svo(
-    'c39-i',
-    39,
-    det('The', 'boat'),
-    v('carried', 'carry', 'Vtr'),
-    listOf('NP', bare('food'), bare('water'), 'and', bare('blankets')),
-    'The boat took food, water and blankets on board.',
-  ),
-  joinedThree(
-    'c39-j',
-    39,
-    { subject: det('The', 'rain'), verb: v('stopped', 'stop', 'Vint') },
-    { subject: det('the', 'clouds'), verb: v('lifted', 'lift', 'Vint') },
-    'and',
-    { subject: bare('children'), verb: v('ran', 'run', 'Vint') },
-    'The rain came to an end, the clouds cleared and children went outside.',
   ),
 ];

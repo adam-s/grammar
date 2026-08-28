@@ -15,11 +15,11 @@ later.
 
 | #   | Sentence                            | The step                                       |
 | --- | ----------------------------------- | ---------------------------------------------- |
-| 1   | The baby slept.                     | nothing can follow; the frame at its clearest  |
-| 2   | Those lights flickered.             | same frame, longer subject                     |
-| 3   | Several guests arrived.             | a quantity in the subject, verb still last     |
-| 4   | The tide turned.                    | **a verb that is linking in lesson 10**        |
-| 5   | She smiled at us.                   | something does follow, and it is not an object |
+| 1   | She smiled at us.                   | something does follow, and it is not an object |
+| 2   | The baby slept.                     | nothing can follow; the frame at its clearest  |
+| 3   | Those lights flickered.             | same frame, longer subject                     |
+| 4   | Several guests arrived.             | a quantity in the subject, verb still last     |
+| 5   | The tide turned.                    | **a verb that is linking in lesson 10**        |
 | 6   | The old bridge collapsed overnight. | a longer predicate that still takes no object  |
 | 7   | The hatch opened.                   | **a verb that is transitive in lesson 9**      |
 | 8   | The balloon burst loudly.           | the verb comes off the end                     |

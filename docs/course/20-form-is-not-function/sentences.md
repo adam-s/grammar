@@ -12,16 +12,16 @@ amounts to saying they are not this.
 
 | #   | Sentence                                       | The step                                  |
 | --- | ---------------------------------------------- | ----------------------------------------- |
-| 1   | They put the piano in the hall.                | required — the sentence breaks without it |
-| 2   | The quartet rehearsed in the hall.             | **the same five words, optional**         |
-| 3   | Another porter laid the tray on the sideboard. | required, new verb and new phrase         |
-| 4   | The cat slept on the sideboard.                | **the same phrase, optional**             |
-| 5   | The clerk placed the deeds under the counter.  | required                                  |
-| 6   | The draught whistled under the counter.        | **the same phrase, optional**             |
-| 7   | She placed the lamp beside the bed.            | required                                  |
-| 8   | The nurse waited beside the bed.               | **the same phrase, optional**             |
-| 9   | The carpenter set the beam across the gap.     | required                                  |
-| 10  | That rope swung across the gap.                | **the same phrase, optional**             |
+| 1   | The quartet rehearsed in the hall.             | **the same five words, optional**         |
+| 2   | The cat slept on the sideboard.                | **the same phrase, optional**             |
+| 3   | The draught whistled under the counter.        | **the same phrase, optional**             |
+| 4   | The nurse waited beside the bed.               | **the same phrase, optional**             |
+| 5   | That rope swung across the gap.                | **the same phrase, optional**             |
+| 6   | Another porter laid the tray on the sideboard. | required, new verb and new phrase         |
+| 7   | The clerk placed the deeds under the counter.  | required                                  |
+| 8   | The carpenter set the beam across the gap.     | required                                  |
+| 9   | They put the piano in the hall.                | required — the sentence breaks without it |
+| 10  | She placed the lamp beside the bed.            | required                                  |
 
 ## Notes
 

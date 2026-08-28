@@ -36,14 +36,14 @@ export const LESSON_23 = [
     v('testified', 'testify', 'Vint'),
     'Three witnesses gave evidence.',
   ),
+  sv('c23-b', 23, numn('Two', 'engines'), v('failed', 'fail', 'Vint'), 'Two engines gave out.'),
   sv(
-    'c23-b',
+    'c23-c',
     23,
     ordn('The', 'first', 'train'),
     v('arrived', 'arrive', 'Vint'),
     'The earliest train came in.',
   ),
-  sv('c23-c', 23, numn('Two', 'engines'), v('failed', 'fail', 'Vint'), 'Two engines gave out.'),
   sv(
     'c23-d',
     23,
@@ -58,20 +58,20 @@ export const LESSON_23 = [
     v('finished', 'finish', 'Vint'),
     'The first two runners completed the race.',
   ),
-  svo(
+  sv(
     'c23-f',
+    23,
+    detnum('Those', 'two', 'windows'),
+    v('rattled', 'rattle', 'Vint'),
+    'Those two windows shook.',
+  ),
+  svo(
+    'c23-g',
     23,
     numn('Five', 'inspectors'),
     v('signed', 'sign', 'Vtr'),
     det('the', 'report'),
     'Five inspectors put their names to the report.',
-  ),
-  sv(
-    'c23-g',
-    23,
-    detnum('Those', 'two', 'windows'),
-    v('rattled', 'rattle', 'Vint'),
-    'Those two windows shook.',
   ),
   svo(
     'c23-h',

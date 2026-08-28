@@ -14,16 +14,16 @@ identical and behaves differently.
 
 | #   | Sentence                                   | The step                                         |
 | --- | ------------------------------------------ | ------------------------------------------------ |
-| 1   | The narrow gate jammed.                    | one adjective, intransitive frame                |
-| 2   | The clerk filed the urgent report.         | the same, in an object                           |
-| 3   | The new tenant seemed nervous.             | a premodifier and a complement in one sentence   |
-| 4   | The kitchen window rattled.                | **a noun premodifying a noun**, not an adjective |
-| 5   | The bright red kite fell.                  | **two adjectives** — one `Nom` or two?           |
-| 6   | The heavy crate is on the ramp.            | required adverbial frame                         |
-| 7   | That jury found the young driver careless. | object complement frame                          |
-| 8   | The porter handed the tired guest a key.   | two-object frame                                 |
-| 9   | Another storm damaged the green shutters.  | a determiner that is not an article              |
-| 10  | The poor protested loudly.                 | the adjective with no noun under it              |
+| 1   | The new tenant seemed nervous.             | a premodifier and a complement in one sentence   |
+| 2   | The narrow gate jammed.                    | one adjective, intransitive frame                |
+| 3   | The bright red kite fell.                  | **two adjectives** — one `Nom` or two?           |
+| 4   | The poor protested loudly.                 | the adjective with no noun under it              |
+| 5   | The kitchen window rattled.                | **a noun premodifying a noun**, not an adjective |
+| 6   | The clerk filed the urgent report.         | the same, in an object                           |
+| 7   | Another storm damaged the green shutters.  | a determiner that is not an article              |
+| 8   | That jury found the young driver careless. | object complement frame                          |
+| 9   | The porter handed the tired guest a key.   | two-object frame                                 |
+| 10  | The heavy crate is on the ramp.            | required adverbial frame                         |
 
 ## Notes
 

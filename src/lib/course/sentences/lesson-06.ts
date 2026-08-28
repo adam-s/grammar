@@ -13,34 +13,34 @@
 import { adv, bare, det, dp, fused, phrasal, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_06 = [
-  sv('c06-a', 6, det('The', 'bell'), v('rang', 'ring', 'Vint'), 'The bell sounded.'),
-  sv('c06-b', 6, det('A', 'window'), v('opened', 'open', 'Vint'), 'A window came open.'),
-  sv('c06-c', 6, det('Those', 'dogs'), v('barked', 'bark', 'Vint'), 'Those dogs made a noise.'),
+  sv('c06-a', 6, fused('Most'), v('agreed', 'agree', 'Vint'), 'Nearly all of them said yes.'),
+  sv('c06-b', 6, det('The', 'bell'), v('rang', 'ring', 'Vint'), 'The bell sounded.'),
+  sv('c06-c', 6, det('A', 'window'), v('opened', 'open', 'Vint'), 'A window came open.'),
+  sv('c06-d', 6, det('Those', 'dogs'), v('barked', 'bark', 'Vint'), 'Those dogs made a noise.'),
   svPlus(
-    'c06-d',
+    'c06-e',
     6,
     det('My', 'phone'),
     v('buzzed', 'buzz', 'Vint'),
     adv('loudly'),
     'My phone vibrated at volume.',
   ),
-  sv('c06-e', 6, det('Every', 'seat'), v('squeaked', 'squeak', 'Vint'), 'All the seats creaked.'),
-  sv('c06-f', 6, bare('Guests'), v('complained', 'complain', 'Vint'), 'Some visitors objected.'),
+  sv('c06-f', 6, det('Every', 'seat'), v('squeaked', 'squeak', 'Vint'), 'All the seats creaked.'),
+  sv('c06-g', 6, bare('Guests'), v('complained', 'complain', 'Vint'), 'Some visitors objected.'),
   sv(
-    'c06-g',
+    'c06-h',
     6,
     bare('Water'),
     phrasal(v('boiled', 'boil', 'Vint'), 'over'),
     'Water reached the boil and spilled.',
   ),
   sv(
-    'c06-h',
+    'c06-i',
     6,
     det('Several', 'boats'),
     v('returned', 'return', 'Vint'),
     'A few vessels came back.',
   ),
-  sv('c06-i', 6, fused('Most'), v('agreed', 'agree', 'Vint'), 'Nearly all of them said yes.'),
   sv(
     'c06-j',
     6,
