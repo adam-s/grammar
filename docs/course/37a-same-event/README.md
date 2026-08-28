@@ -6,7 +6,7 @@ returns. The answers here are arguable and nothing depends on it. See
 
 Researched 28 August 2026. An author's dossier.
 
-**Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
+**Status:** This dossier measures the corpus as it was before the conversion. [sentences.md](sentences.md) is now the live course text, built and reachable; no reading has been accepted by a person, which `npm run course:readiness` reports.
 
 **Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
 

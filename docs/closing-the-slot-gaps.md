@@ -1,172 +1,202 @@
-# Closing four gaps in what the model will let a learner draw
+# Closing the slots the course corpus exposed
 
-Written 28 August 2026, after building all four hundred course sentences and
-finding four constructions the palette refuses.
+Written 28 August 2026 after building the four hundred course sentences.
+Reviewed the same day against the rules, replay tests, browser sweeps, and the
+course's own definitions of subject and object complements.
 
-Three of the four are **one-line omissions in a list**, not decisions. Each was
-checked by making the change and running the suite: nothing depends on the
-restriction. The fourth is a real design question and is not in this plan.
+**Implementation status:** commit `8a320bf` has already widened A, B, and C and
+added fixtures for A and B. This review accepts A and C. It does not accept B as
+proved: the implementation is reachable, but its `objectComplement` label
+conflicts with the model's own definition below.
 
-Nothing here is done. This is the plan, with the evidence for each step and the
-order to do them in.
+## Verdict
 
-## What the four are
+Two changes are ready to make:
 
-|       | Construction                                                                        | Where it is refused                                      |
-| ----- | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **A** | a clause as **subject complement** — _The trouble was that the gate was locked_     | `rules.ts` `subjectComplement`: `childIs('NP', 'AdjP')`  |
-| **B** | a clause as **object complement** — _We asked the driver to wait_                   | `rules.ts` `objectComplement`: the same list             |
-| **C** | a comparison anchored to an **adverb phrase** — _ran more quietly than we expected_ | `builder.ts` `anchorsFor`, the loop inside the predicate |
-| **D** | a **possessive** — _Mara's phone buzzed_                                            | `rules.ts` `determiner`: `childIs('Det', 'DP', 'Num')`   |
+- a clause as **subject complement** — _The trouble was that the gate failed_;
+- a comparison anchored to an **adverb phrase** — _The engine ran more quietly
+  than we expected_.
 
-## Why A, B and C are omissions rather than rules
+Two need a grammar decision first:
 
-**Every other clause-taking slot in `rules.ts` permits `Cl`.**
+- _We asked the driver to wait_ is useful, but the proposed
+  `Cl/objectComplement` analysis conflicts with this model's meaning of
+  **object complement**;
+- _Mara's phone buzzed_ needs a representation for the possessive before any
+  form list can be widened honestly.
 
-```
-subject            NP, Cl                    allowed
-directObject       NP, Cl                    allowed
-adverbial          AdvP, PP, NP, Cl          allowed
-postmodifier       PP, Cl, AdjP, AdvP, NP    allowed
-complement (AdjP)  NP, Cl, PP                allowed
-subjectComplement  NP, AdjP                  REFUSED
-objectComplement   NP, AdjP                  REFUSED
-```
+The earlier version called the first three one-line omissions. That was too
+strong. The subject-complement and anchor restrictions are omissions. The
+`ask + object + to` construction is not settled by changing a list.
 
-If refusing a clausal complement were a principle, `complement` under an `AdjP`
-would refuse one too. It does not — that is how _too heavy to lift_ is built.
-No comment anywhere explains the difference.
+## The four constructions
 
-**C is the same shape of slip, one level down.** `anchorsFor` collects candidate
-anchors twice. At the clause it takes `NP`, `AdjP` **or `AdvP`**; inside the
-predicate it takes `NP` or `AdjP` and drops `AdvP`. The same list, one item
-short.
+|     | Construction | Gap at discovery | Review decision |
+| --- | --- | --- | --- |
+| **A** | `Cl` as subject complement — _The trouble was that the gate failed_ | `subjectComplement` accepts `NP` and `AdjP`, not `Cl` | widen and test |
+| **B** | object-controlled infinitive — _We asked the driver to wait_ | no agreed representation | design first |
+| **C** | comparison attached to an `AdvP` inside the predicate — _ran more quietly than we expected_ | the inner anchor search omits `AdvP` | widen and test |
+| **D** | possessive — _Mara's phone buzzed_ | no agreed representation for the possessor and `'s` | design first |
 
-**Both changes were tried.** Adding `Cl` to the two complement slots, and
-`AdvP` to the inner anchor loop, each left all 4869 tests passing. Nothing
-depends on either restriction.
+## A — clause as subject complement
 
-That is evidence the restriction is unused. **It is not evidence the wider rule
-is right**, which is why the steps below add proof rather than just permission.
+_The trouble was that the gate failed_ has the same clause-level frame as _The
+trouble was the gate_: _be_ links the subject to material that identifies it.
+The model already permits `Cl` as a subject, direct object, adverbial,
+postmodifier, and adjective complement. That symmetry is useful evidence, but
+it is not the reason the change is right. The sentence itself supplies the
+reason: a finite clause can fill the identifying slot after _be_, and the model
+has no other honest place for it.
 
-## Why D is not in this plan
+The implementation correctly changes both rule paths:
 
-A possessive is a noun phrase sitting in a determiner slot, and the `'s` has to
-attach somewhere. Widening a list does not answer where — whether the genitive
-is a `DP` whose head is the clitic, an `NP` with the clitic as a particle, or
-something else — and the answer decides how every possessive in the language is
-drawn. That is a design decision, not a missing entry, and it needs its own
-note.
+- `licenses`, which validates a stored answer;
+- `hypothesizes`, which decides what the learner may try in the palette.
 
-## The risk that governs the order below
+Changing only one path can leave a tree valid but unreachable, or offered and
+then graded wrong.
 
-These are **grading rules**. Widening one means the palette starts _offering_
-the row, and a learner who takes an offer that turns out to be wrong has been
-invited into a mistake by the app. So each step proves the shape before any
-lesson uses it, and the browser sweep runs before anything is called done.
+### Remaining proof and hardening
 
-## Steps
+1. Keep the committed `fix-clause-subject-complement` fixture, whose finite
+   subordinate clause has its own subject and predicate.
+2. Add a focused rule test that expects `Cl/subjectComplement` under a `VP` to
+   be accepted by both rule paths. The fixture gives broad coverage; the rule
+   test makes the intended boundary explicit.
+3. Run the focused test, fixture audits, fixture reachability, and then
+   `npm run all`. Success means zero failures; do not depend on an exact test
+   count, because adding a fixture can legitimately add generated test cases.
 
-### 1. Widen `subjectComplement` and `objectComplement` to accept `Cl`
+## B — object-controlled infinitive
 
-`src/lib/grammar/rules.ts`, two lines:
+Do **not** widen `objectComplement` to `Cl` on the strength of _We asked the
+driver to wait_.
 
-```
-if (!childIs('NP', 'AdjP')) return HIDDEN;      →  if (!childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
-```
+The course defines an object complement as something that **renames or
+describes the direct object**:
 
-Leave a comment saying why `Cl` belongs, so the next reader does not take the
-list for a decision.
+- _They made her a partner_ → _she is a partner_;
+- _The jury found the driver careless_ → _the driver is careless_.
 
-**Check:** `npm run all` exits 0 and the count is unchanged at 4869. A change in
-the count here means something did depend on the restriction, and the plan stops
-until that is understood.
+_To wait_ does not rename or describe _the driver_. It is a non-finite
+complement licensed by _asked_, and _the driver_ controls the understood subject
+of _wait_. Calling the infinitive an object complement would make lesson 13's
+test unreliable.
 
-### 2. Break each one, and watch the right thing fail
+The proposed tree also does not support its own wording. It places _the driver_
+as the matrix direct object and gives the inner `Cl` only `to + VP`; the inner
+clause has no `subject` child. It may be fair to say that the driver is the
+**understood** subject of _wait_, but it is not an overt subject inside that
+stored clause.
 
-Before trusting either, revert the two lines one at a time and confirm the
-fixtures added in step 3 fail — and fail with a message that names the slot.
-A rule nobody has watched fail is a rule nobody has checked.
+Before this sentence enters the course, write a short design note that chooses
+one representation and states the consequences. At minimum it must answer:
 
-### 3. Add two fixtures
+1. Does a `VP` need a general clausal-complement function distinct from direct
+   object and predicative complement?
+2. Is _the driver_ stored only as the matrix object, only as the subordinate
+   subject, or linked across the two roles?
+3. How will the tree distinguish _We asked the driver to wait_ from true object
+   complements such as _We considered the driver reliable_?
+4. Which verb type licenses the construction, and what happens in the passive?
 
-- `fix-clause-subject-complement` — _The trouble was that the gate failed._
-- `fix-clause-object-complement` — _We asked the driver to wait._
+Until those answers exist, leave lesson 34's proposed items 4 and 5 out of the
+live corpus. Commit `8a320bf` already contains the `Cl/objectComplement`
+widening and fixture; that part should be reverted or redesigned before the
+course relies on it. Passing tests can prove that the implementation is
+internally consistent; they cannot prove that the label tells the truth.
 
-Both go in `fixtures/clauses.ts` beside the other clause work. Each needs the
-comment the family expects: what the shape is, what test settles it, and why it
-was absent.
+## C — comparison anchored to an adverb phrase
 
-The second matters most. **Without an overt subject nothing shows that an
-infinitive clause is a clause**, because every other example in the course has an
-invisible subject matching the main one — which makes _to renew the lease_ look
-like part of the verb phrase.
+`anchorsFor` gathers possible postnucleus anchors in two places. At clause level
+it includes `NP`, `AdjP`, and `AdvP`. Inside the predicate it includes only
+`NP` and `AdjP`. That missing `AdvP` is why the comparison in _ran more quietly
+than we expected_ cannot point back to _more quietly_.
 
-**Check:** the audit suite and the reachability suite both run over every
-fixture, so a fixture that is well-formed on paper and unbuildable fails loudly.
+### Remaining proof and course work
 
-### 4. Sweep the two fixtures in the browser
+1. Add a builder test whose predicate contains an `AdvP` before a comparative
+   postnucleus. Assert that the `AdvP` appears in `anchorsFor`.
+2. Keep the committed `AdvP` addition to the inner predicate search. The
+   focused test makes that boundary explicit rather than relying only on a
+   course sentence.
+3. Restore _The engine ran more quietly than we expected_ in lesson 32, with
+   the comparative clause linked to the `AdvP`.
+4. Run the focused test, course audits, course reachability, and `npm run all`.
 
-```
-npm run dev
+## Browser proof
+
+The browser tool has two different sweeps, and both matter:
+
+- `build-sweep` rebuilds the stored answer through the same palette actions a
+  learner uses. This is the browser proof of reachability.
+- `label-sweep` selects each word and adjacent pair in an already opened answer.
+  It checks that the resulting palette is coherent; it does not build the tree.
+
+With the development server already running, use both on each new fixture or
+course sentence:
+
+```sh
+node scripts/snapshot.mjs --action=build-sweep --sentence=fix-clause-subject-complement
 node scripts/snapshot.mjs --action=label-sweep --sentence=fix-clause-subject-complement
-node scripts/snapshot.mjs --action=label-sweep --sentence=fix-clause-object-complement
-```
-
-The sweep drives `window.__grammar`, which calls the same handlers a pointer
-does, so a pass is a statement about the app rather than about a harness. It
-walks the whole build the way a learner does — select, read the palette, pick —
-and asserts the menu at every step.
-
-**This is the step that matters.** A tree can pass every audit and still be
-unreachable: `fix-infinitive-with-subject` did exactly that, which is how the
-gap was found. The audits ask whether the parse is well formed; only the sweep
-asks whether a learner can get there.
-
-Frames land in `.snapshots/<label>/` with a `summary.json`, and the script exits
-non-zero when something is wrong. **Look at the frames.** A palette that offers
-the row is not the same as a palette that offers it legibly.
-
-### 5. Widen the anchor, and sweep lesson 32
-
-`src/lib/grammar/builder.ts`, `anchorsFor`, the loop inside the predicate: add
-`AdvP` so it matches the list the clause-level loop already uses.
-
-Then restore lesson 32's adverb comparison — _The engine ran more quietly than we
-expected_ — which was replaced by a periphrastic adjective when the anchor
-refused it, and sweep it:
-
-```
+node scripts/snapshot.mjs --action=build-sweep --sentence=c32-c
 node scripts/snapshot.mjs --action=label-sweep --sentence=c32-c
 ```
 
-### 6. Put the two sentences back where they belong
+The commands must exit 0. Then read `summary.json` and inspect the captured
+frames. A clean report does not prove that labels fit or that the palette is
+legible.
 
-- **Lesson 30, item 5.** _The trouble was that the gate was locked_ gives the
-  nominal clause its third slot. The lesson currently uses that slot for the
-  marker-optional contrast, which is worth keeping — so this is a choice between
-  two good sentences, not a restoration.
-- **Lesson 34, items 4 and 5.** _We asked the driver to wait_ and _The guide
-  expected the visitors to arrive_. These are the ones the lesson needs.
+## D — possessive
 
-Both lessons record the gap in their `sentences.md`; those notes come out when
-the sentences go in.
+Do not describe the possessive as simply "an NP in a determiner slot" until the
+model chooses that analysis. The open questions are the point:
 
-**Check:** `node scripts/check-sentences.mjs` exits 0 — the length ceiling still
-holds and the proposals still match — then sweep both lessons' changed
-sentences.
+- what form contains _Mara_;
+- where `'s` attaches;
+- whether the whole possessor is an `NP`, a `DP`, or another supported form;
+- whether the course needs a link between the possessor and the possessed noun.
 
-### 7. Say what changed, in the lessons
+That decision affects every possessive, so it belongs in its own design note.
 
-`docs/course/30-nominal-clauses/sentences.md` and
-`docs/course/34-infinitive-clauses/sentences.md` both carry a paragraph saying
-the construction cannot be drawn. Replace it with what was actually true: the
-slot's form list was one entry short, and here is the fixture that proves the
-shape now.
+## Course-document updates
 
-## What this does not do
+After A and C pass their code and browser checks:
 
-It does not make the sentences **right**. `npm run course:readiness` still
-reports 0 of 400 read by a person, and widening a licensing rule does not change
-that. Everything here is about what the app will let a learner build, not about
-whether the reading stored against it is the true one.
+- put _The trouble was that the gate was locked_ in lesson 30 if it wins the
+  explicit choice against the useful marker-optional contrast already there;
+- restore the adverb comparison in lesson 32;
+- remove statements that those two constructions cannot be drawn;
+- update the corresponding lesson dossiers and sentence notes together.
+
+Do not update lesson 34 to claim an infinitive with an overt subject until B has
+an agreed tree. The current wording also contradicts its sentence table: items
+4 and 5 are ordinary same-subject infinitives while their step labels call them
+own-subject cases. Fix those labels or replace the sentences only after the
+model decision.
+
+## Corpus and proposal checks
+
+`node scripts/check-sentences.mjs` checks proposal counts, sentence lengths,
+step text, and—when `proposal-review.md` exists—the duplicate proposal ledger.
+It does **not** prove that `src/lib/course/sentences/` matches the proposals. It
+also currently skips the ledger comparison when the ledger file is absent.
+
+Before calling the course update complete:
+
+1. make a missing required ledger an error, or stop claiming that the ledger was
+   checked;
+2. add a permanent exact comparison between each live course sentence and its
+   `sentences.md` row, or run and retain an equivalent checked report;
+3. run `node scripts/check-sentences.mjs` and the permanent source/proposal
+   comparison after every sentence change.
+
+## What these checks do not prove
+
+Audits prove that a stored tree is well formed. Replay proves that the palette
+can reach it. Browser sweeps prove that the real page can perform those actions.
+None proves that the grammatical reading is true.
+
+`npm run course:readiness` still reports whether a person has reviewed each
+reading. Keep that human-review result separate from build, test, and
+reachability results.
