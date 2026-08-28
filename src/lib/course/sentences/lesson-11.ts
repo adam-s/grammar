@@ -35,7 +35,7 @@ export const LESSON_11 = [
     det('The', 'winner'),
     v('was', 'be', 'Vbe'),
     det('a', 'stranger'),
-    'Nobody knew who had won.',
+    'The winner was somebody nobody knew.',
   ),
   svc(
     'c11-d',

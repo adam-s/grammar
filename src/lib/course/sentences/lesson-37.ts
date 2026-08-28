@@ -40,14 +40,14 @@ export const LESSON_37 = [
     37,
     det('Those', 'deeds'),
     passive(v('filed', 'file', 'Vtr'), 'were'),
-    'Somebody filed the deeds, and who does not matter here.',
+    'Somebody filed the deeds.',
   ),
   sv(
     'c37-c',
     37,
     det('The', 'path'),
     passive(v('cleared', 'clear', 'Vtr'), 'was'),
-    'Somebody freed the path, and who does not matter here.',
+    'Somebody freed the path.',
   ),
   svPlus(
     'c37-d',

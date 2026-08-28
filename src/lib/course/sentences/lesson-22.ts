@@ -36,9 +36,9 @@ export const LESSON_22 = [
   sv(
     'c22-d',
     22,
-    appos('That', 'archive', det('a', 'cellar')),
+    appos('That', 'archive', adjn('a', 'damp', 'basement')),
     v('flooded', 'flood', 'Vint'),
-    'That archive, which was a cellar, filled with water.',
+    'That archive, which is a damp basement, filled with water.',
   ),
   svPlus(
     'c22-e',

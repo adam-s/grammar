@@ -59,7 +59,7 @@ export const LESSON_09 = [
     pron('She'),
     v('answered', 'answer', 'Vtr'),
     det('every', 'question'),
-    'She gave a reply.',
+    'She replied to every one of them.',
   ),
   svo(
     'c09-g',

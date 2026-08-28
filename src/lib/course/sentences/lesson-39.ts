@@ -136,7 +136,7 @@ export const LESSON_39 = [
       kind: 'relative',
     }),
     v('waited', 'wait', 'Vint'),
-    'Of the visitors, the ones with no train stayed put.',
+    'Of the visitors, the ones who had missed their train stayed put.',
   ),
   sv(
     'c39-j',
@@ -148,6 +148,6 @@ export const LESSON_39 = [
       object: det('their', 'train'),
     }),
     v('waited', 'wait', 'Vint'),
-    'The visitors stayed put, and none of them had a train.',
+    'The visitors stayed put, and all of them had missed their train.',
   ),
 ];

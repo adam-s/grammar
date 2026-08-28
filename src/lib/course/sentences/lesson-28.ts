@@ -50,9 +50,9 @@ export const LESSON_28 = [
     'c28-e',
     28,
     det('The', 'jury'),
-    v('accepted', 'accept', 'Vtr'),
+    v('noticed', 'notice', 'Vtr'),
     { subject: det('the', 'witness'), verb: v('hesitated', 'hesitate', 'Vint'), kind: 'nominal' },
-    'The jury allowed that the witness had held back.',
+    'The jury saw that the witness had held back.',
   ),
   svClause(
     'c28-f',

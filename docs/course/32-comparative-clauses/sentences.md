@@ -9,18 +9,18 @@ find the construction by looking for the suffix.
 
 ## Sentences
 
-| #   | Sentence                                             | The step                                  |
-| --- | ---------------------------------------------------- | ----------------------------------------- |
-| 1   | The crack was wider than the surveyor reported.      | a fuller second clause                    |
-| 2   | The repair was less costly than the board approved.  | **_less_**, and a transitive main verb    |
-| 3   | The delay was shorter than the guard promised.       | back to the plain frame                   |
-| 4   | The harvest was smaller than the tenant wanted.      | plain frame, longer inner clause          |
-| 5   | That noise was louder than the neighbours tolerated. | close on the frame                        |
-| 6   | The bill was larger than we expected.                | the frame at its clearest                 |
-| 7   | The flood was worse than anyone predicted.           | an irregular comparative                  |
-| 8   | The river rose much faster than the crew managed.    | an **adverb** compared, not an adjective  |
-| 9   | The engine ran more quietly than we expected.        | **_more_ instead of _-er_**, and not _be_ |
-| 10  | The queue was as long as the baker feared.           | **_as … as_**, a different marker         |
+| #   | Sentence                                             | The step                                   |
+| --- | ---------------------------------------------------- | ------------------------------------------ |
+| 1   | The crack was wider than the surveyor reported.      | a fuller second clause                     |
+| 2   | The repair was cheaper than the board feared.        | (step not recorded — the sentence changed) |
+| 3   | The delay was shorter than the guard promised.       | back to the plain frame                    |
+| 4   | The harvest was smaller than the tenant wanted.      | plain frame, longer inner clause           |
+| 5   | That noise was louder than the neighbours tolerated. | close on the frame                         |
+| 6   | The bill was larger than we expected.                | the frame at its clearest                  |
+| 7   | The flood was worse than anyone predicted.           | an irregular comparative                   |
+| 8   | The river rose much faster than the crew managed.    | an **adverb** compared, not an adjective   |
+| 9   | The engine ran more quietly than we expected.        | **_more_ instead of _-er_**, and not _be_  |
+| 10  | The queue was as long as the baker feared.           | **_as … as_**, a different marker          |
 
 ## Notes
 

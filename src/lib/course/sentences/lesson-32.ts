@@ -30,14 +30,14 @@ export const LESSON_32 = [
     32,
     det('The', 'repair'),
     v('was', 'be', 'Vbe'),
-    'less costly',
+    'cheaper',
     {
       marker: 'than',
       subject: det('the', 'board'),
-      verb: v('approved', 'approve', 'Vtr'),
+      verb: v('feared', 'fear', 'Vtr'),
       objectGap: true,
     },
-    'The repair came to under what the board had passed.',
+    'The repair came to less than the board had dreaded.',
   ),
   comparison(
     'c32-c',

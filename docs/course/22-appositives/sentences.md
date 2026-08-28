@@ -17,7 +17,7 @@ both name the same thing. That is what separates an appositive from a modifier.
 | 1   | The treasurer, a banker, resigned.                | the plainest case, commas and all           |
 | 2   | The witness, a neighbour, hesitated.              | back to the plain case after the pair       |
 | 3   | That ferry, Mermaid, sailed.                      | a name rather than a description            |
-| 4   | That archive, a cellar, flooded.                  | close on the plain case                     |
+| 4   | That archive, a damp basement, flooded.           | (step not recorded — the sentence changed)  |
 | 5   | Our guide Arun waved twice.                       | **no commas** — the relation is still there |
 | 6   | Our guide, Arun, waved twice.                     | **the same words, commas added**            |
 | 7   | The court questioned the surgeon, a stranger.     | an appositive on an object                  |

@@ -98,7 +98,7 @@ export const LESSON_36 = [
     pron('She'),
     v('enjoys', 'enjoy', 'Vtr'),
     { verb: v('reading', 'read', 'Vtr'), object: bare('maps') },
-    'She takes pleasure in reading old maps.',
+    'She takes pleasure in reading maps.',
   ),
   svAfterGerund(
     'c36-j',

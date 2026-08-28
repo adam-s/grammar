@@ -339,7 +339,7 @@ Status values:
 | 1   | The treasurer, a banker, resigned.                | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 2   | The witness, a neighbour, hesitated.              | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 3   | That ferry, Mermaid, sailed.                      | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
-| 4   | That archive, a cellar, flooded.                  | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
+| 4   | That archive, a damp basement, flooded.           | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 5   | Our guide Arun waved twice.                       | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 6   | Our guide, Arun, waved twice.                     | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 7   | The court questioned the surgeon, a stranger.     | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
@@ -430,7 +430,7 @@ Status values:
 | 2   | The clerk confirmed the deeds existed.     | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 3   | The nurse thought the baby slept.          | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 4   | An inspector noticed the wiring smoked.    | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
-| 5   | The jury accepted the witness hesitated.   | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
+| 5   | The jury noticed the witness hesitated.    | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 6   | She knew the belt broke.                   | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 7   | They assumed the ferry sailed.             | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 8   | He discovered the archive flooded.         | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
@@ -487,7 +487,7 @@ Status values:
 | #   | Sentence                                             | Natural reading      | Intended parse             | Scope reach           | Model / fixture       |
 | --- | ---------------------------------------------------- | -------------------- | -------------------------- | --------------------- | --------------------- |
 | 1   | The crack was wider than the surveyor reported.      | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
-| 2   | The repair was less costly than the board approved.  | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
+| 2   | The repair was cheaper than the board feared.        | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 3   | The delay was shorter than the guard promised.       | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 4   | The harvest was smaller than the tenant wanted.      | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
 | 5   | That noise was louder than the neighbours tolerated. | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and sweep pass |
