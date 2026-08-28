@@ -91,7 +91,6 @@ describe('practice is interleaved wherever it can be', () => {
  */
 const ONLY_THE: Record<number, string> = {
   7: 'every subject is a pronoun; there is no determiner to vary',
-  23: 'the numbers ARE the determiners, which is the lesson',
 };
 
 describe('determiners are practised as a class, not as one word', () => {

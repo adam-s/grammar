@@ -471,3 +471,38 @@ export const adverbPhrase = sentence(
   ],
   'r1',
 );
+
+/* ------------- an ordinal premodifying a noun — The first train arrived.
+ *
+ * A cardinal fills the determiner slot: *three witnesses* takes no article
+ * because *three* is already doing that job. An ordinal does not — *the first
+ * train* has both — so it is a premodifier under the nominal, beside the noun,
+ * where an adjective would be.
+ *
+ * That contrast is the whole of lesson 23 and nothing proved it: every numeral
+ * in either corpus was a cardinal in the determiner slot, which made `Num`
+ * indistinguishable from `Det`.
+ */
+export const ordinal = sentence(
+  'fix-ordinal',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [w('Num', 'premodifier', 'first'), w('N', 'head', 'train')]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'arrived', { lemma: 'arrive', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The earliest train came in.' },
+    ),
+  ],
+  'r1',
+);

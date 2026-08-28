@@ -370,18 +370,18 @@ Status values are deliberately explicit:
 
 ## Lesson 23 — Numbers in noun phrases
 
-| #   | Sentence                                    | Natural reading      | Intended parse               | Scope reach         | Model / fixture               |
-| --- | ------------------------------------------- | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
-| 1   | Three witnesses testified.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 2   | The first train arrived.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 3   | Two engines failed.                         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 4   | The second bridge collapsed.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 5   | The first two runners finished.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 6   | Five inspectors signed the report.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 7   | Those two windows rattled.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 8   | The last four volunteers packed every book. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 9   | Three boats near the pier returned.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 10  | Those final three remained outside.         | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| #   | Sentence                               | Natural reading      | Intended parse               | Scope reach         | Model / fixture               |
+| --- | -------------------------------------- | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
+| 1   | Three witnesses testified.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 2   | The first train arrived.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 3   | Two engines failed.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 4   | The second bridge collapsed.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 5   | The first two runners finished.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 6   | Five inspectors signed the report.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 7   | Those two windows rattled.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 8   | The last volunteers packed every book. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 9   | Three boats near the pier returned.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 10  | Those three remained outside.          | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
 
 ## Lesson 24 — Auxiliary verbs
 

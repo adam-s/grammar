@@ -1,14 +1,32 @@
 /**
- * Lesson 23 — Numbers in noun phrases.
+ * Lesson 23 — Numbers in noun phrases. Cardinal, ordinal, and head.
  *
- * *Three* does a determiner's job: it says how many, and it occupies the place
- * *the* would have. Put both in and one has to give way, which is the test.
+ * All ten built sentences were *Number + plural noun + verb*, with the number
+ * first every time and every number a cardinal — which made `Num`
+ * indistinguishable from `Det`, since a cardinal fills the determiner slot and
+ * does nothing else.
  *
- * The verbs vary because a counted subject is not a fact about acting. Four
- * delegates can seem uneasy and nine lanterns can be unlit, and a set of ten
- * that all did something would have taught the wrong half.
+ * Item 5 settles the class in five words: *The first two runners* has an
+ * article, an ordinal and a cardinal, so *first* cannot be the determiner and
+ * *two* cannot be an adjective. Item 7 makes the same point more cheaply, and
+ * item 10 is the number as the thing itself.
  */
-import { adj, det, numn, sv, svc, svo, v } from './shape.ts';
+import {
+  adjn,
+  det,
+  detnum,
+  numhead,
+  numn,
+  numpostmod,
+  ordn,
+  ordnum,
+  pp,
+  sv,
+  svo,
+  svPlus,
+  adv,
+  v,
+} from './shape.ts';
 
 export const LESSON_23 = [
   sv(
@@ -21,32 +39,24 @@ export const LESSON_23 = [
   sv(
     'c23-b',
     23,
-    numn('Two', 'engines'),
-    v('failed', 'fail', 'Vint'),
-    'A pair of engines stopped working.',
+    ordn('The', 'first', 'train'),
+    v('arrived', 'arrive', 'Vint'),
+    'The earliest train came in.',
   ),
+  sv('c23-c', 23, numn('Two', 'engines'), v('failed', 'fail', 'Vint'), 'Two engines gave out.'),
   sv(
-    'c23-c',
-    23,
-    numn('Seven', 'houses'),
-    v('flooded', 'flood', 'Vint'),
-    'Seven houses filled with water.',
-  ),
-  svc(
     'c23-d',
     23,
-    numn('Four', 'delegates'),
-    v('seemed', 'seem', 'Vlink'),
-    adj('uneasy'),
-    'Four delegates looked uncomfortable.',
+    ordn('The', 'second', 'bridge'),
+    v('collapsed', 'collapse', 'Vint'),
+    'The next bridge along fell down.',
   ),
-  svc(
+  sv(
     'c23-e',
     23,
-    numn('Nine', 'lanterns'),
-    v('were', 'be', 'Vbe'),
-    adj('unlit'),
-    'Nine lanterns had not been lit.',
+    ordnum('The', 'first', 'two', 'runners'),
+    v('finished', 'finish', 'Vint'),
+    'The first two runners completed the race.',
   ),
   svo(
     'c23-f',
@@ -56,35 +66,34 @@ export const LESSON_23 = [
     det('the', 'report'),
     'Five inspectors put their names to the report.',
   ),
-  svo(
+  sv(
     'c23-g',
     23,
-    numn('Six', 'volunteers'),
-    v('cleared', 'clear', 'Vtr'),
-    det('the', 'road'),
-    'Six volunteers made the road passable.',
-  ),
-  sv(
-    'c23-h',
-    23,
-    numn('Twelve', 'jurors'),
-    v('deliberated', 'deliberate', 'Vint'),
-    'Twelve jurors talked it over.',
-  ),
-  svc(
-    'c23-i',
-    23,
-    numn('Ten', 'passengers'),
-    v('grew', 'grow', 'Vlink'),
-    adj('restless'),
-    'Ten passengers became impatient.',
+    detnum('Those', 'two', 'windows'),
+    v('rattled', 'rattle', 'Vint'),
+    'Those two windows shook.',
   ),
   svo(
+    'c23-h',
+    23,
+    adjn('The', 'last', 'volunteers'),
+    v('packed', 'pack', 'Vtr'),
+    det('every', 'book'),
+    'The remaining helpers boxed up every book.',
+  ),
+  sv(
+    'c23-i',
+    23,
+    numpostmod('Three', 'boats', pp('near', det('the', 'pier'))),
+    v('returned', 'return', 'Vint'),
+    'Three boats by the pier came back.',
+  ),
+  svPlus(
     'c23-j',
     23,
-    numn('Eight', 'porters'),
-    v('carried', 'carry', 'Vtr'),
-    det('the', 'crates'),
-    'Eight porters moved the crates.',
+    numhead('Those', 'three'),
+    v('remained', 'remain', 'Vint'),
+    adv('outside'),
+    'Those three stayed beyond the door.',
   ),
 ];

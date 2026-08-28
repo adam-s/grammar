@@ -59,6 +59,7 @@ import {
   nounPremodifier,
   adjectiveComplement,
   adverbPhrase,
+  ordinal,
 } from './noun-phrases.ts';
 import {
   acrossTheBoard,
@@ -85,6 +86,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   nounPremodifier,
   adjectiveComplement,
   adverbPhrase,
+  ordinal,
   ambiguous,
   gardenPath,
   objectClause,

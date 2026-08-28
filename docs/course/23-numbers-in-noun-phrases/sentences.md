@@ -12,18 +12,18 @@ lessons 21 and 22.
 
 ## Sentences
 
-| #   | Sentence                                    | The step                                       |
-| --- | ------------------------------------------- | ---------------------------------------------- |
-| 1   | Three witnesses testified.                  | a cardinal filling the determiner slot         |
-| 2   | The first train arrived.                    | **an ordinal**, which premodifies instead      |
-| 3   | Two engines failed.                         | back to a cardinal                             |
-| 4   | The second bridge collapsed.                | an ordinal again, so item 2 was not a one-off  |
-| 5   | The first two runners finished.             | **both at once** — and the number is not first |
-| 6   | Five inspectors signed the report.          | a cardinal in a transitive frame               |
-| 7   | Those two windows rattled.                  | a determiner **and** a number together         |
-| 8   | The last four volunteers packed every book. | an ordinal-like word plus a cardinal           |
-| 9   | Three boats near the pier returned.         | a number with a postmodifier after the head    |
-| 10  | Those final three remained outside.         | **the number becomes the head**                |
+| #   | Sentence                               | The step                                       |
+| --- | -------------------------------------- | ---------------------------------------------- |
+| 1   | Three witnesses testified.             | a cardinal filling the determiner slot         |
+| 2   | The first train arrived.               | **an ordinal**, which premodifies instead      |
+| 3   | Two engines failed.                    | back to a cardinal                             |
+| 4   | The second bridge collapsed.           | an ordinal again, so item 2 was not a one-off  |
+| 5   | The first two runners finished.        | **both at once** — and the number is not first |
+| 6   | Five inspectors signed the report.     | a cardinal in a transitive frame               |
+| 7   | Those two windows rattled.             | a determiner **and** a number together         |
+| 8   | The last volunteers packed every book. | an ordinal-like word plus a cardinal           |
+| 9   | Three boats near the pier returned.    | a number with a postmodifier after the head    |
+| 10  | Those three remained outside.          | **the number becomes the head**                |
 
 ## Notes
 

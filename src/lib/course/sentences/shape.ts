@@ -126,6 +126,57 @@ export const adjpostmod =
       ]),
     ]);
 
+/**
+ * *the first train* — an ordinal, which premodifies rather than determines.
+ *
+ * A cardinal fills the determiner slot and excludes an article; an ordinal does
+ * not, and *the first two runners* has all three. `fix-ordinal` proves it.
+ */
+export const ordn =
+  (d: string, ordinalWord: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [w('Num', 'premodifier', ordinalWord), w('N', 'head', noun)]),
+    ]);
+
+/** *those two windows* — a determiner AND a number, so the number is not the determiner. */
+export const detnum =
+  (d: string, number: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [w('Num', 'premodifier', number), w('N', 'head', noun)]),
+    ]);
+
+/** *the first two runners* — an ordinal and a cardinal, neither of them the determiner. */
+export const ordnum =
+  (d: string, ordinalWord: string, number: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [
+        w('Num', 'premodifier', ordinalWord),
+        w('Num', 'premodifier', number),
+        w('N', 'head', noun),
+      ]),
+    ]);
+
+/** *those three* — the number becomes the thing counted. */
+export const numhead =
+  (d: string, number: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [w('Det', 'determiner', d), w('Num', 'head', number)]);
+
+/** *three boats near the pier* — a cardinal determiner over a postmodified nominal. */
+export const numpostmod =
+  (number: string, noun: string, after: Phrase): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Num', 'determiner', number),
+      n('Nom', 'head', [w('N', 'head', noun), after('postmodifier')]),
+    ]);
+
 /** *water* — a noun phrase that is just its noun. */
 export const bare =
   (noun: string): Phrase =>
