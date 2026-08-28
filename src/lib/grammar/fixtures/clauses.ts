@@ -353,3 +353,57 @@ export const frontedAdverbialClause = sentence(
   ],
   'r1',
 );
+
+/* ------------- a supplementary relative — The visitors, who complained, waited.
+ *
+ * The highest-value punctuation contrast in English, and neither corpus had it.
+ * Without the commas the relative says WHICH visitors; with them it adds
+ * something about the ones already named, and the sentence claims all of them
+ * complained rather than only some.
+ *
+ * It attaches to the noun phrase, not to the nominal — a `Nom` has no supplement
+ * — and that is the structural difference from the integrated relative, which
+ * sits inside the nominal beside the noun it picks out. The commas are evidence
+ * for the reading and not the reason for it, so they stay outside the tree.
+ */
+export const supplementaryRelative = sentence(
+  'fix-supplementary-relative',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            w('N', 'head', 'visitors'),
+            pt(','),
+            n(
+              'Cl',
+              'supplement',
+              [
+                w('Subord', 'marker', 'who'),
+                n('NP', 'subject', [w('N', 'head', 'x')], { gap: true }),
+                n('VP', 'predicate', [
+                  w('V', 'head', 'complained', { lemma: 'complain', verbType: 'Vint' }),
+                ]),
+              ],
+              { clauseKind: 'relative', clauseType: 'SV' },
+            ),
+            pt(','),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'waited', { lemma: 'wait', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The visitors stayed put, and all of them had objected.',
+      },
+    ),
+  ],
+  'r1',
+);

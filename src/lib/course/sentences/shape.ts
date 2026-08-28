@@ -1300,6 +1300,59 @@ export function remarkLast(
   );
 }
 
+/**
+ * *The visitors, who had missed their train, waited.* — a supplementary
+ * relative.
+ *
+ * The highest-value punctuation contrast in English and in neither corpus: the
+ * same six words without the commas identify WHICH visitors, and with them add
+ * something about the ones already named. It attaches to the `NP`, not the
+ * `Nom` — a `Nom` has no supplement — which is itself the structural difference
+ * from the integrated relative that sits inside the nominal.
+ */
+export const supplemented =
+  (d: string, noun: string, inner: Inner): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      w('N', 'head', noun),
+      pt(','),
+      cl({ ...inner, kind: 'relative' })('supplement'),
+      pt(','),
+    ]);
+
+/** *The rain stopped, the clouds lifted, and children ran.* Three clauses, two commas. */
+export function joinedThree(
+  id: string,
+  lesson: number,
+  first: Inner,
+  second: Inner,
+  conjunction: string,
+  third: Inner,
+  gloss: string,
+) {
+  const asClause = (inner: Inner) => cl({ ...inner })('coordinate');
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        asClause(first),
+        pt(','),
+        asClause(second),
+        pt(','),
+        w('Conj', 'coordinator', conjunction),
+        asClause(third),
+        pt('.'),
+      ],
+      {},
+    ),
+    gloss,
+  );
+}
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>

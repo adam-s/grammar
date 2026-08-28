@@ -1,16 +1,52 @@
 /**
  * Lesson 39 — Punctuation is evidence.
  *
- * The comma is a reason to try a reading, not the reading itself. Here it
- * separates two coordinated clauses, and the tree is what says so: the comma
- * takes no label and joins nothing. Compare these with lesson 33's, which are
- * the same sentences without it.
+ * The built set asked for one distinct tree across all ten sentences and the
+ * same pick count every time — two clauses, eleven words, a comma before the
+ * coordinator. That is the least informative comma in English: it marks a
+ * boundary the coordinator has already marked.
+ *
+ * Items 6 and 7 are why the lesson exists. Six words, one pair of commas, and
+ * the relative goes from identifying WHICH visitors to adding something about
+ * the ones already named. Items 3, 4, 5 and 9 bring in the commas the course has
+ * already built and never collected — an appositive from 22, fronted clauses
+ * from 29, a list from 26.
+ *
+ * Items 1, 2 and 8 keep the controlled pair with lesson 33, which has these
+ * shapes without commas.
  */
-import { det, joined, v } from './shape.ts';
+import {
+  adjn,
+  adjpostmod,
+  apposName,
+  bare,
+  det,
+  helped,
+  joined,
+  joinedThree,
+  listOf,
+  modifiedBy,
+  pp,
+  pron,
+  supplemented,
+  sv,
+  svo,
+  v,
+  whyFirst,
+} from './shape.ts';
 
 export const LESSON_39 = [
   joined(
     'c39-a',
+    39,
+    { subject: adjn('The', 'brass', 'bell'), verb: v('rang', 'ring', 'Vint') },
+    'and',
+    { subject: adjn('the', 'heavy', 'doors'), verb: v('opened', 'open', 'Vint') },
+    'The brass bell sounded and the heavy doors came open.',
+    true,
+  ),
+  joined(
+    'c39-b',
     39,
     {
       subject: det('The', 'surveyor'),
@@ -21,150 +57,97 @@ export const LESSON_39 = [
     {
       subject: det('the', 'clerk'),
       verb: v('recorded', 'record', 'Vtr'),
-      object: det('the', 'result'),
+      object: pron('it'),
     },
-    'The surveyor took the measurement and the clerk wrote it down.',
+    'The surveyor sized the field and the clerk wrote it down.',
     true,
   ),
-  joined(
-    'c39-b',
-    39,
-    {
-      subject: det('The', 'porter'),
-      verb: v('stacked', 'stack', 'Vtr'),
-      object: det('the', 'crates'),
-    },
-    'and',
-    {
-      subject: det('the', 'driver'),
-      verb: v('signed', 'sign', 'Vtr'),
-      object: det('the', 'docket'),
-    },
-    'The porter piled the crates up and the driver signed for them.',
-    true,
-  ),
-  joined(
+  sv(
     'c39-c',
     39,
-    {
-      subject: det('The', 'auditor'),
-      verb: v('checked', 'check', 'Vtr'),
-      object: det('the', 'ledger'),
-    },
-    'but',
-    {
-      subject: det('the', 'board'),
-      verb: v('ignored', 'ignore', 'Vtr'),
-      object: det('the', 'warning'),
-    },
-    'The auditor went through the ledger, and the board took no notice.',
-    true,
+    apposName('Mara', adjpostmod('our', 'new', 'captain', pp('of', det('the', 'crew')))),
+    v('waved', 'wave', 'Vint'),
+    "Mara, who is the crew's new captain, raised a hand.",
   ),
-  joined(
+  whyFirst(
     'c39-d',
     39,
     {
-      subject: det('The', 'nurse'),
-      verb: v('carried', 'carry', 'Vtr'),
-      object: det('the', 'tray'),
+      marker: 'Before',
+      subject: adjn('the', 'last', 'bus'),
+      verb: v('arrived', 'arrive', 'Vint'),
+      kind: 'adverbial',
     },
-    'and',
-    { subject: det('the', 'porter'), verb: v('opened', 'open', 'Vtr'), object: det('the', 'door') },
-    'The nurse brought the tray while the porter held the door.',
-    true,
+    det('our', 'guests'),
+    v('gathered', 'gather', 'Vint'),
+    'Our guests came together ahead of the final bus coming in.',
   ),
-  joined(
+  whyFirst(
     'c39-e',
     39,
     {
-      subject: det('The', 'jury'),
-      verb: v('heard', 'hear', 'Vtr'),
-      object: det('the', 'evidence'),
+      marker: 'When',
+      subject: det('the', 'gate'),
+      verb: v('opened', 'open', 'Vint'),
+      kind: 'adverbial',
     },
-    'and',
-    {
-      subject: det('the', 'judge'),
-      verb: v('reviewed', 'review', 'Vtr'),
-      object: det('the', 'case'),
-    },
-    'The jury listened, and then the judge went over the case.',
-    true,
+    det('the', 'visitors'),
+    v('entered', 'enter', 'Vint'),
+    'The visitors went in at the moment the gate came open.',
   ),
-  joined(
+  sv(
     'c39-f',
     39,
-    {
-      subject: det('Another', 'baker'),
-      verb: v('opened', 'open', 'Vtr'),
-      object: det('the', 'shop'),
-    },
-    'but',
-    {
-      subject: det('the', 'queue'),
-      verb: v('blocked', 'block', 'Vtr'),
-      object: det('the', 'street'),
-    },
-    'The baker opened up, and the queue that formed blocked the street.',
-    true,
+    modifiedBy('The', 'visitors', {
+      marker: 'who',
+      subjectGap: true,
+      verb: helped(v('missed', 'miss', 'Vtr'), 'had', 'have', 'perfect'),
+      object: det('their', 'train'),
+      kind: 'relative',
+    }),
+    v('waited', 'wait', 'Vint'),
+    'Of the visitors, the ones with no train stayed put.',
   ),
-  joined(
+  sv(
     'c39-g',
     39,
-    {
-      subject: det('The', 'crew'),
-      verb: v('cleared', 'clear', 'Vtr'),
-      object: det('the', 'track'),
-    },
-    'and',
-    { subject: det('the', 'guard'), verb: v('waved', 'wave', 'Vtr'), object: det('the', 'flag') },
-    'The crew made the track passable, and the guard signalled it.',
-    true,
+    supplemented('The', 'visitors', {
+      marker: 'who',
+      subjectGap: true,
+      verb: helped(v('missed', 'miss', 'Vtr'), 'had', 'have', 'perfect'),
+      object: det('their', 'train'),
+    }),
+    v('waited', 'wait', 'Vint'),
+    'The visitors stayed put, and none of them had a train.',
   ),
   joined(
     'c39-h',
     39,
     {
-      subject: det('The', 'landlord'),
-      verb: v('raised', 'raise', 'Vtr'),
-      object: det('the', 'rent'),
+      subject: det('The', 'mechanic'),
+      verb: v('checked', 'check', 'Vtr'),
+      object: det('the', 'brakes'),
     },
-    'and',
-    {
-      subject: det('the', 'tenants'),
-      verb: v('left', 'leave', 'Vtr'),
-      object: det('the', 'building'),
-    },
-    'The landlord put the rent up, and the tenants moved out.',
+    'but',
+    { subject: det('the', 'driver'), verb: v('waited', 'wait', 'Vint') },
+    'The mechanic looked at the brakes, and even so the driver stayed put.',
     true,
   ),
-  joined(
+  svo(
     'c39-i',
     39,
-    {
-      subject: det('The', 'inspector'),
-      verb: v('tested', 'test', 'Vtr'),
-      object: det('the', 'wiring'),
-    },
-    'and',
-    { subject: det('the', 'clerk'), verb: v('filed', 'file', 'Vtr'), object: det('the', 'report') },
-    'The inspector checked the wiring and the clerk wrote it up.',
-    true,
+    det('The', 'boat'),
+    v('carried', 'carry', 'Vtr'),
+    listOf('NP', bare('food'), bare('water'), 'and', bare('blankets')),
+    'The boat took food, water and blankets on board.',
   ),
-  joined(
+  joinedThree(
     'c39-j',
     39,
-    {
-      subject: det('The', 'quartet'),
-      verb: v('finished', 'finish', 'Vtr'),
-      object: det('the', 'piece'),
-    },
+    { subject: det('The', 'rain'), verb: v('stopped', 'stop', 'Vint') },
+    { subject: det('the', 'clouds'), verb: v('lifted', 'lift', 'Vint') },
     'and',
-    {
-      subject: det('the', 'audience'),
-      verb: v('left', 'leave', 'Vtr'),
-      object: det('the', 'hall'),
-    },
-    'The piece ended and people went.',
-    true,
+    { subject: bare('children'), verb: v('ran', 'run', 'Vint') },
+    'The rain came to an end, the clouds cleared and children went outside.',
   ),
 ];

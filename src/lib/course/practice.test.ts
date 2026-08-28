@@ -37,7 +37,6 @@ const UNIFORM: Record<number, string> = {
   28: 'the lesson is a clause in the object slot',
   32: 'the anchor only ever points at an adjective phrase, and only a linking verb licenses one, so SVC is forced',
   33: 'the root of a coordination has no verb; its pattern is a formality',
-  39: 'the root of a coordination has no verb; its pattern is a formality',
 };
 
 const patternsOf = (lesson: (typeof COURSE_LESSONS)[number]) => {

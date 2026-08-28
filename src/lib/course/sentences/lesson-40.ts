@@ -1,115 +1,166 @@
 /**
  * Lesson 40 — Final synthesis.
  *
- * No new idea. Each of these needs most of the course at once, so the only way
- * through is the same first question — find the verb, ask what it needs —
- * asked as many times as there are verbs.
+ * Every one of the built set's ten sentences opened the same way — a noun phrase
+ * with a relative clause modifying its subject — so a learner could start each
+ * one identically and only think from the main verb on. And it contained only
+ * nominal and relative clauses: six of the seven things Stage 5 taught were
+ * absent from the lesson meant to gather everything.
  *
- * Five different clause patterns across the ten. Not more, because the
- * synthesis shape itself — a relative clause in the subject, a nominal clause
- * in the object — is an S V O, so that pattern recurs by construction. Where
- * the frame is free it varies, which is the most that can be claimed.
+ * These open five different ways and bring the passive, the participial, the
+ * gerund, the infinitive, coordination and a supplement back. Item 10 carries
+ * two readings, which lesson 27 had a monopoly on.
  */
-import { adj, adv, det, modifiedBy, pp, svClause, svc, svo, svoa, svoc, svoo, v } from './shape.ts';
-
-const who = (noun: string, verb: ReturnType<typeof v>, late?: string) =>
-  modifiedBy('The', noun, {
-    marker: 'who',
-    subjectGap: true,
-    verb,
-    kind: 'relative' as const,
-    ...(late ? { adverbial: adv(late) } : {}),
-  });
-
-const that = (subject: ReturnType<typeof det>, verb: ReturnType<typeof v>) => ({
-  marker: 'that',
-  subject,
-  verb,
-  kind: 'nominal' as const,
-});
+import {
+  adjn,
+  adv,
+  ambiguous,
+  clauseSubject,
+  det,
+  joined,
+  modifiedBy,
+  passive,
+  pp,
+  remark,
+  sv,
+  svClause,
+  svPlus,
+  svoo,
+  v,
+} from './shape.ts';
 
 export const LESSON_40 = [
   svClause(
     'c40-a',
     40,
-    who('inspector', v('arrived', 'arrive', 'Vint'), 'late'),
+    modifiedBy('The', 'inspector', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('arrived', 'arrive', 'Vint'),
+      kind: 'relative',
+    }),
     v('reported', 'report', 'Vtr'),
-    that(det('the', 'wiring'), v('smoked', 'smoke', 'Vint')),
-    'The late-arriving inspector said the wiring smoked.',
+    {
+      marker: 'that',
+      subject: det('the', 'wiring'),
+      verb: v('smoked', 'smoke', 'Vint'),
+      kind: 'nominal',
+    },
+    'The inspector who turned up said the wiring was giving off smoke.',
   ),
-  svoc(
+  clauseSubject(
     'c40-b',
     40,
-    who('surveyor', v('objected', 'object', 'Vint')),
-    v('called', 'call', 'Vc'),
-    det('the', 'boundary'),
-    adj('wrong'),
-    'The objecting surveyor said the boundary was wrong.',
+    {
+      kind: 'nominal',
+      finiteness: 'gerund-participial',
+      verb: v('Reading', 'read', 'Vtr'),
+      object: det('the', 'warning'),
+    },
+    v('prevented', 'prevent', 'Vtr'),
+    adjn('a', 'serious', 'mistake'),
+    'Going through the warning stopped a bad error.',
   ),
-  svClause(
+  svPlus(
     'c40-c',
     40,
-    who('clerk', v('resigned', 'resign', 'Vint')),
-    v('claimed', 'claim', 'Vtr'),
-    that(det('the', 'deeds'), v('vanished', 'vanish', 'Vint')),
-    'The clerk who left said the deeds had gone.',
+    det('The', 'harbour'),
+    passive(v('dredged', 'dredge', 'Vtr'), 'was'),
+    pp('before', det('the', 'season')),
+    'Somebody cleared the harbour bed ahead of the season.',
   ),
-  svoo(
+  remark(
     'c40-d',
     40,
-    who('tenant', v('complained', 'complain', 'Vint'), 'twice'),
-    v('sent', 'send', 'Vg'),
-    det('her', 'landlord'),
-    det('a', 'notice'),
-    'The twice-complaining tenant sent her landlord a notice.',
+    'Fortunately',
+    modifiedBy('the', 'visitors', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('complained', 'complain', 'Vint'),
+      kind: 'relative',
+    }),
+    v('returned', 'return', 'Vint'),
+    'The visitors who objected came back, which is a good thing.',
   ),
-  svClause(
+  joined(
     'c40-e',
     40,
-    who('witness', v('hesitated', 'hesitate', 'Vint')),
-    v('admitted', 'admit', 'Vtr'),
-    that(det('the', 'driver'), v('braked', 'brake', 'Vint')),
-    'The hesitant witness admitted the driver braked.',
+    { subject: det('The', 'station'), verb: passive(v('restored', 'restore', 'Vtr'), 'was') },
+    'and',
+    { subject: det('the', 'town'), verb: v('rejoiced', 'rejoice', 'Vint') },
+    'Somebody put the station back in order and the town was glad.',
+    true,
   ),
-  svc(
+  svClause(
     'c40-f',
     40,
-    who('auditor', v('returned', 'return', 'Vint')),
-    v('was', 'be', 'Vbe'),
-    adj('satisfied'),
-    'The auditor who came back was content.',
+    modifiedBy('The', 'clerk', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('resigned', 'resign', 'Vint'),
+      kind: 'relative',
+    }),
+    v('claimed', 'claim', 'Vtr'),
+    {
+      marker: 'that',
+      subject: det('the', 'deeds'),
+      verb: v('vanished', 'vanish', 'Vint'),
+      kind: 'nominal',
+    },
+    'The clerk who left the post said the deeds had gone missing.',
   ),
-  svoa(
+  sv(
     'c40-g',
     40,
-    who('guard', v('waited', 'wait', 'Vint'), 'outside'),
-    v('put', 'put', 'Vtr'),
-    det('that', 'ledger'),
-    pp('in', det('the', 'safe')),
-    'The waiting guard placed the ledger in the safe.',
+    modifiedBy('The', 'plan', {
+      finiteness: 'participial',
+      kind: 'relative',
+      objectGap: true,
+      verb: v('drafted', 'draft', 'Vtr'),
+      adverbial: pp('by', det('the', 'committee')),
+    }),
+    v('failed', 'fail', 'Vint'),
+    'The plan the committee drew up came to nothing.',
   ),
   svClause(
     'c40-h',
     40,
-    who('engineer', v('testified', 'testify', 'Vint')),
-    v('showed', 'show', 'Vtr'),
-    that(det('the', 'valve'), v('failed', 'fail', 'Vint')),
-    'The engineer who gave evidence showed the valve failed.',
+    det('The', 'guide'),
+    v('promised', 'promise', 'Vtr'),
+    {
+      marker: 'to',
+      infinitival: true,
+      verb: v('wait', 'wait', 'Vint'),
+      adverbial: adv('outside'),
+      kind: 'nominal',
+      finiteness: 'infinitival',
+    },
+    'The guide gave a word that she would stay put beyond the door.',
   ),
-  svo(
+  svoo(
     'c40-i',
     40,
-    who('baker', v('protested', 'protest', 'Vint'), 'loudly'),
-    v('closed', 'close', 'Vtr'),
-    det('the', 'shop'),
-    'The loudly protesting baker shut the shop.',
+    modifiedBy('The', 'tenant', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('complained', 'complain', 'Vint'),
+      kind: 'relative',
+    }),
+    v('sent', 'send', 'Vg'),
+    det('her', 'landlord'),
+    det('a', 'notice'),
+    'The tenant who objected posted a notice to her landlord.',
   ),
-  svClause(
+  ambiguous(
     'c40-j',
     40,
-    who('trustee', v('abstained', 'abstain', 'Vint')),
-    v('accepted', 'accept', 'Vtr'),
-    that(det('the', 'archive'), v('flooded', 'flood', 'Vint')),
-    'The abstaining trustee accepted the archive had flooded.',
+    det('The', 'inspector'),
+    v('photographed', 'photograph', 'Vtr'),
+    'the',
+    'engineer',
+    'in',
+    det('the', 'office'),
+    'The inspector was in the office when the picture was taken.',
+    'The engineer who works in the office.',
   ),
 ];
