@@ -24,7 +24,7 @@ export const LESSON_22 = [
     22,
     det('The', 'court'),
     v('questioned', 'question', 'Vtr'),
-    appos('the', 'surgeon', det('a', 'stranger')),
+    appos('the', 'surgeon', det('a', 'stranger'), false),
     'The court questioned the surgeon, who was a stranger.',
   ),
   sv(
@@ -61,7 +61,7 @@ export const LESSON_22 = [
     22,
     det('The', 'board'),
     v('appointed', 'appoint', 'Vtr'),
-    appos('the', 'engineer', det('a', 'newcomer')),
+    appos('the', 'engineer', det('a', 'newcomer'), false),
     'The board gave the post to the engineer, who was new.',
   ),
   sv(
@@ -76,7 +76,7 @@ export const LESSON_22 = [
     22,
     det('The', 'inspector'),
     v('interviewed', 'interview', 'Vtr'),
-    appos('her', 'brother', det('a', 'teacher')),
+    appos('her', 'brother', det('a', 'teacher'), false),
     'The inspector spoke to her brother, who taught.',
   ),
   sv(

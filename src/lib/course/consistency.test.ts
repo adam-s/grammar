@@ -134,3 +134,98 @@ describe('the contract fixtures prove every shape the course uses', () => {
     );
   });
 });
+
+/**
+ * The sentence has to read as a sentence.
+ *
+ * Punctuation is deliberately outside the tree — it marks the sentence rather
+ * than being part of what the sentence is built from — so every audit, every
+ * sweep and every layout check looked straight past *the surgeon, a stranger,.*
+ * Three sentences shipped with a comma before the full stop and 4,723 tests
+ * had nothing to say about it, because none of them read the text.
+ */
+describe('the words make a sentence, not just a tree', () => {
+  const CORPUS_TEXT = [
+    ...FIXTURES.map((s) => [s.id, s.text] as const),
+    ...COURSE_LESSONS.flatMap((l) => l.sentences.map((s) => [s.id, s.text] as const)),
+  ];
+
+  it('no two marks sit together', () => {
+    for (const [id, text] of CORPUS_TEXT) {
+      assert.ok(!/[,;:]\s*[.,;:!?]/.test(text), `${id}: “${text}” has two marks in a row`);
+    }
+  });
+
+  it('begins with a capital and never spaces a mark off', () => {
+    for (const [id, text] of CORPUS_TEXT) {
+      assert.match(text, /^[A-Z]/, `${id}: “${text}” does not begin`);
+      assert.ok(!/\s[.,;:]/.test(text), `${id}: “${text}” has a space before a mark`);
+    }
+  });
+
+  /**
+   * Only the course. Seventeen of the contract fixtures carry no end mark at
+   * all — punctuation is outside the tree, so a fixture proving a structure has
+   * no need of it, and the earliest ones were written without. That is their
+   * business. A sentence a learner reads is a different thing.
+   */
+  it('every course sentence ends', () => {
+    for (const lesson of COURSE_LESSONS) {
+      for (const sentence of lesson.sentences) {
+        assert.match(sentence.text, /[.!?]$/, `${sentence.id}: “${sentence.text}” does not end`);
+      }
+    }
+  });
+
+  it('opens and closes an appositive with matching commas, or neither', () => {
+    for (const [id, text] of CORPUS_TEXT) {
+      const commas = (text.match(/,/g) ?? []).length;
+      if (commas === 0) continue;
+      // One comma is a coordination or a supplement; a pair brackets something.
+      // Three would mean a bracket was left open, which is the failure here.
+      assert.ok(commas <= 2, `${id}: “${text}” has ${commas} commas`);
+    }
+  });
+});
+
+/**
+ * A gloss says what the sentence means. It is not a place to retype it.
+ *
+ * All ten of lesson 2's were word-for-word copies. That is worse than no gloss
+ * at all: the alternate-reading machinery leans on the gloss to say what the
+ * second drawing commits you to, and a corpus where a paraphrase is a
+ * formality teaches the learner to skip it.
+ *
+ * The bar is only that the two are not identical. Sharing most words with the
+ * sentence is what a paraphrase does — *The keys are lying on the table* is a
+ * good gloss for *The keys are on the table*.
+ */
+describe('a gloss adds something', () => {
+  it('no reading is glossed with its own sentence', () => {
+    for (const lesson of COURSE_LESSONS) {
+      for (const sentence of lesson.sentences) {
+        for (const reading of sentence.readings) {
+          assert.notEqual(
+            reading.gloss.toLowerCase().replace(/[^a-z]/g, ''),
+            sentence.text.toLowerCase().replace(/[^a-z]/g, ''),
+            `${sentence.id}/${reading.id}: the gloss is the sentence`,
+          );
+        }
+      }
+    }
+  });
+
+  it('the two readings of an ambiguous sentence are glossed differently', () => {
+    for (const lesson of COURSE_LESSONS) {
+      for (const sentence of lesson.sentences) {
+        if (sentence.readings.length < 2) continue;
+        const glosses = new Set(sentence.readings.map((r) => r.gloss));
+        assert.equal(
+          glosses.size,
+          sentence.readings.length,
+          `${sentence.id}: two readings with one gloss says the ambiguity makes no difference`,
+        );
+      }
+    }
+  });
+});

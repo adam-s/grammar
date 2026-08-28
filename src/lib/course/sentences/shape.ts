@@ -132,14 +132,19 @@ export const pp =
  * here as punctuation and nowhere in the tree.
  */
 export const appos =
-  (d: string, noun: string, other: Phrase): Phrase =>
+  (d: string, noun: string, other: Phrase, closing = true): Phrase =>
   (fn) =>
     n('NP', fn, [
       w('Det', 'determiner', d),
       w('N', 'head', noun),
       pt(','),
       other('appositive'),
-      pt(','),
+      // The closing comma belongs to the pair only when something follows it.
+      // At the end of a clause the full stop does that work, and emitting both
+      // produced *the surgeon, a stranger,.* — which every audit accepted,
+      // because punctuation is outside the tree and nothing was checking the
+      // sentence as a sentence.
+      ...(closing ? [pt(',')] : []),
     ]);
 
 /** *the bread and the cheese* — two of the same rank, and the word that joins them. */
