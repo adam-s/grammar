@@ -4,8 +4,13 @@
  * Nothing new is named. What is new is where the clause sits: lesson 28 put
  * one in the object slot, and these are SUBJECTS — so the *it* test from
  * lesson 4 works on them, which is the evidence they are doing a noun's job.
+ *
+ * Some of them link rather than act. *That the belt broke was obvious* is the
+ * commonest thing anyone says about a clause in the subject slot, and ten
+ * transitive main verbs would have made a subject clause look like something
+ * that has to do things to people.
  */
-import { clauseSubject, det, v } from './shape.ts';
+import { adj, clauseSubject, clauseSubjectIs, det, v } from './shape.ts';
 
 export const LESSON_30 = [
   clauseSubject(
@@ -21,7 +26,7 @@ export const LESSON_30 = [
     det('the', 'driver'),
     'The driver was surprised that the belt had broken.',
   ),
-  clauseSubject(
+  clauseSubjectIs(
     'c30-b',
     30,
     {
@@ -30,9 +35,9 @@ export const LESSON_30 = [
       verb: v('sank', 'sink', 'Vint'),
       kind: 'nominal',
     },
-    v('shocked', 'shock', 'Vtr'),
-    det('the', 'town'),
-    'The town was shocked by the sinking.',
+    v('was', 'be', 'Vbe'),
+    adj('obvious'),
+    'Everyone could see that the ferry had sunk.',
   ),
   clauseSubject(
     'c30-c',
@@ -60,7 +65,7 @@ export const LESSON_30 = [
     det('the', 'trustees'),
     'The trustees were angry about the flood.',
   ),
-  clauseSubject(
+  clauseSubjectIs(
     'c30-e',
     30,
     {
@@ -69,9 +74,9 @@ export const LESSON_30 = [
       verb: v('collapsed', 'collapse', 'Vint'),
       kind: 'nominal',
     },
-    v('troubled', 'trouble', 'Vtr'),
-    det('the', 'minister'),
-    'The collapse troubled the minister.',
+    v('seemed', 'seem', 'Vlink'),
+    adj('unlikely'),
+    'It did not seem likely that the talks had collapsed.',
   ),
   clauseSubject(
     'c30-f',
@@ -99,7 +104,7 @@ export const LESSON_30 = [
     det('the', 'crew'),
     'The crew were relieved it started again.',
   ),
-  clauseSubject(
+  clauseSubjectIs(
     'c30-h',
     30,
     {
@@ -108,9 +113,9 @@ export const LESSON_30 = [
       verb: v('shifted', 'shift', 'Vint'),
       kind: 'nominal',
     },
-    v('puzzled', 'puzzle', 'Vtr'),
-    det('the', 'surveyor'),
-    'The moved boundary puzzled the surveyor.',
+    v('was', 'be', 'Vbe'),
+    adj('clear'),
+    'It was plain that the boundary had shifted.',
   ),
   clauseSubject(
     'c30-i',

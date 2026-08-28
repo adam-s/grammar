@@ -4,8 +4,12 @@
  * *and* does the joining and is not one of the things joined — labelling it a
  * coordinate alongside them would say this subject has three parts where it
  * has two.
+ *
+ * A joined subject is not a fact about acting either, so some of these link
+ * rather than act. Two things can both taste stale, and the coordination is
+ * the same shape whichever verb follows it.
  */
-import { both, det, sv, svo, v } from './shape.ts';
+import { adj, both, det, sv, svc, svo, v } from './shape.ts';
 
 export const LESSON_26 = [
   sv(
@@ -15,12 +19,13 @@ export const LESSON_26 = [
     v('vanished', 'vanish', 'Vint'),
     'Both the bread and the cheese disappeared.',
   ),
-  sv(
+  svc(
     'c26-b',
     26,
-    both(det('The', 'kettle'), 'and', det('the', 'lamp')),
-    v('failed', 'fail', 'Vint'),
-    'Both the kettle and the lamp stopped working.',
+    both(det('The', 'soup'), 'and', det('the', 'pastry')),
+    v('tasted', 'taste', 'Vlink'),
+    adj('stale'),
+    'Both had gone stale.',
   ),
   sv(
     'c26-c',
@@ -44,12 +49,13 @@ export const LESSON_26 = [
     det('the', 'deed'),
     'Both of them signed.',
   ),
-  sv(
+  svc(
     'c26-f',
     26,
     both(det('The', 'ferry'), 'and', det('the', 'tug')),
-    v('docked', 'dock', 'Vint'),
-    'Both boats came in.',
+    v('were', 'be', 'Vbe'),
+    adj('overdue'),
+    'Both boats were late.',
   ),
   svo(
     'c26-g',

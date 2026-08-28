@@ -4,8 +4,12 @@
  * A postmodifier, the same job lesson 21 gave a prepositional phrase, done by
  * a clause instead. Its subject slot is empty and the noun it modifies is what
  * fills it, which is what the gap after *that* records.
+ *
+ * The main verbs vary. A relative clause modifies a noun phrase wherever that
+ * phrase sits, and *the engine that stalled was old* is as ordinary as
+ * anything transitive.
  */
-import { det, modifiedBy, sv, svo, v } from './shape.ts';
+import { adj, det, modifiedBy, sv, svc, svo, v } from './shape.ts';
 
 export const LESSON_31 = [
   svo(
@@ -21,7 +25,7 @@ export const LESSON_31 = [
     }),
     'The inspector questioned the driver who had complained.',
   ),
-  sv(
+  svc(
     'c31-b',
     31,
     modifiedBy('The', 'engine', {
@@ -30,8 +34,9 @@ export const LESSON_31 = [
       verb: v('stalled', 'stall', 'Vint'),
       kind: 'relative',
     }),
-    v('failed', 'fail', 'Vint'),
-    'The engine which had stalled then failed.',
+    v('was', 'be', 'Vbe'),
+    adj('old'),
+    'The engine which had stalled was an old one.',
   ),
   sv(
     'c31-c',
@@ -83,7 +88,7 @@ export const LESSON_31 = [
     }),
     'The jury believed the surveyor who gave evidence.',
   ),
-  sv(
+  svc(
     'c31-g',
     31,
     modifiedBy('The', 'ferry', {
@@ -92,8 +97,9 @@ export const LESSON_31 = [
       verb: v('sailed', 'sail', 'Vint'),
       kind: 'relative',
     }),
-    v('sank', 'sink', 'Vint'),
-    'The ferry which had sailed went down.',
+    v('seemed', 'seem', 'Vlink'),
+    adj('seaworthy'),
+    'The ferry which had sailed looked fit for sea.',
   ),
   svo(
     'c31-h',

@@ -565,6 +565,16 @@ export const clauseSubject = (
   gloss: string,
 ) => one(id, lesson, clause(cl(inner), verb, [object('directObject')], 'SVO'), gloss);
 
+/** *That the belt broke was obvious.* A clause in the subject slot, linked to what it was. */
+export const clauseSubjectIs = (
+  id: string,
+  lesson: number,
+  inner: Inner,
+  verb: Verb,
+  complement: Phrase,
+  gloss: string,
+) => one(id, lesson, clause(cl(inner), verb, [complement('subjectComplement')], 'SVC'), gloss);
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>

@@ -3,8 +3,12 @@
  *
  * *Three* does a determiner's job: it says how many, and it occupies the place
  * *the* would have. Put both in and one has to give way, which is the test.
+ *
+ * The verbs vary because a counted subject is not a fact about acting. Four
+ * delegates can seem uneasy and nine lanterns can be unlit, and a set of ten
+ * that all did something would have taught the wrong half.
  */
-import { numn, sv, svo, v, det } from './shape.ts';
+import { adj, det, numn, sv, svc, svo, v } from './shape.ts';
 
 export const LESSON_23 = [
   sv(
@@ -28,19 +32,21 @@ export const LESSON_23 = [
     v('flooded', 'flood', 'Vint'),
     'Seven houses filled with water.',
   ),
-  sv(
+  svc(
     'c23-d',
     23,
     numn('Four', 'delegates'),
-    v('abstained', 'abstain', 'Vint'),
-    'Four delegates did not vote.',
+    v('seemed', 'seem', 'Vlink'),
+    adj('uneasy'),
+    'Four delegates looked uncomfortable.',
   ),
-  sv(
+  svc(
     'c23-e',
     23,
     numn('Nine', 'lanterns'),
-    v('flickered', 'flicker', 'Vint'),
-    'Nine lanterns wavered.',
+    v('were', 'be', 'Vbe'),
+    adj('unlit'),
+    'Nine lanterns had not been lit.',
   ),
   svo(
     'c23-f',
@@ -65,12 +71,13 @@ export const LESSON_23 = [
     v('deliberated', 'deliberate', 'Vint'),
     'Twelve jurors talked it over.',
   ),
-  sv(
+  svc(
     'c23-i',
     23,
     numn('Ten', 'passengers'),
-    v('complained', 'complain', 'Vint'),
-    'Ten passengers objected.',
+    v('grew', 'grow', 'Vlink'),
+    adj('restless'),
+    'Ten passengers became impatient.',
   ),
   svo(
     'c23-j',
