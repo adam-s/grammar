@@ -15,7 +15,10 @@
  *   picks is `replaySentence(sentence, targetReading(...)).steps.length`. The
  *   fit is only a translation from one unit to the other; a real count needs a
  *   real parse.
- * - **Verb-final.** The last word of the sentence is the lexical verb. Judged
+ * - **Verb-final.** The last word of the sentence is the lexical verb, so "cut
+ *   before the last word" finds the subject-predicate boundary without knowing
+ *   what a subject is. This only diagnoses a lesson whose taught decision IS
+ *   that cut, which is lessons 1 and 2; elsewhere it is a neutral fact. Judged
  *   against a word list, so it is exact for this corpus and would need
  *   extending for another one.
  * - **Near-pair.** Two sentences in one lesson whose word sets overlap by half

@@ -144,7 +144,7 @@ across. Trim it, or give the noun phrases something to do besides sit at the
 front.
 
 **Lesson 5 — Find the head.** In items 1 through 6 the head is the last noun
-before the verb, so "last noun wins" scores six. Items 7 and 8 defeat it and
+before the verb, so "last noun wins" scores six. Items 7, 8 and 9 defeat it and
 are the good ones. Add two more of that shape: `A box of tools fell.` and `The
 key to the cabinet vanished.`, both currently sitting unused in lesson 1.
 
@@ -303,7 +303,7 @@ Item 2, `We heard the tired baby cried`, is marginal in ordinary speech; the
 natural forms are `heard the baby cry` and `heard that the baby cried`. Replace
 with `The nurse thought the baby slept.`
 
-**Lesson 29 — Adverbial clauses.** Only items 6 and 7 put the dependent clause
+**Lesson 29 — Adverbial clauses.** Only items 6, 7 and 9 put the dependent clause
 first, and none puts it in the middle. Position is most of what makes adverbial
 clauses hard to find. Move two more to the front.
 
@@ -377,3 +377,61 @@ does not go up.
 
 Two of them need model work first: the non-restrictive relative (lessons 31 and 39) and the fronted participial clause (lesson 35). Both should be checked
 against the fixtures before the sentences are written.
+
+## Applied, 28 August 2026
+
+Every change above is now in
+[`sentence-ladders.md`](sentence-ladders.md), except the two marked as
+suggestions rather than fixes: folding lesson 23 into lesson 6 or 16, and
+lesson 37's `The window was broken.` Both are decisions about the course
+outline, not about a sentence, so they stay open.
+
+Ninety-one edits, replacing sixty-one sentences and rewriting eighteen
+progression notes. Re-measured:
+
+|                                    | Before     | After      |
+| ---------------------------------- | ---------- | ---------- |
+| Verb is the last word, lesson 1    | 10/10      | 3/10       |
+| Verb is the last word, lesson 4    | 10/10      | 5/10       |
+| Verb is the last word, lesson 6    | 10/10      | 6/10       |
+| Lessons with any near-pair         | 18/40      | 25/40      |
+| Cumulative band longer than varied | 37/40      | 29/40      |
+| Mean length                        | 6.78 words | 6.63 words |
+| Daggered, needing model work       | 11         | 17         |
+
+The course got harder and slightly shorter, which was the point.
+
+**Lesson 5 stays verb-final in nine of ten, and that is fine.** Verb-finality
+only matters where the taught decision is the subject-predicate cut, which is
+lessons 1 and 2. Lesson 5 asks for the head of the subject, and the shortcut
+that threatens it is "the head is the last noun." That one moved from 3 of 10
+defeating it to 5 of 10.
+
+### The six new daggers were checked, not assumed
+
+Each was probed against both corpora before being written in. Two first
+attempts gave a false `PRESENT`: the genitive probe matched _Almost every
+driver knows New York_, where the determiner slot holds a determinative phrase
+and not a possessive, and the present-participle probe matched _The shutters
+painted in the spring warped_ on the word _spring_. Re-probed:
+
+- **No possessive marker exists in either corpus at all**, and a determiner slot
+  is only ever filled by `DP`, `Det` or `Num`. So lesson 6's `The driver's phone
+buzzed.` is genuinely new.
+- **A postmodifying clause is only ever `participial/relative` or a finite
+  relative.** No present participle has ever postmodified a noun, so lesson 35's
+  `The child standing by the gate waved.` is genuinely new.
+- `Cl/supplement`, a participial clause functioning as an adverbial, a paired
+  coordinator, _whose_, and a gerund clause with its own subject are all absent.
+
+Lesson 39's item 8 was daggered and then un-daggered: it is an ordinary
+restrictive relative and the model already carries those. Only its comma-bearing
+twin at item 9 needs work.
+
+### What this did not test
+
+The ladders are prose. Nothing in `npm test` reads them, so the 4739 passing
+tests say nothing about these sentences. They confirm only that the course data,
+which was not touched, still holds. The claims above come from
+`node scripts/measure-ladders.mjs` and from the probes quoted, and every
+sentence here still needs a person to read it.
