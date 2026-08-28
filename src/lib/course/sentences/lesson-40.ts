@@ -20,11 +20,12 @@ import {
   joined,
   modifiedBy,
   passive,
+  svoClause,
+  passiveWhy,
   pp,
   remark,
   sv,
   svClause,
-  svPlus,
   svoo,
   v,
 } from './shape.ts';
@@ -61,13 +62,18 @@ export const LESSON_40 = [
     adjn('a', 'serious', 'mistake'),
     'Going through the warning stopped a bad error.',
   ),
-  svPlus(
+  passiveWhy(
     'c40-c',
     40,
     det('The', 'harbour'),
     passive(v('dredged', 'dredge', 'Vtr'), 'was'),
-    pp('before', det('the', 'season')),
-    'Somebody cleared the harbour bed ahead of the season.',
+    {
+      marker: 'before',
+      subject: det('the', 'season'),
+      verb: v('ended', 'end', 'Vint'),
+      kind: 'adverbial',
+    },
+    'Somebody cleared the harbour bed ahead of the season finishing.',
   ),
   remark(
     'c40-d',
@@ -122,11 +128,12 @@ export const LESSON_40 = [
     v('failed', 'fail', 'Vint'),
     'The plan the committee drew up came to nothing.',
   ),
-  svClause(
+  svoClause(
     'c40-h',
     40,
     det('The', 'guide'),
-    v('promised', 'promise', 'Vtr'),
+    v('asked', 'ask', 'Vc'),
+    det('the', 'visitors'),
     {
       marker: 'to',
       infinitival: true,
@@ -135,7 +142,7 @@ export const LESSON_40 = [
       kind: 'nominal',
       finiteness: 'infinitival',
     },
-    'The guide gave a word that she would stay put beyond the door.',
+    'The guide put it to the visitors that they should stay beyond the door.',
   ),
   svoo(
     'c40-i',

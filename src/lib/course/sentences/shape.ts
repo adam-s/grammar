@@ -1432,6 +1432,16 @@ export const isClause = (
   gloss: string,
 ) => one(id, lesson, clause(s, verb, [cl(inner)('subjectComplement')], 'SVC'), gloss);
 
+/** *The harbour was dredged before the season closed.* A passive with a clause saying when. */
+export const passiveWhy = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  inner: Inner,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [cl(inner)('adverbial')], 'SV'), gloss);
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>

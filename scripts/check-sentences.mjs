@@ -91,6 +91,16 @@ for (const dir of dirs) {
 
 // ── the ledger ──────────────────────────────────────────────────────────────
 const LEDGER = `${DOCS}/proposal-review.md`;
+// Its absence used to skip the whole block and still report "no problems", which
+// is a check that passes by not running. If the ledger is required it has to be
+// required when it is missing too — that is the only case the guard was for.
+if (!existsSync(LEDGER)) {
+  problems.push(
+    `${LEDGER} is missing. It records what a person accepted, one row per proposal; ` +
+      'without it nothing says which reading was approved. Restore it, or delete this ' +
+      'check and say in difficulty.md that acceptance is recorded somewhere else.',
+  );
+}
 if (existsSync(LEDGER)) {
   const text = readFileSync(LEDGER, 'utf8');
   /** Ledger rows, grouped by the `## Lesson N — Title` heading above them. */
@@ -155,6 +165,34 @@ if (existsSync(LEDGER)) {
       problems.push(`ledger: no section for ${dir}, which has proposals`);
     }
   }
+}
+
+// ── the live corpus ─────────────────────────────────────────────────────────
+// The tables above are prose about the course. This is the course. They drifted
+// apart in lesson 20 — the same ten sentences in two orders — and nothing
+// noticed, because every check compared documents with documents.
+for (const lesson of COURSE_LESSONS) {
+  const dir = dirs.find((d) => d.startsWith(String(lesson.number).padStart(2, '0') + '-'));
+  if (!dir || !existsSync(`${DOCS}/${dir}/sentences.md`)) continue;
+  const rows = readSentences(`${DOCS}/${dir}/sentences.md`);
+  if (rows.length !== lesson.sentences.length) {
+    problems.push(`${dir}: ${rows.length} rows against ${lesson.sentences.length} built sentences`);
+  }
+  lesson.sentences.forEach((sentence, i) => {
+    const row = rows[i];
+    if (!row) return;
+    const bare = (t) =>
+      t
+        .replace(/[*_`†]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (bare(row.text) !== bare(sentence.text)) {
+      problems.push(
+        `${dir} row ${i + 1}: the document says "${bare(row.text)}" and lesson ` +
+          `${lesson.number} sentence ${i + 1} is "${sentence.text}"`,
+      );
+    }
+  });
 }
 
 const withFile = dirs.filter((d) => existsSync(`${DOCS}/${d}/sentences.md`));

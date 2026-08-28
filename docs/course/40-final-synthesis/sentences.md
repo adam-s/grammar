@@ -17,12 +17,12 @@ seven things Stage 5 taught are absent from the lesson meant to gather everythin
 | --- | ---------------------------------------------------------- | -------------------------------------- |
 | 1   | The inspector who arrived reported that the wiring smoked. | relative inside a nominal frame        |
 | 2   | Reading the warning prevented a serious mistake.           | **a gerund** opens the sentence        |
-| 3   | The harbour was dredged before the season.                 | **a passive** with an adverbial clause |
+| 3   | The harbour was dredged before the season ended.           | **a passive** with an adverbial clause |
 | 4   | Fortunately, the visitors who complained returned.         | **a supplement** opens it              |
 | 5   | The station was restored, and the town rejoiced.           | **passive and coordination**           |
 | 6   | The clerk who resigned claimed that the deeds vanished.    | relative and nominal again             |
 | 7   | The plan drafted by the committee failed.                  | **a participial** and a passive        |
-| 8   | The guide promised to wait outside.                        | **an infinitive with its own subject** |
+| 8   | The guide asked the visitors to wait outside.              | **an infinitive with its own subject** |
 | 9   | The tenant who complained sent her landlord a notice.      | relative with two objects              |
 | 10  | The inspector photographed the engineer in the office.     | **two readings**                       |
 
