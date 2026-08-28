@@ -31,6 +31,8 @@ are vendored and excluded from lint — treat them as third-party until you deli
 ```
 src/lib/grammar/      the subject: taxonomy, licensing rules, build state, layout,
                       grading, clause structure, and the panel's option model
+src/lib/course/       the course: what each lesson teaches, the scope that
+                      follows from it, and 400 sentences to practise on
 src/lib/workspace/    the full-screen shell: rail, panel, canvas, inspector, toolbar
 src/lib/components/ui/ shadcn-svelte, vendored
 src/lib/theme.css     every colour and metric in the app, once
@@ -200,6 +202,24 @@ are different properties, and only the sweep tests the second.**
 What the menus must do is `src/lib/grammar/options.ts` and the thirty-nine
 tests beside it. What the model still cannot say is
 [docs/model-gaps.md](docs/model-gaps.md).
+
+## The course
+
+`src/lib/course/` is the second half of the app and had no entry in this file
+until it was forty lessons old. A lesson declares the decisions it is the
+**first** to teach — `form:NP`, `vt:Vtr`, `fin:infinitival`, written the way the
+palette writes them — and the rest follows from that one field. `scope.ts`
+unions them into what a learner may pick by lesson N, prunes a sentence's answer
+down to the part that lesson actually asks for, and `scope.test.ts` rebuilds
+every one through the real palette under that scope. A lesson that needs a label
+a later lesson introduces is a red test rather than something you have to
+notice.
+
+The four hundred sentences are constructed and say so. `provenance.reviewedBy`
+reads `unreviewed` on every one, because the audits prove a parse is well formed
+and cannot prove it is true — the defects that mattered most were found by
+reading. [docs/course/README.md](docs/course/README.md) has the order and the
+reasoning; `course.ts` is the authority.
 
 ## Influences
 
