@@ -57,7 +57,7 @@ export const LESSON_39 = [
       verb: v('ignored', 'ignore', 'Vtr'),
       object: det('the', 'warning'),
     },
-    'The board disregarded the check.',
+    'The auditor went through the ledger, and the board took no notice.',
     true,
   ),
   joined(
@@ -104,7 +104,7 @@ export const LESSON_39 = [
       verb: v('blocked', 'block', 'Vtr'),
       object: det('the', 'street'),
     },
-    'Opening caused a blockage.',
+    'The baker opened up, and the queue that formed blocked the street.',
     true,
   ),
   joined(
@@ -117,7 +117,7 @@ export const LESSON_39 = [
     },
     'and',
     { subject: det('the', 'guard'), verb: v('waved', 'wave', 'Vtr'), object: det('the', 'flag') },
-    'The track was cleared and signalled.',
+    'The crew made the track passable, and the guard signalled it.',
     true,
   ),
   joined(
@@ -134,7 +134,7 @@ export const LESSON_39 = [
       verb: v('left', 'leave', 'Vtr'),
       object: det('the', 'building'),
     },
-    'The rise emptied the building.',
+    'The landlord put the rent up, and the tenants moved out.',
     true,
   ),
   joined(

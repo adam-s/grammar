@@ -229,3 +229,39 @@ describe('a gloss adds something', () => {
     }
   });
 });
+
+/**
+ * A counting word has to count the same thing in the gloss.
+ *
+ * Carrying determiners into the paraphrases was done by script, and the script
+ * moved one onto the wrong noun: *Several crates were stacked by the porters*
+ * became *Several porters stacked the crates*. The passive swaps which
+ * participant comes first, so a rule that rewrites the opening noun phrase
+ * rewrites a different noun.
+ *
+ * Only the counting words. *Those negotiations* glossed as *Those talks* is a
+ * synonym and fine; *Several crates* glossed as *Several porters* is a
+ * different claim about the world.
+ */
+describe('a gloss counts what the sentence counts', () => {
+  const COUNTING = /^(Several|Both|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Twelve)\s+(\w+)/;
+
+  it('no counting word lands on a different noun', () => {
+    for (const lesson of COURSE_LESSONS) {
+      for (const sentence of lesson.sentences) {
+        const inText = sentence.text.match(COUNTING);
+        if (!inText) continue;
+        for (const reading of sentence.readings) {
+          const inGloss = reading.gloss.match(COUNTING);
+          if (!inGloss || inGloss[1] !== inText[1]) continue;
+          assert.equal(
+            inGloss[2]!.toLowerCase(),
+            inText[2]!.toLowerCase(),
+            `${sentence.id}: “${sentence.text}” counts ${inText[2]}, ` +
+              `and its gloss counts ${inGloss[2]}`,
+          );
+        }
+      }
+    }
+  });
+});

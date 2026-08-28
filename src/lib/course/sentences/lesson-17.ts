@@ -77,7 +77,7 @@ export const LESSON_17 = [
     v('declared', 'declare', 'Vc'),
     det('the', 'contract'),
     advadj('wholly', 'void'),
-    'The court ruled the contract void throughout.',
+    'The court ruled the contract invalid from end to end.',
   ),
   svc(
     'c17-i',

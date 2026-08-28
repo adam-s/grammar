@@ -77,7 +77,7 @@ export const LESSON_26 = [
     26,
     both(det('Those', 'shutters'), 'and', det('the', 'door')),
     v('rattled', 'rattle', 'Vint'),
-    'Both shook in the wind.',
+    'Both the shutters and the door shook in the wind.',
   ),
   svo(
     'c26-j',

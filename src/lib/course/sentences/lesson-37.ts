@@ -97,7 +97,7 @@ export const LESSON_37 = [
     det('Several', 'crates'),
     passive(v('stacked', 'stack', 'Vtr'), 'were'),
     pp('by', det('the', 'porters')),
-    'Several porters stacked the crates.',
+    'The porters stacked several crates.',
   ),
   sv(
     'c37-j',

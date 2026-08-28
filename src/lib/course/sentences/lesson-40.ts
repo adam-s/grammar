@@ -60,7 +60,7 @@ export const LESSON_40 = [
     v('sent', 'send', 'Vg'),
     det('her', 'landlord'),
     det('a', 'notice'),
-    'The twice-complaining tenant sent the landlord a notice.',
+    'The twice-complaining tenant sent her landlord a notice.',
   ),
   svClause(
     'c40-e',
