@@ -75,10 +75,10 @@ re-introducing forms stage 2 already needed.
 
 | #   | Lesson                      | One new idea                                                    | The turn                                             |
 | --- | --------------------------- | --------------------------------------------------------------- | ---------------------------------------------------- |
-| 16  | Adjectives before nouns     | an adjective can premodify a noun head                          | several words can do the adjective's job             |
-| 17  | Adjective phrases           | an adjective can head an adjective phrase                       | a phrase can tell how, when, or where                |
-| 18  | Adverbs and adverb phrases  | an adverb can head an adverb phrase functioning as an adverbial | a preposition begins another kind of phrase          |
-| 19  | Prepositional phrases       | a preposition takes a complement to make a PP                   | the same PP can do different jobs                    |
+| 16  | Adjectives before nouns     | an adjective before a noun shares a layer with it: `Nom`        | an adjective can bring words of its own              |
+| 17  | Adjective phrases           | an adjective phrase can hold more than its adjective            | a phrase can tell how, when, or where                |
+| 18  | Adverbs and adverb phrases  | an adverbial the verb does not require can be dropped           | a preposition begins another kind of phrase          |
+| 19  | Prepositional phrases       | a preposition's complement can be another PP                    | the same PP can do different jobs                    |
 | 20  | Form is not function        | a PP's form stays fixed while its function changes              | a phrase after a noun may modify that noun           |
 | 21  | Modifiers after the head    | a postmodifier follows the head it expands                      | a neighbouring noun phrase can rename the head       |
 | 22  | Appositives                 | an appositive renames a neighbouring noun phrase                | a number can occupy a regular place inside an NP     |
@@ -88,9 +88,21 @@ re-introducing forms stage 2 already needed.
 | 26  | Coordination inside phrases | a conjunction joins coordinates of the same rank                | one PP can attach in two grammatical places          |
 | 27  | Attachment changes meaning  | moving an attachment changes the reading                        | a whole clause can sit inside another clause         |
 
-Lesson 27 is the first major payoff. _I saw the man with the telescope_ can be
-drawn in two well-formed ways, and each drawing earns a different paraphrase.
-The grader treats the second reading as meaning, not as failure.
+Lesson 27 is the first major payoff. _She watched the boy with the binoculars_
+can be drawn in two well-formed ways, and each drawing earns a different
+paraphrase. The grader treats the second reading as meaning, not as failure.
+
+**Lessons 17 to 20 teach no new label,** because stage 2 already needed `AdjP`,
+`PP` and `AdvP` to fill the slots its verbs predict. What they add is work: an
+adjective phrase with something inside it, an adverbial the verb can do
+without, a preposition whose complement is another preposition, and the same
+phrase doing two jobs. That looked wrong until this repo's own research note
+was reread — a unit built around a label and practised in a block is precisely
+what measures badly, and interleaved practice is what measures well. A lesson
+that adds a test rather than a term is the shape the evidence supports.
+
+All twelve lessons here have one sentence and are proved by the ladder. They do
+not have their other nine.
 
 ### Stage 4 — Put clauses inside clauses
 
