@@ -261,6 +261,37 @@ export const svcPlus = (
     gloss,
   );
 
+/**
+ * *The guest was given a key.* A two-object verb in the passive.
+ *
+ * One object is promoted into the subject slot and the other stays exactly
+ * where it was, which is the half of the passive that ten transitive examples
+ * cannot show.
+ */
+export const passiveKeepingObject = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  object: Phrase,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [object('directObject')], 'SVO'), gloss);
+
+/**
+ * *The driver was considered reliable.* An object-complement verb in the passive.
+ *
+ * The object is promoted away and the complement stays behind, still
+ * describing it — so the thing the complement describes is now the subject.
+ */
+export const passiveKeepingComplement = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  complement: Phrase,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [complement('objectComplement')], 'SVC'), gloss);
+
 /** *The soup tasted salty.* */
 export const svc = (
   id: string,

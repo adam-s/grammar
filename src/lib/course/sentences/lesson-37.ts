@@ -6,12 +6,27 @@
  * the relationship between them, which is why voice is a property and not a
  * shape.
  *
- * Half of these name the doer in a *by* phrase and half leave it out, because
- * both halves are the lesson: the passive lets you say who did it in a place
- * where it can be dropped, and dropping it is the commonest reason to use one.
- * Ten agentless passives would have hidden that the participant moved at all.
+ * Half name the doer in a *by* phrase and half leave it out, because both
+ * halves are the lesson: the passive lets you say who did it in a place where
+ * it can be dropped, and dropping it is the commonest reason to use one.
+ *
+ * Two are not transitive. A giving verb has two objects and the passive
+ * promotes only one, so the other stays put — *The guest was given a key* has
+ * a direct object still. A naming verb loses its object and keeps the
+ * complement, which now describes the subject. Ten transitive passives would
+ * have taught that the passive empties the predicate, and it does not.
  */
-import { det, passive, pp, sv, svPlus, v } from './shape.ts';
+import {
+  adj,
+  det,
+  passive,
+  passiveKeepingComplement,
+  passiveKeepingObject,
+  pp,
+  sv,
+  svPlus,
+  v,
+} from './shape.ts';
 
 export const LESSON_37 = [
   svPlus(
@@ -37,12 +52,13 @@ export const LESSON_37 = [
     pp('by', det('a', 'mechanic')),
     'A mechanic repaired the engine.',
   ),
-  sv(
+  passiveKeepingObject(
     'c37-d',
     37,
-    det('The', 'wall'),
-    passive(v('rebuilt', 'rebuild', 'Vtr'), 'was'),
-    'Somebody rebuilt the wall.',
+    det('The', 'guest'),
+    passive(v('given', 'give', 'Vg'), 'was'),
+    det('a', 'key'),
+    'Somebody gave the guest a key.',
   ),
   svPlus(
     'c37-e',
@@ -67,12 +83,13 @@ export const LESSON_37 = [
     pp('by', det('the', 'board')),
     'The board rejected the claim.',
   ),
-  sv(
+  passiveKeepingComplement(
     'c37-h',
     37,
-    det('The', 'archive'),
-    passive(v('closed', 'close', 'Vtr'), 'was'),
-    'Somebody closed the archive.',
+    det('The', 'driver'),
+    passive(v('considered', 'consider', 'Vc'), 'was'),
+    adj('reliable'),
+    'Somebody considered the driver reliable.',
   ),
   svPlus(
     'c37-i',

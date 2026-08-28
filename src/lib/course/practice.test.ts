@@ -47,7 +47,6 @@ const UNIFORM: Record<number, string> = {
   33: 'the root of a coordination has no verb; its pattern is a formality',
   34: 'the lesson is an infinitival clause in the object slot',
   36: 'the lesson is a gerund clause in the subject slot',
-  37: 'the passive promotes the object away, so what is left is S V',
   39: 'the root of a coordination has no verb; its pattern is a formality',
 };
 

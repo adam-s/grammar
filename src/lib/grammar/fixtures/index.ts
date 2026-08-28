@@ -40,7 +40,12 @@ import {
   subjectClause,
 } from './clauses.ts';
 import { coordination, coordinatedSubject } from './coordination.ts';
-import { auxiliaryChain, passive } from './auxiliaries.ts';
+import {
+  auxiliaryChain,
+  passive,
+  passiveTwoObject,
+  passiveObjectComplement,
+} from './auxiliaries.ts';
 import { infinitive, particle, particleShift, hollowClause, twoMarkers } from './non-finite.ts';
 import {
   nominal,
@@ -85,6 +90,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   coordinatedSubject,
   auxiliaryChain,
   passive,
+  passiveTwoObject,
+  passiveObjectComplement,
   infinitive,
   particle,
   particleShift,

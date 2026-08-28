@@ -1,4 +1,4 @@
-import { build, n, w } from '../build.ts';
+import { build, n, pt, w } from '../build.ts';
 import { sentence } from '../entry.ts';
 
 /* ---- an auxiliary chain — The mechanic has been repairing the engine.
@@ -84,6 +84,74 @@ export const passive = sentence(
         status: 'canonical',
         gloss: 'The mechanic repaired the engine, said the other way round.',
       },
+    ),
+  ],
+  'r1',
+);
+
+/* ---- a two-object verb in the passive — The guest was given a key.
+ *
+ * The passive promotes ONE of the two objects into the subject slot and the
+ * other stays where it was, which is why `PASSIVE_SLOTS_BY_VERB_TYPE` lets a
+ * `Vg` keep a direct object and requires nothing. That rule was written, given
+ * an example in its own doc comment, and proved by no sentence in either
+ * corpus until this one.
+ */
+export const passiveTwoObject = sentence(
+  'fix-passive-two-object',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'guest')]),
+          n('VP', 'predicate', [
+            w('Aux', 'auxiliary', 'was', { lemma: 'be', auxKind: 'passive' }),
+            w('V', 'head', 'given', { lemma: 'give', verbType: 'Vg', voice: 'passive' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'a'), w('N', 'head', 'key')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Somebody gave the guest a key.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ---- an object-complement verb in the passive — The driver was considered reliable.
+ *
+ * The object is promoted away and the complement stays, so a `Vc` in the
+ * passive REQUIRES its object complement and permits no object. The other half
+ * of the rule the fixture above proves.
+ */
+export const passiveObjectComplement = sentence(
+  'fix-passive-object-complement',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'driver')]),
+          n('VP', 'predicate', [
+            w('Aux', 'auxiliary', 'was', { lemma: 'be', auxKind: 'passive' }),
+            w('V', 'head', 'considered', {
+              lemma: 'consider',
+              verbType: 'Vc',
+              voice: 'passive',
+            }),
+            n('AdjP', 'objectComplement', [w('Adj', 'head', 'reliable')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Somebody considered the driver reliable.' },
     ),
   ],
   'r1',
