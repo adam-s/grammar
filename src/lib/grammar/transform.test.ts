@@ -117,3 +117,15 @@ describe('turning a sentence round', () => {
     assert.match(d.text, /was known by him/);
   });
 });
+
+describe('the note at the top of the module', () => {
+  it('counts the constituency tests it claims to turn into sentences', () => {
+    // It said three and `demonstrations` returns four: it listed substitution,
+    // fronting and clefting and left out the pseudo-cleft, in the file that
+    // exports it. A comment that counts is a comment that can be run.
+    assert.deepEqual(
+      demonstrations(vtr.words, [2, 3]).map((d) => d.kind),
+      ['substitute', 'front', 'cleft', 'pseudo-cleft'],
+    );
+  });
+});

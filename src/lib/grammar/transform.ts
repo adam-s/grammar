@@ -7,12 +7,15 @@
  * engine that* and hear that it does not.
  *
  * Every palette row already carries its test as a sentence to read. This turns
- * three of them into sentences to say out loud, which is the difference between
+ * four of them into sentences to say out loud, which is the difference between
  * being told a rule and watching it decide something.
  *
- * **The constituency tests need no morphology.** Substitution, fronting and
- * clefting move words that are already on the page and add a fixed handful —
- * *it was*, *that*, *what*. Nothing is conjugated and nothing is inflected.
+ * **The constituency tests need no morphology.** Substitution, fronting,
+ * clefting and the pseudo-cleft move words that are already on the page and add
+ * a fixed handful — *it was*, *that*, *what*. Nothing is conjugated and nothing
+ * is inflected. On *the engine* in *She repaired the engine* they give, in
+ * order: *She repaired it*, *The engine, she repaired*, *It was the engine that
+ * she repaired*, *What she repaired was the engine*.
  *
  * **The passive does**, and that is `morphology.ts`: *She repaired the engine*
  * becomes *The engine was repaired by her*, where *was* has to agree,
