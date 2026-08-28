@@ -84,7 +84,12 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
   // over a short word the two marks plus the subtype do not fit — *has been*
   // put "Perf" hard against "Help". Dropping the redundant half is better than
   // abbreviating an informative one.
-  const redundant = value.form === 'Aux' && value.function === 'auxiliary';
+  const redundant =
+    (value.form === 'Aux' && value.function === 'auxiliary') ||
+    // An elided piece is always the head of what it sits in — that is what
+    // being elided means here — so the mark says nothing and costs room the
+    // node does not have.
+    (value.gap === true && value.function === 'head');
   // A particle's kind and its function say the same thing — `auditFiniteness`
   // enforces exactly that — and over a short word the pair collided with the
   // next label. Only one of two identical claims is worth the pixels.
@@ -130,8 +135,17 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
       formName: primaryName,
       functionMark: fnMark,
       functionName: fnName,
-      subtypeMark: tie ? `gap ${tie}` : 'gap',
-      subtypeName: tie ? `gap, filled by phrase ${tie}` : 'gap',
+      // An elided piece says what it repeats; a moved one says it is empty.
+      subtypeMark:
+        value.function === 'head' ? (tie ? `= ${tie}` : '=') : tie ? `gap ${tie}` : 'gap',
+      subtypeName:
+        value.function === 'head'
+          ? tie
+            ? `left unsaid, repeating ${tie}`
+            : 'left unsaid'
+          : tie
+            ? `gap, filled by phrase ${tie}`
+            : 'gap',
       accessibleName: [primaryName, 'gap', fnName].filter(Boolean).join(', '),
     };
   }

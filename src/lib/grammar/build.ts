@@ -198,6 +198,7 @@ export function build(
       if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
       if (node.partKind) self.partKind = node.partKind;
       if (node.auxKind) self.auxKind = node.auxKind;
+      if (node.index !== undefined) self.index = node.index;
       if (node.auxKind) self.auxKind = node.auxKind;
       if (node.verbType) self.verbType = node.verbType;
       if (node.voice === 'passive') self.voice = 'passive';

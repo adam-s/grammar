@@ -455,3 +455,20 @@ describe('a note shows by default only where it is the choice', () => {
     assert.equal(group(p, 'function')!.notes, 'always');
   });
 });
+
+describe('an offer is not a question', () => {
+  it('an optional group never becomes the open one, however long it is untaken', () => {
+    // Stacking and ellipsis are both offers. If either could take the step, a
+    // finished node would open on "is a piece of it missing?" for ever.
+    let s = emptyBuild();
+    s = wrap(s, W, [0, 0], 'Pron');
+    s = wrap(s, W, [0, 0], 'NP');
+    const np = nodeOver(s, [0, 0])!;
+    s = setFunction(s, np, 'subject');
+    const p = optionsFor(s, W, { kind: 'node', id: np });
+    const optional = p.groups.filter((g) => g.optional).map((g) => g.id);
+    assert.ok(optional.length > 0, 'this selection should have at least one offer');
+    assert.ok(!optional.includes(p.step!), `the palette opened on ${p.step}`);
+    assert.equal(isPanelComplete(p), true, 'an untaken offer does not hold the palette open');
+  });
+});

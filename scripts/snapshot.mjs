@@ -426,7 +426,10 @@ async function buildSweep(browser, sentenceId) {
   const done = await page.evaluate(() => {
     const g = window.__grammar;
     const cs = g.build.constituents;
-    const verbs = Object.values(cs).filter((c) => c.form === 'V');
+    // Not an elided one. *the Queen __ at seven* has a verb-shaped hole whose
+    // type is borrowed from the clause it copies, so asking it to carry its own
+    // would be asking the sentence to say something it deliberately does not.
+    const verbs = Object.values(cs).filter((c) => c.form === 'V' && !c.gap);
     return {
       roots: Object.values(cs).filter((c) => c.parent === null).length,
       verbs: verbs.length,

@@ -27,6 +27,7 @@ export * from './non-finite.ts';
 export * from './noun-phrases.ts';
 export * from './movement.ts';
 export * from './edges.ts';
+export * from './ellipsis.ts';
 
 import { vint, vtr, vbe, vlink, vg, vc } from './verb-types.ts';
 import { ambiguous } from './ambiguity.ts';
@@ -50,6 +51,7 @@ import {
   comparative,
 } from './movement.ts';
 import { punctuation, supplement } from './edges.ts';
+import { vpEllipsis, gapping } from './ellipsis.ts';
 
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
@@ -85,6 +87,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   comparative,
   punctuation,
   supplement,
+  vpEllipsis,
+  gapping,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

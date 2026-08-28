@@ -88,8 +88,40 @@ export function verbOfClause(cs: ConstituentMap, clauseId: string): string | nul
   if (!vp) return null;
   const head = cs[vp]?.children.find((k) => cs[k]?.function === 'head' && cs[k]?.form === 'V');
   if (head) return head;
+  // The verb may not be said at all: *She repaired the engine, and he will __*.
+  // An elided predicate answers with the verb of the one it copies, which is
+  // the whole story about where a clause's frame comes from when its verb is
+  // missing — the frame is borrowed along with the words.
+  const elided = elidedHeadOf(cs, vp);
+  if (elided) {
+    const source = antecedentOf(cs, elided);
+    return source ? verbOfPhrase(cs, source) : null;
+  }
   // A one-word predicate may be the bare V itself, before it is wrapped in a VP.
   return cs[vp]?.form === 'V' ? vp : null;
+}
+
+/** The gap standing where a phrase's head would be, if its head is not said. */
+export function elidedHeadOf(cs: ConstituentMap, id: string): string | null {
+  return cs[id]?.children.find((k) => cs[k]?.gap && cs[k]?.function === 'head') ?? null;
+}
+
+/** The node an elided piece copies: the other end of its index. */
+export function antecedentOf(cs: ConstituentMap, id: string): string | null {
+  const index = cs[id]?.index;
+  if (index === undefined) return null;
+  return Object.keys(cs).find((k) => k !== id && cs[k]!.index === index) ?? null;
+}
+
+/** The head `V` of a phrase, following one more elision if it finds one. */
+function verbOfPhrase(cs: ConstituentMap, id: string, guard = 0): string | null {
+  if (guard > 20) return null;
+  const head = cs[id]?.children.find((k) => cs[k]?.function === 'head' && cs[k]?.form === 'V');
+  if (head) return head;
+  const elided = elidedHeadOf(cs, id);
+  if (!elided) return null;
+  const source = antecedentOf(cs, elided);
+  return source ? verbOfPhrase(cs, source, guard + 1) : null;
 }
 
 /** The head `V` of a verb phrase. */

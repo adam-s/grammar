@@ -279,13 +279,13 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     for (const child of source.children) {
       const c = reading.constituents[child]!;
       if (!c.gap) continue;
-      const option = optionFor(state, sentence.words, created, `gap:${c.function}`);
-      assert.ok(
-        option && isPickable(option),
-        `${sentence.id}/${reading.id}: cannot add a ${c.function} gap`,
+      const key = `gap:${c.function}:${c.form}`;
+      const option = optionFor(state, sentence.words, created, key);
+      assert.ok(option && isPickable(option), `${sentence.id}/${reading.id}: cannot pick ${key}`);
+      state = addGap(state, created, c.function!, c.form);
+      const made = state.constituents[created]!.children.find(
+        (k) => state.constituents[k]!.gap && state.constituents[k]!.function === c.function,
       );
-      state = addGap(state, created, c.function!);
-      const made = state.constituents[created]!.children.find((k) => state.constituents[k]!.gap);
       assert.ok(made, `${sentence.id}/${reading.id}: the ${c.function} gap was not created`);
       learnerId.set(child, made);
     }
@@ -299,20 +299,22 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
   )!;
   visit(root);
 
-  // What each tail phrase belongs to, after the whole tree exists: the phrases
-  // it could belong to have to be there before one of them can be named.
+  // What each moved or unsaid piece points at, after the whole tree exists: the
+  // things it could point at have to be there before one of them can be named.
   for (const [canonicalId, c] of Object.entries(reading.constituents)) {
-    if (c.function !== 'postnucleus' || c.index === undefined) continue;
+    const links = c.function === 'postnucleus' || (c.gap === true && c.function === 'head');
+    if (!links || c.index === undefined) continue;
     const anchorCanonical = Object.keys(reading.constituents).find(
       (id) => id !== canonicalId && reading.constituents[id]!.index === c.index,
     )!;
     const anchorSpan = reading.constituents[anchorCanonical]!.span;
     const tailId = learnerId.get(canonicalId)!;
-    const key = `anchor:${anchorSpan[0]}-${anchorSpan[1]}`;
+    const anchorForm = reading.constituents[anchorCanonical]!.form;
+    const key = `anchor:${anchorForm}:${anchorSpan[0]}-${anchorSpan[1]}`;
     const option = optionFor(state, sentence.words, tailId, key);
     assert.ok(
       option && isPickable(option),
-      `${sentence.id}/${reading.id}: cannot say the tail belongs to ${key}`,
+      `${sentence.id}/${reading.id}: cannot point ${canonicalId} at ${key}`,
     );
     state = setAnchor(state, tailId, learnerId.get(anchorCanonical)!);
   }

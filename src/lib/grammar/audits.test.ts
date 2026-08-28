@@ -8,12 +8,14 @@ import {
   auxiliaryChain,
   coordination,
   frontedPhrase,
+  gapping,
   infinitive,
   particle,
   passive,
   punctuation,
   subjectRelative,
   vbe,
+  vpEllipsis,
   vint,
   vtr,
 } from './fixtures.ts';
@@ -415,5 +417,52 @@ describe('what an auxiliary is helping with', () => {
       .filter((c) => c.form === 'Aux')
       .map((c) => c.auxKind);
     assert.deepEqual(kinds, ['perfect', 'progressive']);
+  });
+});
+
+describe('what is left unsaid', () => {
+  it('an elided predicate borrows its verb, and its slots with it', () => {
+    // *and he will __* is a transitive clause with no direct object in it. The
+    // frame belongs to the clause it copies, which answers for both.
+    const report = auditReading(vpEllipsis.readings[0]!, vpEllipsis.words);
+    assert.equal(report.ok, true, report.all.join(' | '));
+  });
+
+  it('an elision with nothing to copy is unreadable', () => {
+    const { r, s } = broken(vpEllipsis, (r) => {
+      delete r.constituents[idOf(r, (c) => c.gap === true)]!.index;
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /does not say what it copies/);
+  });
+
+  it('what is left unsaid is the same kind of thing as what was said', () => {
+    const { r, s } = broken(vpEllipsis, (r) => {
+      const gapId = idOf(r, (c) => c.gap === true);
+      const np = idOf(r, (c) => c.function === 'directObject');
+      r.constituents[np]!.index = r.constituents[gapId]!.index;
+      delete r.constituents[idOf(r, (c) => c.form === 'VP' && c.index !== undefined)]!.index;
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /copies a NP/);
+  });
+
+  it('an elision points backwards: nothing is unsaid before it is said', () => {
+    const { r, s } = broken(gapping, (r) => {
+      // Move the elision in front of the verb it copies.
+      r.constituents[idOf(r, (c) => c.gap === true)]!.span = [1, 0];
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /copies something said after it/);
+  });
+
+  it('a moved gap is a phrase; an elided one may be a word', () => {
+    // Nothing was displaced, so there is no phrase that went anywhere.
+    const g = gapping.readings[0]!;
+    const elided = idOf(g, (c) => c.gap === true);
+    assert.equal(g.constituents[elided]!.form, 'V');
+    assert.equal(auditReading(g, gapping.words).ok, true);
+
+    const { r, s } = broken(subjectRelative, (r) => {
+      r.constituents[idOf(r, (c) => c.gap === true)]!.form = 'N';
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /a gap stands where a phrase would/);
   });
 });

@@ -28,7 +28,7 @@ import {
   isClauseNode,
   verbs,
 } from './clause.ts';
-import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
+import { HEAD_FORMS, hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm, isPunctuation } from './types.ts';
 import type {
   AuxKind,
@@ -372,7 +372,12 @@ export function setVoice(state: BuildState, id: string, voice: Voice): BuildStat
  * second decision: a clause holds at most one fronted phrase, so if there is
  * one, that is what fills the gap and nothing else could.
  */
-export function addGap(state: BuildState, parentId: string, fn: Func): BuildState {
+export function addGap(
+  state: BuildState,
+  parentId: string,
+  fn: Func,
+  form: Form = 'NP',
+): BuildState {
   const parent = state.constituents[parentId];
   if (!parent || parent.word !== undefined || parent.gap) return state;
   if (parent.children.some((k) => state.constituents[k]?.function === fn)) return state;
@@ -391,7 +396,7 @@ export function addGap(state: BuildState, parentId: string, fn: Func): BuildStat
   const at = after.length > 0 ? cs[after[0]!]!.span[0] : parent.span[1] + 1;
 
   cs[id] = {
-    form: 'NP',
+    form,
     function: fn,
     parent: parentId,
     children: [],
@@ -415,8 +420,10 @@ const SLOT_ORDER: readonly Func[] = [
   'marker',
   'subject',
   'predicate',
-  'head',
+  // Auxiliaries come before the verb they help, so an elided head lands after
+  // them: *and he will __ too*, not *and he __ will too*.
   'auxiliary',
+  'head',
   'particle',
   'indirectObject',
   'directObject',
@@ -472,7 +479,9 @@ export function linkFillers(state: BuildState): BuildState {
 export function setAnchor(state: BuildState, tailId: string, anchorId: string): BuildState {
   const tail = state.constituents[tailId];
   const anchor = state.constituents[anchorId];
-  if (!tail || !anchor || tail.function !== 'postnucleus' || tailId === anchorId) return state;
+  const links =
+    tail?.function === 'postnucleus' || (tail?.gap === true && tail.function === 'head');
+  if (!tail || !anchor || !links || tailId === anchorId) return state;
   const cs = cloneMap(state.constituents);
   const index = 1 + Math.max(0, ...Object.values(cs).map((c) => c.index ?? 0));
   cs[tailId]!.index = index;
@@ -485,14 +494,28 @@ export function setAnchor(state: BuildState, tailId: string, anchorId: string): 
  * and the phrases inside their predicate. A tail belongs to something said
  * earlier, so nothing after it is a candidate.
  */
-export function anchorsFor(state: BuildState, tailId: string): string[] {
-  const tail = state.constituents[tailId];
-  if (!tail || tail.function !== 'postnucleus' || tail.parent === null) return [];
-  const clause = state.constituents[tail.parent]!;
+export function anchorsFor(state: BuildState, id: string): string[] {
+  const node = state.constituents[id];
+  if (!node) return [];
+
+  // An elided head copies something said earlier of exactly its own kind, and
+  // "earlier" is the whole of the search: nothing after it can be what it
+  // repeats.
+  if (node.gap && node.function === 'head') {
+    return Object.keys(state.constituents)
+      .filter((k) => {
+        const c = state.constituents[k]!;
+        return k !== id && !c.gap && c.form === node.form && c.span[0] < node.span[0];
+      })
+      .sort((a, b) => state.constituents[a]!.span[0] - state.constituents[b]!.span[0]);
+  }
+
+  if (node.function !== 'postnucleus' || node.parent === null) return [];
+  const clause = state.constituents[node.parent]!;
   const out: string[] = [];
   for (const k of clause.children) {
     const c = state.constituents[k];
-    if (!c || k === tailId || c.gap || c.span[0] > tail.span[0]) continue;
+    if (!c || k === id || c.gap || c.span[0] > node.span[0]) continue;
     if (c.form === 'NP' || c.form === 'AdjP' || c.form === 'AdvP') out.push(k);
     // A phrase inside the predicate can be the anchor too — the cleft's
     // singled-out phrase is the verb's complement, not the clause's subject.
@@ -506,8 +529,19 @@ export function anchorsFor(state: BuildState, tailId: string): string[] {
   return out;
 }
 
+/** An empty slot a node could hold: what it would be, and what shape. */
+export interface GappableSlot {
+  fn: Func;
+  form: Form;
+  /**
+   * True when the slot is empty because it was never said rather than because
+   * it moved. The two are different claims and the palette words them apart.
+   */
+  elided: boolean;
+}
+
 /** The slots a node could hold as a gap: licensed here, and not yet filled. */
-export function gappableSlots(state: BuildState, id: string): Func[] {
+export function gappableSlots(state: BuildState, id: string): GappableSlot[] {
   const c = state.constituents[id];
   if (!c || c.word !== undefined || c.gap) return [];
   const candidates: Func[] =
@@ -522,12 +556,32 @@ export function gappableSlots(state: BuildState, id: string): Func[] {
   // `hypothesizes`, not `licenses`, for the reason the rest of the palette uses
   // it: whether this verb takes an object is the question being asked, and a
   // row that disappeared until the verb was classified would answer it.
-  return candidates.filter(
-    (fn) =>
-      !siblings.includes(fn) &&
-      hypothesizes(fn, { parentForm: c.form, verbType: null, siblings, childForm: 'NP' }).state ===
-        'allowed',
-  );
+  const out: GappableSlot[] = candidates
+    .filter(
+      (fn) =>
+        !siblings.includes(fn) &&
+        hypothesizes(fn, { parentForm: c.form, verbType: null, siblings, childForm: 'NP' })
+          .state === 'allowed',
+    )
+    .map((fn) => ({ fn, form: 'NP' as Form, elided: false }));
+
+  // A head that is never said. *and he will __* leaves out the whole verb
+  // phrase; *and the Queen __ at seven* leaves out just the verb. Which of the
+  // two it is is the learner's answer, so both are offered.
+  //
+  // Only where something earlier could be what it repeats. Nothing is left
+  // unsaid the first time it is said, so with no antecedent there is nothing
+  // to offer — which also keeps the row off every half-built phrase.
+  if (!siblings.includes('head') && HEAD_FORMS[c.form]) {
+    for (const form of HEAD_FORMS[c.form]!) {
+      const said = Object.keys(state.constituents).some((k) => {
+        const other = state.constituents[k]!;
+        return k !== id && !other.gap && other.form === form && other.span[1] < c.span[0];
+      });
+      if (said) out.push({ fn: 'head', form, elided: true });
+    }
+  }
+  return out;
 }
 
 /** Say which kind of `Part` a word is: infinitival *to*, or a verbal particle. */

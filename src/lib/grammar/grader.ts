@@ -282,15 +282,29 @@ export const ANCHOR_TEST =
   'says what the sentence means.';
 
 /** Does the answer tie the tail phrase at `tail` to the phrase at `anchor`? */
-export function gradeAnchor(sentence: SentenceEntry, tail: Span, anchor: Span): Outcome {
+export function gradeAnchor(
+  sentence: SentenceEntry,
+  tail: Span,
+  tailForm: Form,
+  anchor: Span,
+  anchorForm: Form,
+): Outcome {
   for (const r of ordered(sentence)) {
-    const at = (span: Span) =>
+    const at = (span: Span, form: Form, wantGap: boolean) =>
       Object.keys(r.constituents).find((id) => {
         const c = r.constituents[id]!;
-        return !c.gap && c.span[0] === span[0] && c.span[1] === span[1];
+        return (
+          (c.gap === true) === wantGap &&
+          c.form === form &&
+          c.span[0] === span[0] &&
+          c.span[1] === span[1]
+        );
       });
-    const t = at(tail);
-    const a = at(anchor);
+    // A span does not name a node: a verb phrase and its only child cover the
+    // same words. The form is what tells them apart, and leaving it out graded
+    // a claim about one node against a different one.
+    const t = at(tail, tailForm, tail[1] < tail[0]);
+    const a = at(anchor, anchorForm, false);
     const tied =
       t !== undefined &&
       a !== undefined &&
@@ -371,11 +385,11 @@ export const GAP_TEST =
  * Keyed on the holder rather than on the gap, because a gap has no words to be
  * found by. What is being claimed is about the node that holds it.
  */
-export function gradeGap(sentence: SentenceEntry, span: Span, fn: Func): Outcome {
+export function gradeGap(sentence: SentenceEntry, span: Span, form: Form, fn: Func): Outcome {
   for (const r of ordered(sentence)) {
     const holder = Object.keys(r.constituents).find((id) => {
       const c = r.constituents[id]!;
-      return !c.gap && c.span[0] === span[0] && c.span[1] === span[1];
+      return !c.gap && c.form === form && c.span[0] === span[0] && c.span[1] === span[1];
     });
     const has =
       holder !== undefined &&

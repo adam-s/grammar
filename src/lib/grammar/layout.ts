@@ -262,7 +262,11 @@ export function layout(cs: ConstituentMap, words: Word[], opts: LayoutOpts = {})
   const depth = Math.max(leafRow, opts.minDepth ?? 0);
 
   if (opts.alignLeaves !== false) {
-    for (const id of leaves) nodes[id]!.y = depth * rowHeight;
+    // Not gaps. The words share one baseline because they are the ground the
+    // structure stands on, and a gap is not a word — pushing it down there put
+    // its label in the inch of space between two words and on top of both.
+    // Left where it hangs, it has the whole row to itself.
+    for (const id of leaves) if (!cs[id]!.gap) nodes[id]!.y = depth * rowHeight;
   }
 
   return {

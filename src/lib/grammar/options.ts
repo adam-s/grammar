@@ -595,12 +595,17 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     question: 'Is a piece of it missing?',
     notes: 'always',
     optional: true,
-    options: slots.map((fn) => ({
-      key: `gap:${fn}`,
-      label: `${label(fn)}, with no words`,
-      note: 'The verb requires it and the sentence never says it — a reader supplies it.',
+    options: slots.map((slot) => ({
+      key: `gap:${slot.fn}:${slot.form}`,
+      label: slot.elided
+        ? `the ${formName(slot.form).toLowerCase()}, left unsaid`
+        : `${label(slot.fn)}, with no words`,
+      note: slot.elided
+        ? 'It was said once already, and English does not say it twice.'
+        : 'The verb requires it and the sentence never says it — a reader supplies it.',
       state: 'available' as OptionState,
-      func: fn,
+      func: slot.fn,
+      form: slot.form,
       gap: true as const,
     })),
   };
@@ -613,16 +618,19 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
    * clause's other phrases are listed and one is picked.
    */
   const anchors = anchorsFor(state, id);
+  const copies = c.gap === true && c.function === 'head';
   const anchor: OptionGroup = {
     id: 'anchor',
-    question: `What does ${subject} belong to?`,
+    question: copies ? 'What does it repeat?' : `What does ${subject} belong to?`,
     notes: 'always',
     options: anchors.map((candidate) => {
       const target = state.constituents[candidate]!;
       return {
-        key: `anchor:${target.span[0]}-${target.span[1]}`,
+        key: `anchor:${target.form}:${target.span[0]}-${target.span[1]}`,
         label: quote(words, target.span),
-        note: `It moved to the end off ${quote(words, target.span)}.`,
+        note: copies
+          ? `It says ${quote(words, target.span)} again without saying it.`
+          : `It moved to the end off ${quote(words, target.span)}.`,
         state: (c.index !== undefined && target.index === c.index
           ? 'chosen'
           : 'available') as OptionState,
@@ -766,18 +774,23 @@ function finish(draft: Omit<Panel, 'step' | 'suggested'>): Panel {
     answered: g.options.find((o) => o.state === 'chosen') ?? null,
   }));
 
+  // The open group is the first unanswered question. An optional group is not a
+  // question — it is an offer — so it stays collapsed however long it goes
+  // untaken, and the palette never opens on one.
   let step: string | null = null;
   for (const g of groups) {
-    if (!g.answered && g.options.some(isPickable)) {
+    if (!g.optional && !g.answered && g.options.some(isPickable)) {
       step = g.id;
       break;
     }
   }
   // Everything settled: rest on the last group that can still be changed, so
-  // revising the most recent decision costs nothing.
+  // revising the most recent decision costs nothing. Optional groups are
+  // skipped — an offer nobody has to take should not be where the palette
+  // comes to rest, or every finished node would open on "is a piece missing?".
   if (!step) {
     for (let i = groups.length - 1; i >= 0; i--) {
-      if (groups[i]!.options.some(isPickable)) {
+      if (!groups[i]!.optional && groups[i]!.options.some(isPickable)) {
         step = groups[i]!.id;
         break;
       }

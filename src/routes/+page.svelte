@@ -275,9 +275,9 @@
           nodeId: step.nodeId,
           key:
             step.choice.anchor !== undefined
-              ? `anchor:${step.choice.anchor[0]}-${step.choice.anchor[1]}`
+              ? `anchor:${step.choice.anchorForm}:${step.choice.anchor[0]}-${step.choice.anchor[1]}`
               : step.choice.gap && step.choice.func !== undefined
-                ? `gap:${step.choice.func}`
+                ? `gap:${step.choice.func}:${step.choice.form}`
                 : step.choice.form !== undefined
                   ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
                   : step.choice.func !== undefined
@@ -431,6 +431,28 @@
     const span = targetSpan;
     if (!span) return;
 
+    // Before the form branch: a gap row carries a form too — it is what the
+    // missing piece would have been — and reading it as "name these words that"
+    // graded a claim about an empty slot as a claim about the words beside it.
+    if (o.gap && o.func && selection.kind === 'node') {
+      const c = build.constituents[selection.id]!;
+      const outcome = gradeGap(sentence, c.span, c.form, o.func);
+      verdict = toVerdict(
+        outcome,
+        `nothing fills the ${label(o.func)} here`,
+        `a missing ${label(o.func)}`,
+        GAP_TEST,
+        `gap:${c.span[0]}-${c.span[1]}:${o.func}`,
+      );
+      if (outcome.kind !== 'wrong') {
+        build = addGap(build, selection.id, o.func, o.form);
+        closeIfComplete();
+      } else {
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
     if (o.form) {
       const outcome = gradeForm(sentence, span, o.form);
       const named = PLAIN[o.form] ?? o.form;
@@ -466,9 +488,11 @@
     }
 
     if (o.anchor && selection.kind === 'node') {
-      const tail = build.constituents[selection.id]!.span;
-      const target = build.constituents[o.anchor]?.span;
-      const outcome = target ? gradeAnchor(sentence, tail, target) : null;
+      const me = build.constituents[selection.id]!;
+      const target = build.constituents[o.anchor];
+      const outcome = target
+        ? gradeAnchor(sentence, me.span, me.form, target.span, target.form)
+        : null;
       if (outcome && outcome.kind !== 'wrong') {
         build = setAnchor(build, selection.id, o.anchor);
         verdict = { kind: 'correct', text: `Yes — it belongs to ${o.label}.` };
@@ -479,28 +503,6 @@
           text: outcome?.reason ?? 'It does not belong to that one.',
           test: outcome?.test ?? ANCHOR_TEST,
         };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.gap && o.func && selection.kind === 'node') {
-      // A gap is graded against the answer's own gaps rather than against a
-      // span, because there is no span: what is being claimed is that a slot
-      // this node holds is filled by nothing.
-      const c = build.constituents[selection.id]!;
-      const outcome = gradeGap(sentence, c.span, o.func);
-      verdict = toVerdict(
-        outcome,
-        `nothing fills the ${label(o.func)} here`,
-        `a missing ${label(o.func)}`,
-        GAP_TEST,
-        `gap:${c.span[0]}-${c.span[1]}:${o.func}`,
-      );
-      if (outcome.kind !== 'wrong') {
-        build = addGap(build, selection.id, o.func);
-        closeIfComplete();
-      } else {
         reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
       }
       return;

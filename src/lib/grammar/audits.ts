@@ -10,8 +10,10 @@
  * by a learner being told why a menu item is greyed out.
  */
 import {
+  antecedentOf,
   clauseNodes,
   clauseOf,
+  elidedHeadOf,
   governingVerbType,
   governingVoice,
   isCoordination,
@@ -74,7 +76,11 @@ export function auditStructure(ctx: Ctx): string[] {
       }
       if (c.word !== undefined) f.push(`"${id}" is a gap but also wraps a word`);
       if (c.children.length > 0) f.push(`"${id}" is a gap but has children`);
-      if (!isPhraseForm(c.form)) {
+      // A moved thing is always a phrase, so a gap standing for one is too.
+      // An elided thing is whatever was said before, and English is happy to
+      // leave a single word unsaid: *the PM arrived at six and the Queen __ at
+      // seven*. The form is checked against the antecedent instead, below.
+      if (c.function !== 'head' && !isPhraseForm(c.form)) {
         f.push(`"${id}" is a gap of form "${c.form}"; a gap stands where a phrase would`);
       }
       const at = gapPosition(c);
@@ -305,6 +311,16 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
     f.push(`${where} has no predicate, so its verb type cannot be checked`);
     return f;
   }
+  // An elided predicate borrows its verb, and its slots with it. There is
+  // nothing in THIS clause to check against a frame: *and he will __* has no
+  // object because the object is in the clause it copies, which answers for
+  // both of them.
+  if (elidedHeadOf(ctx.cs, vpId)) {
+    if (!verbId) {
+      f.push(`${where} leaves its verb unsaid and does not say which verb it copies`);
+    }
+    return f;
+  }
   if (vt === null) {
     f.push(`${where} has no classified verb — every clause records what kind its verb is`);
     return f;
@@ -415,7 +431,7 @@ export function auditGaps(ctx: Ctx): string[] {
       f.push(`index ${index} is on ${ids.length} nodes (${ids.join(', ')}); a link joins two`);
       continue;
     }
-    // One end has to be the displaced one, or the link says nothing: two
+    // One end has to be displaced or unsaid, or the link says nothing: two
     // ordinary phrases sharing a number is a claim with no content.
     const moved = ids.filter((id) => ctx.cs[id]!.gap || ctx.cs[id]!.function === 'postnucleus');
     if (moved.length === 0) {
@@ -466,6 +482,27 @@ export function auditGaps(ctx: Ctx): string[] {
 
   for (const [id, c] of Object.entries(ctx.cs)) {
     if (!c.gap) continue;
+    // An elision is a third kind of link, and it runs the other way from a
+    // filler-gap one: nothing was moved out, something was left unsaid because
+    // it had already been said. *She repaired the engine, and he will __.*
+    //
+    // So it always has an index — there is no reading of an elided phrase
+    // without knowing what it copies — and what it points at must be a real
+    // phrase of the same kind, said earlier.
+    if (c.function === 'head') {
+      const source = antecedentOf(ctx.cs, id);
+      if (!source) {
+        f.push(`the elided "${c.form}" at ${c.span[0]} does not say what it copies`);
+      } else if (ctx.cs[source]!.form !== c.form) {
+        f.push(
+          `the elided "${c.form}" at ${c.span[0]} copies a ${ctx.cs[source]!.form}; ` +
+            'what is left unsaid is the same kind of thing as what was said',
+        );
+      } else if (ctx.cs[source]!.span[0] > c.span[0]) {
+        f.push(`the elided "${c.form}" at ${c.span[0]} copies something said after it`);
+      }
+      continue;
+    }
     // A gap is indexed exactly when its clause holds the phrase that fills it.
     // Where it does not, the antecedent is outside — the nominal a relative
     // clause modifies, or the subject a hollow clause borrows: *The box was too

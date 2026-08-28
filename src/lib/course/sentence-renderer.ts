@@ -67,8 +67,10 @@ export type RenderStep = {
     stack?: true;
     /** This step builds an empty slot rather than labelling words. */
     gap?: true;
-    /** This step says what a tail phrase belongs to: the anchor's span. */
+    /** This step says what a tail or elided phrase points at: the anchor's span. */
     anchor?: Span;
+    /** The anchor's form. A span alone does not name a node. */
+    anchorForm?: Form;
   };
 };
 
@@ -268,23 +270,30 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
     for (const child of constituent.children) {
       const c = reading.constituents[child]!;
       if (!c.gap || c.function === null) continue;
-      state = addGap(state, nodeId, c.function);
+      state = addGap(state, nodeId, c.function, c.form);
+      const made = state.constituents[nodeId]!.children.find(
+        (k) => state.constituents[k]!.gap && state.constituents[k]!.function === c.function,
+      )!;
+      generated.set(child, made);
       steps.push({
         kind: 'gap',
         canonicalId: child,
         state,
         span: constituent.span,
         nodeId,
-        choice: { func: c.function, gap: true },
+        choice: { func: c.function, form: c.form, gap: true },
       });
     }
   }
 
   // What each tail phrase belongs to, last: the phrases it could belong to have
   // to exist before one of them can be named.
-  for (const canonicalId of order) {
+  for (const canonicalId of Object.keys(reading.constituents)) {
     const constituent = reading.constituents[canonicalId]!;
-    if (constituent.function !== 'postnucleus' || constituent.index === undefined) continue;
+    const links =
+      constituent.function === 'postnucleus' ||
+      (constituent.gap === true && constituent.function === 'head');
+    if (!links || constituent.index === undefined) continue;
     const anchorCanonical = Object.keys(reading.constituents).find(
       (id) => id !== canonicalId && reading.constituents[id]!.index === constituent.index,
     );
@@ -298,7 +307,10 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
       state,
       span: constituent.span,
       nodeId: tailId,
-      choice: { anchor: reading.constituents[anchorCanonical]!.span },
+      choice: {
+        anchor: reading.constituents[anchorCanonical]!.span,
+        anchorForm: reading.constituents[anchorCanonical]!.form,
+      },
     });
   }
 
