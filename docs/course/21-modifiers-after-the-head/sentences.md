@@ -16,13 +16,13 @@ five lessons earlier.
 | 1   | The map on the shelf fell.                               | a phrase after the head, subject position |
 | 2   | The path beyond the gate narrowed.                       | the same shape, different preposition     |
 | 3   | The key to the door of the shed vanished.                | **one postmodifier inside another**       |
-| 4   | The ice under the bridge thinned.                        | back to the plain case                    |
+| 4   | The ice under the bridge thinned.                        | a plain postmodifier in the subject       |
 | 5   | The old lock on the shed rusted.                         | **premodifier and postmodifier together** |
 | 6   | A cheerful child with a red drum waved.                  | both modifiers, both sides expanded       |
 | 7   | The surveyor measured the field behind the mill.         | a postmodifier inside an object           |
 | 8   | Those workers from the repair shop checked every window. | both, with a longer object                |
 | 9   | They repaired the crack across the ceiling.              | a postmodifier in an object again         |
-| 10  | The lock on the shed was rusty.                          | the same subject as item 3, linking frame |
+| 10  | The lock on the shed was rusty.                          | a postmodified subject in a linking frame |
 
 ## Notes
 

@@ -20,10 +20,10 @@ than one noun before the verb."_
 | 2   | Our visitors arrived early.       | the predicate grows first                         |
 | 3   | The kettle boiled on the stove.   | a phrase in the predicate, subject still short    |
 | 4   | The shoes on my feet pinched.     | **two nouns before the verb** — the real question |
-| 5   | The hole in my shoes widened.     | same shape, and now the nearer noun is wrong      |
+| 5   | The hole in my shoes widened.     | the noun nearest the verb is not the subject      |
 | 6   | The crack in the ceiling spread.  | a tighter phrase, harder to see the boundary      |
 | 7   | A box of tools fell downstairs.   | both halves hold a phrase                         |
-| 8   | The children in the yard shouted. | back to a plain phrase, subject longer            |
+| 8   | The children in the yard shouted. | a plain phrase inside a longer subject            |
 | 9   | The last bus left after midnight. | the predicate carries the phrase this time        |
 | 10  | The lock on the shed rusted.      | the boundary again, with a familiar phrase        |
 

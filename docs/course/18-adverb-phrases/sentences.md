@@ -19,9 +19,9 @@ position is most of what makes adverbials hard to find.
 | 2   | The train arrived late.                     | an adverb that does not end in _-ly_      |
 | 3   | Yesterday the children played.              | **an adverb at the front**                |
 | 4   | The children quietly left.                  | **an adverb between subject and verb**    |
-| 5   | That ice melted overnight.                  | close on the plain case                   |
+| 5   | That ice melted overnight.                  | a one-word adverb at the end              |
 | 6   | Our guests arrived unusually early.         | **two words in the adverb phrase**        |
-| 7   | The old clock ticked remarkably loudly.     | a second expanded phrase                  |
+| 7   | The old clock ticked remarkably loudly.     | an expanded adverb phrase                 |
 | 8   | The auditor checked the ledger twice.       | after an object, and _twice_ is not _-ly_ |
 | 9   | She answered the difficult question calmly. | the adverb survives a longer object       |
 | 10  | The road was surprisingly narrow.           | an adverb **inside an adjective phrase**  |

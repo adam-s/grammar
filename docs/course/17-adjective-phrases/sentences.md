@@ -18,8 +18,8 @@ what is missing is a fixture and a course example, not model capability.
 | 2   | The candidate seemed unusually calm.          | the same, after a different linking verb         |
 | 3   | The box seemed too heavy.                     | a degree word that points forward                |
 | 4   | The road became dangerously narrow.           | an adverbial after the phrase, not inside it     |
-| 5   | That road grew steadily steeper.              | back to a degree word, comparative adjective     |
-| 6   | The milk tasted slightly sour.                | close on the plain case                          |
+| 5   | That road grew steadily steeper.              | a degree word before a comparative adjective     |
+| 6   | The milk tasted slightly sour.                | a degree word before a plain adjective           |
 | 7   | The answer was perfectly clear.               | a degree word inside the phrase                  |
 | 8   | Those visitors were quite anxious.            | **a complement after the adjective**             |
 | 9   | My neighbour seemed proud of her garden.      | a complement of a different shape                |

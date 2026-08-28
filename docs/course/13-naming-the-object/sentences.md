@@ -18,11 +18,11 @@ Two clean formal tests exist and neither is in the app:
 | #   | Sentence                                      | The step                                        |
 | --- | --------------------------------------------- | ----------------------------------------------- |
 | 1   | The members elected the lawyer their chair.   | **a noun phrase as the complement**             |
-| 2   | The board appointed the engineer its adviser. | back to an object complement                    |
+| 2   | The board appointed the engineer its adviser. | a noun phrase as the object complement          |
 | 3   | The owners named the boat Endeavour.          | a name as the complement                        |
 | 4   | The jury found the driver careless.           | the _be_ test at its clearest                   |
 | 5   | The court declared the contract void.         | a formal frame, adjective complement            |
-| 6   | The inspector judged the wiring unsafe.       | close on an adjective complement                |
+| 6   | The inspector judged the wiring unsafe.       | an adjective as the object complement           |
 | 7   | They painted the shutters green.              | the complement is the result, not a description |
 | 8   | They made her a partner.                      | **the same five words, an object complement**   |
 | 9   | They made her a cake.                         | **two objects** — the _be_ test fails           |

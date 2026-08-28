@@ -18,7 +18,7 @@ one — two variables moving together. Lesson 30 is where that is fixed.
 | 1   | The driver said the engine stalled.        | a verb of saying rather than knowing             |
 | 2   | The clerk confirmed the deeds existed.     | the outer subject grows                          |
 | 3   | The nurse thought the baby slept.          | both subjects are people, so neither is a clue   |
-| 4   | An inspector noticed the wiring smoked.    | back to a thing as the inner subject             |
+| 4   | An inspector noticed the wiring smoked.    | an embedded clause with a thing as its subject   |
 | 5   | The jury noticed the witness hesitated.    | (step not recorded — the sentence changed)       |
 | 6   | She knew the belt broke.                   | a clause in the object slot, at its shortest     |
 | 7   | They assumed the ferry sailed.             | the inner clause is intransitive                 |

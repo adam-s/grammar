@@ -15,12 +15,12 @@ the head so the last noun is the wrong one.
 | --- | ---------------------------------- | ----------------------------------------------- |
 | 1   | The clock stopped.                 | one noun, no choice — the label alone           |
 | 2   | The kitchen clock stopped.         | two nouns; the head is still the last           |
-| 3   | A branch snapped.                  | back to one noun, new frame                     |
+| 3   | A branch snapped.                  | one noun, so the head is the only candidate     |
 | 4   | The clock near the door stopped.   | **the head is the first noun**                  |
 | 5   | A heavy branch snapped.            | an adjective decoy, not a noun one              |
 | 6   | A box of tools fell.               | a tighter phrase, and _tools_ is the decoy      |
 | 7   | The key to the cabinet vanished.   | the decoy is more concrete than the head        |
-| 8   | The branch above the path snapped. | item 5 and item 4 combined                      |
+| 8   | The branch above the path snapped. | an adjective decoy and a phrase decoy at once   |
 | 9   | New York glittered.                | a name, where no noun is the head               |
 | 10  | The lid of the box cracked.        | two nouns, both plausible, agreement settles it |
 

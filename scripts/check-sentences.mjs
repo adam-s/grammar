@@ -73,6 +73,18 @@ for (const dir of dirs) {
     // A dagger marks a construction needing a model check; the step still has to be named.
     const step = s.step.replace(/†/g, '').trim();
     if (step.length < 4) problems.push(`${dir}: sentence ${s.n} does not say what its step is`);
+    // The cell describes the SENTENCE, not the transition. It used to describe
+    // the transition, and then the lessons were reordered to satisfy the
+    // accumulation contract and sixty-eight cells became narrative about a
+    // sequence that no longer existed — "back to a cardinal" on the second row,
+    // "item 1 with commas" on a sentence with neither. A cell that names its
+    // neighbours cannot survive a reorder, and the order is now derived.
+    if (/\b(back to|item \d|so item|not a one-off|close on|after the pair)\b/i.test(step)) {
+      problems.push(
+        `${dir}: sentence ${s.n}'s step describes its neighbours — "${step}". ` +
+          'Say what THIS sentence does; the order is derived and will move under you.',
+      );
+    }
   });
 
   const t = ss.map((s) => tokens(s.text.replace(/[*_`†]/g, '')));

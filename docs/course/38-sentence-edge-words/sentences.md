@@ -12,18 +12,18 @@ clearest evidence of what a supplement is, and the lesson never shows it.
 
 ## Sentences
 
-| #   | Sentence                             | The step                                        |
-| --- | ------------------------------------ | ----------------------------------------------- |
-| 1   | Oh, the gate opened.                 | **an interjection**, which the course never has |
-| 2   | Well, the clerk waited.              | a second one, so item 1 is not a one-off        |
-| 3   | Unfortunately, that ferry sank.      | an adverb doing the same job                    |
-| 4   | Surprisingly, the engine restarted.  | the plainest case, at the front                 |
-| 5   | The engine, surprisingly, restarted. | **the same word, in the middle**                |
-| 6   | The engine restarted, surprisingly.  | **the same word, at the end**                   |
-| 7   | Yesterday the children waited.       | **not a supplement** — an adverbial             |
-| 8   | Sadly, the children waited.          | **the same shape, a supplement**                |
-| 9   | Frankly, everyone hesitated.         | a supplement about the speaker, not the event   |
-| 10  | Happily, the crew saved the archive. | close on the front position                     |
+| #   | Sentence                             | The step                                            |
+| --- | ------------------------------------ | --------------------------------------------------- |
+| 1   | Oh, the gate opened.                 | **an interjection**, which the course never has     |
+| 2   | Well, the clerk waited.              | a second interjection, so the class is not one word |
+| 3   | Unfortunately, that ferry sank.      | an adverb doing the same job                        |
+| 4   | Surprisingly, the engine restarted.  | the plainest case, at the front                     |
+| 5   | The engine, surprisingly, restarted. | **the same word, in the middle**                    |
+| 6   | The engine restarted, surprisingly.  | **the same word, at the end**                       |
+| 7   | Yesterday the children waited.       | **not a supplement** — an adverbial                 |
+| 8   | Sadly, the children waited.          | **the same shape, a supplement**                    |
+| 9   | Frankly, everyone hesitated.         | a supplement about the speaker, not the event       |
+| 10  | Happily, the crew saved the archive. | a supplement at the front of a transitive clause    |
 
 ## Notes
 

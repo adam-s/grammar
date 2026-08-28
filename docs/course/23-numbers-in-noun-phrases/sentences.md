@@ -15,9 +15,9 @@ lessons 21 and 22.
 | #   | Sentence                               | The step                                       |
 | --- | -------------------------------------- | ---------------------------------------------- |
 | 1   | Three witnesses testified.             | a cardinal filling the determiner slot         |
-| 2   | Two engines failed.                    | back to a cardinal                             |
+| 2   | Two engines failed.                    | a cardinal filling the determiner slot         |
 | 3   | The first train arrived.               | **an ordinal**, which premodifies instead      |
-| 4   | The second bridge collapsed.           | an ordinal again, so item 2 was not a one-off  |
+| 4   | The second bridge collapsed.           | a second ordinal, so the class is not one word |
 | 5   | The first two runners finished.        | **both at once** — and the number is not first |
 | 6   | Those two windows rattled.             | a determiner **and** a number together         |
 | 7   | Five inspectors signed the report.     | a cardinal in a transitive frame               |

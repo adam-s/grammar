@@ -12,32 +12,34 @@ Now that lesson 29 has taught the marker, this lesson can hold one variable stil
 
 ## Sentences
 
-| #   | Sentence                                       | The step                                    |
-| --- | ---------------------------------------------- | ------------------------------------------- |
-| 1   | That storm surprised the driver.               | **_that_ is a determiner here**             |
-| 2   | That the belt broke surprised the driver.      | **the same clause, now the subject**        |
-| 3   | That the wiring failed worried the inspector.  | subject, transitive main verb               |
-| 4   | That the storm arrived surprised the driver.   | **_that_ is a marker here** — same opening  |
-| 5   | That the archive flooded angered the trustees. | **a fused relative** fills the subject slot |
-| 6   | She knew that the belt broke.                  | **lesson 28's sentence, with the marker**   |
-| 7   | That the talks collapsed seemed unlikely.      | subject, with a longer main predicate       |
-| 8   | That the ferry sank was obvious.               | subject, with a linking main verb           |
-| 9   | The trouble was that the gate failed.          | **a subject complement** — a third slot     |
-| 10  | We believed that the bridge was safe.          | object again, so item 1 was not a one-off   |
+| #   | Sentence                                       | The step                                        |
+| --- | ---------------------------------------------- | ----------------------------------------------- |
+| 1   | That storm surprised the driver.               | **_that_ is a determiner here**                 |
+| 2   | That the belt broke surprised the driver.      | **the same clause, now the subject**            |
+| 3   | That the wiring failed worried the inspector.  | subject, transitive main verb                   |
+| 4   | That the storm arrived surprised the driver.   | **_that_ is a marker here** — same opening      |
+| 5   | That the archive flooded angered the trustees. | **a fused relative** fills the subject slot     |
+| 6   | She knew that the belt broke.                  | **lesson 28's sentence, with the marker**       |
+| 7   | That the talks collapsed seemed unlikely.      | subject, with a longer main predicate           |
+| 8   | That the ferry sank was obvious.               | subject, with a linking main verb               |
+| 9   | The trouble was that the gate failed.          | a clause as subject complement — the third slot |
+| 10  | We believed that the bridge was safe.          | a marked clause in the object slot              |
 
 ## Notes
 
-**Two constructions this lesson wanted and cannot have.**
+**Both constructions this lesson wanted are now built.**
 
-_The trouble was that the gate was locked_ has no representation: `subjectComplement`
-is licensed for `NP` and `AdjP` only, so a clause cannot fill the slot. That is a
-model rule in `src/lib/grammar/rules.ts`, not an authoring gap, and widening it is a
-grading decision nobody has made.
+_The trouble was that the gate failed_ is item 5. It had no representation
+because `subjectComplement` listed `NP` and `AdjP` and never `Cl`, in both
+`licenses` and `hypothesizes` — while every other clause-taking slot already
+accepted one, including `complement` under an `AdjP`. That was an omission in a
+form list, not a decision, and no comment ever said otherwise. See
+[../../closing-the-slot-gaps.md](../../closing-the-slot-gaps.md).
 
 _What the children wanted surprised the teacher_ — the fused relative
-difficulty.md assigns to this lesson — needs an object gap, and `gap` is first
-taught at lesson 31. So it cannot sit before then. Either the ladder moves or the
-sentence does.
+difficulty.md assigns here — still cannot sit at lesson 30, and that one is real:
+it needs an object gap, and `gap` is first taught at lesson 31. Either the ladder
+moves or the sentence does.
 
 Item 5 uses the slot for what the lesson can show instead: the same verb as item
 3 with the marker dropped, so the marker is visibly optional in object position

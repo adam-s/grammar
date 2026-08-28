@@ -15,8 +15,8 @@ hardest to see — which is exactly what `gap` exists to teach.
 | #   | Sentence                                             | The step                                        |
 | --- | ---------------------------------------------------- | ----------------------------------------------- |
 | 1   | Another witness who hesitated returned.              | _who_ rather than _that_, still a subject gap   |
-| 2   | The pipe that froze burst.                           | **item 1 with commas** — and _which_            |
-| 3   | Those shutters that rattled broke.                   | back to a subject gap, shortest frame           |
+| 2   | The pipe that froze burst.                           | a subject gap in the shortest frame             |
+| 3   | Those shutters that rattled broke.                   | a subject gap with a plural head                |
 | 4   | The inspector questioned the driver that complained. | the relative sits inside an object              |
 | 5   | The jury believed the surveyor who testified.        | a relative word that is itself a determiner     |
 | 6   | The boat that the volunteers repaired sailed.        | the relative inside an object again             |

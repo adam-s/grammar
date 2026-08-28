@@ -15,7 +15,7 @@ both name the same thing. That is what separates an appositive from a modifier.
 | #   | Sentence                                          | The step                                    |
 | --- | ------------------------------------------------- | ------------------------------------------- |
 | 1   | The treasurer, a banker, resigned.                | the plainest case, commas and all           |
-| 2   | The witness, a neighbour, hesitated.              | back to the plain case after the pair       |
+| 2   | The witness, a neighbour, hesitated.              | a plain comma-marked appositive             |
 | 3   | That ferry, Mermaid, sailed.                      | a name rather than a description            |
 | 4   | That archive, a damp basement, flooded.           | (step not recorded — the sentence changed)  |
 | 5   | Our guide Arun waved twice.                       | **no commas** — the relation is still there |

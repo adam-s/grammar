@@ -19,10 +19,10 @@ contrast with the progressive, which uses the same suffix.
 | 4   | The children avoided crossing the road.   | an object again, longer main subject          |
 | 5   | Auditing the ledger revealed an error.    | **the same words as a gerund**                |
 | 6   | The clerk was auditing the ledger.        | **not a gerund** — a progressive, same suffix |
-| 7   | Closing the archive angered the trustees. | close on the subject case                     |
+| 7   | Closing the archive angered the trustees. | a gerund clause as subject                    |
 | 8   | We finished after packing every lamp.     | a preposition again, with a fuller object     |
 | 9   | She enjoys reading maps.                  | **the same clause, now an object**            |
-| 10  | She apologised for arriving late.         | **after a preposition** — a third slot        |
+| 10  | She apologised for arriving late.         | a gerund after a preposition — a third slot   |
 
 ## Notes
 

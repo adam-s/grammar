@@ -24,7 +24,7 @@ the substitution test is what settles every one.
 | 5   | My neighbour from Leeds waved.     | a phrase inside the subject                    |
 | 6   | The parcel by the stairs vanished. | five words, still one subject                  |
 | 7   | The engine near the gate stalled.  | the same slot, filled differently again        |
-| 8   | Everyone left early.               | back to one word — _it_ replaces all of them   |
+| 8   | Everyone left early.               | a one-word subject — _it_ replaces all of it   |
 | 9   | The parcel vanished.               | the same sentence as 6 with the phrase removed |
 | 10  | That same engine stalled again.    | premodified subject, predicate still two words |
 

@@ -11,11 +11,11 @@ find the construction by looking for the suffix.
 
 | #   | Sentence                                             | The step                                   |
 | --- | ---------------------------------------------------- | ------------------------------------------ |
-| 1   | The crack was wider than the surveyor reported.      | a fuller second clause                     |
+| 1   | The crack was wider than the surveyor reported.      | a fuller clause after _than_               |
 | 2   | The repair was cheaper than the board feared.        | (step not recorded — the sentence changed) |
-| 3   | The delay was shorter than the guard promised.       | back to the plain frame                    |
+| 3   | The delay was shorter than the guard promised.       | the plain comparative frame                |
 | 4   | The harvest was smaller than the tenant wanted.      | plain frame, longer inner clause           |
-| 5   | That noise was louder than the neighbours tolerated. | close on the frame                         |
+| 5   | That noise was louder than the neighbours tolerated. | a comparative with an abstract subject     |
 | 6   | The bill was larger than we expected.                | the frame at its clearest                  |
 | 7   | The flood was worse than anyone predicted.           | an irregular comparative                   |
 | 8   | The river rose much faster than the crew managed.    | an **adverb** compared, not an adjective   |

@@ -13,13 +13,13 @@ answered it. Two distinct asked-shapes across ten sentences.
 | 1   | The mechanic replaced the belt.      | the clearest "verb what?" there is                |
 | 2   | The baker sold the loaf.             | same frame, a verb that must have one             |
 | 3   | The storm damaged our roof.          | the subject is not a person                       |
-| 4   | The committee rejected his proposal. | back to a plain transitive after the pair         |
-| 5   | Several workers repaired the track.  | close on the frame the lesson teaches             |
+| 4   | The committee rejected his proposal. | a plain transitive, with a possessive determiner  |
+| 5   | Several workers repaired the track.  | the transitive frame with a quantity subject      |
 | 6   | She answered every question.         | an object that nothing receives                   |
 | 7   | She opened the gate.                 | **the same verb, with one**                       |
 | 8   | He wrote a letter.                   | a short frame, so length is not the signal        |
 | 9   | The gate opened.                     | **no object at all** — the frame has to be tested |
-| 10  | The audience hushed.                 | a second intransitive, no pair to lean on         |
+| 10  | The audience hushed.                 | an intransitive with no twin to give it away      |
 
 ## Notes
 

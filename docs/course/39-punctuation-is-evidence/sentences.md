@@ -13,18 +13,18 @@ carries real weight and none is here.
 
 ## Sentences
 
-| #   | Sentence                                                    | The step                                      |
-| --- | ----------------------------------------------------------- | --------------------------------------------- |
-| 1   | The boat carried food, water, and blankets.                 | **a list** — where the last comma is arguable |
-| 2   | The surveyor measured the field, and the clerk recorded it. | the same, so the pair with 33 holds           |
-| 3   | The rain stopped, the clouds lifted, and children ran.      | three clauses, two commas                     |
-| 4   | The mechanic checked the brakes, but the driver waited.     | back to the clause comma, with _but_          |
-| 5   | When the gate opened, the visitors entered.                 | **a supplement** — lesson 38                  |
-| 6   | Before the last bus arrived, our guests gathered.           | **a fronted clause** — lesson 29              |
-| 7   | The brass bell rang, and the heavy doors opened.            | the clause comma — lesson 33 with punctuation |
-| 8   | Mara, our new captain of the crew, waved.                   | **appositive commas** — lesson 22             |
-| 9   | The visitors who had missed their train waited.             | **integrated** — helps identify the visitors  |
-| 10  | The visitors, who had missed their train, waited.           | **supplementary** — adds information          |
+| #   | Sentence                                                    | The step                                          |
+| --- | ----------------------------------------------------------- | ------------------------------------------------- |
+| 1   | The boat carried food, water, and blankets.                 | **a list** — where the last comma is arguable     |
+| 2   | The surveyor measured the field, and the clerk recorded it. | the clause comma, which lesson 33 has without one |
+| 3   | The rain stopped, the clouds lifted, and children ran.      | three clauses, two commas                         |
+| 4   | The mechanic checked the brakes, but the driver waited.     | the clause comma with _but_                       |
+| 5   | When the gate opened, the visitors entered.                 | **a supplement** — lesson 38                      |
+| 6   | Before the last bus arrived, our guests gathered.           | **a fronted clause** — lesson 29                  |
+| 7   | The brass bell rang, and the heavy doors opened.            | the clause comma — lesson 33 with punctuation     |
+| 8   | Mara, our new captain of the crew, waved.                   | **appositive commas** — lesson 22                 |
+| 9   | The visitors who had missed their train waited.             | **integrated** — helps identify the visitors      |
+| 10  | The visitors, who had missed their train, waited.           | **supplementary** — adds information              |
 
 ## Notes
 

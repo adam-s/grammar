@@ -11,18 +11,18 @@ when, once, whenever_ — and it is kept.
 
 ## Sentences
 
-| #   | Sentence                                           | The step                                  |
-| --- | -------------------------------------------------- | ----------------------------------------- |
-| 1   | The ferry waited because the tide turned.          | the same marker, a different frame        |
-| 2   | The room darkened until the fire caught.           | a boundary in time rather than a point    |
-| 3   | The lamp flickered before the power failed.        | the clause names what came after          |
-| 4   | Before the power failed, the lamp flickered.       | **item 7, fronted** — three pairs now     |
-| 5   | Those shutters rattled whenever the wind rose.     | a marker of repetition                    |
-| 6   | The crew cleared the track after the storm passed. | a longer main clause on both sides        |
-| 7   | We waited because the gate was locked.             | a reason clause, after the main clause    |
-| 8   | Because the gate was locked, we waited.            | **item 1, fronted** — and a comma appears |
-| 9   | She waved when the last bus arrived.               | a time clause                             |
-| 10  | When the last bus arrived, she waved.              | **item 3, fronted**                       |
+| #   | Sentence                                           | The step                                          |
+| --- | -------------------------------------------------- | ------------------------------------------------- |
+| 1   | The ferry waited because the tide turned.          | the same marker, a different frame                |
+| 2   | The room darkened until the fire caught.           | a boundary in time rather than a point            |
+| 3   | The lamp flickered before the power failed.        | the clause names what came after                  |
+| 4   | Before the power failed, the lamp flickered.       | the adverbial clause fronted, and a comma with it |
+| 5   | Those shutters rattled whenever the wind rose.     | a marker of repetition                            |
+| 6   | The crew cleared the track after the storm passed. | a longer main clause on both sides                |
+| 7   | We waited because the gate was locked.             | a reason clause, after the main clause            |
+| 8   | Because the gate was locked, we waited.            | a reason clause fronted, and a comma with it      |
+| 9   | She waved when the last bus arrived.               | a time clause                                     |
+| 10  | When the last bus arrived, she waved.              | a time clause fronted, and a comma with it        |
 
 ## Notes
 

@@ -13,34 +13,35 @@ like part of the verb phrase.
 
 ## Sentences
 
-| #   | Sentence                                   | The step                                      |
-| --- | ------------------------------------------ | --------------------------------------------- |
-| 1   | The tenant wanted to renew the lease.      | the frame at its clearest                     |
-| 2   | Our crew tried to restart the engine.      | a verb that almost always takes one           |
-| 3   | The clerk refused to sign the deed.        | back to the shared-subject case               |
-| 4   | That jury declined to accept the claim.    | close on the shared-subject case              |
-| 5   | She hoped to finish the survey.            | a shorter subject, same frame                 |
-| 6   | They planned to dredge that harbour.       | a plain frame after two hard ones             |
-| 7   | He offered to clear the path.              | a verb of offering rather than wanting        |
-| 8   | We asked the driver to wait.               | **the clause has its own subject**            |
-| 9   | The guide expected the visitors to arrive. | the same, and the inner verb is intransitive  |
-| 10  | The box was too heavy to lift.             | **inside an adjective phrase**, not an object |
+| #   | Sentence                                   | The step                                         |
+| --- | ------------------------------------------ | ------------------------------------------------ |
+| 1   | The tenant wanted to renew the lease.      | the frame at its clearest                        |
+| 2   | Our crew tried to restart the engine.      | a verb that almost always takes one              |
+| 3   | The clerk refused to sign the deed.        | an infinitive whose subject is the main subject  |
+| 4   | That jury declined to accept the claim.    | the shared-subject infinitive again, formal verb |
+| 5   | She hoped to finish the survey.            | a shorter subject, same frame                    |
+| 6   | They planned to dredge that harbour.       | a plain shared-subject infinitive                |
+| 7   | He offered to clear the path.              | a verb of offering rather than wanting           |
+| 8   | We asked the driver to wait.               | **the clause has its own subject**               |
+| 9   | The guide expected the visitors to arrive. | the same, and the inner verb is intransitive     |
+| 10  | The box was too heavy to lift.             | **inside an adjective phrase**, not an object    |
 
 ## Notes
 
-**An infinitive clause with its own subject cannot be built.** _We asked the
-driver to wait_ passes every audit — the tree is well formed — but the palette
-will not offer it: `rules.ts` licenses `objectComplement` for `NP` and `AdjP`
-only, so a clause cannot fill the slot and the replay stops. The same restriction
-blocks a nominal clause as subject complement, which is recorded at lesson 30.
+**An infinitive clause with its own subject is now built.** Items 4 and 5 are
+_We asked the driver to wait_ and _The guide expected the visitors to arrive_.
 
-That is the third construction the model genuinely cannot draw, after the
-possessive and the comparison anchored to an adverb phrase. It matters here more
-than elsewhere: without an overt subject, nothing shows that an infinitive clause
-is a **clause**, because every remaining example has an invisible subject
-matching the main one.
+It had passed every audit and been unreachable, because `objectComplement`
+listed `NP` and `AdjP` and never `Cl` — the same one-entry omission that blocked
+a clause as subject complement at lesson 30. The tree was always well formed; the
+palette simply never offered the slot. That split between representable and
+reachable is why the label sweep is the check that settles this, and both
+sentences now sweep clean.
 
-Items 4 and 5 are ordinary infinitives instead, and the gap is left visible.
+It matters here more than anywhere. Without an overt subject nothing shows that
+an infinitive clause is a **clause**, because every other example has an
+invisible subject matching the main one — which makes _to renew the lease_ look
+like part of the verb phrase.
 
 Items 4 and 5 are the point of the lesson. In _We asked the driver to wait_, _the
 driver_ is the object of _asked_ **and** the subject of _to wait_, which is only

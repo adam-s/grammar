@@ -11,18 +11,18 @@ floorboards_ — and it should be the longest in its stage, which it is not.
 
 ## Sentences
 
-| #   | Sentence                                       | The step                                         |
-| --- | ---------------------------------------------- | ------------------------------------------------ |
-| 1   | The cat slept under that table.                | one preposition, one noun-phrase complement      |
-| 2   | A letter came from the bank.                   | the same shape after a different verb            |
-| 3   | The cat bolted out of the barn.                | **a two-word preposition**                       |
-| 4   | The smoke drifted up through some floorboards. | a phrase inside a phrase                         |
-| 5   | The key to the door vanished.                  | a phrase **inside a noun phrase**                |
-| 6   | The lid of the box of tools cracked.           | **nested twice, with only one reading**          |
-| 7   | The mist lifted before the dawn.               | a preposition of time, not place                 |
-| 8   | We walked along the path beside the river.     | two phrases, and where the second attaches       |
-| 9   | She read her report on the train.              | the same shape, and now the reading is not fixed |
-| 10  | Our guide led us through the tunnel.           | back to a plain adverbial                        |
+| #   | Sentence                                       | The step                                            |
+| --- | ---------------------------------------------- | --------------------------------------------------- |
+| 1   | The cat slept under that table.                | one preposition, one noun-phrase complement         |
+| 2   | A letter came from the bank.                   | the same shape after a different verb               |
+| 3   | The cat bolted out of the barn.                | **a two-word preposition**                          |
+| 4   | The smoke drifted up through some floorboards. | a phrase inside a phrase                            |
+| 5   | The key to the door vanished.                  | a phrase **inside a noun phrase**                   |
+| 6   | The lid of the box of tools cracked.           | **nested twice, with only one reading**             |
+| 7   | The mist lifted before the dawn.               | a preposition of time, not place                    |
+| 8   | We walked along the path beside the river.     | two phrases, and the second could attach either way |
+| 9   | She read her report on the train.              | a phrase whose attachment is genuinely open         |
+| 10  | Our guide led us through the tunnel.           | a plain adverbial phrase after an object            |
 
 ## Notes
 

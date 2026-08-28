@@ -16,7 +16,7 @@ the subject, which leaves the shortcut intact.
 | --- | ------------------------------- | ----------------------------------------------------- |
 | 1   | Birds sing.                     | the frame at its smallest                             |
 | 2   | The bell rang twice.            | the predicate grows, so the cut moves off the end     |
-| 3   | Those lanterns flickered.       | back to two parts, with a longer subject              |
+| 3   | Those lanterns flickered.       | a two-part cut with a longer subject                  |
 | 4   | The old gate creaked loudly.    | both halves carry more than one word                  |
 | 5   | Birds sang through the evening. | a one-word subject against a four-word predicate      |
 | 6   | The dog by the door barked.     | the subject holds a phrase; the verb is last anyway   |

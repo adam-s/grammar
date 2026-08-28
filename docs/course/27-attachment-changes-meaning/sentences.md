@@ -22,7 +22,7 @@ shape, so two of these are that instead.
 | 4   | The inspector photographed the driver beside the bus. | **two ordinary places** — driver or event         |
 | 5   | She watched the boy with the binoculars.              | the classic case — who has the binoculars         |
 | 6   | We found the key under the mat.                       | short, and the verb reading is the likelier       |
-| 7   | He painted the shed behind the house.                 | back to attachment, with a plausible tie          |
+| 7   | He painted the shed behind the house.                 | attachment, with a plausible tie either way       |
 | 8   | She read the report on the train.                     | lesson 19's sentence, now marked as two-way       |
 | 9   | The guide met the old men and women.                  | **a different ambiguity** — how far _old_ reaches |
 | 10  | They packed the damaged books and maps.               | coordination scope again, on an object            |

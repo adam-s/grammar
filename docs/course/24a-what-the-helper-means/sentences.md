@@ -8,11 +8,11 @@ three get the identical tree.
 
 ## Sentences
 
-| #   | Sentence                           | The step                         |
-| --- | ---------------------------------- | -------------------------------- |
-| 1   | Those talks will resume.           | a prediction                     |
-| 2   | They may question the driver.      | a possibility, or a permission   |
-| 3   | The board should approve the plan. | an obligation, or an expectation |
+| #   | Sentence                           | The step                       |
+| --- | ---------------------------------- | ------------------------------ |
+| 1   | Those talks will resume.           | a prediction                   |
+| 2   | They may question the driver.      | a possibility, or a permission |
+| 3   | The board should approve the plan. | a modal in a transitive frame  |
 
 ## Notes
 

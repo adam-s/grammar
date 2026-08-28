@@ -12,18 +12,18 @@ joins to like. That makes this a good place to look backwards.
 
 ## Sentences
 
-| #   | Sentence                                          | The step                                     |
-| --- | ------------------------------------------------- | -------------------------------------------- |
-| 1   | The bread and the cheese vanished.                | two noun phrases, subject position           |
-| 2   | The gate or the fence collapsed.                  | _or_, which changes what is claimed          |
-| 3   | Her brother and her cousin objected.              | back to noun phrases, possessive determiners |
-| 4   | Our calm and patient guide explained.             | **two adjectives**, not noun phrases         |
-| 5   | The flag was red and gold.                        | joined inside a subject complement           |
-| 6   | We packed the books and the maps.                 | **the same join, in an object**              |
-| 7   | The surveyor and the clerk signed the deed.       | a plural verb proves it is one subject       |
-| 8   | The jury and the judge questioned the evidence.   | close on the plain case                      |
-| 9   | We walked through the gate and across the field.  | **two prepositional phrases**                |
-| 10  | The small boat carried food, water, and blankets. | **three coordinates, and two commas**        |
+| #   | Sentence                                          | The step                                        |
+| --- | ------------------------------------------------- | ----------------------------------------------- |
+| 1   | The bread and the cheese vanished.                | two noun phrases, subject position              |
+| 2   | The gate or the fence collapsed.                  | _or_, which changes what is claimed             |
+| 3   | Her brother and her cousin objected.              | two noun phrases joined, possessive determiners |
+| 4   | Our calm and patient guide explained.             | **two adjectives**, not noun phrases            |
+| 5   | The flag was red and gold.                        | joined inside a subject complement              |
+| 6   | We packed the books and the maps.                 | **the same join, in an object**                 |
+| 7   | The surveyor and the clerk signed the deed.       | a plural verb proves it is one subject          |
+| 8   | The jury and the judge questioned the evidence.   | a joined subject taking a plural verb           |
+| 9   | We walked through the gate and across the field.  | **two prepositional phrases**                   |
+| 10  | The small boat carried food, water, and blankets. | **three coordinates, and two commas**           |
 
 ## Notes
 
