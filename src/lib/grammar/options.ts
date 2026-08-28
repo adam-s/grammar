@@ -32,7 +32,15 @@
  * `audits.ts` runs over frozen content — so what a learner may pick and what
  * the content must satisfy cannot drift apart.
  */
-import { canWrap, hypothesisFor, nodeOver, roots, type BuildState, type Span } from './builder.ts';
+import {
+  canStackOver,
+  canWrap,
+  hypothesisFor,
+  nodeOver,
+  roots,
+  type BuildState,
+  type Span,
+} from './builder.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { FORM_TEST, FUNCTION_TEST, formName, label } from './names.ts';
@@ -75,7 +83,9 @@ export const isPickable = (o: LabelOption): boolean => PICKABLE.includes(o.state
  * the same close-or-continue rule.
  */
 export const isPanelComplete = (panel: Panel): boolean =>
-  panel.groups.every((group) => group.answered || !group.options.some(isPickable));
+  panel.groups.every(
+    (group) => group.optional || group.answered || !group.options.some(isPickable),
+  );
 
 /**
  * Turn choices already disproved for this selection into ordinary blocked
@@ -122,6 +132,12 @@ export interface LabelOption {
   partKind?: PartKind;
   finiteness?: Finiteness;
   clauseKind?: ClauseKind;
+  /**
+   * This row puts a NEW node over the selection instead of renaming it. The two
+   * moves look identical from the outside — same words, same form list — so the
+   * row has to carry which one it is.
+   */
+  stack?: true;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -145,6 +161,12 @@ export interface OptionGroup {
    * Notes that carry evidence or a block reason take priority whatever this says.
    */
   notes: 'always' | 'ondemand';
+  /**
+   * An offer rather than a question: the panel counts as finished with this
+   * group untouched. Without it, a group nobody is expected to answer would
+   * hold the palette open for ever.
+   */
+  optional?: boolean;
   /** The option already picked here, if any. A group with one is settled. */
   answered?: LabelOption | null;
 }
@@ -489,6 +511,47 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     })),
   };
 
+  /**
+   * Putting a second layer over the same words.
+   *
+   * Renaming and stacking are different things that look the same: both are a
+   * phrase form picked on a run of words already covered by a node. The menu
+   * used to guess from the form — clause over phrase meant stack, anything else
+   * meant rename — which was right for the two cases it knew and wrong for
+   * *old cars*, where an `NP` goes over a `Nom` on the same words.
+   *
+   * So it asks instead. A second group, only where a second layer is possible.
+   */
+  const stack: OptionGroup = {
+    id: 'stack',
+    question: `Or is ${subject} inside something bigger?`,
+    notes: 'ondemand',
+    // An offer, not a question. Every other group has to be answered before
+    // the palette will close, because leaving one open means the learner has
+    // not finished. A second layer over the same words is rare enough that
+    // holding the palette open waiting for one would be nagging.
+    optional: true,
+    options: PHRASE_FORMS.map((f) => {
+      if (!inScope(f, scope.forms)) {
+        return {
+          ...formOption(f, 'untaught', 'not taught yet'),
+          key: `stack:${f}`,
+          stack: true as const,
+        };
+      }
+      const same = f === c.form;
+      return {
+        ...formOption(
+          f,
+          same ? 'blocked' : 'available',
+          same ? 'A node cannot go inside another of the same kind.' : FORM_TEST[f],
+        ),
+        key: `stack:${f}`,
+        stack: true as const,
+      };
+    }),
+  };
+
   const groups: OptionGroup[] = isWord
     ? [
         {
@@ -516,6 +579,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
           notes: 'ondemand',
           options: build(PHRASE_FORMS, false),
         },
+        ...(canStackOver(c) ? [stack] : []),
         ...(c.form === 'Cl' ? [clauseKind] : []),
         ...(c.form === 'S' || c.form === 'Cl' ? [finiteness] : []),
       ];

@@ -37,7 +37,6 @@
     setPartKind,
     setVerbType,
     setVoice,
-    stacksOver,
     unwrap,
     wrap,
   } from '$lib/grammar/builder.ts';
@@ -266,7 +265,7 @@
           nodeId: step.nodeId,
           key:
             step.choice.form !== undefined
-              ? `form:${step.choice.form}`
+              ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
               : step.choice.func !== undefined
                 ? // The required S V A adverbial is a distinct row, because it is
                   // a distinct claim about the verb.
@@ -436,11 +435,11 @@
       let next = build;
       const nodeId = selection.kind === 'node' ? selection.id : null;
       const cur = nodeId ? build.constituents[nodeId] : undefined;
-      // Replacing a loose phrase means removing it first; `wrap` would
-      // otherwise stack a second node on the same words. A clause over a phrase
-      // is the exception, because that stack is the only way to write one.
-      if (nodeId && cur && cur.parent === null && !stacksOver(cur, o.form)) {
-        if (cur.word === undefined) next = unwrap(next, nodeId);
+      // `wrap` always puts a node OVER what is there, so renaming means taking
+      // the old one away first. Which of the two this is comes from the row the
+      // learner clicked rather than from a guess about the form.
+      if (!o.stack && nodeId && cur && cur.parent === null && cur.word === undefined) {
+        next = unwrap(next, nodeId);
       }
       build = wrap(next, words, span, o.form);
       grew();

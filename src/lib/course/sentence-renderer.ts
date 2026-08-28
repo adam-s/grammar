@@ -4,7 +4,9 @@
  */
 import { verbs } from '../grammar/clause.ts';
 import {
+  canStackOver,
   emptyBuild,
+  nodeOver,
   setClauseKind,
   setFiniteness,
   setFunction,
@@ -46,6 +48,8 @@ export type RenderStep = {
     partKind?: PartKind;
     finiteness?: Finiteness;
     clauseKind?: ClauseKind;
+    /** The form goes OVER what is already there rather than replacing it. */
+    stack?: true;
   };
 };
 
@@ -88,6 +92,11 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
   for (const canonicalId of order) {
     const constituent = reading.constituents[canonicalId]!;
     const previousSequence = state.seq;
+    // A loose phrase already on these words means this form goes over it — the
+    // reduced relative's `Cl` over its `VP`. That is a different click from
+    // renaming, so the step has to say which one it is.
+    const under = nodeOver(state, constituent.span);
+    const stack = under ? canStackOver(state.constituents[under]) : false;
     state = wrap(state, sentence.words, constituent.span, constituent.form);
     if (state.seq === previousSequence) {
       throw new Error(`Could not build ${constituent.form} at ${constituent.span.join('–')}.`);
@@ -100,7 +109,7 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
       state,
       span: constituent.span,
       nodeId: generatedId,
-      choice: { form: constituent.form },
+      choice: { form: constituent.form, ...(stack ? { stack: true as const } : {}) },
     });
   }
 

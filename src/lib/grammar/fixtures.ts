@@ -913,6 +913,45 @@ export const nominal = sentence(
   ['Vtr', 'nominal', 'premodifier', 'determiner-scope'],
 );
 
+/* ---------------- stacking on the same words — Old engines stall.
+ *
+ * The case the nominal layer could not reach. With no determiner, the `NP` and
+ * the `Nom` cover the very same two words, so building it means putting a
+ * second node over the first rather than renaming it — and until the palette
+ * asked which was meant, there was no way to say so.
+ *
+ * Structure with a claim in it, not ceremony. *old* modifies *engines* and the
+ * phrase as a whole is what *stall* is about; the nominal is where the first is
+ * true and the noun phrase is where the second is.
+ */
+export const stacked = sentence(
+  'fix-stacked',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            n('Nom', 'head', [w('Adj', 'premodifier', 'Old'), w('N', 'head', 'engines')]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'stall', { lemma: 'stall', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Engines that are old stop running.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vint', 'nominal', 'same-span-stack', 'premodifier'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -934,6 +973,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   particle,
   supplement,
   nominal,
+  stacked,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

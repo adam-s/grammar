@@ -15,7 +15,7 @@ import {
   smallestCovering,
   stackOver,
   setOnlyVerbType,
-  stacksOver,
+  canStackOver,
   unwrap,
   wrap,
   type BuildState,
@@ -341,10 +341,7 @@ describe('a clause may stack over a phrase of the same words', () => {
       children: [],
       span: [0, 1] as [number, number],
     };
-    assert.equal(stacksOver(vp, 'Cl'), true, 'a reduced relative needs Cl over VP');
-    assert.equal(stacksOver(vp, 'S'), true);
-    assert.equal(stacksOver(vp, 'NP'), false, 'renaming a phrase must stay a rename');
-    assert.equal(stacksOver(vp, 'VP'), false, 'picking the same form is not a new layer');
+    assert.equal(canStackOver(vp), true, 'a reduced relative needs Cl over VP');
   });
 
   it('a word leaf is never stacked over — one-word phrases go through wrap', () => {
@@ -356,11 +353,11 @@ describe('a clause may stack over a phrase of the same words', () => {
       span: [0, 0] as [number, number],
       word: 0,
     };
-    assert.equal(stacksOver(leaf, 'Cl'), false);
+    assert.equal(canStackOver(leaf), false, 'a word is renamed, not stacked on');
   });
 
   it('nothing selected stacks over nothing', () => {
-    assert.equal(stacksOver(undefined, 'Cl'), false);
+    assert.equal(canStackOver(undefined), false);
   });
 
   it('the stacked clause keeps the phrase underneath it', () => {
@@ -368,7 +365,7 @@ describe('a clause may stack over a phrase of the same words', () => {
     s = wrap(s, W, [1, 1], 'P');
     s = wrap(s, W, [0, 1], 'VP');
     const vp = roots(s)[0]!;
-    assert.equal(stacksOver(s.constituents[vp], 'Cl'), true);
+    assert.equal(canStackOver(s.constituents[vp]), true);
     s = wrap(s, W, [0, 1], 'Cl');
     const cl = roots(s)[0]!;
     assert.equal(s.constituents[cl]!.form, 'Cl');

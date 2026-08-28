@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
 import {
+  canStackOver,
   emptyBuild,
   hypothesisFor,
   licenseFor,
@@ -149,13 +150,14 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     const selection = existing
       ? ({ kind: 'node', id: existing } as const)
       : ({ kind: 'span', span: source.span } as const);
+    // Renaming and stacking are different rows now, so ask for the one this
+    // step actually is: a loose phrase already on these words is stacked over.
+    const stacking = existing ? canStackOver(state.constituents[existing]) : false;
+    const key = `${stacking ? 'stack' : 'form'}:${source.form}`;
     const form = optionsFor(state, sentence.words, selection)
       .groups.flatMap((group) => group.options)
-      .find((option) => option.key === `form:${source.form}`);
-    assert.ok(
-      form && isPickable(form),
-      `${sentence.id}/${reading.id}: cannot choose ${source.form}`,
-    );
+      .find((option) => option.key === key);
+    assert.ok(form && isPickable(form), `${sentence.id}/${reading.id}: cannot choose ${key}`);
 
     state = wrap(state, sentence.words, source.span, source.form);
     const created = Object.keys(state.constituents).find((id) => {

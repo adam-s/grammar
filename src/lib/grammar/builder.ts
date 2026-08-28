@@ -229,23 +229,26 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
 }
 
 /**
- * Does picking `form` over a span already held by `current` mean "put a new
- * node above this one" rather than "I named this wrong"?
+ * Can a new node go over `current` without replacing it?
  *
- * Same-span stacking is rare and it is not optional: a clause with no subject —
- * the reduced relative in *the horse **raced past the barn** fell* — is a `Cl`
- * whose only child is a `VP` over the very same words. `auditLicensing` insists
- * a clause's predicate is a `VP`, so there is nowhere else for that layer to
- * live.
+ * Same-span stacking is not exotic. A clause with no subject — the reduced
+ * relative in *the horse **raced past the barn** fell* — is a `Cl` whose only
+ * child is a `VP` over the very same words, and a noun phrase with modifiers
+ * and no determiner — *old cars* — is an `NP` over a `Nom` over the same words.
+ * Neither has anywhere else to live.
  *
- * Kept deliberately narrow. Every other same-span pick stays a relabel, because
- * a learner correcting "I meant NP, not VP" is far commoner than one building a
- * second layer, and the menu cannot yet ask which was meant. The general
- * affordance is recorded in docs/model-gaps.md.
+ * The menu used to guess which was meant from the form picked, which worked
+ * only for the two forms it knew about. It now asks: a loose phrase gets a
+ * second group, "or is it inside something bigger?", and the row the learner
+ * clicks says which of the two they meant. So this answers only whether the
+ * question is worth asking at all.
  */
-export function stacksOver(current: Constituent | undefined, form: Form): boolean {
+export function canStackOver(current: Constituent | undefined): boolean {
+  // A word is renamed, never stacked on — wrapping a word in a phrase is
+  // already the ordinary one-word-phrase move and has its own group.
   if (!current || current.word !== undefined) return false;
-  return (form === 'Cl' || form === 'S') && current.form !== form;
+  // Inside a group, adding a layer would change what the group is made of.
+  return current.parent === null;
 }
 
 /** Create (or relabel) a node over `span` with `form`. Pure. */
@@ -255,8 +258,11 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   let seq = state.seq;
 
   if (a === b) {
+    // The thing a one-word phrase goes over is whatever is loose on that word:
+    // usually the word leaf, but an existing one-word phrase when the learner
+    // is stacking a second layer on it.
     const leaf = roots({ ...state, constituents: cs }).find(
-      (id) => cs[id]!.word === a && cs[id]!.parent === null,
+      (id) => cs[id]!.parent === null && cs[id]!.span[0] === a && cs[id]!.span[1] === a,
     );
     // The chosen FORM disambiguates the two things a single-word selection can
     // mean. A word form renames the word ("that is a pronoun, not a noun"); a
@@ -267,15 +273,17 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
       if (!leaf) {
         return state; // nothing to wrap yet; canWrap() explains why
       }
+      if (cs[leaf]!.form === form) return state; // a node cannot go inside itself
       const id = `c${++seq}`;
       cs[id] = { form, function: null, parent: null, children: [leaf], span: [a, a] };
       cs[leaf]!.parent = id;
       return { constituents: cs, seq };
     }
-    if (leaf) {
+    if (leaf && cs[leaf]!.word !== undefined) {
       cs[leaf]!.form = form;
       return { ...state, constituents: cs };
     }
+    if (leaf) return state; // a word form cannot rename a phrase
     const id = `c${++seq}`;
     cs[id] = { form, function: null, parent: null, children: [], span: [a, a], word: a };
     return { constituents: cs, seq };
