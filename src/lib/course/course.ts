@@ -358,7 +358,11 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 31,
         stage: 'Clauses',
         title: 'Relative clauses',
-        teaches: ['kind:relative'],
+        // `gap` lands here because this is the first lesson that draws an empty
+        // slot: the clause has a subject and no word for it, and the noun it
+        // modifies is what fills it. The palette has always offered the row;
+        // until now no lesson admitted introducing it.
+        teaches: ['kind:relative', 'gap'],
         sentences: LESSON_31,
       },
       {
@@ -366,7 +370,10 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 32,
         stage: 'Clauses',
         title: 'Comparative clauses',
-        teaches: ['kind:comparative', 'func:postnucleus'],
+        // `anchor` is the row that says what the tail phrase answers to — the
+        // decision that ties *than we expected* to *larger*. Same story: an
+        // offered row with no lesson behind it.
+        teaches: ['kind:comparative', 'func:postnucleus', 'anchor'],
         sentences: LESSON_32,
       },
       {

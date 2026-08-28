@@ -261,7 +261,16 @@ export type ChapterScope = ReadonlySet<string> | undefined;
  * them.
  */
 export function decisionOf(o: LabelOption): string | null {
-  if (o.gap || o.anchor !== undefined) return null;
+  // Structural moves are decisions too. These three used to return `null`,
+  // which meant no lesson could say when they were first taught while the
+  // palette went on offering them: a learner met the empty slot in lesson 31's
+  // relative clauses with nothing in the ladder admitting it had arrived.
+  if (o.gap) return 'gap';
+  if (o.anchor !== undefined) return 'anchor';
+  // Before `func`, because a fused row carries both and the interesting half is
+  // the second job. `func:head` would have said the learner was answering the
+  // ordinary head question.
+  if (o.fusedWith !== undefined) return `fuse:${o.fusedWith}`;
   if (o.form !== undefined) return `form:${o.form}`;
   if (o.verbType !== undefined) return `vt:${o.verbType}`;
   if (o.clauseKind !== undefined) return `kind:${o.clauseKind}`;
