@@ -51,6 +51,8 @@ const FUNCTION_FORM: Record<Func, Form> = {
   coordinate: 'Subord',
   coordinator: 'Conj',
   prenucleus: 'NP',
+  displacedSubject: 'NP',
+  extraposed: 'Cl',
   particle: 'Part',
   supplement: 'AdvP',
   appositive: 'NP',

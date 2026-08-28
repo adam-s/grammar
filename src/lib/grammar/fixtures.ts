@@ -1073,6 +1073,144 @@ export const frontedPhrase = sentence(
   ['Vtr', 'gap', 'coindexation', 'prenucleus', 'nominal-clause', 'two-clause'],
 );
 
+/* ------------- a question — What did the mechanic repair?
+ *
+ * Two moves in one sentence, and neither needs a discontinuous node.
+ *
+ * *What* is fronted and ties to the empty object slot after *repair*, the same
+ * as in the embedded version. *did* has moved too, in front of the subject —
+ * so it hangs off the clause rather than off the verb phrase it helps. That is
+ * the whole of what subject-auxiliary inversion is, and writing the auxiliary
+ * where it is actually said says it.
+ *
+ * The earlier note in docs/model-gaps.md had this filed under discontinuity.
+ * It is not: nothing here is split. Only an extraposed relative — *A man came
+ * in who I knew* — needs a node whose pieces are apart, and that is still open.
+ */
+export const question = sentence(
+  'fix-question',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'prenucleus', [w('Pron', 'head', 'What', { xpos: 'WP' })], { index: 1 }),
+          w('Aux', 'auxiliary', 'did', { xpos: 'VBD', lemma: 'do' }),
+          n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'mechanic')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'repair', { xpos: 'VB', lemma: 'repair', verbType: 'Vtr' }),
+            gap('NP', 'directObject', { index: 1 }),
+          ]),
+          pt('?'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The question asks which thing the mechanic repaired.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'question', 'inversion', 'gap', 'prenucleus'],
+);
+
+/* --------- particle shift — She looked the number up.
+ *
+ * The particle has moved past the object, and the diagram needs nothing new to
+ * say so. *looked*, *the number* and *up* are all inside the predicate, in the
+ * order they are said. The claim that *up* belongs to *looked* is carried by
+ * its function, not by where it sits.
+ *
+ * Written down because it was on the list of things said to need discontinuity
+ * and does not. Compare `fix-particle`, which is the same verb unshifted.
+ */
+export const particleShift = sentence(
+  'fix-particle-shift',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'looked', { lemma: 'look', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'number')]),
+            w('Part', 'particle', 'up', { xpos: 'RP', partKind: 'verbal' }),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'She found the number by looking it up.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'particle', 'particle-shift', 'phrasal-verb'],
+);
+
+/* ------- extraposition — It is a good thing that we left.
+ *
+ * English dislikes a long subject in front of a short verb, so it says *it*
+ * where the subject goes and puts the content at the end. Neither half stands
+ * alone: *It is a good thing* leaves you asking what *it* was, and *that we
+ * left is a good thing* is the same sentence unmoved.
+ *
+ * So the two are a pair, and the audit holds them to it — a placeholder with
+ * nothing at the end, or content at the end with nothing holding its place, is
+ * half a claim.
+ */
+export const extraposition = sentence(
+  'fix-extraposition',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'displacedSubject', [w('Pron', 'head', 'It')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'is', { xpos: 'VBZ', lemma: 'be', verbType: 'Vbe' }),
+            n('NP', 'subjectComplement', [
+              w('Det', 'determiner', 'a'),
+              n('Nom', 'head', [w('Adj', 'premodifier', 'good'), w('N', 'head', 'thing')]),
+            ]),
+          ]),
+          n(
+            'Cl',
+            'extraposed',
+            [
+              w('Subord', 'marker', 'that'),
+              n('NP', 'subject', [w('Pron', 'head', 'we')]),
+              n('VP', 'predicate', [w('V', 'head', 'left', { lemma: 'leave', verbType: 'Vint' })]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SV' },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'That we left is a good thing.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'extraposition', 'displacedSubject', 'nominal-clause', 'two-clause'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -1097,6 +1235,9 @@ export const FIXTURES: readonly SentenceEntry[] = [
   stacked,
   subjectRelative,
   frontedPhrase,
+  question,
+  particleShift,
+  extraposition,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

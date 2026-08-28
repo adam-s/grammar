@@ -158,6 +158,13 @@ export type PhraseInternalFunction =
    * *__What__ did she repair __?*
    */
   | 'prenucleus'
+  /**
+   * The placeholder *it* standing in the subject slot while the content sits
+   * at the end: *__It__ is a good thing that we left.*
+   */
+  | 'displacedSubject'
+  /** The clause the placeholder is standing in for, moved to the end. */
+  | 'extraposed'
   /** A particle that belongs to its verb: the *up* in *looked up the word*. */
   | 'particle'
   /**
@@ -191,6 +198,8 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'coordinate',
   'coordinator',
   'prenucleus',
+  'displacedSubject',
+  'extraposed',
   'particle',
   'supplement',
   'appositive',

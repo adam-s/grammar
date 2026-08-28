@@ -400,6 +400,35 @@ export function auditGaps(ctx: Ctx): string[] {
     }
   }
 
+  // An auxiliary hanging off a clause is subject-auxiliary inversion, and the
+  // whole of what makes it that is coming before the subject. One sitting
+  // after the subject is not inverted — it belongs in the verb phrase.
+  for (const clause of clauseNodes(ctx.cs)) {
+    const kids = ctx.cs[clause]!.children;
+    const aux = kids.find((k) => ctx.cs[k]?.function === 'auxiliary');
+    const subject = kids.find((k) => ctx.cs[k]?.function === 'subject');
+    if (!aux || !subject) continue;
+    if (ctx.cs[aux]!.span[0] > ctx.cs[subject]!.span[0]) {
+      f.push(
+        `"${aux}" hangs off the clause but comes after the subject; an auxiliary that ` +
+          'has not moved belongs inside the verb phrase',
+      );
+    }
+  }
+
+  // A placeholder and the thing it stands in for are one claim in two places.
+  for (const clause of clauseNodes(ctx.cs)) {
+    const kids = ctx.cs[clause]!.children;
+    const held = kids.some((k) => ctx.cs[k]?.function === 'displacedSubject');
+    const moved = kids.some((k) => ctx.cs[k]?.function === 'extraposed');
+    if (held && !moved) {
+      f.push(`"${clause}" has a placeholder subject and nothing at the end for it to hold`);
+    }
+    if (moved && !held) {
+      f.push(`"${clause}" has an extraposed part and nothing holding its place`);
+    }
+  }
+
   for (const [id, c] of Object.entries(ctx.cs)) {
     if (!c.gap) continue;
     const clause = clauseOf(ctx.cs, id);
@@ -549,6 +578,10 @@ export function label(fn: Func): string {
       return 'supplement';
     case 'prenucleus':
       return 'fronted phrase';
+    case 'displacedSubject':
+      return 'placeholder subject';
+    case 'extraposed':
+      return 'extraposed part';
     default:
       return fn;
   }

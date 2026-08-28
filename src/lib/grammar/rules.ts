@@ -189,8 +189,17 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // Unlike every other function here it may repeat, because English stacks
     // them: *had been being repaired* is four words and one verb.
     case 'auxiliary':
-      if (p !== 'VP') return HIDDEN;
       if (!childIs('Aux')) return HIDDEN;
+      // Ordinarily inside the verb phrase it helps. Directly under a clause it
+      // means the other thing English does with an auxiliary: moving it in
+      // front of the subject to make a question — *__Did__ she repair it?*
+      //
+      // No discontinuity is needed for that, and none is claimed. The
+      // auxiliary is written where it is said, hanging off the clause; what
+      // makes it an inversion is that it comes before the subject, which
+      // `auditGaps` checks. A node whose pieces are not next to each other is
+      // a different problem and is still open (docs/model-gaps.md).
+      if (p !== 'VP' && !CLAUSAL.includes(p)) return HIDDEN;
       return ALLOWED;
 
     case 'determiner':
@@ -243,6 +252,20 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!CLAUSAL.includes(p)) return HIDDEN;
       if (!childIs('NP', 'PP', 'AdvP', 'AdjP', 'Cl')) return HIDDEN;
       return has('prenucleus') ? no('This clause already has a fronted phrase.') : ALLOWED;
+
+    // Extraposition, as a pair. English dislikes a long subject in front of a
+    // short verb, so it puts *it* in the subject slot and the real content at
+    // the end. Neither half means anything without the other, and `auditGaps`
+    // holds them to that.
+    case 'displacedSubject':
+      if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('NP')) return HIDDEN;
+      return has('displacedSubject') ? no('This clause already has a placeholder.') : ALLOWED;
+
+    case 'extraposed':
+      if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('Cl', 'NP')) return HIDDEN;
+      return has('extraposed') ? no('This clause already has an extraposed part.') : ALLOWED;
 
     // Sentence-edge material: in the sentence without filling a slot in it.
     // Licensed on a clause or a noun phrase, which is where asides attach.

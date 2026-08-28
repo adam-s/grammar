@@ -292,10 +292,17 @@ describe('a helping verb belongs to the verb, not beside it', () => {
     assert.equal(under('VP', 'NP'), 'hidden');
   });
 
-  it('nothing outside a verb phrase has one', () => {
-    for (const parent of ['S', 'Cl', 'NP', 'PP', 'AdjP', 'AdvP'] as Form[]) {
+  it('nothing but a verb phrase or a clause has one', () => {
+    for (const parent of ['NP', 'PP', 'AdjP', 'AdvP'] as Form[]) {
       assert.equal(under(parent, 'Aux'), 'hidden', `${parent} should have no helping verb`);
     }
+  });
+
+  it('a clause holds one only because that is where a question puts it', () => {
+    // *Did she repair it?* — the auxiliary has moved in front of the subject,
+    // so it hangs off the clause rather than off the verb phrase it helps.
+    assert.equal(under('S', 'Aux'), 'allowed');
+    assert.equal(under('Cl', 'Aux'), 'allowed');
   });
 
   it('an auxiliary cannot head the phrase it helps', () => {
