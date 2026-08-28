@@ -214,13 +214,24 @@ export const passive = (verb: Verb, was: string): Verb =>
 
 /* --------------------------------------------------------------- patterns */
 
-function clause(subject: Phrase, verb: Verb, rest: SpecNode[], pattern: ClauseType) {
+function clause(
+  subject: Phrase,
+  verb: Verb,
+  rest: SpecNode[],
+  pattern: ClauseType,
+  /** An adverbial between the subject and the verb, inside the verb phrase. */
+  before?: Phrase,
+  /** An adverbial in front of the subject, outside the verb phrase entirely. */
+  fronted?: Phrase,
+) {
   return n(
     'S',
     null,
     [
+      ...(fronted ? [fronted('adverbial')] : []),
       subject('subject'),
       n('VP', 'predicate', [
+        ...(before ? [before('adverbial')] : []),
         ...(verb.aux ?? []).map((a) =>
           w('Aux', 'auxiliary', a.text, { lemma: a.lemma, auxKind: a.kind }),
         ),
@@ -260,6 +271,39 @@ export const svPlus = (
   where: Phrase,
   gloss: string,
 ) => one(id, lesson, clause(s, verb, [where('adverbial')], 'SV'), gloss);
+
+/**
+ * *The candle suddenly sputtered.* — an adverbial between the subject and the
+ * verb.
+ *
+ * Neither corpus had one before lesson 3 needed it, and position is most of what
+ * makes an adverbial hard to find. It sits inside the verb phrase, because it is
+ * still saying something about the verb.
+ */
+export const svMedial = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  where: Phrase,
+  verb: Verb,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [], 'SV', where), gloss);
+
+/**
+ * *Yesterday the children played.* — an adverbial in front of the subject.
+ *
+ * Outside the verb phrase, because it is scoping over the whole clause. Fronting
+ * is the test that an adverbial is optional rather than a slot the verb
+ * predicts, and it is what lesson 39 needs a comma for.
+ */
+export const svFronted = (
+  id: string,
+  lesson: number,
+  where: Phrase,
+  s: Phrase,
+  verb: Verb,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [], 'SV', undefined, where), gloss);
 
 /** *The mechanic replaced the belt.* */
 export const svo = (

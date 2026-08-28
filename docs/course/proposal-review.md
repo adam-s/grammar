@@ -19,18 +19,18 @@ Status values are deliberately explicit:
 
 ## Lesson 1 — Introduction
 
-| #   | Sentence                      | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
-| --- | ----------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
-| 1   | Birds sing.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 2   | The bell rang twice.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 3   | Those lanterns flickered.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | The old gate creaked loudly.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 5   | Birds sang all evening.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | The dog by the door barked.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | My brother sneezed twice.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | The woman in blue smiled.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 9   | Two birds scattered suddenly. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 10  | The kettle boiled over.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| #   | Sentence                        | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
+| --- | ------------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
+| 1   | Birds sing.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 2   | The bell rang twice.            | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 3   | Those lanterns flickered.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | The old gate creaked loudly.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 5   | Birds sang through the evening. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | The dog by the door barked.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | My brother sneezed twice.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | The woman in blue smiled.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 9   | Two birds scattered suddenly.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 10  | The kettle boiled over.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 2 — A sentence has two parts
 
@@ -41,11 +41,11 @@ Status values are deliberately explicit:
 | 3   | The kettle boiled on the stove.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
 | 4   | The shoes on my feet pinched.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
 | 5   | The hole in my shoes widened.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
-| 6   | The key to the cabinet vanished.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
+| 6   | The crack in the ceiling spread.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
 | 7   | A box of tools fell downstairs.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
 | 8   | The children in the yard shouted. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
 | 9   | The last bus left after midnight. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                 |
-| 10  | My neighbour's bicycle broke.     | Pending human review | Step recorded; parse pending | Pending reach audit | **Blocked:** possessive representation |
+| 10  | The lock on the shed rusted.      | Pending human review | Step recorded; parse pending | Pending reach audit | **Blocked:** possessive representation |
 
 ## Lesson 3 — Find the main verb
 

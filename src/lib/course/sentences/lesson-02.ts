@@ -1,84 +1,83 @@
 /**
- * Lesson 2 — A sentence has two parts. The same split, unaided.
+ * Lesson 2 — A sentence has two parts. Where the subject ENDS.
  *
- * Every subject here is three words, so the turn arrives on its own: the
- * subject is a RUN of words, not the word nearest the verb.
+ * Lesson 1 asked where the sentence splits. This asks a harder question, and
+ * the built set never asked it: every one of its subjects was `The ADJ N`, one
+ * adjective longer than lesson 1 and no harder to cut.
  *
- * The glosses say what the sentence means rather than repeating it. All ten
- * were once word-for-word copies, which is worse than no gloss: it teaches
- * that a paraphrase is a formality.
+ * Items 4 and 5 are the pair. *The shoes on my feet* and *The hole in my shoes*
+ * are the same shape, and in the second the noun nearest the verb is not the
+ * subject. Substitution settles both: *They pinched*, *It widened*.
  */
-import { adjn, sv, v } from './shape.ts';
+import { adjn, adv, bare, det, postmod, pp, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_02 = [
-  sv(
-    'c02-a',
-    2,
-    adjn('The', 'old', 'clock'),
-    v('stopped', 'stop', 'Vint'),
-    'The old clock no longer keeps time.',
-  ),
-  sv(
+  sv('c02-a', 2, det('The', 'rain'), v('stopped', 'stop', 'Vint'), 'The rain came to an end.'),
+  svPlus(
     'c02-b',
     2,
-    adjn('The', 'wooden', 'ladder'),
-    v('wobbled', 'wobble', 'Vint'),
-    'The ladder was not steady under the weight.',
+    det('Our', 'visitors'),
+    v('arrived', 'arrive', 'Vint'),
+    adv('early'),
+    'Our guests turned up ahead of time.',
   ),
-  sv(
+  svPlus(
     'c02-c',
     2,
-    adjn('The', 'heavy', 'gate'),
-    v('swung', 'swing', 'Vint'),
-    'The gate moved on its hinges.',
+    det('The', 'kettle'),
+    v('boiled', 'boil', 'Vint'),
+    pp('on', det('the', 'stove')),
+    'The kettle came to the boil where it stood.',
   ),
   sv(
     'c02-d',
     2,
-    adjn('The', 'young', 'soldiers'),
-    v('marched', 'march', 'Vint'),
-    'The soldiers moved off in step.',
+    postmod('The', 'shoes', pp('on', det('my', 'feet'))),
+    v('pinched', 'pinch', 'Vint'),
+    'The shoes I was wearing were too tight.',
   ),
   sv(
     'c02-e',
     2,
-    adjn('The', 'small', 'kitten'),
-    v('pounced', 'pounce', 'Vint'),
-    'The kitten jumped on something.',
+    postmod('The', 'hole', pp('in', det('my', 'shoes'))),
+    v('widened', 'widen', 'Vint'),
+    'The gap in my footwear grew larger.',
   ),
   sv(
     'c02-f',
     2,
-    adjn('The', 'swollen', 'river'),
-    v('rose', 'rise', 'Vint'),
-    'The river, already full, got higher.',
+    postmod('The', 'crack', pp('in', det('the', 'ceiling'))),
+    v('spread', 'spread', 'Vint'),
+    'The split overhead grew longer.',
   ),
-  sv(
+  svPlus(
     'c02-g',
     2,
-    adjn('The', 'loose', 'floorboards'),
-    v('groaned', 'groan', 'Vint'),
-    'The floorboards made a noise underfoot.',
+    postmod('A', 'box', pp('of', bare('tools'))),
+    v('fell', 'fall', 'Vint'),
+    adv('downstairs'),
+    'A container of equipment dropped to the floor below.',
   ),
   sv(
     'c02-h',
     2,
-    adjn('The', 'distant', 'thunder'),
-    v('rumbled', 'rumble', 'Vint'),
-    'Thunder sounded a long way off.',
+    postmod('The', 'children', pp('in', det('the', 'yard'))),
+    v('shouted', 'shout', 'Vint'),
+    'The children outside called out.',
   ),
-  sv(
+  svPlus(
     'c02-i',
     2,
-    adjn('The', 'empty', 'bottle'),
-    v('rolled', 'roll', 'Vint'),
-    'The bottle went along the floor on its side.',
+    adjn('The', 'last', 'bus'),
+    v('left', 'leave', 'Vint'),
+    pp('after', bare('midnight')),
+    'The final bus departed once the day had turned.',
   ),
   sv(
     'c02-j',
     2,
-    adjn('The', 'tired', 'engine'),
-    v('sputtered', 'sputter', 'Vint'),
-    'The worn-out engine ran unevenly.',
+    postmod('The', 'lock', pp('on', det('the', 'shed'))),
+    v('rusted', 'rust', 'Vint'),
+    'The outhouse lock corroded.',
   ),
 ];

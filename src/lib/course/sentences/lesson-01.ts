@@ -1,20 +1,81 @@
 /**
  * Lesson 1 — Introduction. The frame, found with guidance.
  *
- * Every one is a subject and a one-word predicate, so the only decision on
- * screen is where the sentence splits.
+ * The built set put the verb last in all ten, so "cut before the last word"
+ * scored full marks without any idea of what a subject is. These grow the
+ * predicate as often as the subject, and item 5 is the one that breaks the
+ * shortcut hardest: a one-word subject against a four-word predicate.
  */
-import { det, sv, v } from './shape.ts';
+import { adjn, adv, bare, det, numn, phrasal, postmod, pp, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_01 = [
-  sv('c01-a', 1, det('The', 'kettle'), v('boiled', 'boil', 'Vint'), 'The kettle came to the boil.'),
-  sv('c01-b', 1, det('The', 'door'), v('creaked', 'creak', 'Vint'), 'The door made a noise.'),
-  sv('c01-c', 1, det('The', 'audience'), v('clapped', 'clap', 'Vint'), 'The audience applauded.'),
-  sv('c01-d', 1, det('The', 'candle'), v('flickered', 'flicker', 'Vint'), 'The candle wavered.'),
-  sv('c01-e', 1, det('The', 'train'), v('departed', 'depart', 'Vint'), 'The train left.'),
-  sv('c01-f', 1, det('The', 'bridge'), v('collapsed', 'collapse', 'Vint'), 'The bridge fell down.'),
-  sv('c01-g', 1, det('The', 'machine'), v('stopped', 'stop', 'Vint'), 'The machine halted.'),
-  sv('c01-h', 1, det('The', 'rain'), v('eased', 'ease', 'Vint'), 'The rain grew lighter.'),
-  sv('c01-i', 1, det('The', 'lamp'), v('glowed', 'glow', 'Vint'), 'The lamp gave off light.'),
-  sv('c01-j', 1, det('The', 'phone'), v('rang', 'ring', 'Vint'), 'The phone sounded.'),
+  sv('c01-a', 1, bare('Birds'), v('sing', 'sing', 'Vint'), 'Birds make song.'),
+  svPlus(
+    'c01-b',
+    1,
+    det('The', 'bell'),
+    v('rang', 'ring', 'Vint'),
+    adv('twice'),
+    'The bell sounded two times.',
+  ),
+  sv(
+    'c01-c',
+    1,
+    det('Those', 'lanterns'),
+    v('flickered', 'flicker', 'Vint'),
+    'Those lamps wavered.',
+  ),
+  svPlus(
+    'c01-d',
+    1,
+    adjn('The', 'old', 'gate'),
+    v('creaked', 'creak', 'Vint'),
+    adv('loudly'),
+    'The worn gate made a loud noise.',
+  ),
+  svPlus(
+    'c01-e',
+    1,
+    bare('Birds'),
+    v('sang', 'sing', 'Vint'),
+    pp('through', det('the', 'evening')),
+    'Birds kept singing until night.',
+  ),
+  sv(
+    'c01-f',
+    1,
+    postmod('The', 'dog', pp('by', det('the', 'door'))),
+    v('barked', 'bark', 'Vint'),
+    'The dog at the entrance made a noise.',
+  ),
+  svPlus(
+    'c01-g',
+    1,
+    det('My', 'brother'),
+    v('sneezed', 'sneeze', 'Vint'),
+    adv('twice'),
+    'My brother sneezed two times.',
+  ),
+  sv(
+    'c01-h',
+    1,
+    postmod('The', 'woman', pp('in', bare('blue'))),
+    v('smiled', 'smile', 'Vint'),
+    'The woman wearing blue looked pleased.',
+  ),
+  svPlus(
+    'c01-i',
+    1,
+    numn('Two', 'birds'),
+    v('scattered', 'scatter', 'Vint'),
+    adv('suddenly'),
+    'A pair of birds flew apart at once.',
+  ),
+  sv(
+    'c01-j',
+    1,
+    det('The', 'kettle'),
+    phrasal(v('boiled', 'boil', 'Vint'), 'over'),
+    'The kettle boiled and spilled.',
+  ),
 ];

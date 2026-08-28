@@ -12,18 +12,18 @@ the subject, which leaves the shortcut intact.
 
 ## Sentences
 
-| #   | Sentence                      | The step                                              |
-| --- | ----------------------------- | ----------------------------------------------------- |
-| 1   | Birds sing.                   | the frame at its smallest                             |
-| 2   | The bell rang twice.          | the predicate grows, so the cut moves off the end     |
-| 3   | Those lanterns flickered.     | back to two parts, with a longer subject              |
-| 4   | The old gate creaked loudly.  | both halves carry more than one word                  |
-| 5   | Birds sang all evening.       | a one-word subject against a three-word predicate     |
-| 6   | The dog by the door barked.   | the subject holds a phrase; the verb is last anyway   |
-| 7   | My brother sneezed twice.     | short subject, short predicate, cut in the middle     |
-| 8   | The woman in blue smiled.     | subject phrase again, now with the verb last          |
-| 9   | Two birds scattered suddenly. | the predicate is the longer half                      |
-| 10  | The kettle boiled over.       | two words after the subject, neither of them a phrase |
+| #   | Sentence                        | The step                                              |
+| --- | ------------------------------- | ----------------------------------------------------- |
+| 1   | Birds sing.                     | the frame at its smallest                             |
+| 2   | The bell rang twice.            | the predicate grows, so the cut moves off the end     |
+| 3   | Those lanterns flickered.       | back to two parts, with a longer subject              |
+| 4   | The old gate creaked loudly.    | both halves carry more than one word                  |
+| 5   | Birds sang through the evening. | a one-word subject against a four-word predicate      |
+| 6   | The dog by the door barked.     | the subject holds a phrase; the verb is last anyway   |
+| 7   | My brother sneezed twice.       | short subject, short predicate, cut in the middle     |
+| 8   | The woman in blue smiled.       | subject phrase again, now with the verb last          |
+| 9   | Two birds scattered suddenly.   | the predicate is the longer half                      |
+| 10  | The kettle boiled over.         | two words after the subject, neither of them a phrase |
 
 ## Notes
 

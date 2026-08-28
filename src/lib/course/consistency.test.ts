@@ -125,6 +125,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
     new: 'an adjective and part of a name',
     out: 'a preposition and a verb particle',
     outside: 'a preposition and an adverb',
+    over: 'a preposition and a verb particle',
     question: 'a noun and a verb',
     repair: 'a noun and a verb',
     rusted: 'an adjective and a verb',

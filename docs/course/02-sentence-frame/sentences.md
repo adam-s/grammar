@@ -21,11 +21,11 @@ than one noun before the verb."_
 | 3   | The kettle boiled on the stove.   | a phrase in the predicate, subject still short    |
 | 4   | The shoes on my feet pinched.     | **two nouns before the verb** — the real question |
 | 5   | The hole in my shoes widened.     | same shape, and now the nearer noun is wrong      |
-| 6   | The key to the cabinet vanished.  | a tighter phrase, harder to see the boundary      |
+| 6   | The crack in the ceiling spread.  | a tighter phrase, harder to see the boundary      |
 | 7   | A box of tools fell downstairs.   | both halves hold a phrase                         |
 | 8   | The children in the yard shouted. | back to a plain phrase, subject longer            |
 | 9   | The last bus left after midnight. | the predicate carries the phrase this time        |
-| 10  | My neighbour's bicycle broke.     | a possessive in the subject †                     |
+| 10  | The lock on the shed rusted.      | the boundary again, with a familiar phrase        |
 
 ## Notes
 

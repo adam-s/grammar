@@ -76,7 +76,19 @@ describe('every answer a lesson asks for is graded right', () => {
  */
 describe('the grader can still say no', () => {
   const lesson = COURSE_LESSONS[0]!;
-  const sentence = lesson.sentences[0]!;
+  // Both assertions below name the span [0, 1], so they need a sentence whose
+  // subject is exactly the first two words. Taking sentence[0] and hoping was
+  // enough until lesson 1 opened on *Birds sing*, whose subject is one word —
+  // and then the control failed for a reason that had nothing to do with the
+  // grader. Pick the sentence the test actually needs.
+  const sentence = lesson.sentences.find((s) => {
+    const cs = s.readings[0]!.constituents;
+    return Object.keys(cs).some((id) => {
+      const c = cs[id]!;
+      return c.function === 'subject' && c.span[0] === 0 && c.span[1] === 1;
+    });
+  })!;
+  assert.ok(sentence, 'lesson 1 has no sentence with a two-word subject');
 
   it('calls a verb phrase over the subject wrong, and says what it is', () => {
     const verdict = gradeForm(sentence, [0, 1], 'VP', 'phrase');
@@ -101,7 +113,15 @@ describe('the grader can still say no', () => {
  */
 describe('a lesson refuses an untaught label, in the module and not just the view', () => {
   const lesson = COURSE_LESSONS[0]!;
-  const sentence = lesson.sentences[0]!;
+  // Same reason as the block above: the control draws an NP over [0, 1], so it
+  // needs a sentence whose subject is those two words.
+  const sentence = lesson.sentences.find((s) => {
+    const cs = s.readings[0]!.constituents;
+    return Object.keys(cs).some((id) => {
+      const c = cs[id]!;
+      return c.function === 'subject' && c.span[0] === 0 && c.span[1] === 1;
+    });
+  })!;
   const scope = scopeThrough(COURSE_LESSONS, lesson.number);
 
   it('offers the word classes as untaught at lesson one, with a reason', () => {
