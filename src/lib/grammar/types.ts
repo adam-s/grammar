@@ -146,10 +146,15 @@ export const PART_KINDS: readonly PartKind[] = ['infinitival', 'verbal'];
  * What an auxiliary is doing.
  *
  * *has*, *is*, *was*, *will* and *did* are one word class and five jobs, and
- * the job is what a reader has to recover: *was repaired* is passive, *was
- * repairing* is not, and the auxiliary is the only difference. Modals are the
- * odd one out — they carry no slots of their own, which is why they sit outside
- * Morenberg's six rather than inside them.
+ * the job is what a reader has to recover. *was repaired* is passive and *was
+ * repairing* is not, and the auxiliary is the one thing they share — the job
+ * is legible only from the verb after it. That is the whole reason this is
+ * stored rather than read off the word: the corpus holds *was* as a passive
+ * auxiliary in `fix-passive` and as a progressive one in lesson 24, and
+ * nothing about the spelling tells them apart.
+ *
+ * Modals are the odd one out — they carry no slots of their own, which is why
+ * they sit outside Morenberg's six rather than inside them.
  */
 export type AuxKind = 'modal' | 'perfect' | 'progressive' | 'passive' | 'do';
 export const AUX_KINDS: readonly AuxKind[] = ['modal', 'perfect', 'progressive', 'passive', 'do'];

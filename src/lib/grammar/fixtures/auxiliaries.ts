@@ -9,8 +9,15 @@ import { sentence } from '../entry.ts';
  * premodifiers would have been the cheap wrong answer: a premodifier narrows
  * its head, and *has* does not narrow *repairing*, it tenses it.
  *
- * Two rather than one, because `auxiliary` is the only function in the model
- * that may repeat, and a fixture with one would not prove it.
+ * Two rather than one, because a single auxiliary proves nothing about the
+ * chain: the two are ordered, perfect before progressive, and only a pair
+ * shows that the order is a fact rather than an accident of having one.
+ *
+ * `auxiliary` is not the only function that may repeat, though this comment
+ * said so for a long time. `coordinate` repeats in `fix-coordination`,
+ * `marker` in `fix-two-markers`, `premodifier` in `fix-nominal` and `flat` in
+ * `fix-determinative-and-name` — four of them, and one of those fixtures
+ * exists for exactly that reason.
  */
 export const auxiliaryChain = sentence(
   'fix-auxiliary-chain',
