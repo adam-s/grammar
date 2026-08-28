@@ -172,6 +172,33 @@ export type ClauseFunction =
   | 'indirectObject'
   | 'subjectComplement'
   | 'objectComplement'
+  /**
+   * How, when, where, how often — and all of them under one label, on purpose.
+   *
+   * The usual taxonomy splits adverbs seven ways: manner, time, place,
+   * frequency, degree, conjunctive, evaluative. Three of those are structural
+   * here and are already distinguished, without needing a name of their own:
+   *
+   * - **degree** (*very*, *almost*, *too*) is `Adv` with function
+   *   `premodifier`, sitting inside the `AdjP` or `DP` it intensifies;
+   * - **evaluative** (*fortunately*, *frankly*) is `AdvP` with function
+   *   `supplement`, sitting outside the clause frame altogether;
+   * - everything else is this.
+   *
+   * The other four — manner, time, place, frequency — are deliberately not
+   * separated, because nothing in the syntax separates them. *He ran quickly*
+   * and *He ran yesterday* are the same tree. No substitution, movement or
+   * omission test tells them apart; only knowing what the word means does, and
+   * a label a learner can only reach by meaning is the one thing this model
+   * has refused everywhere else.
+   *
+   * **Conjunctive adverbs have no home.** *however*, *therefore*, *meanwhile*
+   * are not `Conj` — that is *and*, *but*, *or*, which join inside one
+   * sentence — and calling them `supplement` records that they sit outside the
+   * frame while losing the thing that makes them what they are, which is that
+   * they point back at the sentence before. Neither corpus contains one. If
+   * they are ever wanted, they need a decision here first, not a sentence.
+   */
   | 'adverbial';
 
 export type PhraseInternalFunction =

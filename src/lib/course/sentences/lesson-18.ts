@@ -5,6 +5,25 @@
  * lesson 14. The clause patterns vary because an optional adverbial can hang
  * off any of them, and ten sentences that were all S V would have taught that
  * adverbials belong to intransitive verbs.
+ *
+ * **Three things this lesson does not yet do**, recorded here because they are
+ * the next thing anyone writing sentences for it should fix:
+ *
+ * 1. **Every adverb phrase in both corpora is one word.** All 27 of them, while
+ *    12 of the 76 adjective phrases hold more than one. So the lesson teaches a
+ *    phrase layer that has never contained anything but its head, and a learner
+ *    is right to ask what the `AdvP` node is for. *very quickly*, *far too late*
+ *    would answer it — and no fixture proves that shape either, so the contract
+ *    set needs one first.
+ * 2. **Place adverbs are one word: *outside*.** No *here*, *there*,
+ *    *everywhere*, *upstairs*. Place as a ROLE is well covered by prepositional
+ *    phrases, so the gap is narrow, but it is real.
+ * 3. **Frequency is two: *again*, *twice*.** No *always*, *never*, *often*,
+ *    *rarely*, which is the commonest kind of adverb a learner meets.
+ *
+ * The semantic types themselves — manner, time, place, frequency — are not
+ * labelled and should not be; see `ClauseFunction.adverbial` in `types.ts` for
+ * why. Showing the range is the point, not naming it.
  */
 import { adj, adv, det, pron, svPlus, svcPlus, svoPlus, v } from './shape.ts';
 

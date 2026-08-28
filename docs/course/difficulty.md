@@ -176,6 +176,13 @@ is the note saying it should.
 
 11 + 9 + 1 = 21.
 
+**A twelfth Course 1 item is not in that count, because no fixture proves it
+either.** `AdvP > Adv/premodifier` — an adverb phrase with something in front of
+its head, _very quickly_. All 27 adverb phrases across both corpora are a single
+word, while 12 of 76 adjective phrases are not, so lesson 18 teaches a phrase
+layer that has never held anything but its head. The contract set needs the
+fixture before the lesson can have the sentence.
+
 ## Where this came from
 
 The original "Materials to author" section of [README.md](README.md) asked for
