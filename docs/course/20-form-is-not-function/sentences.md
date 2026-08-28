@@ -2,11 +2,15 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**This lesson is built correctly and these are its own sentences, unchanged.**
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**This lesson was built correctly, and these are its own sentences, unchanged.**
 Five matched pairs, each holding the prepositional phrase word for word and
 changing only what it is doing. It is the design the rest of the course should
 copy, and the criticism of lessons 8 to 14, 17, 18, 25 and 27 in these dossiers
-amounts to saying they are not this.
+amounts to saying they were not this.
 
 ## Sentences
 
@@ -25,9 +29,9 @@ amounts to saying they are not this.
 
 ## Notes
 
-The removal test is the only way through. The built Lesson 14 corpus gives it no
-optional adverbial to reject; Lesson 14's proposal now repairs that earlier gap.
-Here the test is interleaved across five matched pairs.
+The removal test is the only way through. The lesson 14 corpus this replaced gave
+it no optional adverbial to reject; lesson 14 now carries one. Here the test is
+interleaved across five matched pairs.
 
 Three distinct asked-shapes looks low against lesson 16's six and is not a
 defect. The pairs are meant to look alike; that is the whole design.

@@ -2,13 +2,15 @@
  * Lesson 18 — Adverbs and adverb phrases. Now with phrases, and with positions.
  *
  * The lesson was called "Adverbs and adverb phrases" and there was no adverb
- * phrase longer than one word anywhere in either corpus. Items 3 and 7 are the
- * missing shape — lesson 17 spends all ten sentences on a degree word in front
- * of an adjective, and this is the same structure one class over.
+ * phrase longer than one word anywhere in either corpus. *Our guests arrived
+ * unusually early* and *The old clock ticked remarkably loudly* are the missing
+ * shape — lesson 17 spends all ten sentences on a degree word in front of an
+ * adjective, and this is the same structure one class over.
  *
- * Every built adverb was clause-final. Item 4 fronts one, item 5 puts one
- * between the subject and the verb, and item 9 puts one inside an adjective
- * phrase, which is `Adv` doing a different job one level down.
+ * Every built adverb was clause-final. *Yesterday the children played* fronts
+ * one, *The children quietly left* puts one between the subject and the verb, and
+ * *The road was surprisingly narrow* puts one inside an adjective phrase, which
+ * is `Adv` doing a different job one level down.
  */
 import {
   advadj,

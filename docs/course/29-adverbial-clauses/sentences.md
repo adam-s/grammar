@@ -2,12 +2,17 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut:** every adverbial clause in the built lesson comes **after** the
-main clause. Ten of ten. Position is most of what makes an adverbial clause hard
-to find, and it is the one thing the lesson holds constant.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-The marker inventory is the built lesson's strength — _because, after, until,
-when, once, whenever_ — and it is kept.
+**The shortcut:** every adverbial clause in the lesson this replaced came
+**after** the main clause. Ten of ten. Position is most of what makes an
+adverbial clause hard to find, and it was the one thing that lesson held
+constant.
+
+The marker inventory was its strength — _because, after, until, when, once,
+whenever_ — and it is kept.
 
 ## Sentences
 
@@ -26,11 +31,14 @@ when, once, whenever_ — and it is kept.
 
 ## Notes
 
-Items 1/4, 3/5 and 7/8 are three controlled pairs: the same words in two
-positions. Fronting is the definitive test that a clause is an adverbial rather
-than a complement, and the built lesson never uses it.
+_The lamp flickered before the power failed_, _We waited because the gate was
+locked_ and _She waved when the last bus arrived_ each appear twice, once with
+the clause fronted: three controlled pairs, the same words in two positions.
+Fronting is the definitive test that a clause is an adverbial rather than a
+complement, and the corpus this replaced never uses it.
 
-**The commas in items 4, 5 and 8 are the point of the pairs, not decoration.**
+**The commas in the three fronted clauses are the point of the pairs, not
+decoration.**
 Lesson 39 exists to say punctuation is evidence and currently has one punctuation
 pattern; a fronted adverbial clause is the second, and it comes from here.
 

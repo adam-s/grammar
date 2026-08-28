@@ -2,14 +2,19 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**Two shortcuts to defeat.** In the built corpus every sentence is three words
-in the shape `The N V.`, so the verb is the last word and it is the only word
-that could be one — the tense test never has a wrong answer to reject. And 62 of
-the 70 Stage 1 verbs end in _-ed_, so "find the _-ed_ word" nearly always works.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-The corpus being uniformly past tense is **not** the problem. The learner does
-the shifting, and _The visitors waited_ → _Today the visitors **wait**_ works
-fine. What is missing is a competitor.
+**Two shortcuts to defeat.** In the corpus this replaced every sentence was
+three words in the shape `The N V.`, so the verb was the last word and the only
+word that could be one — the tense test never had a wrong answer to reject. And
+62 of its 70 Stage 1 verbs ended in _-ed_, so "find the _-ed_ word" nearly always
+worked.
+
+The uniform past tense was **not** the problem. The learner does the shifting,
+and _The visitors waited_ → _Today the visitors **wait**_ works fine. What was
+missing was a competitor.
 
 ## Sentences
 
@@ -28,14 +33,14 @@ fine. What is missing is a competitor.
 
 ## Notes
 
-Items 5, 6 and 7 are the point. _drive_, _walk_ and _swimmers/swam_ each put a
-word in the sentence that reads as an action and is not the verb. Shifting the
-sentence in time settles it: _Today the drive tires them_ changes _tired_, never
-_drive_.
+_The drive tired them_, _The long walk exhausted us_ and _Those swimmers swam
+quickly_ are the point. _drive_, _walk_ and _swimmers/swam_ each put a word in
+the sentence that reads as an action and is not the verb. Shifting the sentence
+in time settles it: _Today the drive tires them_ changes _tired_, never _drive_.
 
-Four of the ten verbs are irregular — _flew, swam, sank_, and _ran_ if item 8 is
-rewritten — against one in ten in the built corpus. Two of the ten end on the
-verb, against three of ten built.
+Three of the ten verbs are irregular — _flew_, _swam_ and _sank_ — against one in
+ten in the corpus this replaced. Two of the ten end on the verb, against three of
+ten there.
 
 The strongest competitor of all is an auxiliary, and it cannot be used here:
 `form:Aux` arrives at lesson 24. That is the scope ladder working, and it means

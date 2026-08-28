@@ -2,9 +2,13 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut to defeat:** every sentence in the built lesson has exactly one
-noun, so the head is never in doubt. A lesson called _Find the head_ in which the
-head is the only candidate is a naming exercise.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The shortcut to defeat:** every sentence in the lesson this replaced had
+exactly one noun, so the head was never in doubt. A lesson called _Find the head_
+in which the head is the only candidate is a naming exercise.
 
 Two decoys are needed: a second noun that is **not** the head, and a phrase after
 the head so the last noun is the wrong one.
@@ -26,9 +30,10 @@ the head so the last noun is the wrong one.
 
 ## Notes
 
-Five of the ten put the head somewhere other than last, against none in the built
-corpus. Items 6, 7 and 10 use _of_ and _to_, which bind more tightly than a
-locative phrase and are harder to see past.
+Five of the ten put the head somewhere other than last, against none in the
+corpus this replaced. _A box of tools fell_, _The key to the cabinet vanished_
+and _The lid of the box cracked_ use _of_ and _to_, which bind more tightly than
+a locative phrase and are harder to see past.
 
 **The agreement test is what these are for.** _The lid of the box **cracked**_
 takes a singular verb however many boxes there are, and the plural version — _The
@@ -36,6 +41,7 @@ lids of the box cracked_ — makes it visible. That test is the one that survive
 into real writing, where the nearest noun pulls the verb wrongly, and it appears
 nowhere in the app.
 
-**Item 9 builds today.** `NP > N/flat` is on
+**_New York glittered_ is where `NP > N/flat` enters the course.** It was on
 [../difficulty.md](../difficulty.md)'s list of shapes proved by a fixture and
-used by no lesson, and `node scripts/probe-constructions.mjs` confirms it.
+used by no lesson. It is built here, and a name is the one place where no noun in
+the phrase is its head.

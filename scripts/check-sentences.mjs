@@ -15,6 +15,14 @@
  *   `metrics.tokens` counts punctuation, so this does too;
  * - every sentence says what its step is, because a step nobody can name is the
  *   length ladder wearing a difficulty ladder's label;
+ * - nothing in the file refers to a sentence by its number. The order is
+ *   derived from the accumulation contract, so a row number is a fact about
+ *   today's arrangement, and sixty-eight cells and a hundred and thirty-one
+ *   sentences of prose once said things about rows that had moved;
+ * - a step cell that names a construction — preposition, particle, object
+ *   complement, passive, appositive — is checked against the tree the course
+ *   actually stores for that sentence. That is what catches a cell describing
+ *   the sentence next to it;
  * - the directory names a real lesson, or is an optional `NNx-` companion;
  * - `proposal-review.md`, the authoring ledger, holds exactly the same sentences
  *   in exactly the same order. The ledger is a second copy of all 413 proposals,
@@ -87,6 +95,23 @@ for (const dir of dirs) {
     }
   });
 
+  // Nothing may name a row by its number — not a step cell, not the notes below
+  // the table. The order is derived, so a number written down is a claim about
+  // an arrangement that the next reorder will move out from under it. Name the
+  // sentence instead.
+  readFileSync(file, 'utf8')
+    .split('\n')
+    .forEach((line, i) => {
+      const ordinal = line.match(/\b(items?|rows?|sentences?)\s+(\d+)\b/i);
+      if (!ordinal) return;
+      // The table's own `| 4 |` column is the numbering; it is allowed to exist.
+      if (/^\|\s*\d+\s*\|/.test(line)) return;
+      problems.push(
+        `${dir}:${i + 1} refers to "${ordinal[0]}". The order is derived — ` +
+          'name the sentence, not its position.',
+      );
+    });
+
   const t = ss.map((s) => tokens(s.text.replace(/[*_`†]/g, '')));
   if (t.length) {
     const spread = Math.max(...t) - Math.min(...t);
@@ -102,6 +127,10 @@ for (const dir of dirs) {
 }
 
 // ── the ledger ──────────────────────────────────────────────────────────────
+/** The ledger's last column, per `<dir>#<row>`: what it claims about that row. */
+const ledgerRows = new Map();
+const ledgerClaim = (dir, n) => ledgerRows.get(`${dir}#${n}`) ?? null;
+
 const LEDGER = `${DOCS}/proposal-review.md`;
 // Its absence used to skip the whole block and still report "no problems", which
 // is a check that passes by not running. If the ledger is required it has to be
@@ -125,8 +154,18 @@ if (existsSync(LEDGER)) {
       ledger.set(heading, []);
       continue;
     }
-    const row = line.match(/^\|\s*(\d+)\s*\|([^|]+)\|/);
-    if (row && heading) ledger.get(heading).push({ n: Number(row[1]), text: row[2].trim() });
+    const row = line.match(/^\|\s*(\d+)\s*\|([^|]+)\|(.*)$/);
+    if (row && heading) {
+      const columns = row[3]
+        .split('|')
+        .map((c) => c.trim())
+        .filter((c) => c.length);
+      ledger.get(heading).push({
+        n: Number(row[1]),
+        text: row[2].trim(),
+        last: columns[columns.length - 1] ?? '',
+      });
+    }
   }
 
   // A ledger heading says "Lesson 7" or "Lesson 18a"; a directory is "07-pronouns".
@@ -140,6 +179,7 @@ if (existsSync(LEDGER)) {
   const seen = new Set();
   for (const [h, rows] of ledger) {
     const dir = dirFor(h);
+    if (dir) for (const r of rows) ledgerRows.set(`${dir}#${r.n}`, r.last);
     if (!dir) {
       problems.push(`ledger: "Lesson ${h}" matches no lesson folder`);
       continue;
@@ -207,6 +247,183 @@ for (const lesson of COURSE_LESSONS) {
   });
 }
 
+/**
+ * A step cell that names a construction, against the tree the course stores.
+ *
+ * The step column is the only prose that travels with a sentence, and it is the
+ * prose most likely to end up on the wrong row. Four cells in the particle
+ * lesson called a particle a preposition and a preposition a particle; one
+ * nominal clause was called a fused relative; a participial was called a
+ * passive the model deliberately does not record. Every one of those is a word
+ * the tree can be asked about.
+ *
+ * A cell that says what a sentence is NOT is left alone — *not a gerund* is a
+ * true thing to say about a progressive.
+ */
+const factsOf = (sentence) => {
+  const f = new Set();
+  for (const reading of sentence.readings) {
+    for (const c of Object.values(reading.constituents)) {
+      f.add(`form:${c.form}`);
+      if (c.function) f.add(`fn:${c.function}`);
+      if (c.verbType) f.add(`vt:${c.verbType}`);
+      if (c.partKind) f.add(`part:${c.partKind}`);
+      if (c.voice) f.add(`voice:${c.voice}`);
+      if (c.clauseKind) f.add(`kind:${c.clauseKind}`);
+      if (c.finiteness) f.add(`fin:${c.finiteness}`);
+      if (c.fusedWith) f.add('fused');
+      if (c.gap) f.add('gap');
+    }
+  }
+  return f;
+};
+
+const TERMS = [
+  { word: /\bpreposition(al)?\b/i, held: (f) => f.has('form:PP') || f.has('form:P') },
+  { word: /\bparticle\b/i, held: (f) => f.has('part:verbal') },
+  { word: /\bobject complement\b/i, held: (f) => f.has('fn:objectComplement') },
+  {
+    // In the passive the indirect object has become the subject, so a step that
+    // says so is right about a tree that no longer holds one.
+    word: /\btwo objects\b|\bindirect object\b/i,
+    held: (f) => f.has('fn:indirectObject') || f.has('voice:passive'),
+  },
+  { word: /\bpassive\b/i, held: (f) => f.has('voice:passive') },
+  { word: /\bappositive\b/i, held: (f) => f.has('fn:appositive') },
+  { word: /\bfused\b/i, held: (f) => f.has('fused') },
+  { word: /\brelative\b/i, held: (f) => f.has('kind:relative') },
+  { word: /\bauxiliar/i, held: (f) => f.has('fn:auxiliary') },
+  { word: /\bpronoun\b/i, held: (f) => f.has('form:Pron') },
+  { word: /\binfinitive\b|\binfinitival\b/i, held: (f) => f.has('fin:infinitival') },
+  { word: /\bgap\b/i, held: (f) => f.has('gap') },
+];
+
+let termsChecked = 0;
+for (const lesson of COURSE_LESSONS) {
+  const dir = dirs.find((d) => d.startsWith(String(lesson.number).padStart(2, '0') + '-'));
+  if (!dir || !existsSync(`${DOCS}/${dir}/sentences.md`)) continue;
+  const rows = readSentences(`${DOCS}/${dir}/sentences.md`);
+  lesson.sentences.forEach((sentence, i) => {
+    const row = rows[i];
+    if (!row) return;
+    const step = row.step.replace(/[*_`†]/g, '');
+    // A denial is a claim about what the tree does not hold, and this check
+    // cannot tell the two apart, so it stays out of them.
+    if (/\b(not|never|no|nothing)\b/i.test(step)) return;
+    const facts = factsOf(sentence);
+    const missed = TERMS.filter((term) => term.word.test(step) && !term.held(facts));
+    termsChecked += TERMS.filter((term) => term.word.test(step)).length;
+    if (missed.length) {
+      problems.push(
+        `${dir} row ${i + 1}: the step says "${step}" and no reading of ` +
+          `"${sentence.text}" holds one. A step describes its own sentence.`,
+      );
+    }
+  });
+}
+
+/**
+ * A page may not say a decision is unused while the course uses it.
+ *
+ * These pages measure two corpora: the one the sentences replaced, in the past
+ * tense, and the live rows a reader reaches a few lines later. The openings were
+ * written against the first and adopted as the second, so lesson 24 said
+ * `aux:do` appeared in none of the four hundred sentences directly above two
+ * sentences that use it.
+ *
+ * A decision key is written the way the palette writes it — `aux:do`,
+ * `form:Interj` — so a claim about one is checkable. A sentence that says a
+ * decision is absent has to be about the corpus that no longer exists, and say
+ * so.
+ */
+const USED = new Set();
+for (const lesson of COURSE_LESSONS) {
+  for (const sentence of lesson.sentences) {
+    for (const reading of sentence.readings) {
+      for (const c of Object.values(reading.constituents)) {
+        USED.add(`form:${c.form}`);
+        if (c.function) USED.add(`func:${c.function}`);
+        if (c.verbType) USED.add(`vt:${c.verbType}`);
+        if (c.clauseKind) USED.add(`kind:${c.clauseKind}`);
+        if (c.auxKind) USED.add(`aux:${c.auxKind}`);
+        if (c.finiteness) USED.add(`fin:${c.finiteness}`);
+        if (c.partKind) USED.add(`part:${c.partKind}`);
+        if (c.voice) USED.add(`voice:${c.voice}`);
+      }
+    }
+  }
+}
+
+/**
+ * Claims about a decision going UNUSED, not every sentence with "no" in it.
+ * `func:supplement` "fills no slot" is a definition; `aux:do` "appears nowhere
+ * in the course" is a measurement, and measurements go stale.
+ */
+const ABSENCE =
+  /(appears? (?:nowhere|in none)|used in none|never (?:used|exercised|appears)|taught and never|no (?:course )?sentence (?:uses|has|carries|contains)|none of the (?:400|four hundred)|nowhere in the (?:course|corpus)|unused)/i;
+/** The past tense, or a phrase that names the corpus being talked about. */
+const SCOPED = /\b(was|were|had|did|used to|replaced|before the conversion|this replaced)\b/i;
+
+let claimsChecked = 0;
+for (const dir of dirs) {
+  for (const name of ['sentences.md', 'README.md']) {
+    const file = `${DOCS}/${dir}/${name}`;
+    if (!existsSync(file)) continue;
+    const text = readFileSync(file, 'utf8');
+    // Sentences, roughly: enough to keep a claim and its scope together.
+    const prose = text
+      .split('\n')
+      // A table row is a list of cells, not a claim with a scope.
+      .filter((line) => !/^\s*\|/.test(line))
+      .join(' ');
+    for (const claim of prose.split(/(?<=[.!?])\s+/)) {
+      const keys = [...claim.matchAll(/`((?:form|func|vt|kind|aux|fin|part|voice):[A-Za-z]+)`/g)];
+      if (!keys.length || !ABSENCE.test(claim)) continue;
+      for (const [, key] of keys) {
+        if (!USED.has(key)) continue;
+        claimsChecked += 1;
+        if (!SCOPED.test(claim)) {
+          problems.push(
+            `${dir}/${name}: "${claim.trim().slice(0, 120)}" says ${key} is absent, ` +
+              'and the course uses it. Say which corpus, in the past tense.',
+          );
+        }
+      }
+    }
+  }
+}
+
+/**
+ * The optional lessons have proposals and no built sentences, and the ledger
+ * says of each row whether it is in the corpus. That is the one per-row fact
+ * the ledger carries, so it is the one worth checking.
+ */
+const BUILT = new Set(
+  COURSE_LESSONS.flatMap((lesson) =>
+    lesson.sentences.map((s) => s.text.replace(/\s+/g, ' ').trim().toLowerCase()),
+  ),
+);
+for (const dir of dirs.filter((d) => /^\d\d[a-z]-/.test(d))) {
+  const file = `${DOCS}/${dir}/sentences.md`;
+  if (!existsSync(file)) continue;
+  for (const row of readSentences(file)) {
+    const text = row.text
+      .replace(/[*_`†]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const inCorpus = BUILT.has(text.toLowerCase());
+    const claim = ledgerClaim(dir, row.n);
+    if (claim === null) continue;
+    const says = /in the corpus/i.test(claim);
+    if (says !== inCorpus) {
+      problems.push(
+        `ledger: ${dir} row ${row.n} — "${text}" is ${inCorpus ? '' : 'not '}built, ` +
+          `and the ledger says "${claim}".`,
+      );
+    }
+  }
+}
+
 const withFile = dirs.filter((d) => existsSync(`${DOCS}/${d}/sentences.md`));
 console.log(`sentences.md: ${withFile.length} of ${dirs.length} lesson folders`);
 const missing = [...ids].filter((id) => !existsSync(`${DOCS}/${id}/sentences.md`));
@@ -221,4 +438,6 @@ if (problems.length) {
   for (const p of problems) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`checked ${checked} files, no problems`);
+console.log(
+  `checked ${checked} files, ${termsChecked} step claims and ${claimsChecked} absence claims, no problems`,
+);

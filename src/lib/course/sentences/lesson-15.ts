@@ -1,8 +1,9 @@
 /**
  * Lesson 15 — The six types, one procedure. Where counting stops working.
  *
- * Items 1 to 7 are the paradigm, one sentence per frame, in the order the verb
- * adds demands. Items 8 and 9 are why the procedure is needed: five words each,
+ * The lesson walks the frames in the order the verb adds demands, from
+ * intransitive to an object with a required place. *They called her a taxi* and
+ * *They called her a genius* are why the procedure is needed: five words each,
  * three noun phrases each, and only the `be` test tells them apart — *she is a
  * genius* holds, *she is a taxi* does not.
  *

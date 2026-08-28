@@ -2,11 +2,15 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**This is the most clearly broken lesson in Stage 2.** Measured: all ten of its
-adverbials are obligatory and none is optional, so the removal test — the whole
-point of the lesson — has nothing to reject. And every verb is a form of _be_,
-so the required adverbial is only ever shown in one frame. The first optional
-adverbial in the entire course arrives at lesson 16.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**This was the most clearly broken lesson in Stage 2.** Measured against the
+corpus this replaced: all ten of its adverbials were obligatory and none optional,
+so the removal test — the whole point of the lesson — had nothing to reject. And
+every verb was a form of _be_, so the required adverbial was only ever shown in
+one frame. The first optional adverbial in that whole course arrived at lesson 16.
 
 The fix is matched pairs, the same design lesson 20 already uses successfully.
 
@@ -27,12 +31,14 @@ The fix is matched pairs, the same design lesson 20 already uses successfully.
 
 ## Notes
 
-Items 6 and 7 differ by one word, and that word changes whether the phrase can
-be removed. _She opened the box._ is a sentence; _\*She placed the box._ is not.
-Items 9 and 10 do the same with a different verb pair.
+_She placed the box under the bench_ and _She opened the box under the bench_
+differ by one word, and that word changes whether the phrase can be removed. _She
+opened the box._ is a sentence; _\*She placed the box._ is not. _The driver waited
+at the depot_ and _The driver put the engine at the depot_ do the same with a
+different verb pair.
 
-Items 3 and 4 add two object-plus-place frames that the built lesson omits
-entirely. The proposal does not claim a clean no-object SVA example: judgments
+_She put the milk in the fridge_ and _She placed some files on the desk_ add two
+object-plus-place frames that the corpus this replaced omits entirely. The proposal does not claim a clean no-object SVA example: judgments
 about verbs such as _lead_, _live_, and _last_ shift with context, so they are
 poor first evidence for a binary removal test.
 
@@ -44,7 +50,7 @@ was found. Leaving the gap visible is better than filling it with a sentence a
 careful reader would argue with, which is what _The path leads through the
 woods_ was.
 
-Items 9 and 10 reuse the same place phrase. _The driver waited_ keeps the same
+The driver pair reuses one place phrase. _The driver waited_ keeps the same
 meaning; _\*The driver put the engine_ is incomplete. A removal test must hold
 the verb's intended sense still rather than accepting a different use of the
 same spelling.
@@ -55,5 +61,5 @@ classes rather than the lesson's actual idea, and lessons 18 and 19 later teach
 nothing new precisely because it all arrived here. Whether to split the lesson is
 a course-outline question, not a sentence one.
 
-Item 5 is the only single-word adverbial. That is enough for the removal test and
-it keeps the token spread inside the ceiling.
+_Those children played outside_ carries the only single-word adverbial. That is
+enough for the removal test and it keeps the token spread inside the ceiling.

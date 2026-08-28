@@ -5,9 +5,10 @@
  * the whole course at lesson seven of forty, and picks fell against lesson 6.
  * More importantly it never showed the idea the lesson exists for.
  *
- * Items 6 and 7 are that idea in one line: *The man in blue laughed* becomes
- * *He laughed*, never *The he in blue laughed*. Item 9 is the structural
- * evidence for the same thing — a pronoun takes a postmodifier under a `Nom`,
+ * *The man in blue laughed* and *He laughed* are that idea in one line: the
+ * phrase becomes one word, never *The he in blue laughed*. *Nobody in the row
+ * complained* is the structural evidence for the same thing — a pronoun takes a
+ * postmodifier under a `Nom`,
  * exactly as a noun does, because it is filling the noun phrase's slot.
  */
 import { adv, bare, det, postmod, pp, pron, pronmod, sv, svPlus, svMedial, v } from './shape.ts';

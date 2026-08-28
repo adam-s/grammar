@@ -6,11 +6,12 @@
  * tense, and the slot it leaves empty is the OBJECT — the engine is the thing
  * repaired, not the thing repairing. That is the difference from lesson 31.
  *
- * Two shapes the built set lacked. Item 4 is a PRESENT participle, where the
- * empty slot is the subject again; a postmodifying clause in this project had
- * only ever been a past participle or a finite relative. Item 6 puts the clause
- * at the front, which is where it actually confuses readers, and brings the
- * comma lesson 39 needs.
+ * Two shapes the built set lacked. *The child standing by the gate waved* is a
+ * PRESENT participle, where the empty slot is the subject again; a postmodifying
+ * clause in this project had only ever been a past participle or a finite
+ * relative. *Damaged by the flood, the bridge closed* puts the clause at the
+ * front, which is where it actually confuses readers, and brings the comma
+ * lesson 39 needs.
  *
  * The clauses are not marked passive, though they mean one. The model's passive
  * wants a `be` to hang the claim on and a reduced participial has none, so the

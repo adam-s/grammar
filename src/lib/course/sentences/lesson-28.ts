@@ -6,10 +6,10 @@
  * `form:Subord` arrives at lesson 29 — scope working, not an oversight — and
  * lesson 30 is where the marker and the position stop moving together.
  *
- * Item 8 is the difficulty the lesson can have before the marker exists: *The
- * jury accepted the witness* is a complete sentence, so the learner has to read
- * to the end before deciding whether *the witness* is an object or the subject
- * of something.
+ * *The jury noticed the witness hesitated* is the difficulty the lesson can have
+ * before the marker exists: *The jury noticed the witness* is a complete
+ * sentence, so the learner has to read to the end before deciding whether *the
+ * witness* is an object or the subject of something.
  */
 import { adj, adjn, adv, det, pron, svClause, v } from './shape.ts';
 

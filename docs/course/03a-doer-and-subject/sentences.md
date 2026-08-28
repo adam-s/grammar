@@ -3,9 +3,13 @@
 **Optional.** See [../optional-lessons.md](../optional-lessons.md) and
 [README.md](README.md).
 
+**Status:** an optional companion, and not in `COURSE_LESSONS`. Some of these
+sentences exist in the built corpus and the rest are not built at all; the
+ledger in [../proposal-review.md](../proposal-review.md) says which, per row.
+
 Three sentences, not ten. An optional lesson is a demonstration, and the
-demonstration is that **all three come out as the same tree**. _The audience
-clapped_ is in lesson 1. The other two need approved parses before their diagrams
+demonstration is that **all three come out as the same tree**. None of the three
+is built: all of them need a parse and a person's approval before their diagrams
 can appear on the page.
 
 ## Sentences

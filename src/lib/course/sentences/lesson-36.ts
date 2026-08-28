@@ -5,11 +5,12 @@
  * same pick count every time — the most uniform lesson in the course. Every
  * gerund was a subject with an object inside it.
  *
- * Items 4 and 5 put the clause in an object slot, items 6 and 9 after a
- * preposition. Item 7 is the pair that matters: *auditing the ledger* appears
- * once after an auxiliary, where it is the main verb, and once as a subject,
- * where it is a clause. Same three words, different job, and lesson 24 is what
- * makes the first one buildable.
+ * *The children avoided crossing the road* and *She enjoys reading maps* put the
+ * clause in an object slot; *We finished after packing every lamp* and *She
+ * apologised for arriving late* put it after a preposition. *Auditing the ledger
+ * revealed an error* and *The clerk was auditing the ledger* are the pair that
+ * matters: the same three words are a clause in one and the main verb in the
+ * other, and lesson 24 is what makes the second one buildable.
  */
 import {
   adv,

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
 import {
+  anchorsFor,
   asConstituents,
   canWrap,
   emptyBuild,
@@ -21,8 +22,9 @@ import {
   wrap,
   type BuildState,
 } from './builder.ts';
+import { build, gap, n, pt, w } from './build.ts';
 import { punctuation, vtr } from './fixtures.ts';
-import type { Reading, Word } from './types.ts';
+import type { Form, Func, Reading, Word } from './types.ts';
 
 const W = vtr.words; // She repaired the engine.
 
@@ -428,5 +430,76 @@ describe('grouping around punctuation', () => {
     assert.equal(v.state, 'allowed', 'the same span is a relabel, which is allowed');
     const inside = canWrap(wrap(s, words, [9, 9], 'V'), words, [8, 9]);
     assert.equal(inside.state, 'disabled', 'half of a group plus its neighbour is a cut');
+  });
+});
+
+/**
+ * What a tail phrase may belong to.
+ *
+ * `anchorsFor` searches twice — the clause's own children, and the phrases
+ * inside its predicate — and the two lists have to hold the same forms. The
+ * inner one was short of `AdvP`, so *The engine ran more quietly than we
+ * expected* could be stored and never built: the phrase the comparison belongs
+ * to sits inside the verb phrase.
+ */
+describe('anchors for a tail phrase', () => {
+  /** *The engine ran more quietly than we expected.* */
+  const built = build(
+    n(
+      'S',
+      null,
+      [
+        n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'engine')]),
+        n('VP', 'predicate', [
+          w('V', 'head', 'ran', { lemma: 'run', verbType: 'Vint' }),
+          n('AdvP', 'adverbial', [w('Adv', 'premodifier', 'more'), w('Adv', 'head', 'quietly')]),
+        ]),
+        n(
+          'Cl',
+          'postnucleus',
+          [
+            w('Subord', 'marker', 'than'),
+            n('NP', 'subject', [w('Pron', 'head', 'we')]),
+            n('VP', 'predicate', [
+              w('V', 'head', 'expected', { lemma: 'expect', verbType: 'Vtr' }),
+              gap('NP', 'directObject'),
+            ]),
+          ],
+          { clauseKind: 'comparative', clauseType: 'SVO' },
+        ),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    { id: 'r1', status: 'canonical', gloss: 'The engine was quieter than we thought.' },
+  );
+
+  const state: BuildState = { constituents: built.reading.constituents, seq: 0 };
+  const cs = state.constituents;
+  const idOf = (form: Form, fn: Func) =>
+    Object.keys(cs).find((k) => cs[k]!.form === form && cs[k]!.function === fn)!;
+
+  it('includes the adverb phrase inside the predicate', () => {
+    const anchors = anchorsFor(state, idOf('Cl', 'postnucleus'));
+    assert.ok(
+      anchors.includes(idOf('AdvP', 'adverbial')),
+      'the comparison belongs to *more quietly*, which is not a child of the clause',
+    );
+  });
+
+  it('includes the phrases of the clause itself', () => {
+    const anchors = anchorsFor(state, idOf('Cl', 'postnucleus'));
+    assert.ok(anchors.includes(idOf('NP', 'subject')));
+  });
+
+  it('offers nothing that comes after the tail, or the tail itself', () => {
+    const anchors = anchorsFor(state, idOf('Cl', 'postnucleus'));
+    assert.ok(!anchors.includes(idOf('Cl', 'postnucleus')));
+    for (const id of anchors) {
+      assert.ok(
+        cs[id]!.span[0] < cs[idOf('Cl', 'postnucleus')]!.span[0],
+        'a tail belongs to something said earlier',
+      );
+    }
   });
 });

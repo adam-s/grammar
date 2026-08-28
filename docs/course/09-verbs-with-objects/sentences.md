@@ -2,9 +2,13 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut is the heading.** All ten built sentences are `NP V NP.` and take
-an object, so the learner never runs "verb what?" — the lesson title has already
-answered it. Two distinct asked-shapes across ten sentences.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The shortcut is the heading.** All ten sentences this replaced were `NP V NP.`
+and took an object, so the learner never ran "verb what?" — the lesson title had
+already answered it. Two distinct asked-shapes across ten sentences.
 
 ## Sentences
 
@@ -23,13 +27,13 @@ answered it. Two distinct asked-shapes across ten sentences.
 
 ## Notes
 
-Items 5 and 6 are the pair the lesson needs. Same verb, two frames, nine words
-between them, and the only way through is asking whether anything answers _verb
-what?_
+_She opened the gate_ and _The gate opened_ are the pair the lesson needs. Same
+verb, two frames, seven words between them, and the only way through is asking
+whether anything answers _verb what?_
 
-Item 9 is deliberately unpaired. With only the ergative pair a learner could
-decide the test is "does this verb appear twice"; a lone intransitive means every
-sentence has to be checked.
+_The audience hushed_ is deliberately unpaired. With only the ergative pair a
+learner could decide the test is "does this verb appear twice"; a lone
+intransitive means every sentence has to be checked.
 
 The definitive test is the passive — a direct object can become the subject, _the
 belt was replaced_ — and it arrives at lesson 37. Until then substitution is the

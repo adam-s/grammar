@@ -3,10 +3,11 @@
  *
  * The built set put the verb last in all ten and used no verb that appears
  * anywhere else in another sense, so a learner left with the idea that a verb
- * HAS a type. Items 4 and 7 are seeds: *turn* comes back as a linking verb in
- * lesson 10, *open* as a transitive one in lesson 9.
+ * HAS a type. *The tide turned* and *The hatch opened* are seeds: *turn* comes
+ * back as a linking verb in lesson 10, *open* as a transitive one in lesson 9.
  *
- * Item 5 matters for a different reason — something does follow the verb and it
+ * *She smiled at us* matters for a different reason — something does follow the
+ * verb and it
  * is not an object, so "nothing comes after an intransitive verb" fails inside
  * the lesson that would otherwise teach it.
  */

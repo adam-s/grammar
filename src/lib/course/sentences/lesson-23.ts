@@ -6,10 +6,11 @@
  * indistinguishable from `Det`, since a cardinal fills the determiner slot and
  * does nothing else.
  *
- * Item 5 settles the class in five words: *The first two runners* has an
+ * *The first two runners finished* settles the class in five words: it has an
  * article, an ordinal and a cardinal, so *first* cannot be the determiner and
- * *two* cannot be an adjective. Item 7 makes the same point more cheaply, and
- * item 10 is the number as the thing itself.
+ * *two* cannot be an adjective. *Those two windows rattled* makes the same point
+ * more cheaply, and *Those three remained outside* is the number as the thing
+ * itself.
  */
 import {
   adjn,

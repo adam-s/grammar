@@ -6,10 +6,13 @@
  * the position moved together, and the commonest nominal clause in English —
  * *She knew that the belt broke* — was in neither.
  *
- * Items 1 and 2 hold the clause still and move it. Items 7 and 8 are the sharper
- * pair: *that* is a determiner at lesson 6, a marker at 29 and a relativizer at
- * 31, and the course never put two of those side by side. Item 5 puts a nominal
- * clause in a subject-complement slot, which appears nowhere in the course.
+ * *She knew that the belt broke* and *That the belt broke surprised the driver*
+ * hold the clause still and move it. *That storm surprised the driver* and *That
+ * the storm arrived surprised the driver* are the sharper pair: *that* is a
+ * determiner at lesson 6, a marker at 29 and a relativizer at 31, and the course
+ * never put two of those side by side. *The trouble was that the gate failed*
+ * puts a nominal clause in a subject-complement slot, which appears nowhere else
+ * in the course.
  */
 import {
   adj,

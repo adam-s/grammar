@@ -4,11 +4,11 @@
  * The built set was already the best-composed lesson in Stage 3, putting the new
  * premodifier inside every verb type from Stage 2, and that design is kept.
  *
- * Item 4 is the trap it lacked. *kitchen* sits exactly where *narrow* sits in
- * item 1 and is a noun: it takes no comparative and cannot follow a linking
- * verb. Those are lesson 6's determiner tests, run against a different intruder.
- * Item 5 stacks two adjectives, which asks a real `Nom` question the built set
- * never asked.
+ * *The kitchen window rattled* is the trap it lacked. *kitchen* sits exactly
+ * where *narrow* sits in *The narrow gate jammed* and is a noun: it takes no
+ * comparative and cannot follow a linking verb. Those are lesson 6's determiner
+ * tests, run against a different intruder. *The bright red kite fell* stacks two
+ * adjectives, which asks a real `Nom` question the built set never asked.
  */
 import {
   adj,

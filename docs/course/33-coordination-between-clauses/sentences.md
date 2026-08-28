@@ -2,8 +2,12 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**This lesson is sound and the changes are small.** Seven _and_, three _but_, no
-_or_. Three distinct asked-shapes.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**This lesson was sound and the changes are small.** The version this replaced
+had seven _and_, three _but_ and no _or_, across three distinct asked-shapes.
 
 **No sentence has a comma, and that is deliberate.** Lesson 39 is built almost
 entirely on comma-plus-coordinator sentences of exactly this shape, so the two
@@ -27,8 +31,9 @@ and it is worth protecting.
 
 ## Notes
 
-Item 3 adds the missing coordinator. It also uses a modal, which lesson 24
-taught, so the composition costs nothing.
+_We waited or they left_ adds the coordinator the corpus this replaced never
+used. _The tide turned but the ferry waited_ and _The quartet rehearsed but the
+audience left_ do the same for _but_, so all three coordinators are here.
 
 **Both halves stand alone**, and that is what separates coordination from
 subordination. _The kettle boiled._ and _The lights dimmed._ are each sentences;

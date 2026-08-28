@@ -2,11 +2,12 @@
  * Lesson 19 — Prepositional phrases. Depth, which is the one place length is
  * the right answer.
  *
- * This lesson teaches no label; its content is nesting. Item 7 is the deepest
- * sentence in the lesson and the safest, because *of* binds tightly and only one
- * attachment is available. Item 5 is deep and NOT safe — *beside the river* can
- * attach to the path or to the walking — and item 8 is left genuinely two-ways
- * open so lesson 27 has something to come back to.
+ * This lesson teaches no label; its content is nesting. *The lid of the box of
+ * tools cracked* is the deepest sentence in the lesson and the safest, because
+ * *of* binds tightly and only one attachment is available. *We walked along the
+ * path beside the river* is deep and NOT safe — *beside the river* can attach to
+ * the path or to the walking — and *She read her report on the train* is left
+ * genuinely two-ways open so lesson 27 has something to come back to.
  *
  * Nesting inside a noun phrase is unambiguous; stacking after a verb is not, and
  * that contrast is worth an author knowing.

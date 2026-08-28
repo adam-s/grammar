@@ -7,8 +7,9 @@
  * both* a premodifier and a postmodifier, though lesson 16 taught the
  * premodifier five lessons earlier.
  *
- * Item 7 nests inside the noun phrase, which is the safe kind: *of the shed* can
- * only attach to *the door*, so the depth costs no ambiguity.
+ * *The key to the door of the shed vanished* nests inside the noun phrase, which
+ * is the safe kind: *of the shed* can only attach to *the door*, so the depth
+ * costs no ambiguity.
  */
 import {
   adj,

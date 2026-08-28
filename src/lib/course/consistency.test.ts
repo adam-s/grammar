@@ -432,3 +432,40 @@ describe('a gloss counts what the sentence counts', () => {
     }
   });
 });
+
+/**
+ * One decision about the passive, applied the same way twice.
+ *
+ * *The plan drafted by the committee* means a passive and is not written as
+ * one: the model's passive is `be` plus a participle, and a reduced participial
+ * has no `be` to hang the claim on, so the record stops at `fin:participial`
+ * with the object slot left as a gap. Lesson 35 states that decision.
+ *
+ * A decision stated in a comment is a decision until somebody writes the
+ * eleventh participial. This is the rule, so that adding a voice to one of them
+ * fails here rather than quietly splitting the corpus in two.
+ */
+describe('a participial clause is not written as a passive', () => {
+  it('no participial verb carries a voice', () => {
+    let checked = 0;
+    for (const { where, c, cs } of all()) {
+      if (c.finiteness !== 'participial') continue;
+      for (const id of c.children) {
+        const child = cs[id]!;
+        if (child.function !== 'predicate') continue;
+        for (const g of child.children) {
+          const verb = cs[g]!;
+          if (verb.form !== 'V') continue;
+          checked += 1;
+          assert.equal(
+            verb.voice,
+            undefined,
+            `${where}: a reduced participial has no auxiliary to carry a voice, ` +
+              'and the corpus writes the meaning as an object gap instead.',
+          );
+        }
+      }
+    }
+    assert.ok(checked >= 10, `only ${checked} participial verbs were examined`);
+  });
+});

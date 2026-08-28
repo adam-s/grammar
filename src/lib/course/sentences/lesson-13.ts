@@ -3,8 +3,9 @@
  *
  * Lesson 12 and lesson 13 share a surface shape — noun phrase, verb, noun
  * phrase, noun phrase — and the built course never put the two together, so the
- * learner was never asked to choose. Items 5 and 6 are the same five words with
- * different verbs, and item 7 is a two-object sentence dropped in whole.
+ * learner was never asked to choose. *They made her a partner* and *They made her
+ * a cake* are the same five words with different verbs, and *The clerk handed the
+ * visitor a form* is a two-object sentence dropped in whole.
  *
  * The test is `be`: *the driver **is** careless* holds, and *the guest is a key*
  * does not. It runs today, needs no grammar the learner has not met, and is in

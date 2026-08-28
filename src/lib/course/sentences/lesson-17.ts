@@ -2,13 +2,15 @@
  * Lesson 17 — Adjective phrases. Not only a degree word and an adjective.
  *
  * All ten built sentences were the same construction: an adverb in front of an
- * adjective. Item 3 is the floor the set had none of — an adjective phrase can
- * be one word, and if every example has two the learner learns the wrong
- * minimum. Items 5 and 6 are the other half of what an adjective phrase can
- * hold, which was absent from both corpora until now.
+ * adjective. *The lake water felt cold* is the floor the set had none of — an
+ * adjective phrase can be one word, and if every example has two the learner
+ * learns the wrong minimum.
  *
- * Item 7 is the boundary case: *near the bridge* follows the adjective and is
- * NOT part of it. Substitution settles it against item 6.
+ * *My neighbour seemed proud of her garden* is the other half of what an
+ * adjective phrase can hold, and it was absent from both corpora until now: the
+ * complement sits INSIDE the phrase, and *My neighbour seemed proud* does not
+ * mean the same thing. The clause version of the same slot is lesson 34's *too
+ * heavy to lift*.
  */
 import { adj, adjWith, advadj, det, nounmod, pp, svc, svoc, v } from './shape.ts';
 

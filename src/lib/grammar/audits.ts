@@ -355,7 +355,7 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
     }
     // *was repaired*, not *repaired*. A participle with no helping verb in
     // front of it is a different structure — a reduced relative — and building
-    // one needs a gap where the subject would be (docs/model-gaps.md).
+    // one needs a gap where the subject would be (README.md).
     const helpers = vp.children.filter((k) => ctx.cs[k]?.function === 'auxiliary');
     if (helpers.length === 0) {
       f.push(`${where} is marked passive but has no helping verb: the passive needs "be"`);

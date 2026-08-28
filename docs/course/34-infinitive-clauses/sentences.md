@@ -2,53 +2,59 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
 **The measured gap: no infinitive clause anywhere in the course has its own
 subject.** _asked the driver to wait_, where the waiting is done by the driver
-and not by the asker, does not exist in any of the 400 sentences.
+and not by the asker, does not exist in any of the 400 sentences, and it still
+does not. **The gap is open, and it is a model question rather than an authoring
+one** — see [../difficulty.md](../difficulty.md).
 
 That matters more than the other omissions. Without an overt subject the learner
 has no evidence that an infinitive clause is a **clause** at all — every example
 has an invisible subject matching the main one, so _to renew the lease_ looks
-like part of the verb phrase.
+like part of the verb phrase. What this lesson can show instead is that the
+clause carries its own material: an object of its own, or an adverbial of its
+own, inside the part _to_ marks off.
 
 ## Sentences
 
-| #   | Sentence                                   | The step                                         |
-| --- | ------------------------------------------ | ------------------------------------------------ |
-| 1   | The tenant wanted to renew the lease.      | the frame at its clearest                        |
-| 2   | Our crew tried to restart the engine.      | a verb that almost always takes one              |
-| 3   | The clerk refused to sign the deed.        | an infinitive whose subject is the main subject  |
-| 4   | That jury declined to accept the claim.    | the shared-subject infinitive again, formal verb |
-| 5   | She hoped to finish the survey.            | a shorter subject, same frame                    |
-| 6   | They planned to dredge that harbour.       | a plain shared-subject infinitive                |
-| 7   | He offered to clear the path.              | a verb of offering rather than wanting           |
-| 8   | We asked the driver to wait.               | **the clause has its own subject**               |
-| 9   | The guide expected the visitors to arrive. | the same, and the inner verb is intransitive     |
-| 10  | The box was too heavy to lift.             | **inside an adjective phrase**, not an object    |
+| #   | Sentence                                | The step                                          |
+| --- | --------------------------------------- | ------------------------------------------------- |
+| 1   | The tenant wanted to renew the lease.   | the frame at its clearest                         |
+| 2   | Our crew tried to restart the engine.   | a verb that almost always takes one               |
+| 3   | The clerk refused to sign the deed.     | an infinitive whose subject is the main subject   |
+| 4   | That jury declined to accept the claim. | the shared-subject infinitive again, formal verb  |
+| 5   | She hoped to finish the survey.         | a shorter subject, same frame                     |
+| 6   | They planned to dredge that harbour.    | a plain shared-subject infinitive                 |
+| 7   | He offered to clear the path.           | a verb of offering rather than wanting            |
+| 8   | The driver promised to wait outside.    | **the clause carries its own adverbial**          |
+| 9   | The council agreed to fund the repairs. | a shared subject, and an object inside the clause |
+| 10  | The box was too heavy to lift.          | **inside an adjective phrase**, not an object     |
 
 ## Notes
 
-**An infinitive clause with its own subject is now built.** Items 4 and 5 are
-_We asked the driver to wait_ and _The guide expected the visitors to arrive_.
+**An infinitive clause with its own subject is still not built, on purpose.**
+_We asked the driver to wait_ was built for a while, in the `objectComplement`
+slot, because that form list was widened to accept a clause. The label was wrong:
+an object complement renames or describes the direct object — _the driver is
+careless_ — and _to wait_ does neither. It says what the driver is to do. Calling
+it an object complement would have made lesson 13's _be_ test unreliable in the
+one place a learner is most likely to try it, and the grader would have enforced
+the error. The widening, its fixture and its three course sentences are gone, and
+the open question is written down in [../difficulty.md](../difficulty.md)
+instead.
 
-It had passed every audit and been unreachable, because `objectComplement`
-listed `NP` and `AdjP` and never `Cl` — the same one-entry omission that blocked
-a clause as subject complement at lesson 30. The tree was always well formed; the
-palette simply never offered the slot. That split between representable and
-reachable is why the label sweep is the check that settles this, and both
-sentences now sweep clean.
+What the lesson shows instead is that the clause has its own material. In _The
+driver promised to wait outside_ the adverbial _outside_ belongs to _wait_, not
+to _promised_; in _The council agreed to fund the repairs_ the object belongs to
+_fund_. Neither is as strong as an overt subject would be, and neither pretends
+to be.
 
-It matters here more than anywhere. Without an overt subject nothing shows that
-an infinitive clause is a **clause**, because every other example has an
-invisible subject matching the main one — which makes _to renew the lease_ look
-like part of the verb phrase.
-
-Items 4 and 5 are the point of the lesson. In _We asked the driver to wait_, _the
-driver_ is the object of _asked_ **and** the subject of _to wait_, which is only
-visible once the clause has a subject at all.
-
-**Items 4, 5 and 8 build today.** All three were daggered and none needed to be.
-`node scripts/probe-constructions.mjs` builds each clean once `to` is a `Part` with
+**_The box was too heavy to lift_ was daggered and did not need to be.**
+`node scripts/probe-constructions.mjs` builds it clean once `to` is a `Part` with
 function `marker`, a sibling of the verb phrase rather than a particle inside it.
 That is how the existing non-finite fixtures already write it, and getting it
 wrong is what made the first probe report a gap.

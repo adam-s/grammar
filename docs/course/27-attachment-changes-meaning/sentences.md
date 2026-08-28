@@ -2,12 +2,17 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**This lesson does the hardest thing in the course correctly.** Every one of its
-sentences carries two readings, and no sentence in any other lesson carries more
-than one. The model holds both and the grader accepts both.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-**The one shortcut:** all ten are the same ambiguity — verb, noun phrase,
-prepositional phrase. One type, ten times, two distinct asked-shapes.
+**This lesson does the hardest thing in the course correctly.** Every one of its
+sentences carries two readings, and it is one of the two lessons where any
+sentence carries more than one. The model holds both and the grader accepts both.
+
+**The one shortcut:** in the lesson this replaced all ten were the same ambiguity
+— verb, noun phrase, prepositional phrase. One type, ten times, two distinct
+asked-shapes.
 
 Coordination scope is available since lesson 26 and is a genuinely different
 shape, so two of these are that instead.
@@ -16,7 +21,7 @@ shape, so two of these are that instead.
 
 | #   | Sentence                                              | The step                                          |
 | --- | ----------------------------------------------------- | ------------------------------------------------- |
-| 1   | That guard stopped the man with the torch.            | the same, and both readings are ordinary          |
+| 1   | That guard stopped the man with the torch.            | the torch belongs to the man, or to the stopping  |
 | 2   | The reporter interviewed the actor in the garden.     | a place, where both readings still hold           |
 | 3   | The nurse carried the tray on a trolley.              | an instrument reading against a location one      |
 | 4   | The inspector photographed the driver beside the bus. | **two ordinary places** — driver or event         |
@@ -29,19 +34,20 @@ shape, so two of these are that instead.
 
 ## Notes
 
-Items 5 and 10 are the addition. _the old men and women_ is either _[old men] and
-[women]_ or _old [men and women]_, and nothing in the words decides. It is the
-same lesson — attachment changes meaning — in a shape that is not a prepositional
-phrase, so the learner cannot pattern-match their way through.
+_The guide met the old men and women_ and _They packed the damaged books and
+maps_ are the addition. _the old men and women_ is either _[old men] and [women]_
+or _old [men and women]_, and nothing in the words decides. It is the same lesson
+— attachment changes meaning — in a shape that is not a prepositional phrase, so
+the learner cannot pattern-match their way through.
 
-Item 8 is deliberately the same sentence as lesson 19's item 8. There it is built
-one way and nothing is said; here it comes back with both readings. A sentence
-returning eight lessons later with more in it is the cheapest kind of
-composition.
+_She read the report on the train_ is deliberately lesson 19's sentence again,
+with _the_ for _her_. There it is built one way and nothing is said; here it
+comes back with both readings. A sentence returning eight lessons later with more
+in it is the cheapest kind of composition.
 
-In item 9, either the driver is beside the bus or the photographing happens
-there. Both paraphrases are ordinary; neither requires the weak noun phrase
-_the house from the road_.
+In _The inspector photographed the driver beside the bus_, either the driver is
+beside the bus or the photographing happens there. Both paraphrases are ordinary;
+neither requires the weak noun phrase _the house from the road_.
 
 **There is no test here, and that is the lesson.** Both attachments are
 grammatical; only what the sentence is about picks one. What can be tested is the

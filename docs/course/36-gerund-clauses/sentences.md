@@ -2,12 +2,18 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**This is the most uniform lesson in the course.** One distinct asked-shape across
-all ten sentences and identical picks — 27 — for every one. Gerund, object, verb,
-object, ten times, always in the subject slot.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-Missing: the gerund as object, after a preposition, with its own subject, and any
-contrast with the progressive, which uses the same suffix.
+**This was the most uniform lesson in the course.** One distinct asked-shape
+across all ten sentences this replaced, and identical picks — 27 — for every one.
+Gerund, object, verb, object, ten times, always in the subject slot.
+
+Missing there: the gerund as object, after a preposition, with its own subject,
+and any contrast with the progressive, which uses the same suffix. All but the
+gerund with its own subject are in the rows below; that one waits on the
+possessive ([../difficulty.md](../difficulty.md)).
 
 ## Sentences
 
@@ -26,17 +32,20 @@ contrast with the progressive, which uses the same suffix.
 
 ## Notes
 
-Items 7 and 8 are the pair that matters. _auditing the ledger_ appears twice: once
-after an auxiliary, where it is the main verb, and once as a subject, where it is
-a clause. Same three words, different job, and lesson 24 is what makes the first
-one buildable. Nothing else in the lesson forces the learner to ask which one
-they are looking at.
+_Auditing the ledger revealed an error_ and _The clerk was auditing the ledger_
+are the pair that matters. _auditing the ledger_ appears twice: once as a
+subject, where it is a clause, and once after an auxiliary, where it is the main
+verb. Same three words, different job, and lesson 24 is what makes the second one
+buildable. Nothing else in the lesson forces the learner to ask which one they
+are looking at.
 
-Items 4, 5, 6 and 9 move the gerund out of the subject slot, which the built
-lesson never does. Substitution settles all of them: _She enjoys **it**_, _We
-finished after **it**_.
+_The children avoided crossing the road_, _We finished after packing every lamp_,
+_She enjoys reading maps_ and _She apologised for arriving late_ move the gerund
+out of the subject slot, which the corpus this replaced never does. Substitution
+settles all of them: _She enjoys **it**_, _We finished after **it**_.
 
 **A gerund with its own subject** — _The children's shouting woke the baby_ — is
 deliberately absent. No possessive marker exists anywhere in either corpus, so it
-is the same open model question as lesson 2's item 10 and lesson 6's, and it is
-not worth spending this lesson on.
+is the same open model question that keeps the possessive out of lessons 2 and 6,
+and it is written down in [../difficulty.md](../difficulty.md) rather than spent
+on here.

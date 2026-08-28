@@ -2,8 +2,12 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut:** every one of the ten built complements is an adjective, and no
-verb in the lesson appears in any other sense. English hands you the fix — _grow_,
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The shortcut:** every one of the ten complements this replaced was an
+adjective, and no verb in that lesson appeared in any other sense. English hands you the fix — _grow_,
 _turn_ and _feel_ are each intransitive, transitive and linking, so one verb can
 carry three frames in five words apiece.
 
@@ -27,9 +31,11 @@ salty_ holds; _The farmer grew potatoes_ → _\*The farmer was potatoes_ does no
 
 ## Notes
 
-Items 3, 7 and 8 are one verb in three frames. Items 5 and 6 are a second verb in
-two. That is five of the ten sentences doing work no built sentence in the lesson
-does, and none of them is longer than six tokens.
+_The sky grew dark_, _A farmer grew some potatoes_ and _Those children grew_ are
+one verb in three frames. _The water felt cold_ and _She felt the rough cloth_
+are a second verb in two. That is five of the ten sentences doing work no
+sentence in the corpus this replaced does, and none of them is longer than seven
+tokens.
 
 **No noun-phrase complement appears here**, and that is deliberate: _He is a
 doctor_ is lesson 11's, and holding it back means lesson 11 has something to add

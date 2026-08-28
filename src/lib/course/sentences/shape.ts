@@ -1101,10 +1101,9 @@ export const clauseSubjectIs = (
  * lesson uses, assigned to lesson 30. *What* is doing two jobs at once: it is the
  * thing wanted, and it is the head of the phrase that is the subject.
  *
- * It fills the slot a nominal clause as subject complement would have filled, and
- * cannot: `subjectComplement` is licensed for `NP` and `AdjP` only, so *The
- * trouble was that the gate was locked* has no representation. That is a model
- * limit, recorded rather than worked around.
+ * It needs an object gap, which is first taught at lesson 31, so it cannot sit
+ * at lesson 30 as difficulty.md asks. No course sentence uses this helper yet;
+ * either the ladder moves or the sentence does.
  */
 export const fusedRelativeSubject = (
   id: string,
@@ -1125,30 +1124,6 @@ export const fusedRelativeSubject = (
       [object('directObject')],
       'SVO',
     ),
-    gloss,
-  );
-
-/**
- * *We asked the driver to wait.* — an infinitive clause with its own subject.
- *
- * No infinitive clause anywhere in the course had one, so nothing showed that an
- * infinitive clause is a clause: every example had an invisible subject matching
- * the main one. Here *the driver* is the object of *asked* and the subject of
- * *to wait* at once.
- */
-export const svoClause = (
-  id: string,
-  lesson: number,
-  s: Phrase,
-  verb: Verb,
-  object: Phrase,
-  inner: Inner,
-  gloss: string,
-) =>
-  one(
-    id,
-    lesson,
-    clause(s, verb, [object('directObject'), cl(inner)('objectComplement')], 'SVOC'),
     gloss,
   );
 

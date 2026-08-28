@@ -2,10 +2,14 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
 **The problem this lesson has.** It teaches no label, and pruned to its own
 scope its twelve-node canonical tree collapses to four nodes and seven picks —
-identical to lesson 3. Its built sentences are all `The N + PP + V.`, six words
-asking the same four questions as _The visitors waited_.
+identical to lesson 3. The sentences this replaced were all `The N + PP + V.`,
+six words asking the same four questions as _The visitors waited_.
 
 **What to do about it.** The postmodified subjects belong at lesson 21, where
 `func:postmodifier` is taught, and their heads belong at lesson 5. What is left
@@ -25,19 +29,20 @@ the substitution test is what settles every one.
 | 6   | The parcel by the stairs vanished. | five words, still one subject                  |
 | 7   | The engine near the gate stalled.  | the same slot, filled differently again        |
 | 8   | Everyone left early.               | a one-word subject — _it_ replaces all of it   |
-| 9   | The parcel vanished.               | the same sentence as 6 with the phrase removed |
+| 9   | The parcel vanished.               | the same subject with the phrase taken out     |
 | 10  | That same engine stalled again.    | premodified subject, predicate still two words |
 
 ## Notes
 
-Items 6 and 9 are a pair: the same sentence with and without the phrase inside
-the subject. Both are grammatical, both replace with _it_, and the boundary moves
-between them.
+_The parcel by the stairs vanished_ and _The parcel vanished_ are a pair: the
+same sentence with and without the phrase inside the subject. Both are
+grammatical, both replace with _it_, and the boundary moves between them.
 
-Items 1 and 8 are one-word subjects on purpose. The substitution test says a noun
-phrase is a run that _it_ or _they_ can replace; a subject that already **is**
-one word is the clearest possible case, and the built lesson has none.
+_She waited_ and _Everyone left early_ are one-word subjects on purpose. The
+substitution test says a noun phrase is a run that _it_ or _they_ can replace; a
+subject that already **is** one word is the clearest possible case, and the
+corpus this replaced has none.
 
 Pronouns arrive at lesson 7, so `form:Pron` prunes here and the learner is not
 asked to label it. That is the scope ladder working as documented in
-[../README.md](../README.md), and it is why items 1 and 8 are safe.
+[../README.md](../README.md), and it is why those two are safe.

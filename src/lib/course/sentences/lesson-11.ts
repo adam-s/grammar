@@ -2,8 +2,9 @@
  * Lesson 11 — The verb _be_. Separated from the other linking verbs, at last.
  *
  * The built set contained no linking verb but _be_, so the lesson only asked the
- * learner to notice which lesson they were in. Items 6 and 7 are identical apart
- * from the verb, and `Vlink` and `Vbe` have to be told apart.
+ * learner to notice which lesson they were in. *The bread tasted stale* and *The
+ * bread was stale* are identical apart from the verb, and `Vlink` and `Vbe` have
+ * to be told apart.
  *
  * What the built set did right is kept: adjective and noun-phrase complements
  * alternate under one function, which is the whole doctrine of the app in a

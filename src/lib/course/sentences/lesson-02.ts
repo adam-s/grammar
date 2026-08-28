@@ -5,8 +5,8 @@
  * the built set never asked it: every one of its subjects was `The ADJ N`, one
  * adjective longer than lesson 1 and no harder to cut.
  *
- * Items 4 and 5 are the pair. *The shoes on my feet* and *The hole in my shoes*
- * are the same shape, and in the second the noun nearest the verb is not the
+ * *The shoes on my feet pinched* and *The hole in my shoes widened* are the pair.
+ * They are the same shape, and in the second the noun nearest the verb is not the
  * subject. Substitution settles both: *They pinched*, *It widened*.
  */
 import { adjn, adv, bare, det, postmod, pp, sv, svPlus, v } from './shape.ts';

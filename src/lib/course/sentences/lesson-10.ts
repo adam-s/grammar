@@ -5,10 +5,11 @@
  * any other sense, so the substitution test — put *be* in and see whether it
  * holds — never had a sentence to turn down.
  *
- * *grow* does all three jobs and English hands them over for free: item 3 links,
- * item 7 takes an object, item 8 takes nothing. *feel* does two, in items 5 and
- * 6. That is five of the ten doing work no built sentence did, and none of them
- * is longer than six words.
+ * *grow* does all three jobs and English hands them over for free: *The sky grew
+ * dark* links, *A farmer grew some potatoes* takes an object, *Those children
+ * grew* takes nothing. *feel* does two, in *The water felt cold* and *She felt
+ * the rough cloth*. That is five of the ten doing work no built sentence did, and
+ * none of them is longer than six words.
  */
 import { adj, adjn, det, pron, sv, svc, svo, v } from './shape.ts';
 

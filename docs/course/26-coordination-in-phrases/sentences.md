@@ -2,10 +2,14 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut:** measured, every coordinated structure in the built lesson is
-**two noun phrases in subject position** — ten of ten. Nine use _and_ and one
-uses _or_. So the lesson shows one of the many things coordination joins, in one
-of the places it can sit.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The shortcut:** measured, every coordinated structure in the lesson this
+replaced was **two noun phrases in subject position** — ten of ten. Nine used
+_and_ and one used _or_. So it showed one of the many things coordination joins,
+in one of the places it can sit.
 
 Coordination is itself one of the constituency tests from lesson 1: only like
 joins to like. That makes this a good place to look backwards.
@@ -27,18 +31,21 @@ joins to like. That makes this a good place to look backwards.
 
 ## Notes
 
-Items 4, 5 and 6 join something other than a noun phrase, which the built lesson
-never does. Item 2 puts a join in an object; items 1, 7, 8 and 10 keep the
-subject cases the lesson already had.
+_Our calm and patient guide explained_, _The flag was red and gold_ and _We
+walked through the gate and across the field_ join something other than a noun
+phrase, which the corpus this replaced never does. _We packed the books and the
+maps_ puts a join in an object; the four joined subjects keep the cases the
+lesson already had.
 
-**Item 8 carries the sharpest formal evidence in the lesson**, and it is free.
-_The surveyor and the clerk **signed**_ takes a plural verb where either alone
-would take a singular. That is agreement proving the coordination is one subject
-rather than two, and no built sentence draws attention to it.
+**_The surveyor and the clerk signed the deed_ carries the sharpest formal
+evidence in the lesson**, and it is free. _The surveyor and the clerk **signed**_
+takes a plural verb where either alone would take a singular. That is agreement
+proving the coordination is one subject rather than two, and no sentence in the
+corpus this replaced draws attention to it.
 
-Item 9 is the three-way list, which raises the serial comma. Lesson 39 needs
-punctuation that decides something, and this is one of the few commas in the
-course that a reader could argue about.
+_The small boat carried food, water, and blankets_ is the three-way list, which
+raises the serial comma. Lesson 39 needs punctuation that decides something, and
+this is one of the few commas in the course that a reader could argue about.
 
 **Correlatives are deliberately absent.** _both … and_, _either … or_ need a model
 decision about what the first half is — it pairs with the coordinator without

@@ -172,11 +172,13 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       // for other verb types, so offering it greyed out would teach a slot
       // that is never available.
       if (p !== 'VP') return HIDDEN;
-      // The same, and it matters more here: without a clause in this slot there
-      // is no way to write *We asked the driver to wait*, and so no way to show
-      // that an infinitive clause is a CLAUSE — every other example in the
-      // course has an invisible subject matching the main one.
-      if (!childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
+      // No `Cl` here, unlike the slot above. An object complement renames or
+      // describes the direct object — *the driver is careless* — and the clause
+      // that wanted this slot, *We asked the driver to wait*, does neither: *to
+      // wait* says what the driver is to do. Object control needs its own
+      // representation, and until it has one the label would be a lie the
+      // grader enforces. See "What the model still cannot say" in README.md.
+      if (!childIs('NP', 'AdjP')) return HIDDEN;
       if (vt !== null && vt !== 'Vc') return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       // In the passive the direct object has become the subject, so the
@@ -221,7 +223,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       // auxiliary is written where it is said, hanging off the clause; what
       // makes it an inversion is that it comes before the subject, which
       // `auditGaps` checks. A node whose pieces are not next to each other is
-      // a different problem and is still open (docs/model-gaps.md).
+      // a different problem and is still open — README.md lists it.
       if (p !== 'VP' && !CLAUSAL.includes(p)) return HIDDEN;
       return ALLOWED;
 
@@ -360,7 +362,7 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // a determiner rather than being one visibly.
     //
     // A join made with a comma alone is not recognised, and cannot be until
-    // punctuation is part of the structure (docs/model-gaps.md).
+    // punctuation is part of the structure (README.md).
     case 'coordinate':
       return (ctx.siblingForms ?? []).includes('Conj') || siblings.includes('coordinate')
         ? ALLOWED
@@ -406,14 +408,15 @@ export function hypothesizes(fn: Func, ctx: LicenseContext): Verdict {
       if (p !== 'VP' || !childIs('NP')) return HIDDEN;
       return once('indirectObject', 'This verb already has an indirect object.');
     // These two lists have to agree with `licenses` above on what FORMS a slot
-    // takes — they differ only on verb type and prerequisite siblings. Both were
-    // short of `Cl`, in both functions, which is how a clausal complement came to
-    // be well formed and unreachable at the same time.
+    // takes — they differ only on verb type and prerequisite siblings. The
+    // subject complement was short of `Cl` in both functions, which is how a
+    // clausal complement came to be well formed and unreachable at the same
+    // time. The object complement takes no clause in either, on purpose.
     case 'subjectComplement':
       if (p !== 'VP' || !childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
       return once('subjectComplement', 'This verb already has a subject complement.');
     case 'objectComplement':
-      if (p !== 'VP' || !childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
+      if (p !== 'VP' || !childIs('NP', 'AdjP')) return HIDDEN;
       return once('objectComplement', 'This verb already has an object complement.');
     case 'adverbial':
       if (!childIs('AdvP', 'PP', 'NP', 'Cl')) return HIDDEN;

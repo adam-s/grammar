@@ -2,10 +2,15 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut:** no linking verb other than _be_ appears, so the lesson asks the
-learner to notice they are in lesson 11. The built lesson's real strength is that
-it mixes adjective and noun-phrase complements under one function, which is the
-form-function doctrine in a single lesson. That is kept.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The shortcut:** no linking verb other than _be_ appeared, so the lesson asked
+the learner to notice they were in lesson 11. The real strength of the lesson
+this replaced was that it mixed adjective and noun-phrase complements under one
+function, which is the form-function doctrine in a single lesson. That is
+kept.
 
 ## Sentences
 
@@ -24,17 +29,17 @@ form-function doctrine in a single lesson. That is kept.
 
 ## Notes
 
-Items 6 and 7 are the contrast the built lesson lacks: identical apart from the
-verb, so `Vlink` and `Vbe` have to be told apart rather than assumed from the
-lesson number.
+_The bread tasted stale_ and _The bread was stale_ are the contrast the corpus
+this replaced lacked: identical apart from the verb, so `Vlink` and `Vbe` have to
+be told apart rather than assumed from the lesson number.
 
-Items 1 to 5 alternate adjective and noun-phrase complements on purpose. `AdjP`
+The lesson alternates adjective and noun-phrase complements on purpose. `AdjP`
 and `NP` under one `subjectComplement` is the clearest statement in Stage 2 that
 form and function are different questions.
 
-Item 10 is a small trap and worth keeping. _deserted_ has the shape of a past
-participle, and at lesson 11 there is no passive to confuse it with — but lesson
-37 will bring one, and _The streets were deserted_ against _The harbour was
+_The streets were deserted_ is a small trap and worth keeping. _deserted_ has the
+shape of a past participle, and at lesson 11 there is no passive to confuse it
+with — but lesson 37 will bring one, and this sentence against _The harbour was
 dredged_ is the pair that lesson needs.
 
 Three formal reasons _be_ is separated at all, none of which needs a sentence

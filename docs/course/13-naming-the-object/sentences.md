@@ -2,9 +2,14 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
 **The shortcut is the heading.** Lesson 12 and lesson 13 share a surface shape —
-noun phrase, verb, noun phrase, noun phrase — and the two constructions never
-appear together, so the learner is never asked to choose.
+noun phrase, verb, noun phrase, noun phrase — and in the corpus this replaced the
+two constructions never appeared together, so the learner was never asked to
+choose.
 
 Two clean formal tests exist and neither is in the app:
 
@@ -30,13 +35,14 @@ Two clean formal tests exist and neither is in the app:
 
 ## Notes
 
-Items 5 and 6 are the flagship pair of the whole stage. Five words each, three
-noun phrases each, identical in every way except the verb's frame. _She is a
-genius_ holds; _\*She is a taxi_ does not. Nothing else in Stage 2 tests the verb
-rather than the shape.
+_They made her a partner_ and _They made her a cake_ are the flagship pair of the
+whole stage. Five words each, three noun phrases each, identical in every way
+except the verb's frame. _She is a partner_ holds; _\*She is a cake_ does not.
+Nothing else in Stage 2 tests the verb rather than the shape.
 
-Item 7 is lesson 12's sentence dropped in unchanged, so the count of noun phrases
-stops being a reliable signal inside this lesson.
+_The clerk handed the visitor a form_ is lesson 12's sentence dropped in
+unchanged, so the count of noun phrases stops being a reliable signal inside this
+lesson.
 
 Four of the ten complements are noun phrases and six are adjectives, which is
 close to the built lesson's mix and worth keeping — it is what stops "the last
@@ -44,4 +50,8 @@ word is an adjective" from working.
 
 **A note for the app**, not for the sentences: `FUNCTION_TEST.objectComplement`
 currently reads "renames or describes the direct object", which is a description.
-_Can you say the object **is** it?_ is a test, is shorter, and is right.
+_Can you say the object **is** it?_ is a test, is shorter, and is right. It is
+also the test that keeps the slot honest: it is why _We asked the driver to wait_
+is **not** an object complement, and why that construction stays out of the
+course until the model has a representation for it
+([../difficulty.md](../difficulty.md)).

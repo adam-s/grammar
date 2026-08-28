@@ -16,18 +16,21 @@ Researched 28 August 2026. An author's dossier. See
 
 ## The finding
 
-**`form:Interj` is taught here and appears in none of the 400 sentences.**
+**`form:Interj` was taught here and used in none of the 400 sentences this
+dossier measures.**
 
-The ten sentences are all evaluative adverbs: _Unfortunately, Surprisingly,
+Those ten sentences were all evaluative adverbs: _Unfortunately, Surprisingly,
 Naturally, Regrettably, Predictably, Curiously, Frankly, Happily, Apparently,
 Sadly._ Not one _Oh_, _Well_, _Hey_ or _Ouch_.
 
-So the lesson's title names two things and delivers one. `form:Interj` is one of
-exactly two decisions in the whole course that are taught and never used; the
-other is `aux:do` at lesson 24.
+So the lesson's title named two things and delivered one. `form:Interj` was one
+of exactly two decisions in the whole course taught and never used; the other was
+`aux:do` at lesson 24.
 
-That is worth fixing in one direction or the other. A decision the palette will
-accept and no sentence exercises is a claim the course has not earned.
+That was worth fixing in one direction or the other, and it was fixed by writing
+the sentence: _Oh, the gate opened_ and _Well, the clerk waited_ are in
+[sentences.md](sentences.md). A decision the palette will accept and no sentence
+exercises is a claim the course has not earned.
 
 Four distinct asked-shapes, which come from the varying main clauses rather than
 from the edge material.

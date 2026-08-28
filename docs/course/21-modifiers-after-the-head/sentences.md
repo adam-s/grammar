@@ -2,12 +2,17 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**Two gaps.** Measured: the deepest prepositional-phrase nesting inside a
-lesson-21 noun phrase is **zero** — every postmodifier is a flat `P + NP`, while
-lesson 19 nests two deep after a verb. And from
-[../difficulty.md](../difficulty.md): _"not one of lesson 21's ten sentences uses
-both"_ a premodifier and a postmodifier, though lesson 16 taught the premodifier
-five lessons earlier.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**Two gaps, both now closed.** Measured against the corpus this replaced: the
+deepest prepositional-phrase nesting inside a lesson-21 noun phrase was **zero** —
+every postmodifier was a flat `P + NP`, while lesson 19 nested two deep after a
+verb. And as [../difficulty.md](../difficulty.md) put it, _"not one of lesson
+21's ten sentences uses both"_ a premodifier and a postmodifier, though lesson 16
+taught the premodifier five lessons earlier. The rows below nest one postmodifier
+inside another, and three of them carry both modifiers at once.
 
 ## Sentences
 
@@ -26,14 +31,16 @@ five lessons earlier.
 
 ## Notes
 
-Item 7 is the nesting the lesson lacks, and it is the safe kind: _of the shed_
-can only attach to _the door_, so the depth costs no ambiguity. Lesson 19 has
-already established that a phrase can sit inside a phrase; this is the same fact
-inside a noun phrase.
+_The key to the door of the shed vanished_ is the nesting the corpus this
+replaced lacks, and it is the safe kind: _of the shed_ can only attach to _the
+door_, so the depth costs no ambiguity. Lesson 19 has already established that a
+phrase can sit inside a phrase; this is the same fact inside a noun phrase.
 
-Items 3, 5 and 8 use both modifiers. Item 3 is seven words — shorter than _The
-clerk showed the visitor from the ministry a map_, which is in the built lesson —
-and asks for more. That is difficulty.md's own example.
+_The old lock on the shed rusted_, _A cheerful child with a red drum waved_ and
+_Those workers from the repair shop checked every window_ use both modifiers at
+once. The first is seven words — shorter than _The clerk showed the visitor from
+the ministry a map_, which the corpus this replaced used — and asks for more.
+That is difficulty.md's own example.
 
 **The agreement test is what makes a postmodifier visible.** _The lock on the
 shed **was** rusty_, not _were_, however many sheds there are. It is the one

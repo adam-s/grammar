@@ -6,14 +6,15 @@
  * coordinator. That is the least informative comma in English: it marks a
  * boundary the coordinator has already marked.
  *
- * Items 6 and 7 are why the lesson exists. Six words, one pair of commas, and
- * the relative goes from identifying WHICH visitors to adding something about
- * the ones already named. Items 3, 4, 5 and 9 bring in the commas the course has
- * already built and never collected — an appositive from 22, fronted clauses
- * from 29, a list from 26.
+ * *The visitors who had missed their train waited* and *The visitors, who had
+ * missed their train, waited* are why the lesson exists. Six words, one pair of
+ * commas, and the relative goes from identifying WHICH visitors to adding
+ * something about the ones already named. The rest bring in commas the course has
+ * already built and never collected — an appositive from 22, fronted clauses from
+ * 29, a list from 26.
  *
- * Items 1, 2 and 8 keep the controlled pair with lesson 33, which has these
- * shapes without commas.
+ * The three clause commas keep the controlled pair with lesson 33, which has
+ * these shapes without commas.
  */
 import {
   adjn,

@@ -2,10 +2,10 @@
  * Lesson 9 — Verbs that take an object. The heading is no longer the answer.
  *
  * Every one of the built set's ten sentences took an object, so nobody had to
- * ask "verb what?" — the lesson title had already answered it. Items 5 and 6 are
- * the same verb with and without one, and item 9 is a second intransitive with
- * no twin, so the frame has to be tested on every sentence rather than on the
- * ones that appear twice.
+ * ask "verb what?" — the lesson title had already answered it. *She opened the
+ * gate* and *The gate opened* are the same verb with and without one, and *The
+ * audience hushed* is a second intransitive with no twin, so the frame has to be
+ * tested on every sentence rather than on the ones that appear twice.
  *
  * The definitive test is the passive, and it is twenty-eight lessons away.
  * Substitution is the one that works today: *it* replaces the object.

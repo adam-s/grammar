@@ -1,17 +1,18 @@
 /**
  * Lesson 24 — Auxiliary verbs. Including the one that proves the category.
  *
- * `aux:do` was taught here and used in none of the four hundred sentences — one
- * of exactly two decisions in the course that were taught and never exercised.
+ * `aux:do` was taught here and used in none of the four hundred sentences this
+ * set replaced — one of exactly two decisions taught and never exercised.
  * That matters more than a missing example: *do* is what English inserts when a
  * sentence needs an auxiliary and has none, which is the reason the class
- * exists. Items 4 and 5 use it.
+ * exists. *The visitors did wait* and *The clerk did file the deeds* use it.
  *
  * No sentence anywhere had two auxiliaries either, so the ordering rule — modal,
- * then perfect, then progressive — was invisible. Items 8 and 9 stack them.
+ * then perfect, then progressive — was invisible. *Our guests have been waiting*
+ * and *A mechanic may have checked the brakes* stack them.
  *
- * Items 1 to 4 hold the subject and the verb completely still and change only
- * the helper. That is the right way to show a paradigm and the built set already
+ * The four *The visitors …* sentences hold the subject and the verb completely
+ * still and change only the helper. That is the right way to show a paradigm and the built set already
  * did it.
  */
 import { det, helped, pron, sv, svo, v } from './shape.ts';

@@ -16,18 +16,29 @@
  * test can award itself. This module only reports; `scripts/course-readiness.mjs`
  * is what turns the report into a gate.
  */
-import type { SentenceEntry } from '../grammar/types.ts';
+import { UNREVIEWED, type SentenceEntry } from '../grammar/types.ts';
 import { COURSE_LESSONS } from './course.ts';
 
 /** The value `constructed.ts` writes until a person has actually read one. */
-export const UNREVIEWED = 'unreviewed';
+export { UNREVIEWED };
+
+/**
+ * Names that are not a person.
+ *
+ * `contract` is what `entry.ts` writes for a fixture, meaning "this parse is
+ * part of the engine's contract" — a true thing to say and not a signature. It
+ * only ever reached this function by accident, because `reviewStatus` walks the
+ * course and not the fixtures, and an accident that would have read as sign-off
+ * is worth closing rather than relying on the caller.
+ */
+const NOT_A_PERSON = [UNREVIEWED, 'contract'];
 
 /** Has a named person put their name to this parse and its glosses? */
 export function isReviewed(sentence: SentenceEntry): boolean {
   const { reviewedBy, reviewedAt } = sentence.provenance;
   return (
     reviewedBy.trim().length > 0 &&
-    reviewedBy !== UNREVIEWED &&
+    !NOT_A_PERSON.includes(reviewedBy.trim()) &&
     /^\d{4}-\d{2}-\d{2}$/.test(reviewedAt)
   );
 }

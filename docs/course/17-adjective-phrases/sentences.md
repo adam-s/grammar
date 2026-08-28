@@ -2,13 +2,18 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut:** all ten built sentences are a degree adverb in front of an
-adjective. One construction, ten times, in a lesson that teaches no label.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-**And an evidence gap.** Checked against both corpora: **no adjective phrase
-anywhere has a complement.** _eager to help_, _proud of her garden_, _too heavy
-to lift_ — none exists. The construction probe builds both complement shapes, so
-what is missing is a fixture and a course example, not model capability.
+**The shortcut:** all ten sentences this replaced were a degree adverb in front
+of an adjective. One construction, ten times, in a lesson that teaches no label.
+
+**And an evidence gap.** Checked against both corpora as they were: **no
+adjective phrase anywhere had a complement.** _eager to help_, _proud of her
+garden_, _too heavy to lift_ — none existed. The construction probe builds both
+complement shapes, so what was missing was a fixture and a course example, not
+model capability. Both shapes are in the course now, here and at lesson 34.
 
 ## Sentences
 
@@ -17,7 +22,7 @@ what is missing is a fixture and a course example, not model capability.
 | 1   | The lake water felt cold.                     | **a one-word adjective phrase** — the floor case |
 | 2   | The candidate seemed unusually calm.          | the same, after a different linking verb         |
 | 3   | The box seemed too heavy.                     | a degree word that points forward                |
-| 4   | The road became dangerously narrow.           | an adverbial after the phrase, not inside it     |
+| 4   | The road became dangerously narrow.           | an adverb modifying the adjective, not the verb  |
 | 5   | That road grew steadily steeper.              | a degree word before a comparative adjective     |
 | 6   | The milk tasted slightly sour.                | a degree word before a plain adjective           |
 | 7   | The answer was perfectly clear.               | a degree word inside the phrase                  |
@@ -27,15 +32,17 @@ what is missing is a fixture and a course example, not model capability.
 
 ## Notes
 
-Item 3 is the floor and the built lesson has none: an adjective phrase can be one
-word, and if every example has two the learner learns the wrong minimum.
+_The lake water felt cold_ is the floor, and the corpus this replaced has none:
+an adjective phrase can be one word, and if every example has two the learner
+learns the wrong minimum.
 
-Item 7 is the boundary case. _near the bridge_ follows the adjective and is
-**not** part of it — it modifies the clause. Compare item 6, where _of her garden_
-is inside the phrase. Substitution settles it: _The road became narrow_ stands
-alone; _\*My neighbour seemed proud_ does not mean the same thing.
+_My neighbour seemed proud of her garden_ is the boundary case. _of her garden_
+sits **inside** the adjective phrase, and removing it changes what the sentence
+says: _\*My neighbour seemed proud_ does not mean the same thing. The mirror case
+— a phrase that follows the adjective and modifies the clause instead — is not in
+this lesson; attachment is lesson 19's question and then lesson 27's.
 
-**Items 5 and 6 build today.** Both were daggered because no adjective phrase in
-either corpus has a complement. `node scripts/probe-constructions.mjs` builds both
-`AdjP > PP/complement` and `AdjP > Cl/complement` clean, so the absence is an
-authoring gap and not a model one.
+**`AdjP > PP/complement` is built here**, in that same sentence, and it was the
+one adjective-phrase shape neither corpus had. `AdjP > Cl/complement` arrives at
+lesson 34, in _The box was too heavy to lift_. Both were once assumed to be model
+gaps and neither is.

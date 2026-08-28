@@ -1,15 +1,17 @@
 /**
  * Lesson 38 — Interjections and sentence-edge words.
  *
- * `form:Interj` was taught here and used in none of the four hundred sentences —
- * the last of the two decisions the course taught and never exercised. Items 1
- * and 2 use it.
+ * `form:Interj` was taught here and used in none of the four hundred sentences
+ * this set replaced — the last of the two decisions taught and never exercised.
+ * *Oh, the gate opened* and *Well, the clerk waited* use it.
  *
  * Every built supplement was sentence-initial with a comma, so free position —
- * the clearest evidence of what a supplement is — was never shown. Items 4, 5
- * and 6 move one word through three places with nothing else changing.
+ * the clearest evidence of what a supplement is — was never shown. The three
+ * *surprisingly* sentences move one word through three places with nothing else
+ * changing.
  *
- * Items 7 and 8 are the pair the lesson most needs. Both start with a word and a
+ * *Yesterday the children waited* and *Sadly, the children waited* are the pair
+ * the lesson most needs. Both start with a word and a
  * comma before a clause, and one is an adverbial while the other is a
  * supplement. The removal test does NOT separate them — both drop. The question
  * test does: *When did they play? Yesterday* works, and *How did they play?

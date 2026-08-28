@@ -7,8 +7,8 @@
  * for: the subject runs from one word to five and back, and the substitution
  * test settles every one.
  *
- * Items 6 and 9 are a pair: the same sentence with and without the phrase
- * inside the subject.
+ * *The parcel by the stairs vanished* and *The parcel vanished* are a pair: the
+ * same sentence with and without the phrase inside the subject.
  */
 import { adjn, adv, bare, det, postmod, pp, pron, sv, svPlus, v } from './shape.ts';
 

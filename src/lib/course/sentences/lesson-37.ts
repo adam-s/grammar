@@ -1,14 +1,16 @@
 /**
  * Lesson 37 — Passive voice. Where the lesson-1 shortcut finally breaks.
  *
- * The palette's hint for the subject is *WHO or WHAT does it?*, and item 2 is
- * the first sentence in the whole course whose subject does nothing. Thirty-six
- * lessons of a rule that always worked, and it stops here.
+ * The palette's hint for the subject is *WHO or WHAT does it?*, and *The harbour
+ * was dredged by the contractors* is the first sentence in the whole course whose
+ * subject does nothing. Thirty-six lessons of a rule that always worked, and it
+ * stops here.
  *
- * Items 1 and 2 are the pair the built set lacked: the same event in both
- * voices, adjacent, so *turn it back* is a test the learner runs rather than a
- * rule they are told. Item 7 is the trap — *be* plus an *-ed* word that is a
- * subject complement, so the form test is not sufficient on its own.
+ * It and *The contractors dredged the harbour* are the pair the built set lacked:
+ * the same event in both voices, so *turn it back* is a test the learner runs
+ * rather than a rule they are told. *The gates were closed* is the trap — *be*
+ * plus an *-ed* word that can be a subject complement, so the form test is not
+ * sufficient on its own, and both readings are stored.
  */
 import {
   adj,

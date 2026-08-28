@@ -66,7 +66,7 @@ export function clauseOf(cs: ConstituentMap, id: string): string | null {
  * clause; the presence of *and* is the claim that this node is a join. The cost
  * is that a join made with a comma alone — *the engine stalled, the car
  * stopped* — is not recognised, and cannot be until punctuation has a home
- * (docs/model-gaps.md).
+ * (README.md, "What the model still cannot say").
  */
 export function isCoordination(cs: ConstituentMap, id: string): boolean {
   return (cs[id]?.children ?? []).some((k) => cs[k]?.function === 'coordinator');

@@ -459,6 +459,17 @@ export interface SentenceProvenance {
   audits: 'pass' | 'fail';
 }
 
+/**
+ * What `reviewedBy` says until a person has read the parse and signed for it.
+ *
+ * It lives here, beside the field, because both ends need it and neither may
+ * depend on the other: a sentence writes it, and the readiness report reads it.
+ * Putting it in the report module made sentence construction import the module
+ * that imports the finished course, and the cycle only showed itself when
+ * something imported a sentence module first.
+ */
+export const UNREVIEWED = 'unreviewed';
+
 export interface SentenceEntry {
   id: string;
   text: string;

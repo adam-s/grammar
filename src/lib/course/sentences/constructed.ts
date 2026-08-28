@@ -12,7 +12,7 @@
  */
 import type { BuiltReading } from '../../grammar/build.ts';
 import { sentence } from '../../grammar/entry.ts';
-import type { SentenceEntry } from '../../grammar/types.ts';
+import { UNREVIEWED, type SentenceEntry } from '../../grammar/types.ts';
 
 export function constructed(
   id: string,
@@ -28,7 +28,9 @@ export function constructed(
     canonicalId,
     { work: 'constructed', locator: where },
     // No human has read these parses. The field says so, so that "reviewed"
-    // never becomes something a later reader assumes.
-    { reviewedBy: 'unreviewed', reviewedAt: '2026-08-28' },
+    // never becomes something a later reader assumes — and the date is empty,
+    // because a date beside `unreviewed` records when a review that did not
+    // happen did not happen.
+    { reviewedBy: UNREVIEWED, reviewedAt: '' },
   );
 }

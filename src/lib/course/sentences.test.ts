@@ -11,6 +11,7 @@
  * automatic can. `provenance.reviewedBy` says `unreviewed` for a reason.
  */
 import assert from 'node:assert/strict';
+import { readFileSync, readdirSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { auditReading } from '../grammar/audits.ts';
 import { verbs } from '../grammar/clause.ts';
@@ -122,8 +123,11 @@ describe('sign-off is a name and a date, not a flag', () => {
 
   it('refuses the placeholder, a blank, and a missing date', () => {
     assert.equal(isReviewed(one), false, 'as written');
-    const withName = { ...one, provenance: { ...one.provenance, reviewedBy: 'A. Sohn' } };
-    assert.equal(isReviewed(withName), true, 'a name and the date it already carries');
+    const withName = {
+      ...one,
+      provenance: { ...one.provenance, reviewedBy: 'A. Sohn', reviewedAt: '2026-08-28' },
+    };
+    assert.equal(isReviewed(withName), true, 'a name and a date');
     assert.equal(
       isReviewed({ ...withName, provenance: { ...withName.provenance, reviewedAt: 'soon' } }),
       false,
@@ -134,5 +138,41 @@ describe('sign-off is a name and a date, not a flag', () => {
       false,
       'nor is a blank',
     );
+    assert.equal(
+      isReviewed({
+        ...one,
+        provenance: { ...one.provenance, reviewedBy: 'contract', reviewedAt: '2026-08-27' },
+      }),
+      false,
+      "nor is the fixtures' own marker, which is not a person",
+    );
+    assert.equal(one.provenance.reviewedAt, '', 'an unreviewed sentence carries no review date');
   });
+});
+
+/**
+ * A comment may not name a sentence by its position.
+ *
+ * The order inside a lesson is derived from the accumulation contract, not
+ * authored, so a row number is a fact about today's arrangement. One reorder
+ * turned a hundred and thirty-one "item N" references in the documents and
+ * seventy-five in these headers into confident statements about the wrong
+ * sentences, and every one of them passed every test. `check-sentences.mjs`
+ * holds the documents to this rule; this holds the source to it.
+ */
+describe('nothing in the corpus source refers to a sentence by number', () => {
+  const dir = new URL('./sentences/', import.meta.url);
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
+    it(file, () => {
+      const text = readFileSync(new URL(file, dir), 'utf8');
+      text.split('\n').forEach((line, i) => {
+        const hit = line.match(/\b(items?|rows?|sentences?)\s+\d+\b/i);
+        assert.equal(
+          hit,
+          null,
+          `${file}:${i + 1} says "${hit?.[0]}" — name the sentence, not its position.`,
+        );
+      });
+    });
+  }
 });

@@ -3,13 +3,18 @@
 **Optional.** See [../optional-lessons.md](../optional-lessons.md) and
 [README.md](README.md).
 
+**Status:** an optional companion, and not in `COURSE_LESSONS`. Some of these
+sentences exist in the built corpus and the rest are not built at all; the
+ledger in [../proposal-review.md](../proposal-review.md) says which, per row.
+
 Three sentences. This is the **inverse** of [lesson 3a](../03a-doer-and-subject/):
 there, sentences that mean different things came out as the same tree. Here,
 sentences that mean the same thing come out as different trees.
 
-Items 2 and 3 are in lesson 37. Item 1 is not: the corpus has the passive and
-never its active counterpart, which is the pair this lesson needs and the reason
-it has to be written.
+All three sentences are in lesson 37, which is why this companion needs no new
+grammar: it re-reads three trees the course already builds. The corpus this
+replaced had the passive and never its active counterpart, and that missing pair
+is the reason the companion was written.
 
 ## Sentences
 
@@ -21,13 +26,15 @@ it has to be written.
 
 ## Notes
 
-The page shows all three completed diagrams. Items 1 and 2 come out differently
-— subject, verb, direct object against subject, auxiliary, verb, adverbial — and
+The page shows all three completed diagrams. _The contractors dredged the
+harbour_ and _The harbour was dredged by the contractors_ come out differently —
+subject, verb, direct object against subject, auxiliary, verb, adverbial — and
 nothing happened differently in the world.
 
-Item 3 is where the judgment lives. **There is no active version of it.** To
-write it actively you must supply a subject, and if you do not know one you must
-invent _someone_ or _they_, both of which add a claim the passive never made.
+_Those deeds were filed_ is where the judgment lives. **There is no active
+version of it.** To write it actively you must supply a subject, and if you do
+not know one you must invent _someone_ or _they_, both of which add a claim the
+passive never made.
 
 Then:
 
@@ -37,8 +44,8 @@ Then:
 > chose.
 
 **This is where lesson 3a pays off.** The app's subject hint is _WHO or WHAT does
-it?_, and item 2 is the first sentence in the course where the subject does
-nothing. 3a planted the doubt at lesson 3 so this lesson could collect on it
+it?_, and _The harbour was dredged by the contractors_ is the first sentence in
+the course where the subject does nothing. 3a planted the doubt at lesson 3 so this lesson could collect on it
 thirty-four lessons later.
 
 **It must not become style advice.** "Avoid the passive" is common, wrong often

@@ -5,8 +5,9 @@
  * find all ten by hunting for punctuation — and lesson 39 will later insist that
  * punctuation is evidence rather than definition.
  *
- * Items 2 and 3 are the pair: *Our guide Arun* picks out which guide, and *Our
- * guide, Arun* names the only one there is. Same words, and the commas change
+ * *Our guide Arun waved twice* and *Our guide, Arun, waved twice* are the pair:
+ * *Our guide Arun* picks out which guide, and *Our guide, Arun* names the only
+ * one there is. Same words, and the commas change
  * what is claimed. It is lesson 39's question, seventeen lessons early.
  */
 import { adjn, appos, apposName, bare, closeAppos, det, sv, svo, svPlus, adv, v } from './shape.ts';

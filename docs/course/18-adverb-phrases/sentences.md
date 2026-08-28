@@ -3,12 +3,17 @@
 Drafted 28 August 2026. See [README.md](README.md) and the optional companion
 [../18a-kinds-of-adverb/](../18a-kinds-of-adverb/).
 
-**The lesson is called "Adverbs and adverb phrases" and there is no multi-word
-adverb phrase anywhere in the course.** Every `AdvP` in both corpora is exactly
-one word wide. Lesson 17 spends all ten of its sentences on a degree word in
-front of an adjective and this lesson never reuses the structure on an adverb.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-**And every adverb is clause-final.** None is fronted, none is medial, and
+**The lesson is called "Adverbs and adverb phrases" and there was no multi-word
+adverb phrase anywhere in the course this replaced.** Every `AdvP` in both
+corpora was exactly one word wide. Lesson 17 spends all ten of its sentences on a
+degree word in front of an adjective, and this lesson never reused the structure
+on an adverb.
+
+**And every adverb was clause-final.** None was fronted, none medial, and
 position is most of what makes adverbials hard to find.
 
 ## Sentences
@@ -28,18 +33,19 @@ position is most of what makes adverbials hard to find.
 
 ## Notes
 
-Items 4 and 5 move the adverb, which the built lesson never does. Fronting is
-also the test that an adverbial is optional rather than a complement, and it
-feeds lesson 39, which currently has one punctuation pattern and needs more.
+_Yesterday the children played_ and _The children quietly left_ move the adverb,
+which the corpus this replaced never does. Fronting is also the test that an
+adverbial is optional rather than a complement, and it feeds lesson 39.
 
-Item 9 is the composition with lesson 17: _surprisingly_ modifies _narrow_, not
-the verb, so the same word class is doing a different job one level down. It is
-the cheapest way to show that `Adv` and `adverbial` are separate questions.
+_The road was surprisingly narrow_ is the composition with lesson 17:
+_surprisingly_ modifies _narrow_, not the verb, so the same word class is doing a
+different job one level down. It is the cheapest way to show that `Adv` and
+`adverbial` are separate questions.
 
-**Items 3 and 7 build today.** `AdvP > Adv/premodifier` has no fixture and no
-course sentence, and it was daggered on that basis — but `node scripts/probe-constructions.mjs`
-builds it clean. Nothing has to change in the model; the shape simply has never
-been written.
+**_Our guests arrived unusually early_ and _The old clock ticked remarkably
+loudly_ are where `AdvP > Adv/premodifier` enters the course.** The shape had no
+fixture and no course sentence, and was assumed on that basis to be a model gap.
+It is not; it had simply never been written.
 
 Seven of ten adverbs still sit at the end, which is where most adverbs go. The
 point is that it is no longer ten of ten.

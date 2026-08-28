@@ -6,7 +6,7 @@ returns. The answers here are arguable and nothing depends on it. See
 
 Researched 28 August 2026. An author's dossier, not a page for a learner.
 
-**Status:** This dossier measures the corpus as it was before the conversion. [sentences.md](sentences.md) is now the live course text, built and reachable; no reading has been accepted by a person, which `npm run course:readiness` reports.
+**Status:** This dossier measures the corpus as it was before the conversion. This lesson is an optional companion and is **not** in `COURSE_LESSONS`, so [sentences.md](sentences.md) is a proposal: some of its sentences exist in the built corpus and the rest are not built at all. The ledger says which, per row.
 
 **Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
 

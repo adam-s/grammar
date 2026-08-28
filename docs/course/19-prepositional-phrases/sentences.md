@@ -2,12 +2,16 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
 **This lesson teaches no label and its content is depth.** It is the one place in
 the course where longer is the right answer, because nesting _is_ the lesson. The
-built lesson already nests two deep — _out of the barn_, _up through the
-floorboards_ — and it should be the longest in its stage, which it is not.
+lesson this replaced already nested two deep — _out of the barn_, _up through the
+floorboards_ — and should have been the longest in its stage, which it was not.
 
-**One shortcut:** every prepositional phrase in the built lesson is an adverbial.
+**One shortcut:** every prepositional phrase in that lesson was an adverbial.
 
 ## Sentences
 
@@ -26,14 +30,16 @@ floorboards_ — and it should be the longest in its stage, which it is not.
 
 ## Notes
 
-Item 7 is the deepest sentence in the lesson and it is unambiguous, because _of_
-binds tightly and only one attachment is available. That is the safe way to teach
-depth. Item 5 is deep and **not** safe: _beside the river_ can attach to _the
-path_ or to _walked_, and lesson 27 is eight lessons away.
+_The lid of the box of tools cracked_ is the deepest sentence in the lesson and
+it is unambiguous, because _of_ binds tightly and only one attachment is
+available. That is the safe way to teach depth. _We walked along the path beside
+the river_ is deep and **not** safe: _beside the river_ can attach to _the path_
+or to _walked_, and lesson 27 is eight lessons away.
 
 That contrast is worth an author knowing: **nesting inside a noun phrase is
-unambiguous; stacking after a verb is not.** Item 8 is included precisely so the
-lesson holds one sentence whose reading is genuinely open, which lesson 27 can
-then return to.
+unambiguous; stacking after a verb is not.** _She read her report on the train_
+is included precisely so the lesson holds one sentence whose reading is genuinely
+open, which lesson 27 then returns to.
 
-Item 10 quietly answers the "every prepositional phrase is a place" assumption.
+_The mist lifted before the dawn_ quietly answers the "every prepositional phrase
+is a place" assumption.

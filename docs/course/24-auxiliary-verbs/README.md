@@ -22,12 +22,13 @@ Six decisions. Like lesson 14, a large jump.
 
 ## The finding
 
-**`aux:do` is taught here and appears nowhere in the course.** Checked across
-all 400 sentences: the auxiliaries used are modal, perfect and progressive.
-There is not one _do_, _does_ or _did_.
+**`aux:do` was taught here and used in none of the 400 sentences this dossier
+measures.** Checked across all of them: the auxiliaries used were modal, perfect
+and progressive. There was not one _do_, _does_ or _did_.
 
-It is one of exactly two decisions in the whole course that are taught and never
-used. The other is `form:Interj` at lesson 38.
+It was one of exactly two decisions in the whole course taught and never used.
+The other was `form:Interj` at lesson 38. Both are used now: see
+[sentences.md](sentences.md).
 
 That matters more than a missing example, because **`do` is the auxiliary that
 proves the category exists.** _Do_-support is what English inserts when a
@@ -62,7 +63,8 @@ that changes with the time is _was_, not _failing_.
 ## What this should change
 
 1. **Use _do_, or stop teaching `aux:do`.** A decision the palette will accept
-   and no sentence exercises is a claim the course has not earned.
+   and no sentence exercises is a claim the course has not earned. **Done** —
+   _The visitors did wait_ and _The clerk did file the deeds_.
 2. **Build one auxiliary chain.** The ordering rule — modal, then perfect, then
    progressive — is invisible with one auxiliary.
 3. **Name the inversion test.** It is what an auxiliary _is_.

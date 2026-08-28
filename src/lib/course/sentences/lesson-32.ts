@@ -2,8 +2,10 @@
  * Lesson 32 — Comparative clauses. Not only *be* plus *-er*.
  *
  * Every built sentence was the same frame, so a learner could find the
- * construction by looking for the suffix. Item 3 compares an adverb after a verb
- * that is not *be*, item 4 uses *as … as*, and item 6 compares a quantity.
+ * construction by looking for the suffix. *The engine ran more quietly than we
+ * expected* compares an adverb after a verb that is not *be*, *The queue was as
+ * long as the baker feared* uses *as … as*, and *The river rose much faster than
+ * the crew managed* compares a rate.
  *
  * The `anchor` is what makes this its own lesson: the tail belongs to the
  * comparative word, not to the subject, and the two are not adjacent.

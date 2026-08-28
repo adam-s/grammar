@@ -2,10 +2,14 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**Two shortcuts.** The verb is the last word in all ten built sentences, and no
-verb appears anywhere else in the course in another sense — so a learner leaves
-with the idea that a verb _has_ a type, rather than that a verb is intransitive
-_here_.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**Two shortcuts.** The verb was the last word in all ten sentences this
+replaced, and no verb appeared anywhere else in that course in another sense — so
+a learner left with the idea that a verb _has_ a type, rather than that a verb is
+intransitive _here_.
 
 The passive test is what settles this properly and it cannot be used until
 lesson 37. What can be done now is to plant the verbs that will change type
@@ -28,12 +32,15 @@ later.
 
 ## Notes
 
-Items 4 and 7 are seeds. _The tide turned_ here and _The milk turned sour_ at
-lesson 10; _The gate opened_ here and _She opened the gate_ at lesson 9. Neither
-pair is remarked on in the built course, and both cost nothing.
+_The tide turned_ and _The hatch opened_ are seeds. _The tide turned_ here and
+_Our milk turned sour_ at lesson 10; _The hatch opened_ here and _She opened the
+gate_ at lesson 9. Neither pair was remarked on in the corpus this replaced, and
+both cost nothing.
 
-Item 5 matters for a different reason: _at us_ follows the verb and is not an
-object, so "nothing comes after an intransitive verb" fails immediately. That is
-the shortcut a learner would otherwise take from items 1 to 4.
+_She smiled at us_ matters for a different reason: _at us_ follows the verb and
+is not an object, so "nothing comes after an intransitive verb" fails
+immediately. That is the shortcut a learner would otherwise take from the plain
+frames around it, which is why it opens the lesson.
 
-Five of the ten end on the verb, against ten of ten built.
+Five of the ten end on the verb, against ten of ten in the corpus this
+replaced.

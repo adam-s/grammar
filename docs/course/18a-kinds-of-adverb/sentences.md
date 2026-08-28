@@ -3,14 +3,21 @@
 **Optional.** See [../optional-lessons.md](../optional-lessons.md) and
 [README.md](README.md).
 
-Four sentences, not ten. The demonstration is that **all four come out as the
-same tree** — checked against both corpora, every one of these is drawn
-`VP > AdvP/adverbial`, a single attachment path across all four kinds.
+**Status:** an optional companion, and not in `COURSE_LESSONS`. Some of these
+sentences exist in the built corpus and the rest are not built at all; the
+ledger in [../proposal-review.md](../proposal-review.md) says which, per row.
 
-Three of the four are in the built corpus. _The guard waited outside_ is not:
-the corpus has _outside_ only inside _The guard who waited outside put that
-ledger in the safe_, which is fourteen words with a relative clause in it. The
-short version has to be written.
+Four sentences, not ten. The demonstration is that **all four come out as the
+same tree**: each is drawn `VP > AdvP/adverbial`, one attachment path across four
+meanings. The two that are built are drawn that way today. Position is a
+different question — a fronted adverb attaches at the clause instead, which is
+lesson 18's _Yesterday the children played_.
+
+Two of the four are in the built corpus — _The train arrived late_ and _The
+auditor checked the ledger twice_. The other two are not built. _The guard waited
+outside_ is the one worth writing: the corpus has _outside_ only inside _The
+guard who waited outside put that ledger in the safe_, which is fourteen words
+with a relative clause in it.
 
 ## Sentences
 

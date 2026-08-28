@@ -199,9 +199,48 @@ hour while being impossible to build, because picking a form over a loose phrase
 replaced that phrase instead of stacking over it. **Representable and reachable
 are different properties, and only the sweep tests the second.**
 
-What the menus must do is `src/lib/grammar/options.ts` and the thirty-nine
-tests beside it. What the model still cannot say is
-[docs/model-gaps.md](docs/model-gaps.md).
+There is a third property, and it has no test. **Reachable and true are
+different things.** *We asked the driver to wait* was built as a clause in the
+`objectComplement` slot, audited, replayed, swept and graded — and the label was
+wrong, because an object complement renames or describes the direct object and
+*to wait* does neither. Reading the definition the app shows the learner is what
+caught it. `npm run course:readiness` reports how much of the course has been
+read that way.
+
+What the menus must do is `src/lib/grammar/options.ts` and the thirty-nine tests
+beside it.
+
+## What the model still cannot say
+
+Measured against [CGELBank](https://arxiv.org/html/2305.17347v2), the treebank
+built on Huddleston and Pullum's *Cambridge Grammar of the English Language*, so
+that "are we complete" is not a matter of taste. Four things are open, and each
+is a decision nobody has made rather than a bug:
+
+- **Object control.** *We asked the driver to wait* — *the driver* is the object
+  of *asked* and also who does the waiting, and the model has no slot for the
+  second job. Before it returns, a design note has to say whether a `VP` needs a
+  clausal-complement function distinct from direct object and predicative
+  complement; whether *the driver* is stored as the matrix object, the
+  subordinate subject, or linked across both; how the tree tells it from *We
+  considered the driver reliable*; and what happens in the passive.
+- **The possessive.** *Mara's phone buzzed* has no representation: an `NP`
+  cannot fill a determiner slot, a `DP`'s head must be a `Det`, and a `DP` has no
+  complement. The question is where the `'s` attaches. It holds up a sentence in
+  lessons 2, 6 and 36, each of which says so.
+- **Fused functions beyond the two English has.** `fusedWith` holds a second job
+  and `FUSIONS` is a closed table of two. A third goes in the table.
+- **Raising against control.** *It seems to work* and *She wants to leave* build
+  the same tree. Which verb gives its subject a role is a fact about the verb,
+  not about the sentence in front of you, so a flag for it would be a lexical
+  fact wearing a syntactic hat. Left alone on purpose.
+
+**Nothing here is claimed from reading the code.** Every entry was checked by
+building the structure and running the audits, or by driving the app with
+`npm run snapshot`. Reading the code gave the wrong answer four separate times,
+always in the same direction — calling a thing blocked because no fixture
+happened to use it. `scripts/probe-constructions.mjs` is the half hour that
+changed the plan every time.
 
 ## The course
 
@@ -220,6 +259,13 @@ reads `unreviewed` on every one, because the audits prove a parse is well formed
 and cannot prove it is true — the defects that mattered most were found by
 reading. [docs/course/README.md](docs/course/README.md) has the order and the
 reasoning; `course.ts` is the authority.
+
+Each lesson also has a dossier under [docs/course/](docs/course/), and
+`npm run course:sentences` holds the two together: the documents' tables against
+the built sentences, the authoring ledger against the documents, and each step
+cell's claim against the tree the course stores. It also rejects prose that names
+a sentence by its row number, because the order inside a lesson is derived from
+the accumulation contract and moves.
 
 ## Influences
 

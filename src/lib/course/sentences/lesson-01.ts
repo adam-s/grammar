@@ -3,8 +3,8 @@
  *
  * The built set put the verb last in all ten, so "cut before the last word"
  * scored full marks without any idea of what a subject is. These grow the
- * predicate as often as the subject, and item 5 is the one that breaks the
- * shortcut hardest: a one-word subject against a four-word predicate.
+ * predicate as often as the subject, and *Birds sang through the evening* breaks
+ * the shortcut hardest: a one-word subject against a four-word predicate.
  */
 import { adjn, adv, bare, det, numn, phrasal, postmod, pp, sv, svPlus, v } from './shape.ts';
 

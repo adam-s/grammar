@@ -2,13 +2,17 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**The shortcut:** all ten built sentences are _Number + plural noun + verb_, with
-the number as the first word every time. Only cardinals appear, so `form:Num` is
-indistinguishable from `form:Det` — a number that fills the determiner slot and
-nothing else is just a determiner with a different name.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-The lesson is also the second-shortest in the course at 3.9 words, a trough after
-lessons 21 and 22.
+**The shortcut:** all ten sentences this replaced were _Number + plural noun +
+verb_, with the number as the first word every time. Only cardinals appeared, so
+`form:Num` was indistinguishable from `form:Det` — a number that fills the
+determiner slot and nothing else is just a determiner with a different name.
+
+That lesson was also the second-shortest in the course at 3.9 words, a trough
+after lessons 21 and 22.
 
 ## Sentences
 
@@ -27,17 +31,19 @@ lessons 21 and 22.
 
 ## Notes
 
-Items 2, 4, 5 and 8 add ordinals, and item 5 is the one that settles the class:
-_The first two runners_ has an article, an ordinal and a cardinal, so _first_
-cannot be the determiner and _two_ cannot be an adjective. That is the whole
-lesson in five words and it is absent from the built corpus.
+_The first train arrived_, _The second bridge collapsed_, _The first two runners
+finished_ and _The last volunteers packed every book_ add ordinals, and _The first
+two runners finished_ is the one that settles the class: it has an article, an
+ordinal and a cardinal, so _first_ cannot be the determiner and _two_ cannot be
+an adjective. That is the whole lesson in five words and it is absent from the
+corpus this replaced.
 
-Item 7 does the same job more cheaply — _Those two windows_ has a determiner
+_Those two windows rattled_ does the same job more cheaply — a determiner sits
 before the number, so the number is not filling that slot.
 
-**Item 10 builds today.** `NP > Num/head` is on
-[../difficulty.md](../difficulty.md)'s list, and `node scripts/probe-constructions.mjs`
-confirms the model draws it.
+**_Those three remained outside_ is where `NP > Num/head` enters the course.** It
+was on [../difficulty.md](../difficulty.md)'s list of shapes a fixture proves and
+no lesson uses.
 
 If ordinals turn out not to be worth their own lesson, the fold into lesson 6 or
 16 that [README.md](README.md) raises is still the better answer. That is a

@@ -3,8 +3,13 @@
 **Optional.** See [../optional-lessons.md](../optional-lessons.md) and
 [README.md](README.md).
 
-Three sentences. All three are in lesson 24, all three get `aux:modal`, and all
-three get the identical tree.
+**Status:** an optional companion, and not in `COURSE_LESSONS`. Some of these
+sentences exist in the built corpus and the rest are not built at all; the
+ledger in [../proposal-review.md](../proposal-review.md) says which, per row.
+
+Three sentences, one of which — _The board should approve the plan_ — is lesson
+24's. All three get `aux:modal` and all three get the identical tree; the other
+two are not built.
 
 ## Sentences
 
@@ -25,9 +30,10 @@ Then the question is put and left open:
 > that you expect them to? Both are ordinary readings. Nothing in the sentence
 > decides, and nothing in the tree records which one you picked.
 
-Items 2 and 3 are each ambiguous on their own, which is the stronger version of
-the point: it is not only that one label covers several meanings, it is that a
-single sentence can carry two of them at once.
+_They may question the driver_ and _The board should approve the plan_ are each
+ambiguous on their own, which is the stronger version of the point: it is not
+only that one label covers several meanings, it is that a single sentence can
+carry two of them at once.
 
 **This must not add a label.** Splitting modality into deontic and epistemic is
 real in reference grammars and is exactly what `src/lib/grammar/types.ts` refuses

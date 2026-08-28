@@ -3,12 +3,12 @@
  *
  * All ten gaps in the built set were subject gaps and only *that* and *who*
  * appeared. The zero relative is the sharpest omission: *The book I needed
- * disappeared* has no relativizer at all, is completely ordinary, and is the
- * case where the gap is hardest to see — which is what `gap` exists to teach.
+ * vanished* has no relativizer at all, is completely ordinary, and is the case
+ * where the gap is hardest to see — which is what `gap` exists to teach.
  *
- * Items 4 and 5 are one word apart. A learner who can find the hole in item 5
- * has understood the machinery; one who can only find item 1's has learned to
- * look for *that*.
+ * It and *The book that I needed vanished* are one word apart. A learner who can
+ * find the hole in the bare one has understood the machinery; one who can only
+ * find the *that* version's has learned to look for *that*.
  */
 import { adj, det, modifiedBy, pron, sv, svc, svo, v } from './shape.ts';
 

@@ -2,14 +2,16 @@
  * Lesson 25 — Particles. With the movement that proves one.
  *
  * Every particle in the built set sat directly after the verb, which is exactly
- * where a preposition sits, so the test that separates them never ran. Items 1
- * and 2, 4 and 5, and 10 move the particle behind the object — which a
+ * where a preposition sits, so the test that separates them never ran. Four
+ * sentences move the particle behind the object — *took every name down*,
+ * *switched the lamp off*, *cheered him on*, *wrote the address down* — which a
  * preposition cannot do.
  *
- * Items 6 and 7 are the sharpest pair: *looked up the number* and *looked up the
- * chimney* differ in one noun and in what *up* is. *She looked the number up* is
- * fine; *She looked the chimney up* is not. Item 3 runs the test without anyone
- * being asked to, because a pronoun object forces the particle to move.
+ * *She looked up the number* and *She looked up the chimney* are the sharpest
+ * pair: they differ in one noun and in what *up* is. *She looked the number up*
+ * is fine; *She looked the chimney up* is not. *The crowd cheered him on* runs
+ * the test without anyone being asked to, because a pronoun object forces the
+ * particle to move.
  */
 import { det, phrasal, pp, pron, svo, svPlus, svoShifted, v } from './shape.ts';
 

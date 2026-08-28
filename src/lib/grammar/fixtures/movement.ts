@@ -63,7 +63,7 @@ export const frontedPhrase = sentence(
  * the whole of what subject-auxiliary inversion is, and writing the auxiliary
  * where it is actually said says it.
  *
- * An earlier draft of docs/model-gaps.md had this filed under discontinuity.
+ * An earlier draft of the model-gaps notes had this filed under discontinuity.
  * Nothing here is split, and — as `fix-tail-clause` below shows — neither is
  * the extraposed relative that was supposed to be the case that needed it.
  */

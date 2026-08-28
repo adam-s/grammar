@@ -3,10 +3,12 @@
  *
  * In all ten built sentences the indirect object was definite and the direct
  * object began with *a*, so looking for the article scored ten out of ten and
- * the *to* or *for* paraphrase was never needed. Items 4, 5 and 7 break that three
- * different ways.
+ * the *to* or *for* paraphrase was never needed. *The clerk showed a visitor the
+ * map*, *He wrote his sister the letter* and *The porter brought the guests their
+ * cases* break that three different ways.
  *
- * Item 8 is the paraphrase made into a sentence: *gave a map to us* has the same
+ * *The guide gave a map to us* is the paraphrase made into a sentence: it has the
+ * same
  * words as *gave us a map* and a different tree — one object and an adverbial,
  * not two objects. It is what stops "three noun phrases" becoming the rule.
  */

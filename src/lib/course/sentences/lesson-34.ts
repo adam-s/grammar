@@ -1,16 +1,23 @@
 /**
- * Lesson 34 — Infinitive clauses. With subjects of their own.
+ * Lesson 34 — Infinitive clauses. What the clause holds of its own.
  *
- * No infinitive clause anywhere in the course had an overt subject, so nothing
- * showed that an infinitive clause is a CLAUSE at all — every example had an
+ * No infinitive clause anywhere in the course has an overt subject, so nothing
+ * shows that an infinitive clause is a CLAUSE at all — every example has an
  * invisible subject matching the main one, which makes *to renew the lease* look
  * like part of the verb phrase.
  *
- * In item 4, *the driver* is the object of *asked* AND the subject of *to wait*,
- * and that is only visible once the clause has a subject. Item 8 puts the
- * infinitive inside an adjective phrase, which difficulty.md assigns here.
+ * That gap is open on purpose. *We asked the driver to wait* was built here for
+ * a while, with the infinitive as an `objectComplement`, and the label was wrong:
+ * an object complement renames or describes the direct object, and *to wait*
+ * says what the driver is to do. Object control needs a representation the model
+ * does not have; README.md and docs/course/difficulty.md carry the question.
+ *
+ * What the lesson can show is material INSIDE the clause: *The driver promised to
+ * wait outside* puts an adverbial there and *The council agreed to fund the
+ * repairs* an object. *The box was too heavy to lift* puts the whole infinitive
+ * inside an adjective phrase, which difficulty.md assigns here.
  */
-import { adjWithCl, det, pron, svClause, svoClause, v } from './shape.ts';
+import { adjWithCl, adv, det, pron, svClause, v } from './shape.ts';
 
 export const LESSON_34 = [
   svClause(
@@ -118,35 +125,35 @@ export const LESSON_34 = [
     },
     'He put himself forward to free the path.',
   ),
-  svoClause(
+  svClause(
     'c34-h',
     34,
-    pron('We'),
-    v('asked', 'ask', 'Vc'),
-    det('the', 'driver'),
+    det('The', 'driver'),
+    v('promised', 'promise', 'Vtr'),
     {
       marker: 'to',
       infinitival: true,
       verb: v('wait', 'wait', 'Vint'),
+      adverbial: adv('outside'),
       kind: 'nominal',
       finiteness: 'infinitival',
     },
-    'We put it to the driver that he should stay put.',
+    'The driver gave his word that he would stay out there.',
   ),
-  svoClause(
+  svClause(
     'c34-i',
     34,
-    det('The', 'guide'),
-    v('expected', 'expect', 'Vc'),
-    det('the', 'visitors'),
+    det('The', 'council'),
+    v('agreed', 'agree', 'Vtr'),
     {
       marker: 'to',
       infinitival: true,
-      verb: v('arrive', 'arrive', 'Vint'),
+      verb: v('fund', 'fund', 'Vtr'),
+      object: det('the', 'repairs'),
       kind: 'nominal',
       finiteness: 'infinitival',
     },
-    'The guide reckoned the visitors would turn up.',
+    'The council settled on paying for the work.',
   ),
   adjWithCl(
     'c34-j',

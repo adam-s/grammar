@@ -2,12 +2,16 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**Three shortcuts.** The built lesson contains **no article at all** — its ten
-are _that, this, every, some, his, those, another, each, her, both_ — while `the`
-and `a` are about 89% of every determiner in the course, and the learner first
-labels one at lesson 8. Every sentence is `Det N V.`, so the determiner is the
-first word ten times. And every noun phrase has one, so nothing shows the slot
-can be empty.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**Three shortcuts.** The lesson this replaced contained **no article at all** —
+its ten were _that, this, every, some, his, those, another, each, her, both_ —
+while `the` and `a` are about 89% of every determiner in the course, and the
+learner first labelled one at lesson 8. Every sentence was `Det N V.`, so the
+determiner was the first word ten times. And every noun phrase had one, so
+nothing showed the slot can be empty.
 
 The case for withholding the article is real: it is the most invisible word in
 English and a class is easier to see through its salient members. The case
@@ -31,13 +35,14 @@ then meets the label on ten unfamiliar words.
 
 ## Notes
 
-Items 1 and 2 put the articles back. Items 6 and 7 are the ones the built lesson
-most needs: _Guests complained_ and _Water boiled over_ are ordinary English with
-an empty determiner slot, and nothing in Stage 1 currently shows one.
+_The bell rang_ and _A window opened_ put the articles back. _Guests complained_
+and _Water boiled over_ are the ones the corpus this replaced most needed:
+ordinary English with an empty determiner slot, which nothing in Stage 1 showed.
 
-**Items 9 and 10 build today.** Both were daggered on the assumption that a
-shape absent from the corpus is a shape the model cannot draw. `node scripts/probe-constructions.mjs`
-builds each one clean, so the only thing missing is the sentence.
+**_Most agreed_ and _Almost every seat squeaked_ are built.** Both were once
+daggered on the assumption that a shape absent from the corpus is a shape the
+model cannot draw. `node scripts/probe-constructions.mjs` builds each one clean,
+so the only thing that had been missing was the sentence.
 
 A possessive noun phrase in the determiner slot — _The driver's phone buzzed_ —
 is deliberately **not** here. No possessive marker exists anywhere in either

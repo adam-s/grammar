@@ -3,9 +3,14 @@
 Drafted 28 August 2026. See [README.md](README.md) and the optional companion
 [../37a-same-event/](../37a-same-event/).
 
-**This lesson is already well built** — four distinct asked-shapes and the widest
-pick range in Stage 5. It covers the hard cases: the indirect object promoted,
-the object complement kept, and passives with and without an agent. That is kept.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**This lesson was already well built** — four distinct asked-shapes and the
+widest pick range in Stage 5. It covered the hard cases: the indirect object
+promoted, the object complement kept, and passives with and without an agent.
+That is kept.
 
 **Why it matters more than its position suggests.** The app's hint for the
 subject is _WHO or WHAT does it?_, and _The harbour was dredged by the
@@ -29,20 +34,21 @@ nothing. Thirty-six lessons of a rule that always worked, and it stops here.
 
 ## Notes
 
-Items 1 and 2 are the pair the built lesson lacks: the same event in both voices,
-adjacent, so _turn it back_ is a test the learner can run rather than a rule they
+_The contractors dredged the harbour_ and _The harbour was dredged by the
+contractors_ are the pair the corpus this replaced lacks: the same event in both
+voices, so _turn it back_ is a test the learner can run rather than a rule they
 are told.
 
-**Item 7 is the trap and it is worth having only if both readings are accepted.**
-_The streets were deserted_ can describe an empty state or an event in which
-people abandoned the streets. The form test, _be_ plus a past participle, is not
-sufficient on its own. The proposal review must prove that the builder can store
-both readings; otherwise this sentence must be replaced rather than grading one
-ordinary interpretation as wrong.
+**_The gates were closed_ is the trap, and it is worth having only because both
+readings are stored.** It can describe a shut state or an event in which somebody
+shut them. The form test, _be_ plus a past participle, is not sufficient on its
+own, so the sentence carries two readings and the learner may build either. A
+single stored reading here would have graded one ordinary interpretation as
+wrong.
 
-Items 3 and 9 have no agent and no active counterpart that does not invent one.
-That is not a gap in the sentences; it is the fact
-[../37a-same-event/](../37a-same-event/) is built on.
+_Those deeds were filed_ and _The path was cleared_ have no agent and no active
+counterpart that does not invent one. That is not a gap in the sentences; it is
+the fact [../37a-same-event/](../37a-same-event/) is built on.
 
 **The adjectival near-miss is deliberately absent.** _The window was broken_ has
 two real readings, one an event and one a state, and whether the model can hold

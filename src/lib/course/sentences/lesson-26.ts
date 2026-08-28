@@ -6,7 +6,8 @@
  * ten out of ten — so the lesson showed one of the many things coordination
  * joins, in one of the places it can sit.
  *
- * Item 8 carries the sharpest evidence in the lesson and it is free: *The
+ * *The surveyor and the clerk signed the deed* carries the sharpest evidence in
+ * the lesson and it is free: *The
  * surveyor and the clerk **signed*** takes a plural verb where either alone
  * would take a singular. That is agreement proving the pair is one subject
  * rather than two, and no built sentence drew attention to it.

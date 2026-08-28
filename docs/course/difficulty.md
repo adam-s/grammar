@@ -29,14 +29,22 @@ times.
 
 ### And the corpus that replaced it
 
-|                                                    | then                 | now       |
-| -------------------------------------------------- | -------------------- | --------- |
-| lessons asking for one distinct shape              | 9                    | 4         |
-| lessons asking for two                             | 12                   | **0**     |
-| lessons asking for six or more                     | 5                    | **16**    |
-| transitions that discard what the step before used | 184                  | **0**     |
-| structural shapes the course uses                  | 88 trees / 43 shapes | 71 shapes |
-| decisions taught and never exercised               | 2                    | **0**     |
+|                                                               | then                 | now       |
+| ------------------------------------------------------------- | -------------------- | --------- |
+| lessons asking for one distinct shape                         | 9                    | 4         |
+| lessons asking for two                                        | 12                   | **0**     |
+| lessons asking for six or more                                | 5                    | **16**    |
+| transitions that discard **all** of what the step before used | 184                  | **0**     |
+| structural shapes the course uses                             | 88 trees / 43 shapes | 71 shapes |
+| decisions taught and never exercised                          | 2                    | **0**     |
+
+**Read that row carefully.** 184 was measured under set inclusion — a transition
+counted as a discard if it dropped **any** earlier lesson its predecessor used.
+Under that definition the corpus still has **76**, and `measure-course.mjs` still
+reports them, because inclusion turned out to be unsatisfiable (see the contract
+below). The 0 is the weaker and satisfiable rule the test enforces: no transition
+drops more than half. The two numbers measure different things and both are here
+on purpose.
 
 The four still at one shape are lessons 1 to 4, where everything inside the
 sentence prunes away and the target cannot vary. Their variation is where the cut
@@ -131,9 +139,15 @@ What survives is what inclusion was reaching for.
    a sentence keeps at least half the earlier lessons its predecessor drew on.
    That catches `{1,2,3}` → `{4,5,6}` exactly, which is the failure the whole
    rule exists for. **Enforced by `src/lib/course/accumulation.test.ts`**, and the
-   corpus meets it at all 360 transitions with nothing to spare.
-2. **The running union of a lesson never shrinks.** Free to check, and it fails
-   first and more clearly if the reach computation itself breaks.
+   corpus meets it at all 360 transitions with nothing to spare: the tightest is
+   lesson 37's eighth step, which keeps exactly three of six.
+2. **A reach set names the lesson a visible decision comes from.** A canary on
+   the reach computation itself: a sentence with a determiner in it must reach
+   the lesson that first taught determiners. The rule above compares two reach
+   sets and would be satisfied by a computation that was wrong the same way
+   twice — an empty set every time passes it. This one would not. (Its
+   predecessor, "the running union never shrinks", could not fail at all: it
+   added to a set and then asserted the set had not shrunk.)
 3. **Structure may be the step.** Nesting a taught thing inside another, or
    giving a familiar form a new job, changes no reach set. A step may instead
    raise the target's node count or introduce a `(form, function)` pair the lesson
@@ -159,23 +173,30 @@ Not checkable, and better said than faked:
 
 ## What the course never touches
 
-The units are what `measure-course.mjs` reports: **16 structural shapes**
-(`parent > child/function`, the string `consistency.test.ts` uses) and **5 node
-properties**, which are not shapes and are counted apart. Twenty-one in all, every
-one proved by a fixture and used by no lesson.
+The units are what `measure-course.mjs` reports: **7 structural shapes**
+(`parent > child/function`, the string `consistency.test.ts` uses) and **3 node
+properties**, which are not shapes and are counted apart. Ten in all, every one
+proved by a fixture and used by no lesson. The count was 16 and 5 before the
+course corpus was converted; the eleven that closed are named below.
 
 **Eleven were listed as belonging in Course 1 and built nowhere. All eleven are
 now built**, along with six more the list could not see, because it counted
 shapes a fixture proves and no lesson uses — and those six were absent from both.
-The fixtures written for them are named in
-[../closing-the-slot-gaps.md](../closing-the-slot-gaps.md) and in the fixture
-files themselves.
+The fixtures written for them are named in the fixture files themselves.
 
-Three constructions were genuinely unbuildable, and two of those turned out to be
-one entry missing from a form list rather than a decision. What remains blocked is
-**the possessive**: an `NP` cannot fill a determiner slot, a `DP`'s head must be a
-`Det`, and a `DP` has no complement, so _Mara's phone_ has no representation. That
-one is a design question — where the `'s` attaches — and not a missing entry.
+Three constructions were called unbuildable. **One was a form list one entry
+short**: a clause as subject complement, _The trouble was that the gate failed_,
+now lesson 30's. **Two are still open, and both are design questions rather than
+missing entries**, recorded here and in
+[the README](../../README.md#what-the-model-still-cannot-say):
+
+- **the possessive.** An `NP` cannot fill a determiner slot, a `DP`'s head must be
+  a `Det`, and a `DP` has no complement, so _Mara's phone_ has no representation.
+  The question is where the `'s` attaches;
+- **object control.** _We asked the driver to wait_ was built for a day as a
+  clause in the `objectComplement` slot, and that label means "renames or
+  describes the direct object", which _to wait_ does not do. It was removed. The
+  question is what slot the model should have instead.
 
 **Nine belong to Course 2 and are properly absent**, since lessons 41–50 are
 planned and unwritten: `S > Aux/auxiliary`, `S > NP/prenucleus` and
@@ -203,11 +224,16 @@ the smallest tree holding each construction and runs every audit over it.
 the eleven Course 1 shapes above builds, and so do the supplementary relative,
 the participial adverbial, the present-participle postmodifier, the close
 appositive, the paired coordinator, the adjective-phrase complement, the
-infinitive with its own subject, the auxiliary chain, _do_-support, _whose_,
-_as … as_, and the interjection.
+auxiliary chain, _do_-support, _whose_, _as … as_, and the interjection.
 
 So they are authoring gaps. The sentences have never been written; nothing
 stands in the way of writing them.
+
+**A probe that builds is not a probe that is right.** The infinitive with its own
+subject was on this list, built clean, entered the course, swept clean in the
+browser — and was removed, because the only slot that would take it means
+something else. A probe answers "can the model draw this?" It cannot answer "is
+this what the drawing means?"
 
 **One is genuinely blocked.** An English possessive has no representation: a `NP`
 cannot fill a determiner slot, a `DP`'s head must be a `Det`, and a `DP` has no
@@ -218,10 +244,11 @@ Three of the twenty were reported BLOCKED on a first attempt and built on a
 second, because the spec was wrong rather than the model. A failing probe is a
 prompt to try another shape before it is a finding, and the script says so.
 
-Separately, two decisions are **taught and never used** anywhere in the 400
-sentences: `aux:do` at lesson 24 and `form:Interj` at lesson 38. Both build.
-Each is a claim the course has not earned, and each is fixed by one sentence or
-by dropping the decision from `teaches`.
+Separately, two decisions were **taught and never used** anywhere in the 400
+sentences this corpus replaced: `aux:do` at lesson 24 and `form:Interj` at lesson 38. Each was a claim the course had not earned, and each was fixed the cheap way,
+by writing the sentence: _The visitors did wait_ and _The clerk did file the
+deeds_ for the first, _Oh, the gate opened_ and _Well, the clerk waited_ for the
+second. That is the **0** in the table above.
 
 ## Where this came from
 

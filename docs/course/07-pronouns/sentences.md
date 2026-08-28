@@ -2,10 +2,15 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**Two problems.** Every sentence in the built lesson is two words, which makes it
-the shortest lesson in the whole course at lesson seven of forty; picks drop from
-lesson 6's 11 to 9, so the course steps backwards. And the idea the lesson most
-needs to carry is missing: **a pronoun replaces a noun phrase, not a noun.**
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**Two problems.** Every sentence in the lesson this replaced was two words, which
+made it the shortest lesson in the whole course at lesson seven of forty; picks
+dropped from lesson 6's 11 to 9, so the course stepped backwards. And the idea
+the lesson most needs to carry was missing: **a pronoun replaces a noun phrase,
+not a noun.**
 
 _The man in blue laughed_ → _He laughed_, never _The he in blue laughed_. That is
 the substitution test from lesson 4 seen from the other end, and it is the first
@@ -28,13 +33,13 @@ time the learner meets the replacement itself.
 
 ## Notes
 
-Items 6 and 7 are the lesson. Neither is in the built corpus; item 6 is the
-shape lesson 4 uses and item 7 the shape lesson 7 uses, and putting the two next
-to each other makes the point in one line.
+_He laughed_ and _The man in blue laughed_ are the lesson. Neither is in the
+corpus this replaced; one is the shape lesson 4 uses and the other the shape this
+lesson uses, and putting the two side by side makes the point in one line.
 
-Item 9 does the opposite work: _Nobody in the back row_ shows that a pronoun can
-take a postmodifier, which means it is filling the noun-phrase slot rather than
-being a small noun. It is also why the school definition, _a word that takes the
+_Nobody in the row complained_ does the opposite work: a pronoun takes a
+postmodifier, which means it is filling the noun-phrase slot rather than being a
+small noun. It is also why the school definition, _a word that takes the
 place of a noun_, is not merely a different name for the same idea but a wrong
 one.
 

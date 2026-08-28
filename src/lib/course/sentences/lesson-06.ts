@@ -3,11 +3,11 @@
  *
  * The built set contained no article at all, while *the* and *a* are about 89%
  * of every determiner in the course — so the learner met the label on ten
- * unfamiliar words and first had to apply it to *the* at lesson 8. Items 1 and
- * 2 put the articles back.
+ * unfamiliar words and first had to apply it to *the* at lesson 8. *The bell
+ * rang* and *A window opened* put the articles back.
  *
- * Items 6 and 7 are the ones the built set most needed: a noun phrase with the
- * slot EMPTY. Nothing in Stage 1 showed one, so nothing said the slot was
+ * *Guests complained* and *Water boiled over* are the ones the built set most
+ * needed: a noun phrase with the slot EMPTY. Nothing in Stage 1 showed one, so nothing said the slot was
  * optional.
  */
 import { adv, bare, det, dp, fused, phrasal, sv, svPlus, v } from './shape.ts';

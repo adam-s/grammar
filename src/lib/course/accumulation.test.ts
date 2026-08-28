@@ -83,17 +83,29 @@ describe('a lesson accumulates instead of substituting', () => {
     });
   }
 
-  it('the running union of a lesson never shrinks', () => {
-    // The weaker half of the same idea, and free to check: whatever a lesson has
-    // used stays used. It cannot fail while the rule above holds, which is the
-    // point — it fails first and more clearly if the reach computation breaks.
+  it('a reach set names the earlier lesson a visible decision comes from', () => {
+    // A canary on `reachOf`, which the rule above cannot be. That rule compares
+    // two reach sets, so a computation wrong in the same way twice would satisfy
+    // it — an empty set every time passes. This checks a reach set against
+    // something anybody can see in the sentence: a determiner comes from the
+    // lesson that first taught determiners.
+    const taught = firstTaught.get('func:determiner');
+    assert.ok(taught, 'some lesson teaches the determiner');
+    let checked = 0;
     for (const lesson of COURSE_LESSONS) {
-      const union = new Set<number>();
+      if (lesson.number <= taught!) continue;
       for (const sentence of lesson.sentences) {
-        const before = union.size;
-        for (const n of reachOf(lesson.number, sentence)) union.add(n);
-        assert.ok(union.size >= before, `${lesson.id}: the union shrank`);
+        const cs = canonicalReading(sentence).constituents;
+        if (!Object.values(cs).some((c) => c.function === 'determiner')) continue;
+        checked += 1;
+        assert.ok(
+          reachOf(lesson.number, sentence).has(taught!),
+          `${sentence.id} has a determiner and does not reach lesson ${taught}`,
+        );
       }
     }
+    // Without this the check passes by not running, which is the failure mode
+    // the assertion it replaced actually had.
+    assert.ok(checked > 100, `only ${checked} sentences carried a determiner to check`);
   });
 });

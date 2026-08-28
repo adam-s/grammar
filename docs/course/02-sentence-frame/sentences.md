@@ -3,10 +3,14 @@
 Drafted 28 August 2026. See [README.md](README.md) for why this lesson teaches
 no label, and [../difficulty.md](../difficulty.md) for the length ceiling.
 
-**The question this lesson should ask** is not where the sentence splits, which
-was lesson 1, but **where the subject ends**. The built corpus never asks it: all
-ten of its subjects are `The ADJ N`, one adjective longer than lesson 1 and no
-harder.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The question this lesson asks** is not where the sentence splits, which was
+lesson 1, but **where the subject ends**. The corpus this replaced never asked
+it: all ten of its subjects were `The ADJ N`, one adjective longer than lesson 1
+and no harder.
 
 The difficulty is documented and has a name. From the College of San Mateo
 writing centre: _"Subjects may be more difficult to identify when there is more
@@ -29,14 +33,18 @@ than one noun before the verb."_
 
 ## Notes
 
-Items 4 and 5 are the pair the lesson exists for. _The shoes on my feet_ and _The
-hole in my shoes_ are the same shape, and in the second the noun nearest the verb
-is not the subject. Substitution settles both: _They pinched_, _It widened_.
+_The shoes on my feet pinched_ and _The hole in my shoes widened_ are the pair
+the lesson exists for. They are the same shape, and in the second the noun
+nearest the verb is not the subject. Substitution settles both: _They pinched_,
+_It widened_.
 
-**Item 10 is daggered.** No possessive marker appears anywhere in either corpus,
-and a determiner slot is only ever filled by `Det`, `DP` or `Num`. It needs a
-model decision before it can be built. If that decision is no, replace it with
-_The lock on the shed rusted._
+**The possessive subject this lesson wanted is not here.** _Mara's phone buzzed_
+would put a second noun before the verb in the cheapest way English has, and no
+possessive marker appears anywhere in either corpus: a determiner slot is only
+ever filled by `Det`, `DP` or `Num`. That is a model decision nobody has made,
+recorded in [../difficulty.md](../difficulty.md) and in
+[the README](../../../README.md#what-the-model-still-cannot-say). _The lock on
+the shed rusted_ holds the slot until it is made.
 
 Six of the ten still end on the verb. That is lesson 1's shortcut, not this
 lesson's, and the subject boundary is what these are chosen for.

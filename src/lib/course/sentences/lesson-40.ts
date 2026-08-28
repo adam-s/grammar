@@ -8,8 +8,9 @@
  * absent from the lesson meant to gather everything.
  *
  * These open five different ways and bring the passive, the participial, the
- * gerund, the infinitive, coordination and a supplement back. Item 10 carries
- * two readings, which lesson 27 had a monopoly on.
+ * gerund, the infinitive, coordination and a supplement back. *The inspector
+ * photographed the engineer in the office* carries two readings, which lesson 27
+ * had a monopoly on.
  */
 import {
   adjn,
@@ -20,7 +21,6 @@ import {
   joined,
   modifiedBy,
   passive,
-  svoClause,
   passiveWhy,
   pp,
   remark,
@@ -154,12 +154,16 @@ export const LESSON_40 = [
     v('returned', 'return', 'Vint'),
     'The visitors who objected came back, which is a good thing.',
   ),
-  svoClause(
+  svClause(
     'c40-j',
     40,
-    det('The', 'guide'),
-    v('asked', 'ask', 'Vc'),
-    det('the', 'visitors'),
+    modifiedBy('The', 'surveyor', {
+      marker: 'who',
+      subjectGap: true,
+      verb: v('returned', 'return', 'Vint'),
+      kind: 'relative',
+    }),
+    v('promised', 'promise', 'Vtr'),
     {
       marker: 'to',
       infinitival: true,
@@ -168,6 +172,6 @@ export const LESSON_40 = [
       kind: 'nominal',
       finiteness: 'infinitival',
     },
-    'The guide put it to the visitors that they should stay beyond the door.',
+    'The surveyor who came back gave his word that he would stay out there.',
   ),
 ];

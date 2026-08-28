@@ -166,6 +166,53 @@ describe('licensing rules', () => {
   });
 });
 
+/**
+ * The form a complement slot takes, stated once and in both rule paths.
+ *
+ * The rows in `TABLE` above leave `childForm` unset, and `childIs` is permissive
+ * when it is unset, so none of them says anything about form. These do. A clause
+ * belongs after *be* — *The trouble was that the gate failed* — and does not
+ * belong in the object-complement slot, which renames or describes the direct
+ * object. Both paths have to agree, or a tree is offered and then graded wrong,
+ * or is well formed and unreachable.
+ */
+describe('what a complement slot accepts', () => {
+  const rows: { fn: 'subjectComplement' | 'objectComplement'; childForm: Form; want: string }[] = [
+    { fn: 'subjectComplement', childForm: 'NP', want: 'allowed' },
+    { fn: 'subjectComplement', childForm: 'AdjP', want: 'allowed' },
+    { fn: 'subjectComplement', childForm: 'Cl', want: 'allowed' },
+    { fn: 'subjectComplement', childForm: 'PP', want: 'hidden' },
+    { fn: 'objectComplement', childForm: 'NP', want: 'allowed' },
+    { fn: 'objectComplement', childForm: 'AdjP', want: 'allowed' },
+    { fn: 'objectComplement', childForm: 'Cl', want: 'hidden' },
+  ];
+
+  for (const r of rows) {
+    it(`${r.childForm} as ${r.fn} → ${r.want}, when the answer is stored`, () => {
+      const verbType = r.fn === 'subjectComplement' ? 'Vbe' : 'Vc';
+      const siblings = r.fn === 'objectComplement' ? ['directObject' as const] : [];
+      assert.equal(
+        licenses(r.fn, { parentForm: 'VP', verbType, siblings, childForm: r.childForm }).state,
+        r.want,
+      );
+    });
+
+    it(`${r.childForm} as ${r.fn} → ${r.want}, when the learner is guessing`, () => {
+      // `hypothesizes` drops the verb-frame gate and keeps the form gate, so the
+      // two paths agree here and nowhere else.
+      assert.equal(
+        hypothesizes(r.fn, {
+          parentForm: 'VP',
+          verbType: null,
+          siblings: [],
+          childForm: r.childForm,
+        }).state,
+        r.want,
+      );
+    });
+  }
+});
+
 describe('head-form agreement', () => {
   const rows: { parentForm: Form; childForm: Form; want: 'allowed' | 'disabled' }[] = [
     { parentForm: 'NP', childForm: 'N', want: 'allowed' },

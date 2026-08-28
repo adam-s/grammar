@@ -2,12 +2,16 @@
 
 Drafted 28 August 2026. See [README.md](README.md).
 
-**This is already the best-composed lesson in Stage 3** — six distinct
-asked-shapes, and the new premodifier is deliberately placed inside every verb
-type from Stage 2. That design is kept.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
 
-**Two shortcuts remain.** Every noun phrase has exactly one adjective, and the
-word before the noun is always an adjective — a noun premodifying a noun looks
+**This was already the best-composed lesson in Stage 3** — six distinct
+asked-shapes, and the new premodifier deliberately placed inside every verb type
+from Stage 2. That design is kept.
+
+**Two shortcuts had to go.** Every noun phrase had exactly one adjective, and the
+word before the noun was always an adjective — a noun premodifying a noun looks
 identical and behaves differently.
 
 ## Sentences
@@ -27,18 +31,21 @@ identical and behaves differently.
 
 ## Notes
 
-Item 4 is the trap worth having. _kitchen_ sits exactly where _narrow_ sat in
-item 1 and it is a noun: it takes no comparative and cannot follow a linking verb
-— _\*the kitchener clock_, _\*the clock is kitchen_. Those are lesson 6's
-determiner tests run against a different intruder.
+_The kitchen window rattled_ is the trap worth having. _kitchen_ sits exactly
+where _narrow_ sits in _The narrow gate jammed_ and it is a noun: it takes no
+comparative and cannot follow a linking verb — _\*the kitchener window_, _\*the
+window is kitchen_. Those are lesson 6's determiner tests run against a different
+intruder.
 
-Item 5 raises a real `Nom` question the built lesson never asks: whether stacked
-adjectives are siblings or nested. It is worth asking even if the answer is
-settled by the model.
+_The bright red kite fell_ raises a real `Nom` question the corpus this replaced
+never asks: whether stacked adjectives are siblings or nested. It is worth asking
+even if the answer is settled by the model.
 
-**Item 10 builds today.** `Nom > Adj/head` with the fusion property is on
-[../difficulty.md](../difficulty.md)'s list, and `node scripts/probe-constructions.mjs`
-builds it clean.
+**_The poor protested loudly_ is where `Nom > Adj/head` enters the course**, with
+the fusion property. It was on [../difficulty.md](../difficulty.md)'s list of
+shapes a fixture proves and no lesson uses.
 
-Items 3, 6, 7 and 8 reuse four Stage 2 frames. That is the composition the rest
-of Stage 3 keeps failing to do, and it costs nothing.
+_The clerk filed the urgent report_, _That jury found the young driver careless_,
+_The porter handed the tired guest a key_ and _The heavy crate is on the ramp_
+reuse four Stage 2 frames. That is the composition the rest of Stage 3 keeps
+failing to do, and it costs nothing.

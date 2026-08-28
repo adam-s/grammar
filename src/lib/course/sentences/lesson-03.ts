@@ -3,13 +3,14 @@
  *
  * The built set was three words in the shape `The N V.`, so the verb was the
  * last word AND the only word that could be one — the test never had a wrong
- * answer to turn down. Items 5, 6 and 7 give it one: *drive*, *walk* and
- * *swimmers* each put a word in the sentence that reads as an action and is not
- * the verb. Shifting the sentence in time settles it.
+ * answer to turn down. *The drive tired them*, *The long walk exhausted us* and
+ * *Those swimmers swam quickly* give it one: *drive*, *walk* and *swimmers* each
+ * put a word in the sentence that reads as an action and is not the verb.
+ * Shifting the sentence in time settles it.
  *
  * The uniform past tense was never the problem — the learner does the shifting.
  * What the uniform past DID create was a smaller shortcut, "find the -ed word",
- * so four of these ten verbs are irregular against one in the built set.
+ * so three of these ten verbs are irregular against one in the built set.
  */
 import { adjn, adv, bare, det, postmod, pp, pron, sv, svMedial, svPlus, svo, v } from './shape.ts';
 

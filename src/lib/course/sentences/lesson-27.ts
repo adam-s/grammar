@@ -7,9 +7,10 @@
  * phrase, so a learner could pattern-match through without asking what attaches
  * where.
  *
- * Items 5 and 10 are coordination scope, available since lesson 26 and a
- * genuinely different shape. Item 8 is lesson 19's sentence coming back eight
- * lessons later with more in it.
+ * *The guide met the old men and women* and *They packed the damaged books and
+ * maps* are coordination scope, available since lesson 26 and a genuinely
+ * different shape. *She read the report on the train* is lesson 19's sentence
+ * coming back eight lessons later with more in it.
  *
  * There is no test here, and that is the lesson. Both attachments are
  * grammatical; only what the sentence is about picks one.

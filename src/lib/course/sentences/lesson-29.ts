@@ -2,9 +2,10 @@
  * Lesson 29 — Adverbial clauses. Including the ones that come first.
  *
  * Every adverbial clause in the built set came after the main clause — ten out
- * of ten — and position is most of what makes one hard to find. Items 4, 5 and 8
- * front the clauses of items 1, 3 and 7, so the same words appear in two places
- * and fronting can be seen as a move rather than described as one.
+ * of ten — and position is most of what makes one hard to find. Three sentences
+ * come back with the clause fronted — *before the power failed*, *because the
+ * gate was locked*, *when the last bus arrived* — so the same words appear in two
+ * places and fronting can be seen as a move rather than described as one.
  *
  * The commas those three bring are not decoration: lesson 39 exists to say
  * punctuation is evidence and currently has one pattern, and a fronted adverbial

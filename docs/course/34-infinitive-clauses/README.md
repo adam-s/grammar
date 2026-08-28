@@ -59,7 +59,10 @@ renew_ does not change. _wanted_ does. That is what `fin:infinitival` records.
 ## What this should change
 
 1. **One infinitive with its own subject.** It is the evidence that this is a
-   clause, and the course has none.
+   clause, and the course has none. **Blocked, not forgotten:** the model has no
+   representation for object control, and the slot that was briefly used for it —
+   `objectComplement` — means something else. See
+   [../difficulty.md](../difficulty.md).
 2. **One infinitive that is not an object.** Either position would do.
 
 ## Sources

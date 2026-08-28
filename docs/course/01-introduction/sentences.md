@@ -1,14 +1,17 @@
 # Lesson 1 — Introduction · sentences
 
 Drafted 28 August 2026 against the shortcut register in [README.md](README.md)
-and the length ceiling in [../difficulty.md](../difficulty.md). Proposals: none
-has been parsed, and none should replace the corpus until a person has read it.
+and the length ceiling in [../difficulty.md](../difficulty.md).
 
-**The shortcut to defeat:** in the built corpus the verb is the last word in all
-ten sentences, so "cut before the last word" scores 10/10 without any idea of
-what a subject is. The fix is a predicate longer than one word, and it has to
-grow on the **predicate** side — every long sentence in the built lesson grows
-the subject, which leaves the shortcut intact.
+**Status:** the table below is the live course text. Where this page measures a
+corpus — shortcuts, counts, what was missing — it measures the one these
+sentences replaced; the notes under the table describe what is built.
+
+**The shortcut to defeat:** in the corpus this replaced the verb was the last
+word in all ten sentences, so "cut before the last word" scored 10/10 without any
+idea of what a subject is. The fix is a predicate longer than one word, and it
+has to grow on the **predicate** side — every long sentence there grew the
+subject, which left the shortcut intact.
 
 ## Sentences
 
@@ -27,11 +30,13 @@ the subject, which leaves the shortcut intact.
 
 ## Notes
 
-Four of the ten end on the verb, against ten of ten in the built corpus. Items 6
-and 8 keep the verb last on purpose: without them the learner learns a new rule,
-"never cut before the last word", which is the same mistake reversed.
+Four of the ten end on the verb, against ten of ten in the corpus this replaced.
+_The dog by the door barked_ and _The woman in blue smiled_ keep the verb last on
+purpose: without them the learner learns a new rule, "never cut before the last
+word", which is the same mistake reversed.
 
-Item 5 is the one that matters most. A one-word subject with a three-word
-predicate makes "cut before the last word" fail badly rather than narrowly.
+_Birds sang through the evening_ is the one that matters most. A one-word subject
+with a four-word predicate makes "cut before the last word" fail badly rather
+than narrowly.
 
 Nothing here needs a construction the model does not have.

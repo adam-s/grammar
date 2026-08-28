@@ -6,9 +6,10 @@
  * whole point of the lesson — had nothing to turn down, and every verb was a
  * form of `be`.
  *
- * Items 6 and 7 differ by one word, and that word decides whether the phrase can
- * go. *She opened the box.* is a sentence; *She placed the box.* is not. Items 9
- * and 10 do it again with a different verb pair.
+ * *She placed the box under the bench* and *She opened the box under the bench*
+ * differ by one word, and that word decides whether the phrase can go. *She
+ * opened the box.* is a sentence; *She placed the box.* is not. The two *driver*
+ * sentences do it again with a different verb pair.
  */
 import { adv, det, pp, pron, sva, svoa, svoPlus, svPlus, v } from './shape.ts';
 
