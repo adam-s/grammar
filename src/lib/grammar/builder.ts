@@ -572,7 +572,10 @@ export function anchorsFor(state: BuildState, id: string): string[] {
     if (c.form === 'VP') {
       for (const g of c.children) {
         const inner = state.constituents[g];
-        if (inner && !inner.gap && (inner.form === 'NP' || inner.form === 'AdjP')) out.push(g);
+        // `AdvP` too — the loop above takes NP, AdjP and AdvP at the clause, and
+        // this one dropped the third. That is why *ran more quietly than we
+        // expected* could not be built: the anchor sits inside the predicate.
+        if (inner && !inner.gap && ['NP', 'AdjP', 'AdvP'].includes(inner.form)) out.push(g);
       }
     }
   }

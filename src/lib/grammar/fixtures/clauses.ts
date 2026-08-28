@@ -407,3 +407,96 @@ export const supplementaryRelative = sentence(
   ],
   'r1',
 );
+
+/* ------------- a clause as subject complement — The trouble was that the gate
+ * failed.
+ *
+ * *be* links a subject to something that says what it is, and that something can
+ * be a clause. Substitution shows it fills the same slot a noun phrase would:
+ * *The trouble was the gate*.
+ *
+ * It had no representation until now, and not for a reason: `subjectComplement`
+ * listed `NP` and `AdjP` and never `Cl`, while every other clause-taking slot in
+ * `rules.ts` already accepted one.
+ */
+export const clauseSubjectComplement = sentence(
+  'fix-clause-subject-complement',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'trouble')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'was', { lemma: 'be', verbType: 'Vbe' }),
+            n(
+              'Cl',
+              'subjectComplement',
+              [
+                w('Subord', 'marker', 'that'),
+                n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'gate')]),
+                n('VP', 'predicate', [
+                  w('V', 'head', 'failed', { lemma: 'fail', verbType: 'Vint' }),
+                ]),
+              ],
+              { clauseKind: 'nominal', clauseType: 'SV' },
+            ),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'A failed gate was the difficulty.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------- an infinitive clause with its own subject — We asked the driver
+ * to wait.
+ *
+ * *the driver* is the object of *asked* and the subject of *to wait* at once,
+ * and that is only visible when the inner clause has a subject to show. No
+ * infinitive clause in either corpus had one, so nothing proved that an
+ * infinitive clause is a CLAUSE: every example had an invisible subject matching
+ * the main one, which makes *to wait* look like part of the verb phrase.
+ *
+ * The clause is the object complement, because it says what the object is to do.
+ * That slot refused a clause until the same one-word omission was fixed.
+ */
+export const clauseObjectComplement = sentence(
+  'fix-clause-object-complement',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'We')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'asked', { lemma: 'ask', verbType: 'Vc' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'driver')]),
+            n(
+              'Cl',
+              'objectComplement',
+              [
+                w('Part', 'marker', 'to', { xpos: 'TO', partKind: 'infinitival' }),
+                n('VP', 'predicate', [
+                  w('V', 'head', 'wait', { xpos: 'VB', lemma: 'wait', verbType: 'Vint' }),
+                ]),
+              ],
+              { clauseKind: 'nominal', finiteness: 'infinitival', clauseType: 'SV' },
+            ),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVOC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'We put it to the driver that he should stay put.' },
+    ),
+  ],
+  'r1',
+);

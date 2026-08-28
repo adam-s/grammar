@@ -40,6 +40,8 @@ import {
   subjectClause,
   frontedAdverbialClause,
   supplementaryRelative,
+  clauseSubjectComplement,
+  clauseObjectComplement,
 } from './clauses.ts';
 import {
   coordination,
@@ -110,6 +112,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   frontedAdverbialClause,
   subjectRelative,
   supplementaryRelative,
+  clauseSubjectComplement,
+  clauseObjectComplement,
   subjectClause,
   coordination,
   coordinatedSubject,

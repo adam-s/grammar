@@ -155,7 +155,12 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
 
     case 'subjectComplement':
       if (p !== 'VP') return HIDDEN;
-      if (!childIs('NP', 'AdjP')) return HIDDEN;
+      // `Cl` belongs here. Every other clause-taking slot already accepts one —
+      // subject, direct object, adverbial, postmodifier, and `complement` under
+      // an AdjP, which is how *too heavy to lift* is built. These two were the
+      // only holdouts, no comment ever said why, and *The trouble was that the
+      // gate failed* had no representation as a result.
+      if (!childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       if (!slotsFor(vt, voice).includes('subjectComplement')) {
         return no(`Only "be" and linking verbs take a subject complement.`);
@@ -167,7 +172,11 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       // for other verb types, so offering it greyed out would teach a slot
       // that is never available.
       if (p !== 'VP') return HIDDEN;
-      if (!childIs('NP', 'AdjP')) return HIDDEN;
+      // The same, and it matters more here: without a clause in this slot there
+      // is no way to write *We asked the driver to wait*, and so no way to show
+      // that an infinitive clause is a CLAUSE — every other example in the
+      // course has an invisible subject matching the main one.
+      if (!childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
       if (vt !== null && vt !== 'Vc') return HIDDEN;
       if (vt === null) return no(UNCLASSIFIED);
       // In the passive the direct object has become the subject, so the
@@ -396,11 +405,15 @@ export function hypothesizes(fn: Func, ctx: LicenseContext): Verdict {
     case 'indirectObject':
       if (p !== 'VP' || !childIs('NP')) return HIDDEN;
       return once('indirectObject', 'This verb already has an indirect object.');
+    // These two lists have to agree with `licenses` above on what FORMS a slot
+    // takes — they differ only on verb type and prerequisite siblings. Both were
+    // short of `Cl`, in both functions, which is how a clausal complement came to
+    // be well formed and unreachable at the same time.
     case 'subjectComplement':
-      if (p !== 'VP' || !childIs('NP', 'AdjP')) return HIDDEN;
+      if (p !== 'VP' || !childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
       return once('subjectComplement', 'This verb already has a subject complement.');
     case 'objectComplement':
-      if (p !== 'VP' || !childIs('NP', 'AdjP')) return HIDDEN;
+      if (p !== 'VP' || !childIs('NP', 'AdjP', 'Cl')) return HIDDEN;
       return once('objectComplement', 'This verb already has an object complement.');
     case 'adverbial':
       if (!childIs('AdvP', 'PP', 'NP', 'Cl')) return HIDDEN;
