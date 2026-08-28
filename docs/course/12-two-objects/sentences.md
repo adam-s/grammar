@@ -1,0 +1,41 @@
+# Lesson 12 — Two objects · sentences
+
+Drafted 28 August 2026. See [README.md](README.md).
+
+**The measured shortcut:** in all ten built sentences the indirect object is
+definite and the direct object begins with _a_. Looking for the article scores
+ten out of ten, and the _to_/_for_ paraphrase is never needed.
+
+The test is that paraphrase: _handed the guest a key_ → _handed a key **to** the
+guest_. The thing that can move behind a preposition is the indirect object.
+
+## Sentences
+
+| #   | Sentence                                   | The step                                           |
+| --- | ------------------------------------------ | -------------------------------------------------- |
+| 1   | The porter handed the guest a key.         | the frame at its clearest                          |
+| 2   | She told the children a story.             | same frame, a verb of saying                       |
+| 3   | The teacher gave the class a warning.      | an abstract second object                          |
+| 4   | The clerk showed a visitor the map.        | **the determiners swap** — indefinite first        |
+| 5   | He wrote his sister the letter.            | a definite direct object                           |
+| 6   | The porter carried the heavy cases.        | **one object** — the count has to be made          |
+| 7   | The porter brought the guests their cases. | two objects, both definite                         |
+| 8   | The guide gave a map to us.                | **the paraphrase** — one object and an adverbial   |
+| 9   | The nurse brought a blanket.               | one object again, unpaired                         |
+| 10  | The coach taught the squad a routine.      | close on the frame, with the article shortcut dead |
+
+## Notes
+
+Items 4, 5 and 7 break the article shortcut three different ways. After them, _a_
+tells the learner nothing.
+
+Items 6 and 7 are a near-pair on the same verb and subject: one object, then two.
+Item 9 is unpaired so that the count is not decided by noticing a twin.
+
+**Item 8 is the important one.** _gave a map to us_ has the same words as _gave us
+a map_ and a different tree — one object and an adverbial, not two objects. It is
+the paraphrase test made into a sentence, and it is what stops a learner deciding
+that "three noun phrases" is the rule.
+
+The pair that separates this lesson from lesson 13 belongs at lesson 15: _They
+called her a taxi_ against _They called her a genius_.
