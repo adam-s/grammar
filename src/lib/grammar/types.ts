@@ -173,6 +173,17 @@ export type PhraseInternalFunction =
    */
   | 'prenucleus'
   /**
+   * Material at the tail of a clause that belongs earlier in it: *A man came in
+   * __who I knew__*, where the relative clause modifies *a man* and is said
+   * after the verb.
+   *
+   * English moves heavy material rightwards rather than leaving it in the
+   * middle. Writing it where it is said, with a link back to what it belongs
+   * to, is how the diagram says both things at once — and is why the tree does
+   * not need a node whose pieces are apart.
+   */
+  | 'postnucleus'
+  /**
    * The placeholder *it* standing in the subject slot while the content sits
    * at the end: *__It__ is a good thing that we left.*
    *
@@ -222,6 +233,7 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'coordinate',
   'coordinator',
   'prenucleus',
+  'postnucleus',
   'placeholderSubject',
   'extraposed',
   'flat',

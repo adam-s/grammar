@@ -276,6 +276,40 @@ export function gradeVoice(sentence: SentenceEntry, wordIndex: number, voice: Vo
   };
 }
 
+/** The test for a tail phrase: put it back where it belongs and read it. */
+export const ANCHOR_TEST =
+  'Move it back next to each phrase in turn. It belongs to the one that still ' +
+  'says what the sentence means.';
+
+/** Does the answer tie the tail phrase at `tail` to the phrase at `anchor`? */
+export function gradeAnchor(sentence: SentenceEntry, tail: Span, anchor: Span): Outcome {
+  for (const r of ordered(sentence)) {
+    const at = (span: Span) =>
+      Object.keys(r.constituents).find((id) => {
+        const c = r.constituents[id]!;
+        return !c.gap && c.span[0] === span[0] && c.span[1] === span[1];
+      });
+    const t = at(tail);
+    const a = at(anchor);
+    const tied =
+      t !== undefined &&
+      a !== undefined &&
+      r.constituents[t]!.index !== undefined &&
+      r.constituents[t]!.index === r.constituents[a]!.index;
+    if (tied) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'It does not belong to that one.', test: ANCHOR_TEST };
+}
+
 /** The test for what an auxiliary is helping with: look at the verb after it. */
 export const AUX_KIND_TEST =
   'Look at the verb after it. A bare verb means a modal; an -ing verb means ' +

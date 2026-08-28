@@ -23,6 +23,14 @@ export interface LicenseContext {
   verbType: VerbType | null;
   /** Functions already filled among the prospective siblings. */
   siblings: readonly Func[];
+  /**
+   * The forms of those same siblings, in the same order.
+   *
+   * Only `marker` needs it, and it needs it because a clause can hold two
+   * introducing words doing different jobs — *__for__ anyone __to__ lift* —
+   * and "already has one" is the wrong answer to the second.
+   */
+  siblingForms?: readonly Form[];
   /** Active or passive. Omitted means active. */
   voice?: Voice;
   /**
@@ -237,13 +245,29 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // The word that introduces a clause and is not part of what it says.
     // Only a clause has one, and only a subordinator can be one — a marker is
     // not the clause's head, and giving it any other role misdescribes it.
-    case 'marker':
+    case 'marker': {
       if (!CLAUSAL.includes(p)) return HIDDEN;
       // `Part` as well as `Subord`, because infinitival *to* introduces a
       // clause the same way *because* does: *she wanted __to__ leave*. It is
       // not the clause's head and it fills none of its slots.
       if (!childIs('Subord', 'Part')) return HIDDEN;
-      return has('marker') ? no('This clause already has an introducing word.') : ALLOWED;
+      // One of each kind, not one in total. *for anyone to lift* has a
+      // subordinator saying what kind of clause it is and an infinitival *to*
+      // saying what shape its verb is in; they are different claims and both
+      // are said out loud.
+      const kind = ctx.childForm === 'Part' ? 'Part' : 'Subord';
+      const taken = siblings.some(
+        (f, i) => f === 'marker' && (ctx.siblingForms?.[i] ?? 'Subord') === kind,
+      );
+      if (taken) {
+        return no(
+          kind === 'Part'
+            ? 'This clause already has an infinitival “to”.'
+            : 'This clause already has an introducing word.',
+        );
+      }
+      return ALLOWED;
+    }
 
     // A particle belongs to its verb — *looked up* is one verb, and *up* is
     // not a preposition here because it takes no object of its own. Inside the
@@ -261,6 +285,14 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!CLAUSAL.includes(p)) return HIDDEN;
       if (!childIs('NP', 'PP', 'AdvP', 'AdjP', 'Cl')) return HIDDEN;
       return has('prenucleus') ? no('This clause already has a fronted phrase.') : ALLOWED;
+
+    // The tail position. Like a prenucleus it fills a role somewhere else in
+    // the clause, and unlike a supplement it is not outside the grammar — so
+    // `auditGaps` requires it to say what it belongs to.
+    case 'postnucleus':
+      if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('NP', 'PP', 'AdvP', 'AdjP', 'Cl')) return HIDDEN;
+      return has('postnucleus') ? no('This clause already has a tail phrase.') : ALLOWED;
 
     // Extraposition, as a pair. English dislikes a long subject in front of a
     // short verb, so it puts *it* in the subject slot and the real content at

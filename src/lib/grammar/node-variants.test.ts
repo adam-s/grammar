@@ -116,3 +116,18 @@ test('the measured node width grows to contain every visible qualifier', () => {
   assert.ok(long > combined);
   assert.ok(NODE_VARIANTS.every((variant) => nodeLabelWidth(variant) > 0));
 });
+
+test('a particle does not say the same thing twice', () => {
+  // The function and the kind carry the same claim, and `auditFiniteness`
+  // requires them to agree — so showing both is showing one of them twice.
+  assert.equal(
+    nodeLabelParts({ form: 'Part', function: 'particle', partKind: 'verbal' }).subtypeMark,
+    null,
+  );
+  assert.equal(
+    nodeLabelParts({ form: 'Part', function: 'marker', partKind: 'infinitival' }).subtypeMark,
+    null,
+  );
+  // Until the function is answered, the kind is all there is to show.
+  assert.equal(nodeLabelParts({ form: 'Part', partKind: 'infinitival' }).subtypeMark, 'Inf');
+});

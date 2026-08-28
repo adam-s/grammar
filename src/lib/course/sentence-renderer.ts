@@ -6,6 +6,7 @@ import { verbs } from '../grammar/clause.ts';
 import {
   addGap,
   canStackOver,
+  setAnchor,
   emptyBuild,
   nodeOver,
   setAuxKind,
@@ -43,7 +44,8 @@ export type RenderStep = {
     | 'finiteness'
     | 'clause-kind'
     | 'aux-kind'
-    | 'gap';
+    | 'gap'
+    | 'anchor';
   canonicalId: string | null;
   state: BuildState;
   /** The words the decision is about — what a learner would have selected. */
@@ -65,6 +67,8 @@ export type RenderStep = {
     stack?: true;
     /** This step builds an empty slot rather than labelling words. */
     gap?: true;
+    /** This step says what a tail phrase belongs to: the anchor's span. */
+    anchor?: Span;
   };
 };
 
@@ -274,6 +278,28 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
         choice: { func: c.function, gap: true },
       });
     }
+  }
+
+  // What each tail phrase belongs to, last: the phrases it could belong to have
+  // to exist before one of them can be named.
+  for (const canonicalId of order) {
+    const constituent = reading.constituents[canonicalId]!;
+    if (constituent.function !== 'postnucleus' || constituent.index === undefined) continue;
+    const anchorCanonical = Object.keys(reading.constituents).find(
+      (id) => id !== canonicalId && reading.constituents[id]!.index === constituent.index,
+    );
+    if (!anchorCanonical) continue;
+    const tailId = generated.get(canonicalId)!;
+    const anchorId = generated.get(anchorCanonical)!;
+    state = setAnchor(state, tailId, anchorId);
+    steps.push({
+      kind: 'anchor',
+      canonicalId,
+      state,
+      span: constituent.span,
+      nodeId: tailId,
+      choice: { anchor: reading.constituents[anchorCanonical]!.span },
+    });
   }
 
   return { steps, final: state };

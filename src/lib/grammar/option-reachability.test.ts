@@ -8,6 +8,7 @@ import {
   hypothesisFor,
   licenseFor,
   nodeOver,
+  setAnchor,
   setAuxKind,
   setClauseKind,
   setFiniteness,
@@ -297,6 +298,24 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     (id) => reading.constituents[id]!.parent === null,
   )!;
   visit(root);
+
+  // What each tail phrase belongs to, after the whole tree exists: the phrases
+  // it could belong to have to be there before one of them can be named.
+  for (const [canonicalId, c] of Object.entries(reading.constituents)) {
+    if (c.function !== 'postnucleus' || c.index === undefined) continue;
+    const anchorCanonical = Object.keys(reading.constituents).find(
+      (id) => id !== canonicalId && reading.constituents[id]!.index === c.index,
+    )!;
+    const anchorSpan = reading.constituents[anchorCanonical]!.span;
+    const tailId = learnerId.get(canonicalId)!;
+    const key = `anchor:${anchorSpan[0]}-${anchorSpan[1]}`;
+    const option = optionFor(state, sentence.words, tailId, key);
+    assert.ok(
+      option && isPickable(option),
+      `${sentence.id}/${reading.id}: cannot say the tail belongs to ${key}`,
+    );
+    state = setAnchor(state, tailId, learnerId.get(anchorCanonical)!);
+  }
   return state;
 }
 

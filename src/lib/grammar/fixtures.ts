@@ -1349,6 +1349,232 @@ export const determinativeAndName = sentence(
   ['Vtr', 'determinative-phrase', 'flat', 'proper-name'],
 );
 
+/* -------- extraposition from a noun phrase — A man came in who I knew.
+ *
+ * The sentence this project spent a night believing needed a node whose pieces
+ * are apart. *who I knew* modifies *a man*, and three words sit between them.
+ *
+ * It does not need one. English moves heavy material to the end rather than
+ * leaving it in the middle, so the relative clause is written where it is said
+ * — in the tail position — with a link back to what it belongs to. The diagram
+ * says both things at once and every node stays a run of words.
+ *
+ * Two links, and they are different. The clause is tied to *a man*, which is
+ * what it modifies. Inside it, the gap after *knew* is tied to *who*, which is
+ * the ordinary filler-gap link.
+ */
+export const tailClause = sentence(
+  'fix-tail-clause',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'NP',
+            'subject',
+            [w('Det', 'determiner', 'A'), n('Nom', 'head', [w('N', 'head', 'man')])],
+            { index: 1 },
+          ),
+          n('VP', 'predicate', [
+            w('V', 'head', 'came', { lemma: 'come', verbType: 'Vint' }),
+            w('Part', 'particle', 'in', { xpos: 'RP', partKind: 'verbal' }),
+          ]),
+          n(
+            'Cl',
+            'postnucleus',
+            [
+              n('NP', 'prenucleus', [w('Pron', 'head', 'who', { xpos: 'WP' })], { index: 2 }),
+              n('NP', 'subject', [w('Pron', 'head', 'I')]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'knew', { lemma: 'know', verbType: 'Vtr' }),
+                gap('NP', 'directObject', { index: 2 }),
+              ]),
+            ],
+            { clauseKind: 'relative', clauseType: 'SVO', index: 1 },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Someone I knew came in.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vint', 'Vtr', 'postnucleus', 'extraposition-from-NP', 'gap', 'two-clause'],
+);
+
+/* ------- a cleft — It was John who broke the belt.
+ *
+ * *It* is not a thing, and *was John* is not what happened. The sentence takes
+ * an ordinary clause and splits it in two so one part can be singled out.
+ *
+ * Written the same way as the tail clause above: the relative sits at the end
+ * and points back at what it belongs to, which here is the phrase being singled
+ * out. Nothing is discontinuous.
+ */
+export const cleft = sentence(
+  'fix-cleft',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'It')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'was', { xpos: 'VBD', lemma: 'be', verbType: 'Vbe' }),
+            n('NP', 'subjectComplement', [w('N', 'head', 'John', { xpos: 'NNP' })], { index: 1 }),
+          ]),
+          n(
+            'Cl',
+            'postnucleus',
+            [
+              w('Subord', 'marker', 'who'),
+              gap('NP', 'subject'),
+              n('VP', 'predicate', [
+                w('V', 'head', 'broke', { lemma: 'break', verbType: 'Vtr' }),
+                n('NP', 'directObject', [
+                  w('Det', 'determiner', 'the'),
+                  n('Nom', 'head', [w('N', 'head', 'belt')]),
+                ]),
+              ]),
+            ],
+            { clauseKind: 'relative', clauseType: 'SVO', index: 1 },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'John, and nobody else, broke the belt.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'Vtr', 'cleft', 'postnucleus', 'gap', 'two-clause'],
+);
+
+/* --- a comparative — More people came than we expected.
+ *
+ * *than we expected* completes *more*, and the verb sits between them. Same
+ * shape as the two above, and the third family that was said to need a split
+ * node and does not.
+ */
+export const comparative = sentence(
+  'fix-comparative',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'NP',
+            'subject',
+            [
+              n('DP', 'determiner', [w('Det', 'head', 'More')]),
+              n('Nom', 'head', [w('N', 'head', 'people')]),
+            ],
+            { index: 1 },
+          ),
+          n('VP', 'predicate', [w('V', 'head', 'came', { lemma: 'come', verbType: 'Vint' })]),
+          n(
+            'Cl',
+            'postnucleus',
+            [
+              w('Subord', 'marker', 'than'),
+              n('NP', 'subject', [w('Pron', 'head', 'we')]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'expected', { lemma: 'expect', verbType: 'Vtr' }),
+                gap('NP', 'directObject'),
+              ]),
+            ],
+            { clauseKind: 'comparative', clauseType: 'SVO', index: 1 },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The number who came was above what we expected.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vint', 'Vtr', 'comparative', 'postnucleus', 'gap', 'two-clause'],
+);
+
+/* -- two introducing words — The box was too heavy for anyone to lift.
+ *
+ * *for* says what kind of clause it is; *to* says what shape its verb is in.
+ * They are different claims and both are said out loud, so a clause holds one
+ * of each rather than one in total.
+ *
+ * Compare `fix-hollow-clause`, which is the same sentence with the lifter left
+ * unsaid. Naming the lifter is what makes the second marker necessary.
+ */
+export const twoMarkers = sentence(
+  'fix-two-markers',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [w('N', 'head', 'box')]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'was', { xpos: 'VBD', lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [
+              w('Adv', 'premodifier', 'too'),
+              w('Adj', 'head', 'heavy'),
+              n(
+                'Cl',
+                'complement',
+                [
+                  w('Subord', 'marker', 'for'),
+                  n('NP', 'subject', [w('Pron', 'head', 'anyone')]),
+                  w('Part', 'marker', 'to', { xpos: 'TO', partKind: 'infinitival' }),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'lift', { xpos: 'VB', lemma: 'lift', verbType: 'Vtr' }),
+                    gap('NP', 'directObject'),
+                  ]),
+                ],
+                { clauseKind: 'comparative', finiteness: 'infinitival', clauseType: 'SVO' },
+              ),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Nobody could lift the box, because of its weight.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'Vtr', 'two-markers', 'infinitive', 'gap', 'two-clause'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -1379,6 +1605,10 @@ export const FIXTURES: readonly SentenceEntry[] = [
   hollowClause,
   coordinatedSubject,
   determinativeAndName,
+  tailClause,
+  cleft,
+  comparative,
+  twoMarkers,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

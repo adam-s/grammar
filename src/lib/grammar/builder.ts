@@ -461,6 +461,51 @@ export function linkFillers(state: BuildState): BuildState {
   return { ...state, constituents: next };
 }
 
+/**
+ * Say what a tail phrase belongs to.
+ *
+ * Unlike the filler-gap link this is a real choice: a clause can hold several
+ * phrases a tail could have moved off, and *A man came in who I knew* would
+ * mean something else if the relative belonged to a different one. So it is
+ * asked rather than derived.
+ */
+export function setAnchor(state: BuildState, tailId: string, anchorId: string): BuildState {
+  const tail = state.constituents[tailId];
+  const anchor = state.constituents[anchorId];
+  if (!tail || !anchor || tail.function !== 'postnucleus' || tailId === anchorId) return state;
+  const cs = cloneMap(state.constituents);
+  const index = 1 + Math.max(0, ...Object.values(cs).map((c) => c.index ?? 0));
+  cs[tailId]!.index = index;
+  cs[anchorId]!.index = index;
+  return { ...state, constituents: cs };
+}
+
+/**
+ * The phrases a tail could have moved off: the other children of its clause,
+ * and the phrases inside their predicate. A tail belongs to something said
+ * earlier, so nothing after it is a candidate.
+ */
+export function anchorsFor(state: BuildState, tailId: string): string[] {
+  const tail = state.constituents[tailId];
+  if (!tail || tail.function !== 'postnucleus' || tail.parent === null) return [];
+  const clause = state.constituents[tail.parent]!;
+  const out: string[] = [];
+  for (const k of clause.children) {
+    const c = state.constituents[k];
+    if (!c || k === tailId || c.gap || c.span[0] > tail.span[0]) continue;
+    if (c.form === 'NP' || c.form === 'AdjP' || c.form === 'AdvP') out.push(k);
+    // A phrase inside the predicate can be the anchor too — the cleft's
+    // singled-out phrase is the verb's complement, not the clause's subject.
+    if (c.form === 'VP') {
+      for (const g of c.children) {
+        const inner = state.constituents[g];
+        if (inner && !inner.gap && (inner.form === 'NP' || inner.form === 'AdjP')) out.push(g);
+      }
+    }
+  }
+  return out;
+}
+
 /** The slots a node could hold as a gap: licensed here, and not yet filled. */
 export function gappableSlots(state: BuildState, id: string): Func[] {
   const c = state.constituents[id];
@@ -641,12 +686,11 @@ function functionContext(state: BuildState, id: string, fn: Func): LicenseContex
     return null;
   }
   const parent = state.constituents[c.parent]!;
-  const siblings = parent.children
-    .filter((k) => k !== id)
-    .map((k) => state.constituents[k]?.function)
-    .filter((x): x is Func => x != null);
+  const others = parent.children.filter((k) => k !== id && state.constituents[k]?.function != null);
+  const siblings = others.map((k) => state.constituents[k]!.function!);
   return {
     parentForm: parent.form,
+    siblingForms: others.map((k) => state.constituents[k]!.form),
     verbType: governingVerbType(state.constituents, id) ?? looseVerbType(state),
     voice: governingVerb(state.constituents, id)
       ? governingVoice(state.constituents, id)

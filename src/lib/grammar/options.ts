@@ -33,6 +33,7 @@
  * the content must satisfy cannot drift apart.
  */
 import {
+  anchorsFor,
   canStackOver,
   canWrap,
   gappableSlots,
@@ -145,6 +146,8 @@ export interface LabelOption {
   stack?: true;
   /** This row builds an empty slot rather than labelling something on screen. */
   gap?: true;
+  /** This row says what a tail phrase belongs to. The id of the phrase it names. */
+  anchor?: string;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -602,6 +605,32 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     })),
   };
 
+  /**
+   * What a tail phrase belongs to.
+   *
+   * A real choice, unlike the filler-gap link: *A man came in who I knew* would
+   * mean something else if the relative belonged to a different phrase, so the
+   * clause's other phrases are listed and one is picked.
+   */
+  const anchors = anchorsFor(state, id);
+  const anchor: OptionGroup = {
+    id: 'anchor',
+    question: `What does ${subject} belong to?`,
+    notes: 'always',
+    options: anchors.map((candidate) => {
+      const target = state.constituents[candidate]!;
+      return {
+        key: `anchor:${target.span[0]}-${target.span[1]}`,
+        label: quote(words, target.span),
+        note: `It moved to the end off ${quote(words, target.span)}.`,
+        state: (c.index !== undefined && target.index === c.index
+          ? 'chosen'
+          : 'available') as OptionState,
+        anchor: candidate,
+      };
+    }),
+  };
+
   const groups: OptionGroup[] = isWord
     ? [
         {
@@ -636,6 +665,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       ];
 
   groups.push(functionGroup(state, id, subject, scope));
+  if (anchor.options.length > 0) groups.push(anchor);
   if (gaps.options.length > 0) groups.push(gaps);
 
   return finish({

@@ -31,6 +31,7 @@
   import {
     addGap,
     emptyBuild,
+    setAnchor,
     setAuxKind,
     nodeOver,
     setFunction,
@@ -44,6 +45,7 @@
   } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
   import {
+    ANCHOR_TEST,
     AUX_KIND_TEST,
     CLAUSE_KIND_TEST,
     FINITENESS_TEST,
@@ -52,6 +54,7 @@
     PLAIN,
     VERB_TYPE_TEST,
     VOICE_TEST,
+    gradeAnchor,
     gradeAuxKind,
     gradeClauseKind,
     gradeFiniteness,
@@ -271,27 +274,29 @@
           span: step.span,
           nodeId: step.nodeId,
           key:
-            step.choice.gap && step.choice.func !== undefined
-              ? `gap:${step.choice.func}`
-              : step.choice.form !== undefined
-                ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
-                : step.choice.func !== undefined
-                  ? // The required S V A adverbial is a distinct row, because it is
-                    // a distinct claim about the verb.
-                    step.choice.func === 'adverbial' && step.choice.obligatory
-                    ? 'func:obligatoryAdverbial'
-                    : `func:${step.choice.func}`
-                  : step.choice.voice !== undefined
-                    ? `voice:${step.choice.voice}`
-                    : step.choice.partKind !== undefined
-                      ? `part:${step.choice.partKind}`
-                      : step.choice.auxKind !== undefined
-                        ? `aux:${step.choice.auxKind}`
-                        : step.choice.finiteness !== undefined
-                          ? `fin:${step.choice.finiteness}`
-                          : step.choice.clauseKind !== undefined
-                            ? `kind:${step.choice.clauseKind}`
-                            : `vt:${step.choice.verbType}`,
+            step.choice.anchor !== undefined
+              ? `anchor:${step.choice.anchor[0]}-${step.choice.anchor[1]}`
+              : step.choice.gap && step.choice.func !== undefined
+                ? `gap:${step.choice.func}`
+                : step.choice.form !== undefined
+                  ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
+                  : step.choice.func !== undefined
+                    ? // The required S V A adverbial is a distinct row, because it is
+                      // a distinct claim about the verb.
+                      step.choice.func === 'adverbial' && step.choice.obligatory
+                      ? 'func:obligatoryAdverbial'
+                      : `func:${step.choice.func}`
+                    : step.choice.voice !== undefined
+                      ? `voice:${step.choice.voice}`
+                      : step.choice.partKind !== undefined
+                        ? `part:${step.choice.partKind}`
+                        : step.choice.auxKind !== undefined
+                          ? `aux:${step.choice.auxKind}`
+                          : step.choice.finiteness !== undefined
+                            ? `fin:${step.choice.finiteness}`
+                            : step.choice.clauseKind !== undefined
+                              ? `kind:${step.choice.clauseKind}`
+                              : `vt:${step.choice.verbType}`,
         })),
       reset,
     };
@@ -457,6 +462,25 @@
       const id = nodeOver(build, span);
       if (id) selection = { kind: 'node', id };
       closeIfComplete();
+      return;
+    }
+
+    if (o.anchor && selection.kind === 'node') {
+      const tail = build.constituents[selection.id]!.span;
+      const target = build.constituents[o.anchor]?.span;
+      const outcome = target ? gradeAnchor(sentence, tail, target) : null;
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setAnchor(build, selection.id, o.anchor);
+        verdict = { kind: 'correct', text: `Yes — it belongs to ${o.label}.` };
+        closeIfComplete();
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: outcome?.reason ?? 'It does not belong to that one.',
+          test: outcome?.test ?? ANCHOR_TEST,
+        };
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
       return;
     }
 

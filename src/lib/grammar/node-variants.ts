@@ -53,6 +53,7 @@ const FUNCTION_FORM: Record<Func, Form> = {
   coordinate: 'Subord',
   coordinator: 'Conj',
   prenucleus: 'NP',
+  postnucleus: 'Cl',
   placeholderSubject: 'NP',
   extraposed: 'Cl',
   flat: 'N',

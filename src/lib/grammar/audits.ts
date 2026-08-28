@@ -262,15 +262,14 @@ export function auditLicensing(ctx: Ctx): string[] {
     }
     const parent = ctx.cs[c.parent];
     if (!parent) continue; // structure audit already reported it
-    const siblings = parent.children
-      .filter((k) => k !== id)
-      .map((k) => ctx.cs[k]?.function)
-      .filter((x): x is Func => x != null);
+    const others = parent.children.filter((k) => k !== id && ctx.cs[k]?.function != null);
+    const siblings = others.map((k) => ctx.cs[k]!.function!);
     const v = licenses(c.function, {
       parentForm: parent.form,
       verbType: governingVerbType(ctx.cs, id),
       voice: governingVoice(ctx.cs, id),
       siblings,
+      siblingForms: others.map((k) => ctx.cs[k]!.form),
       childForm: c.form,
     });
     if (v.state === 'allowed') continue;
@@ -416,9 +415,23 @@ export function auditGaps(ctx: Ctx): string[] {
       f.push(`index ${index} is on ${ids.length} nodes (${ids.join(', ')}); a link joins two`);
       continue;
     }
-    const gaps = ids.filter((id) => ctx.cs[id]!.gap);
-    if (gaps.length !== 1) {
-      f.push(`index ${index} joins ${gaps.length} gaps; a link joins one gap to one filler`);
+    // One end has to be the displaced one, or the link says nothing: two
+    // ordinary phrases sharing a number is a claim with no content.
+    const moved = ids.filter((id) => ctx.cs[id]!.gap || ctx.cs[id]!.function === 'postnucleus');
+    if (moved.length === 0) {
+      f.push(
+        `index ${index} joins two phrases that are both where they belong; a link says ` +
+          'one of them was moved',
+      );
+    }
+  }
+
+  // A tail phrase says what it belongs to, or it is a supplement instead —
+  // material at the edge that fills no role is a different claim.
+  for (const [id, c] of Object.entries(ctx.cs)) {
+    if (c.function !== 'postnucleus') continue;
+    if (c.index === undefined) {
+      f.push(`the tail phrase "${id}" does not say what it belongs to`);
     }
   }
 
@@ -518,13 +531,18 @@ export function auditFiniteness(ctx: Ctx): string[] {
     if (c.form === 'Cl' && c.function !== 'coordinate' && !c.clauseKind) {
       f.push(`"${clause}" is a clause but does not say what kind — relative, nominal, adverbial`);
     }
-    const marker = c.children.find((k) => ctx.cs[k]?.function === 'marker');
-    const markerForm = marker ? ctx.cs[marker]!.form : null;
+    // A clause may have two introducing words doing different jobs, so ask each
+    // question of the marker that answers it.
+    const markers = c.children.filter((k) => ctx.cs[k]?.function === 'marker');
+    const hasTo = markers.some((k) => ctx.cs[k]!.form === 'Part');
+    const hasSubord = markers.some((k) => ctx.cs[k]!.form === 'Subord');
     const finite = c.finiteness ?? 'finite';
-    if (markerForm === 'Part' && finite !== 'infinitival') {
+    if (hasTo && finite !== 'infinitival') {
       f.push(`"${clause}" is introduced by "to", so the clause is infinitival, not ${finite}`);
     }
-    if (markerForm === 'Subord' && finite !== 'finite') {
+    // Only when there is no *to* alongside it. *for anyone to lift* has a
+    // subordinator and is not finite, and the *to* is what says so.
+    if (hasSubord && !hasTo && finite !== 'finite') {
       f.push(`"${clause}" is introduced by a subordinator, which starts a finite clause`);
     }
   }
@@ -618,6 +636,8 @@ export function label(fn: Func): string {
       return 'supplement';
     case 'prenucleus':
       return 'fronted phrase';
+    case 'postnucleus':
+      return 'tail phrase';
     case 'placeholderSubject':
       return 'placeholder subject';
     case 'extraposed':

@@ -85,6 +85,13 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
   // put "Perf" hard against "Help". Dropping the redundant half is better than
   // abbreviating an informative one.
   const redundant = value.form === 'Aux' && value.function === 'auxiliary';
+  // A particle's kind and its function say the same thing — `auditFiniteness`
+  // enforces exactly that — and over a short word the pair collided with the
+  // next label. Only one of two identical claims is worth the pixels.
+  const entailed =
+    value.form === 'Part' &&
+    ((value.function === 'particle' && value.partKind === 'verbal') ||
+      (value.function === 'marker' && value.partKind === 'infinitival'));
   const fnMark =
     value.function && !redundant ? functionMark(value.function, value.obligatory === true) : null;
   const fnName = value.function ? functionName(value.function, value.obligatory === true) : null;
@@ -95,7 +102,7 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
       ? verbTypeMark(value.verbType, voice)
       : value.form === 'Cl' && (value.clauseKind || finiteness !== 'finite')
         ? clauseKindMark(value.clauseKind ?? null, finiteness)
-        : value.form === 'Part' && value.partKind
+        : value.form === 'Part' && value.partKind && !entailed
           ? partKindMark(value.partKind)
           : value.form === 'Aux' && value.auxKind
             ? auxKindMark(value.auxKind)
