@@ -385,18 +385,18 @@ Status values are deliberately explicit:
 
 ## Lesson 24 — Auxiliary verbs
 
-| #   | Sentence                                  | Natural reading      | Intended parse               | Scope reach         | Model / fixture               |
-| --- | ----------------------------------------- | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
-| 1   | The visitors will wait.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 2   | The visitors have waited.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 3   | The visitors are waiting.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 4   | The visitors did wait.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 5   | The clerk did file the deeds.             | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 6   | She has repaired the gate.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 7   | The engine was failing.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 8   | The mechanic may have checked the brakes. | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 9   | Our guests have been waiting.             | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 10  | The board should approve the plan.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| #   | Sentence                                | Natural reading      | Intended parse               | Scope reach         | Model / fixture               |
+| --- | --------------------------------------- | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
+| 1   | The visitors will wait.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 2   | The visitors have waited.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 3   | The visitors are waiting.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 4   | The visitors did wait.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 5   | The clerk did file the deeds.           | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 6   | She has repaired the gate.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 7   | That engine was failing.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 8   | A mechanic may have checked the brakes. | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 9   | Our guests have been waiting.           | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 10  | The board should approve the plan.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 
 ## Lesson 24a — What the helper verb means
 
@@ -412,13 +412,13 @@ Status values are deliberately explicit:
 | --- | ----------------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
 | 1   | She switched off the lamp.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 2   | She switched the lamp off.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 3   | We wrote down the address.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | We wrote the address down.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 5   | She looked up the number.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | She looked up the chimney.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The children picked up the litter.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | The children climbed up the ladder. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 9   | The crowd cheered him on.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 3   | The crowd cheered him on.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | We wrote down the address.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 5   | We wrote the address down.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | She looked up the number.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | She looked up the chimney.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | The children picked up the litter.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 9   | The children climbed up the ladder. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 10  | The clerk took every name down.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 26 — Coordination inside phrases

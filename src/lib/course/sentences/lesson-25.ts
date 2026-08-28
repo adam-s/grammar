@@ -1,91 +1,101 @@
 /**
- * Lesson 25 — Particles. *down* belongs with the verb, not to a phrase.
+ * Lesson 25 — Particles. With the movement that proves one.
  *
- * It looks like the preposition of lesson 19 and behaves like nothing of the
- * kind: it takes no complement, and *the address* is the object of *wrote
- * down* rather than of *down*.
+ * Every particle in the built set sat directly after the verb, which is exactly
+ * where a preposition sits, so the test that separates them never ran. Items 1
+ * and 2, 4 and 5, and 10 move the particle behind the object — which a
+ * preposition cannot do.
+ *
+ * Items 6 and 7 are the sharpest pair: *looked up the number* and *looked up the
+ * chimney* differ in one noun and in what *up* is. *She looked the number up* is
+ * fine; *She looked the chimney up* is not. Item 3 runs the test without anyone
+ * being asked to, because a pronoun object forces the particle to move.
  */
-import { det, phrasal, pron, svo, v } from './shape.ts';
+import { det, phrasal, pp, pron, svo, svPlus, svoShifted, v } from './shape.ts';
 
 export const LESSON_25 = [
   svo(
     'c25-a',
     25,
-    det('The', 'clerk'),
-    phrasal(v('wrote', 'write', 'Vtr'), 'down'),
-    det('the', 'address'),
-    'The clerk noted the address in writing.',
+    pron('She'),
+    phrasal(v('switched', 'switch', 'Vtr'), 'off'),
+    det('the', 'lamp'),
+    'She turned the lamp off.',
   ),
-  svo(
+  svoShifted(
     'c25-b',
     25,
-    det('Another', 'engineer'),
-    phrasal(v('shut', 'shut', 'Vtr'), 'off'),
-    det('the', 'valve'),
-    'Another engineer closed the valve.',
+    pron('She'),
+    v('switched', 'switch', 'Vtr'),
+    det('the', 'lamp'),
+    'off',
+    'She turned the lamp off.',
   ),
-  svo(
+  svoShifted(
     'c25-c',
     25,
-    pron('She'),
-    phrasal(v('looked', 'look', 'Vtr'), 'up'),
-    det('the', 'number'),
-    'She found the number in a list.',
+    det('The', 'crowd'),
+    v('cheered', 'cheer', 'Vtr'),
+    pron('him'),
+    'on',
+    'The crowd urged him along.',
   ),
   svo(
     'c25-d',
     25,
-    det('The', 'committee'),
-    phrasal(v('turned', 'turn', 'Vtr'), 'down'),
-    det('the', 'offer'),
-    'The committee refused the offer.',
+    pron('We'),
+    phrasal(v('wrote', 'write', 'Vtr'), 'down'),
+    det('the', 'address'),
+    'We noted the address.',
   ),
-  svo(
+  svoShifted(
     'c25-e',
     25,
-    det('The', 'porter'),
-    phrasal(v('put', 'put', 'Vtr'), 'away'),
-    det('the', 'crates'),
-    'The porter stored the crates.',
+    pron('We'),
+    v('wrote', 'write', 'Vtr'),
+    det('the', 'address'),
+    'down',
+    'We noted the address.',
   ),
   svo(
     'c25-f',
     25,
-    pron('They'),
-    phrasal(v('called', 'call', 'Vtr'), 'off'),
-    det('the', 'search'),
-    'They stopped the search.',
+    pron('She'),
+    phrasal(v('looked', 'look', 'Vtr'), 'up'),
+    det('the', 'number'),
+    'She searched for the number.',
   ),
-  svo(
+  svPlus(
     'c25-g',
     25,
-    det('The', 'auditor'),
-    phrasal(v('drew', 'draw', 'Vtr'), 'up'),
-    det('a', 'schedule'),
-    'The auditor prepared a schedule.',
+    pron('She'),
+    v('looked', 'look', 'Vint'),
+    pp('up', det('the', 'chimney')),
+    'She peered into the chimney.',
   ),
   svo(
     'c25-h',
     25,
-    det('The', 'crew'),
-    phrasal(v('took', 'take', 'Vtr'), 'apart'),
-    det('the', 'scaffold'),
-    'The crew dismantled the scaffold.',
+    det('The', 'children'),
+    phrasal(v('picked', 'pick', 'Vtr'), 'up'),
+    det('the', 'litter'),
+    'The children collected the litter.',
   ),
-  svo(
+  svPlus(
     'c25-i',
     25,
-    det('The', 'inspector'),
-    phrasal(v('pointed', 'point', 'Vtr'), 'out'),
-    det('the', 'fault'),
-    'The inspector showed where the fault was.',
+    det('The', 'children'),
+    v('climbed', 'climb', 'Vint'),
+    pp('up', det('the', 'ladder')),
+    'The children went up the ladder.',
   ),
-  svo(
+  svoShifted(
     'c25-j',
     25,
-    det('Her', 'landlord'),
-    phrasal(v('threw', 'throw', 'Vtr'), 'out'),
-    det('the', 'furniture'),
-    'Her landlord got rid of the furniture.',
+    det('The', 'clerk'),
+    v('took', 'take', 'Vtr'),
+    det('every', 'name'),
+    'down',
+    'The clerk noted every name.',
   ),
 ];

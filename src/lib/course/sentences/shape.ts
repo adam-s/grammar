@@ -487,6 +487,37 @@ export const svFronted = (
   gloss: string,
 ) => one(id, lesson, clause(s, verb, [], 'SV', undefined, where), gloss);
 
+/**
+ * *She switched the lamp off.* — the particle behind the object.
+ *
+ * The movement that proves something is a particle, and the built lesson 25 had
+ * none: all ten of its particles sat directly after the verb, where a
+ * preposition sits too. *She looked the number up* is fine and *She looked the
+ * chimney up* is not, which is the whole test.
+ *
+ * `fix-particle-shift` proves it.
+ */
+export const svoShifted = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  object: Phrase,
+  particle: string,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(
+      s,
+      verb,
+      [object('directObject'), w('Part', 'particle', particle, { partKind: 'verbal' })],
+      'SVO',
+    ),
+    gloss,
+  );
+
 /** *The mechanic replaced the belt.* */
 export const svo = (
   id: string,

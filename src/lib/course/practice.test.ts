@@ -33,7 +33,6 @@ const UNIFORM: Record<number, string> = {
   7: 'nothing but S V is in scope until lesson 9',
   8: 'nothing but S V is in scope until lesson 9',
   11: 'the pattern is the lesson',
-  25: 'a verb with a particle takes an object; there is no intransitive one to show',
   27: 'the attachment ambiguity needs an object for the phrase to attach to',
   28: 'the lesson is a clause in the object slot',
   32: 'a comparison needs something to compare, so the complement is the point',
