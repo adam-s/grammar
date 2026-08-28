@@ -131,7 +131,9 @@ async function newPage(browser, viewport, scale = SHOT_SCALE) {
 async function contentClip(page, also = []) {
   const box = await page.evaluate((extra) => {
     const parts = [
-      ...document.querySelectorAll('svg.diagram text, svg.diagram line'),
+      // `path` too: the movement arcs under the words are paths, and leaving
+      // them out of the union cropped them off the bottom of every frame.
+      ...document.querySelectorAll('svg.diagram text, svg.diagram line, svg.diagram path'),
       ...document.querySelectorAll('.popup'),
       ...extra.flatMap((sel) => [...document.querySelectorAll(sel)]),
     ];

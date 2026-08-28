@@ -1,5 +1,6 @@
 <script module lang="ts">
   import { layout } from './layout.ts';
+  import { linkGeometry, links } from './links.ts';
   import {
     DIAGRAM_PAD,
     DIAGRAM_ROW,
@@ -25,9 +26,18 @@
    * from the same pure layout is cheaper than plumbing it back out of a
    * component instance.
    */
+  /** Vertical room each movement arc needs below the words. */
+  const LINK_LANE = 16;
+
   export function diagramSize(cs: ConstituentMap, words: Word[], minDepth = 0) {
     const l = layout(cs, words, { rowHeight: ROW, minDepth });
-    return { x: 0, y: 0, w: l.width + PAD * 2, h: l.height + WORD_GAP + 30 + PAD * 2 };
+    const lanes = links(cs).length;
+    return {
+      x: 0,
+      y: 0,
+      w: l.width + PAD * 2,
+      h: l.height + WORD_GAP + 30 + lanes * LINK_LANE + PAD * 2,
+    };
   }
 
   /**
@@ -175,6 +185,16 @@
   const wordY = $derived(L.height + WORD_GAP);
 
   const size = $derived(diagramSize(constituents, words, minDepth));
+  /**
+   * The arcs, placed from the same layout the tree uses. A node with no box —
+   * one the layout could not place — drops its whole arc rather than half of it.
+   */
+  const arcs = $derived(
+    linkGeometry(links(constituents), (id) => {
+      const box = L.nodes[id];
+      return box ? { x: box.x, left: box.left, right: box.right } : null;
+    }),
+  );
 
   const hue = (f: Form) => `var(--s${hueSlot(f)})`;
 
@@ -369,6 +389,24 @@
       </g>
     {/each}
 
+    <!-- Movement and repetition, drawn under the words.
+         Everything above says what is inside what. These three say the other
+         kind of thing a sentence can say: that a phrase belongs somewhere it is
+         not, or that a silence repeats something said earlier. They were
+         matching numbers before, which is honest and unreadable. -->
+    {#each arcs as arc (arc.index)}
+      {@const y = wordY + 14 + arc.lane * LINK_LANE}
+      {@const dir = arc.to.x > arc.from.x ? 1 : -1}
+      <g class="link" class:repeat={arc.kind === 'repeat'}>
+        <path d={`M ${arc.from.x} ${wordY + 8} V ${y} H ${arc.to.x} V ${wordY + 12}`} fill="none" />
+        <path
+          class="head"
+          d={`M ${arc.to.x} ${wordY + 8} l ${-4 * dir} 7 l ${8 * dir} 0 Z`}
+          transform={`rotate(${dir > 0 ? 0 : 0} ${arc.to.x} ${wordY + 8})`}
+        />
+      </g>
+    {/each}
+
     <!-- The word row is drawn from the WORDS, never from the tree's leaves: a
          learner starts with a bare sentence and no structure at all, and a word
          must never appear or vanish as the structure grows. -->
@@ -476,6 +514,27 @@
   .word .mark {
     fill: transparent;
   }
+  .link path {
+    stroke: var(--accent, #8b5cf6);
+    stroke-width: 1.25;
+    fill: none;
+  }
+
+  .link .head {
+    fill: var(--accent, #8b5cf6);
+    stroke: none;
+  }
+
+  /* A repeat is not a movement, and a reader should not have to be told twice
+     which is which. */
+  .link.repeat path {
+    stroke-dasharray: 3 3;
+  }
+
+  .link.repeat .head {
+    fill: var(--accent, #8b5cf6);
+  }
+
   .word text {
     font-size: 17px;
   }

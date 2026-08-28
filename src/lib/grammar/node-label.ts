@@ -124,9 +124,14 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
             ? auxKindName(value.auxKind)
             : null;
   const primaryName = formName(value.form);
-  // The link between a filler and its gap is the whole claim being made, and a
-  // reader who cannot see it sees two unrelated phrases. The number is the
-  // notation, and it means only that these two are one thing.
+  /**
+   * The number that pairs a moved phrase with the place it came from.
+   *
+   * It is NOT drawn any more. The diagram draws an arc under the words instead,
+   * which shows the same relation without asking a reader to hunt the tree for
+   * a matching digit — so printing the digit as well would be saying it twice.
+   * It stays in the accessible name, where there is no arc to follow.
+   */
   const tie = value.index === undefined || value.index === null ? '' : String(value.index);
   // An elided piece and a moved one are both empty and are not the same claim.
   const unsaid = value.function === 'head' || value.function === 'predicate';
@@ -139,7 +144,7 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
       functionMark: fnMark,
       functionName: fnName,
       // An elided piece says what it repeats; a moved one says it is empty.
-      subtypeMark: unsaid ? (tie ? `= ${tie}` : '=') : tie ? `gap ${tie}` : 'gap',
+      subtypeMark: unsaid ? '=' : 'gap',
       subtypeName: unsaid
         ? tie
           ? `left unsaid, repeating ${tie}`
@@ -152,13 +157,12 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
         .join(', '),
     };
   }
-  const withTie = tie ? [subtypeMark, tie].filter(Boolean).join(' ') : subtypeMark;
   return {
     form: value.form,
     formName: primaryName,
     functionMark: fnMark,
     functionName: fnName,
-    subtypeMark: withTie,
+    subtypeMark,
     subtypeName: tie ? [subtypeName, `fills gap ${tie}`].filter(Boolean).join(', ') : subtypeName,
     accessibleName: [primaryName, subtypeName, fnName].filter(Boolean).join(', '),
   };
