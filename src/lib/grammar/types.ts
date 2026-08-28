@@ -305,6 +305,19 @@ export interface Constituent {
   /** For `form: 'Aux'` — which of the five jobs this auxiliary is doing. */
   auxKind?: AuxKind;
   /**
+   * A second job this node is doing at the same time as `function`.
+   *
+   * *__Most__ were gone* has no noun for *most* to determine, so *most* is the
+   * determiner AND the head of the phrase. *The __poor__ complained* is the
+   * same shape one level down: *poor* modifies and heads at once.
+   *
+   * Additive on purpose. `function` still holds the job the tree is built on —
+   * always `head`, since that is the one the phrase needs — so nothing that
+   * walks the tree has to learn a second shape. CGEL calls this fusion of
+   * functions and writes it Det-Head; this stores the other half.
+   */
+  fusedWith?: Func;
+  /**
    * This node covers no words: a slot the sentence leaves empty.
    *
    * *The engine that stalled* has a subject inside the relative clause and no

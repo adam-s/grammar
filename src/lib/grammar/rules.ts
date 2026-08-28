@@ -33,6 +33,8 @@ export interface LicenseContext {
   siblingForms?: readonly Form[];
   /** Active or passive. Omitted means active. */
   voice?: Voice;
+  /** The second job this child is doing, if it is doing two. */
+  fusedWith?: Func;
   /**
    * Form of the child being licensed, when known. Only `head` needs it, and it
    * needs it badly: a verb phrase's head is a verb, so without this the menu
@@ -184,6 +186,10 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (has('head')) return no('A phrase has exactly one head.');
       const allowed = HEAD_FORMS[p];
       if (ctx.childForm && allowed && !allowed.includes(ctx.childForm)) {
+        // Unless it is doing two jobs at once. *Most were gone* has no noun for
+        // *most* to determine, so *most* determines and heads together — which
+        // is the only reason a determiner may head a noun phrase.
+        if (ctx.fusedWith && fuses(p, ctx.childForm, ctx.fusedWith)) return ALLOWED;
         return no(`The head of ${HEAD_ARTICLE[p]} is ${HEAD_NAMES[p]}.`);
       }
       return ALLOWED;
@@ -406,6 +412,28 @@ export function hypothesizes(fn: Func, ctx: LicenseContext): Verdict {
   }
 }
 
+/**
+ * The fusions English has, as parent → child → the job the head is fused with.
+ *
+ * Short and closed on purpose. Fusion is not a general licence to head a phrase
+ * with anything; it is a small set of places where English leaves out the word
+ * that would normally be the head and lets its neighbour cover for it.
+ *
+ *   *__Most__ were gone*        a determiner with no noun to determine
+ *   *The __poor__ complained*   a modifier with no noun to modify
+ *
+ * `auditFusion` holds the other half of the bargain: a node that could have
+ * headed the phrase on its own is not fused, it is just the head.
+ */
+export const FUSIONS: Record<string, Partial<Record<string, Func>>> = {
+  NP: { Det: 'determiner', Num: 'determiner', DP: 'determiner' },
+  Nom: { Adj: 'premodifier', AdjP: 'premodifier' },
+};
+
+export function fuses(parent: Form, child: Form, fusedWith: Func): boolean {
+  return FUSIONS[parent]?.[child] === fusedWith;
+}
+
 /** Phrase forms that must have exactly one head. `S`/`Cl` are not phrases. */
 export const HEAD_BEARING: readonly Form[] = ['NP', 'Nom', 'DP', 'VP', 'PP', 'AdjP', 'AdvP'];
 
@@ -416,7 +444,10 @@ export const HEAD_BEARING: readonly Form[] = ['NP', 'Nom', 'DP', 'VP', 'PP', 'Ad
  */
 export const HEAD_FORMS: Record<string, readonly Form[]> = {
   NP: ['N', 'Pron', 'Num', 'Nom', 'NP'],
-  Nom: ['N', 'Nom'],
+  // `Pron` because of the fused relative: in *what he wants*, *what* is what
+  // the clause modifies, and it is a pronoun. Nothing about a nominal requires
+  // a noun — it requires the thing a determiner would point at.
+  Nom: ['N', 'Pron', 'Nom'],
   DP: ['Det', 'DP'],
   // Not `Aux`. A verb phrase is named after its main verb, and an auxiliary is
   // never that — in *was repaired* the phrase is about *repaired*. Auxiliaries

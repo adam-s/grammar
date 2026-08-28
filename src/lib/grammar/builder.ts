@@ -29,7 +29,14 @@ import {
   isClauseNode,
   verbs,
 } from './clause.ts';
-import { HEAD_FORMS, hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
+import {
+  HEAD_FORMS,
+  fuses,
+  hypothesizes,
+  licenses,
+  type LicenseContext,
+  type Verdict,
+} from './rules.ts';
 import { isPhraseForm, isPunctuation } from './types.ts';
 import type {
   AuxKind,
@@ -312,6 +319,28 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   for (const k of kids) cs[k]!.parent = id;
   // Grouping is what puts a fronted phrase and a gap into the same clause.
   return linkFillers({ constituents: cs, seq });
+}
+
+/**
+ * Say that one word is doing two jobs: heading its phrase and doing the job the
+ * missing head's neighbour would have done.
+ *
+ * A single move rather than two, because half of it is not a state worth being
+ * in — a determiner heading a noun phrase without being fused is exactly what
+ * `auditFusion` rejects.
+ */
+export function setFusion(state: BuildState, id: string, fusedWith: Func): BuildState {
+  const c = state.constituents[id];
+  if (!c || c.parent === null) return state;
+  const parent = state.constituents[c.parent]!;
+  if (!fuses(parent.form, c.form, fusedWith)) return state;
+  if (parent.children.some((k) => k !== id && state.constituents[k]?.function === 'head')) {
+    return state;
+  }
+  const cs = cloneMap(state.constituents);
+  cs[id]!.function = 'head';
+  cs[id]!.fusedWith = fusedWith;
+  return { ...state, constituents: cs };
 }
 
 /** Assign a function already accepted by the grader as a compatible hypothesis. */
@@ -706,12 +735,18 @@ function prospectiveParent(fn: Func): Form | null {
  * Delegates to the same `licenses()` the audits use — one rule set, so what a
  * learner can build is what the content must satisfy.
  */
-export function licenseFor(state: BuildState, id: string, fn: Func): Verdict {
+/**
+ * `fusedWith` is the second job a caller is ABOUT to give this node, not one it
+ * already has. Asking "may this be the head" of a determiner is answered no
+ * until you say it is also the determiner, and the two arrive together.
+ */
+export function licenseFor(state: BuildState, id: string, fn: Func, fusedWith?: Func): Verdict {
   const c = state.constituents[id];
   if (!c) return { state: 'hidden' };
   if (c.parent === null && !prospectiveParent(fn)) return unparentedFunction();
   const ctx = functionContext(state, id, fn);
-  return ctx ? licenses(fn, ctx) : { state: 'hidden' };
+  if (!ctx) return { state: 'hidden' };
+  return licenses(fn, fusedWith ? { ...ctx, fusedWith } : ctx);
 }
 
 /** Menu affordance: compatible answers stay actionable until graded. */
@@ -758,6 +793,7 @@ function functionContext(state: BuildState, id: string, fn: Func): LicenseContex
   return {
     parentForm: parent.form,
     siblingForms: others.map((k) => state.constituents[k]!.form),
+    fusedWith: c.fusedWith,
     verbType: governingVerbType(state.constituents, id) ?? looseVerbType(state),
     voice: governingVerb(state.constituents, id)
       ? governingVoice(state.constituents, id)

@@ -41,7 +41,7 @@ import {
 import { coordination, coordinatedSubject } from './coordination.ts';
 import { auxiliaryChain, passive } from './auxiliaries.ts';
 import { infinitive, particle, particleShift, hollowClause, twoMarkers } from './non-finite.ts';
-import { nominal, stacked, determinativeAndName } from './noun-phrases.ts';
+import { nominal, stacked, determinativeAndName, fused, fusedRelative } from './noun-phrases.ts';
 import {
   frontedPhrase,
   question,
@@ -79,6 +79,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   nominal,
   stacked,
   determinativeAndName,
+  fused,
+  fusedRelative,
   frontedPhrase,
   question,
   extraposition,

@@ -33,6 +33,7 @@
     emptyBuild,
     setAnchor,
     setAuxKind,
+    setFusion,
     nodeOver,
     setFunction,
     setClauseKind,
@@ -49,6 +50,7 @@
     AUX_KIND_TEST,
     CLAUSE_KIND_TEST,
     FINITENESS_TEST,
+    FUSION_TEST,
     GAP_TEST,
     PART_KIND_TEST,
     PLAIN,
@@ -60,6 +62,7 @@
     gradeFiniteness,
     gradeForm,
     gradeFunction,
+    gradeFusion,
     gradeGap,
     gradePartKind,
     gradeVerbType,
@@ -276,27 +279,29 @@
           key:
             step.choice.anchor !== undefined
               ? `anchor:${step.choice.anchorForm}:${step.choice.anchor[0]}-${step.choice.anchor[1]}`
-              : step.choice.gap && step.choice.func !== undefined
-                ? `gap:${step.choice.func}:${step.choice.form}`
-                : step.choice.form !== undefined
-                  ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
-                  : step.choice.func !== undefined
-                    ? // The required S V A adverbial is a distinct row, because it is
-                      // a distinct claim about the verb.
-                      step.choice.func === 'adverbial' && step.choice.obligatory
-                      ? 'func:obligatoryAdverbial'
-                      : `func:${step.choice.func}`
-                    : step.choice.voice !== undefined
-                      ? `voice:${step.choice.voice}`
-                      : step.choice.partKind !== undefined
-                        ? `part:${step.choice.partKind}`
-                        : step.choice.auxKind !== undefined
-                          ? `aux:${step.choice.auxKind}`
-                          : step.choice.finiteness !== undefined
-                            ? `fin:${step.choice.finiteness}`
-                            : step.choice.clauseKind !== undefined
-                              ? `kind:${step.choice.clauseKind}`
-                              : `vt:${step.choice.verbType}`,
+              : step.choice.fusedWith !== undefined
+                ? `func:head+${step.choice.fusedWith}`
+                : step.choice.gap && step.choice.func !== undefined
+                  ? `gap:${step.choice.func}:${step.choice.form}`
+                  : step.choice.form !== undefined
+                    ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
+                    : step.choice.func !== undefined
+                      ? // The required S V A adverbial is a distinct row, because it is
+                        // a distinct claim about the verb.
+                        step.choice.func === 'adverbial' && step.choice.obligatory
+                        ? 'func:obligatoryAdverbial'
+                        : `func:${step.choice.func}`
+                      : step.choice.voice !== undefined
+                        ? `voice:${step.choice.voice}`
+                        : step.choice.partKind !== undefined
+                          ? `part:${step.choice.partKind}`
+                          : step.choice.auxKind !== undefined
+                            ? `aux:${step.choice.auxKind}`
+                            : step.choice.finiteness !== undefined
+                              ? `fin:${step.choice.finiteness}`
+                              : step.choice.clauseKind !== undefined
+                                ? `kind:${step.choice.clauseKind}`
+                                : `vt:${step.choice.verbType}`,
         })),
       reset,
     };
@@ -503,6 +508,25 @@
           text: outcome?.reason ?? 'It does not belong to that one.',
           test: outcome?.test ?? ANCHOR_TEST,
         };
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
+    if (o.fusedWith && selection.kind === 'node') {
+      const c = build.constituents[selection.id]!;
+      const outcome = gradeFusion(sentence, c.span, c.form, o.fusedWith);
+      verdict = toVerdict(
+        outcome,
+        `it is the ${label(o.fusedWith)} and the head at once`,
+        `both at once`,
+        FUSION_TEST,
+        `fuse:${c.span[0]}-${c.span[1]}`,
+      );
+      if (outcome.kind !== 'wrong') {
+        build = setFusion(build, selection.id, o.fusedWith);
+        closeIfComplete();
+      } else {
         reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
       }
       return;

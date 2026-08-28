@@ -20,7 +20,16 @@ import {
   predicateOf,
   verbOfClause,
 } from './clause.ts';
-import { licenses, hasPassive, requiredFor, slotsFor, HEAD_BEARING, LONG } from './rules.ts';
+import {
+  licenses,
+  fuses,
+  hasPassive,
+  requiredFor,
+  slotsFor,
+  HEAD_BEARING,
+  HEAD_FORMS,
+  LONG,
+} from './rules.ts';
 import {
   CLAUSE_FUNCTIONS,
   gapPosition,
@@ -277,6 +286,7 @@ export function auditLicensing(ctx: Ctx): string[] {
       siblings,
       siblingForms: others.map((k) => ctx.cs[k]!.form),
       childForm: c.form,
+      fusedWith: c.fusedWith,
     });
     if (v.state === 'allowed') continue;
     const why = v.state === 'disabled' ? v.reason : `a ${parent.form} has no ${label(c.function)}`;
@@ -385,6 +395,46 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
         '"be" needs either a subject complement or an adverbial it requires ' +
           '(mark that adverbial `obligatory`)',
       );
+    }
+  }
+  return f;
+}
+
+/* ---------------------------------------------------------------- 11: fusion */
+
+/**
+ * A node doing two jobs is doing two jobs it could not do apart.
+ *
+ * Fusion is a real thing and a tempting excuse. *Most were gone* has a
+ * determiner heading a noun phrase, which nothing else licenses — that is
+ * fusion. A noun heading a noun phrase is just the head, and calling it fused
+ * with something would be decoration.
+ */
+export function auditFusion(ctx: Ctx): string[] {
+  const f: string[] = [];
+  for (const [id, c] of Object.entries(ctx.cs)) {
+    if (c.fusedWith === undefined) continue;
+    const where = `"${id}" (${c.form})`;
+    if (c.function !== 'head') {
+      f.push(`${where} is fused but its function is ${c.function}; fusion is always with the head`);
+      continue;
+    }
+    if (c.parent === null) {
+      f.push(`${where} is fused but sits in nothing, so there is no second job to do`);
+      continue;
+    }
+    const parent = ctx.cs[c.parent]!;
+    if (!fuses(parent.form, c.form, c.fusedWith)) {
+      f.push(
+        `${where} claims to be head and ${label(c.fusedWith)} at once under a ${parent.form}, ` +
+          'which is not one of the fusions English has',
+      );
+      continue;
+    }
+    // The sharp half: if it could have headed the phrase alone, nothing is
+    // fused and the second label is invented.
+    if ((HEAD_FORMS[parent.form] ?? []).includes(c.form)) {
+      f.push(`${where} can head a ${parent.form} on its own, so it is the head and nothing more`);
     }
   }
   return f;
@@ -634,6 +684,7 @@ const AUDITS: readonly [string, (ctx: Ctx) => string[]][] = [
   ['finiteness', auditFiniteness],
   ['gaps', auditGaps],
   ['flat', auditFlat],
+  ['fusion', auditFusion],
   ['head', auditHead],
 ];
 

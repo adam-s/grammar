@@ -44,6 +44,8 @@ export interface SpecNode {
   partKind?: PartKind;
   /** On an `Aux` leaf. */
   auxKind?: AuxKind;
+  /** A second job this node does at the same time as its function. */
+  fusedWith?: Func;
   /** This node covers no words. Its position comes from where it is written. */
   gap?: true;
   /** Ties a gap to its filler. Shared by exactly two nodes. */
@@ -135,6 +137,27 @@ export interface BuiltReading {
   words: Word[];
 }
 
+/**
+ * Copy every optional property a spec node may carry onto the constituent.
+ *
+ * One place, because there are three branches that need it — word, phrase, gap
+ * — and keeping three lists in step by hand went wrong twice: once silently
+ * dropping `index` from leaves, once putting `fusedWith` on gaps and nowhere
+ * else.
+ */
+function carry(self: Constituent, node: SpecNode): void {
+  if (node.obligatory) self.obligatory = true;
+  if (node.clauseKind) self.clauseKind = node.clauseKind;
+  if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
+  if (node.partKind) self.partKind = node.partKind;
+  if (node.auxKind) self.auxKind = node.auxKind;
+  if (node.verbType) self.verbType = node.verbType;
+  if (node.voice === 'passive') self.voice = 'passive';
+  if (node.clauseType) self.clauseType = node.clauseType;
+  if (node.index !== undefined) self.index = node.index;
+  if (node.fusedWith) self.fusedWith = node.fusedWith;
+}
+
 export function build(
   spec: SpecNode,
   meta: {
@@ -176,7 +199,7 @@ export function build(
     if (node.gap) {
       // No words, so the span runs backwards from where the gap sits.
       self.span = [words.length, words.length - 1];
-      if (node.index !== undefined) self.index = node.index;
+      carry(self, node);
       self.gap = true;
       return { id, lo: Infinity, hi: -Infinity };
     }
@@ -193,16 +216,7 @@ export function build(
       });
       self.word = i;
       self.span = [i, i];
-      if (node.obligatory) self.obligatory = true;
-      if (node.clauseKind) self.clauseKind = node.clauseKind;
-      if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
-      if (node.partKind) self.partKind = node.partKind;
-      if (node.auxKind) self.auxKind = node.auxKind;
-      if (node.index !== undefined) self.index = node.index;
-      if (node.auxKind) self.auxKind = node.auxKind;
-      if (node.verbType) self.verbType = node.verbType;
-      if (node.voice === 'passive') self.voice = 'passive';
-      if (node.clauseType) self.clauseType = node.clauseType;
+      carry(self, node);
       return { id, lo: i, hi: i };
     }
 
@@ -218,14 +232,7 @@ export function build(
     // A node whose only children are gaps is itself empty, and says so the same
     // way a gap does.
     self.span = lo <= hi ? [lo, hi] : [words.length, words.length - 1];
-    if (node.index !== undefined) self.index = node.index;
-    if (node.obligatory) self.obligatory = true;
-    if (node.clauseKind) self.clauseKind = node.clauseKind;
-    if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
-    if (node.partKind) self.partKind = node.partKind;
-    if (node.verbType) self.verbType = node.verbType;
-    if (node.voice === 'passive') self.voice = 'passive';
-    if (node.clauseType) self.clauseType = node.clauseType;
+    carry(self, node);
     return { id, lo, hi };
   };
 

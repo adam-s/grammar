@@ -1,4 +1,4 @@
-import { build, n, pt, w } from '../build.ts';
+import { build, gap, n, pt, w } from '../build.ts';
 import { sentence } from './sentence.ts';
 
 /* ------------- the nominal layer — She repaired the old red engine.
@@ -134,4 +134,125 @@ export const determinativeAndName = sentence(
   ],
   'r1',
   ['Vtr', 'determinative-phrase', 'flat', 'proper-name'],
+);
+
+/* ------- one word, two jobs — Most were gone, and the poor complained.
+ *
+ * *most* has no noun to determine, so it determines and heads at once. *poor*
+ * has no noun to modify, so it modifies and heads at once. CGEL calls this
+ * fusion of functions and writes it Det-Head; the diagram writes `D+H`.
+ *
+ * Fusion is a real thing and a tempting excuse, so it is a closed list of two.
+ * A noun heading a noun phrase is the head and nothing more — `auditFusion`
+ * rejects a second label on anything that could have done the job alone.
+ */
+export const fused = sentence(
+  'fix-fused',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [w('Det', 'head', 'Most', { fusedWith: 'determiner' })]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'were', { xpos: 'VBD', lemma: 'be', verbType: 'Vbe' }),
+                n('AdjP', 'subjectComplement', [w('Adj', 'head', 'gone')]),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVC' },
+          ),
+          pt(','),
+          w('Conj', 'coordinator', 'and'),
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [
+                w('Det', 'determiner', 'the'),
+                n('Nom', 'head', [w('Adj', 'head', 'poor', { fusedWith: 'premodifier' })]),
+              ]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'complained', { lemma: 'complain', verbType: 'Vint' }),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SV' },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Most of them had left, and the people who are poor complained.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'Vint', 'fusion', 'determiner-head', 'modifier-head', 'two-clause'],
+);
+
+/* --------- a fused relative — What he wants is a rest.
+ *
+ * The third fusion CGEL names, and the one that needed no machinery at all.
+ * *what* heads the nominal and the clause after it modifies that head, with a
+ * gap where its object would be. Every relation is one a relative clause
+ * already has.
+ *
+ * It was blocked by a single entry: a nominal could only be headed by a noun.
+ * Nothing about a nominal requires a noun — it requires the thing a determiner
+ * would point at, and *what* is exactly that.
+ */
+export const fusedRelative = sentence(
+  'fix-fused-relative',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            n('Nom', 'head', [
+              w('Pron', 'head', 'What', { xpos: 'WP' }),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  n('NP', 'subject', [w('Pron', 'head', 'he')]),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'wants', { lemma: 'want', verbType: 'Vtr' }),
+                    gap('NP', 'directObject'),
+                  ]),
+                ],
+                { clauseKind: 'relative', clauseType: 'SVO' },
+              ),
+            ]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'is', { xpos: 'VBZ', lemma: 'be', verbType: 'Vbe' }),
+            n('NP', 'subjectComplement', [
+              w('Det', 'determiner', 'a'),
+              n('Nom', 'head', [w('N', 'head', 'rest')]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The thing he wants is a rest.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'Vtr', 'fused-relative', 'gap', 'two-clause'],
 );

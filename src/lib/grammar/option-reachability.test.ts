@@ -10,6 +10,7 @@ import {
   nodeOver,
   setAnchor,
   setAuxKind,
+  setFusion,
   setClauseKind,
   setFiniteness,
   setFunction,
@@ -21,10 +22,23 @@ import {
 } from './builder.ts';
 import { FIXTURES } from './fixtures.ts';
 import { isPickable, optionsFor } from './options.ts';
-import type { Func, Reading, SentenceEntry } from './types.ts';
+import type { Constituent, Func, Reading, SentenceEntry } from './types.ts';
 import { CLAUSE_FUNCTIONS, PHRASE_INTERNAL_FUNCTIONS } from './types.ts';
 
 const FUNCTIONS = [...CLAUSE_FUNCTIONS, ...PHRASE_INTERNAL_FUNCTIONS];
+
+/**
+ * The palette row that produces this constituent's function.
+ *
+ * Three rows can set a function: the plain one, the obligatory adverbial, and
+ * fusion — which sets two jobs at once because half of it is not a state worth
+ * being in.
+ */
+function functionKey(c: Constituent): string {
+  if (c.fusedWith) return `func:head+${c.fusedWith}`;
+  if (c.function === 'adverbial' && c.obligatory) return 'func:obligatoryAdverbial';
+  return `func:${c.function}`;
+}
 
 function optionFor(state: BuildState, words: SentenceEntry['words'], id: string, key: string) {
   return optionsFor(state, words, { kind: 'node', id })
@@ -131,7 +145,10 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     while (prospective.length > 0) {
       const index = prospective.findIndex((child) => {
         const fn = reading.constituents[child]!.function!;
-        return licenseFor(state, learnerId.get(child)!, fn).state === 'allowed';
+        return (
+          licenseFor(state, learnerId.get(child)!, fn, reading.constituents[child]!.fusedWith)
+            .state === 'allowed'
+        );
       });
       // Nothing legal yet is not a failure. Once a sentence holds more than one
       // verb, a loose node cannot say which clause it will join, so "object of
@@ -142,16 +159,15 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
       const child = prospective.splice(index, 1)[0]!;
       const canonical = reading.constituents[child]!;
       const id = learnerId.get(child)!;
-      const key =
-        canonical.function === 'adverbial' && canonical.obligatory
-          ? 'func:obligatoryAdverbial'
-          : `func:${canonical.function}`;
+      const key = functionKey(canonical);
       const option = optionFor(state, sentence.words, id, key);
       assert.ok(
         option && isPickable(option),
         `${sentence.id}/${reading.id}: cannot choose prospective ${canonical.function}`,
       );
-      state = setFunction(state, id, canonical.function, canonical.obligatory === true);
+      state = canonical.fusedWith
+        ? setFusion(state, id, canonical.fusedWith)
+        : setFunction(state, id, canonical.function, canonical.obligatory === true);
     }
 
     const existing = nodeOver(state, source.span);
@@ -252,7 +268,10 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     while (pending.length > 0) {
       const index = pending.findIndex((child) => {
         const fn = reading.constituents[child]!.function!;
-        return licenseFor(state, learnerId.get(child)!, fn).state === 'allowed';
+        return (
+          licenseFor(state, learnerId.get(child)!, fn, reading.constituents[child]!.fusedWith)
+            .state === 'allowed'
+        );
       });
       assert.notEqual(
         index,
@@ -264,13 +283,12 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
       const child = pending.splice(index, 1)[0]!;
       const fn = reading.constituents[child]!.function as Func;
       const id = learnerId.get(child)!;
-      const key =
-        fn === 'adverbial' && reading.constituents[child]!.obligatory
-          ? 'func:obligatoryAdverbial'
-          : `func:${fn}`;
+      const key = functionKey(reading.constituents[child]!);
       const option = optionFor(state, sentence.words, id, key);
-      assert.ok(option && isPickable(option), `${sentence.id}/${reading.id}: cannot choose ${fn}`);
-      state = setFunction(state, id, fn, reading.constituents[child]!.obligatory === true);
+      assert.ok(option && isPickable(option), `${sentence.id}/${reading.id}: cannot choose ${key}`);
+      state = reading.constituents[child]!.fusedWith
+        ? setFusion(state, id, reading.constituents[child]!.fusedWith!)
+        : setFunction(state, id, fn, reading.constituents[child]!.obligatory === true);
       assert.equal(state.constituents[id]!.function, fn);
     }
 

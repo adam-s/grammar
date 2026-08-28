@@ -11,6 +11,7 @@ import {
   nodeOver,
   setAuxKind,
   setClauseKind,
+  setFusion,
   setFiniteness,
   setFunction,
   setPartKind,
@@ -67,6 +68,8 @@ export type RenderStep = {
     stack?: true;
     /** This step builds an empty slot rather than labelling words. */
     gap?: true;
+    /** The second job this node does, when it does two. */
+    fusedWith?: Func;
     /** This step says what a tail or elided phrase points at: the anchor's span. */
     anchor?: Span;
     /** The anchor's form. A span alone does not name a node. */
@@ -102,6 +105,9 @@ function applyFunction(
   generatedId: string,
   constituent: Constituent,
 ): BuildState {
+  // Fusion is one move, not two: a determiner heading a noun phrase is only
+  // licensed because it is also the determiner, so the pair arrives together.
+  if (constituent.fusedWith) return setFusion(state, generatedId, constituent.fusedWith);
   return setFunction(state, generatedId, constituent.function, constituent.obligatory === true);
 }
 
@@ -250,7 +256,11 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
         state,
         span: constituent.span,
         nodeId: generated.get(canonicalId)!,
-        choice: { func: constituent.function!, obligatory: constituent.obligatory === true },
+        choice: {
+          func: constituent.function!,
+          obligatory: constituent.obligatory === true,
+          ...(constituent.fusedWith ? { fusedWith: constituent.fusedWith } : {}),
+        },
       });
       progressed = true;
     }

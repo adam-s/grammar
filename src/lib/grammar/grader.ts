@@ -276,6 +276,37 @@ export function gradeVoice(sentence: SentenceEntry, wordIndex: number, voice: Vo
   };
 }
 
+/** The test for fusion: try putting the missing word back. */
+export const FUSION_TEST =
+  'Say it again with a noun after it. If the noun would be doing a job nothing ' +
+  'else is doing, the word in front of it is doing that job too.';
+
+/** Does the answer have the node at `span` doing two jobs at once? */
+export function gradeFusion(
+  sentence: SentenceEntry,
+  span: Span,
+  form: Form,
+  fusedWith: Func,
+): Outcome {
+  for (const r of ordered(sentence)) {
+    const node = Object.keys(r.constituents).find((id) => {
+      const c = r.constituents[id]!;
+      return c.form === form && c.span[0] === span[0] && c.span[1] === span[1];
+    });
+    if (node && r.constituents[node]!.fusedWith === fusedWith) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'It is only doing one job here.', test: FUSION_TEST };
+}
+
 /** The test for a tail phrase: put it back where it belongs and read it. */
 export const ANCHOR_TEST =
   'Move it back next to each phrase in turn. It belongs to the one that still ' +

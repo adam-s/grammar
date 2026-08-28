@@ -39,6 +39,8 @@ export interface NodeLabelValue {
   auxKind?: AuxKind | null;
   /** This node covers no words. */
   gap?: boolean;
+  /** A second job this node does at the same time. */
+  fusedWith?: Func | null;
   /** Ties this node to the gap or filler it is one half of. */
   index?: number | null;
 }
@@ -117,9 +119,18 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
     // node does not have. An elided predicate keeps its mark, because a clause
     // holds other things and which one is missing is the point.
     (value.gap === true && value.function === 'head');
-  const fnMark =
-    value.function && !redundant ? functionMark(value.function, value.obligatory === true) : null;
-  const fnName = value.function ? functionName(value.function, value.obligatory === true) : null;
+  // A fused node names both jobs, in CGEL's order: the one the missing word
+  // would have done, then the one it is covering. `D+H` is the whole claim.
+  const fnMark = value.fusedWith
+    ? `${functionMark(value.fusedWith)}+${functionMark(value.function ?? 'head')}`
+    : value.function && !redundant
+      ? functionMark(value.function, value.obligatory === true)
+      : null;
+  const fnName = value.fusedWith
+    ? `${functionName(value.fusedWith)} and ${functionName(value.function ?? 'head')} at once`
+    : value.function
+      ? functionName(value.function, value.obligatory === true)
+      : null;
   const voice = value.voice ?? 'active';
   const finiteness = value.finiteness ?? 'finite';
   const subtypeMark =

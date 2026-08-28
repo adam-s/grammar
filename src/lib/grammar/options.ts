@@ -44,6 +44,7 @@ import {
   type Span,
 } from './builder.ts';
 import { CLAUSE_KINDS } from './node-variants.ts';
+import { FUSIONS, HEAD_FORMS } from './rules.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { FORM_TEST, FUNCTION_TEST, auxKindName, formName, label } from './names.ts';
@@ -148,6 +149,8 @@ export interface LabelOption {
   gap?: true;
   /** This row says what a tail phrase belongs to. The id of the phrase it names. */
   anchor?: string;
+  /** This row says the node does two jobs at once. The other job it names. */
+  fusedWith?: Func;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -736,6 +739,22 @@ function functionGroup(
         obligatory: true,
       });
     }
+  }
+
+  // One word doing two jobs. Offered only where English actually does it, and
+  // only where the node could not have headed the phrase on its own — a noun
+  // heading a noun phrase is the head and nothing more.
+  const parent = c.parent ? state.constituents[c.parent] : null;
+  const fusedWith = parent ? FUSIONS[parent.form]?.[c.form] : undefined;
+  if (fusedWith && !(HEAD_FORMS[parent!.form] ?? []).includes(c.form)) {
+    options.push({
+      key: `func:head+${fusedWith}`,
+      label: `${label(fusedWith)} and head at once`,
+      note: `There is no noun for it to be the ${label(fusedWith)} of, so it is both.`,
+      state: (c.fusedWith === fusedWith ? 'chosen' : 'available') as OptionState,
+      func: 'head',
+      fusedWith,
+    });
   }
 
   return { id: 'function', question: `What does ${subject} do?`, notes: 'always', options };

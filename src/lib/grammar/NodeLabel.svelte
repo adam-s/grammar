@@ -24,6 +24,7 @@
     auxKind = null,
     gap = false,
     index = null,
+    fusedWith = null,
   }: Props = $props();
 
   const parts = $derived(
@@ -39,6 +40,7 @@
       auxKind,
       gap,
       index,
+      fusedWith,
     }),
   );
   const offsets = $derived(nodeLabelOffsets(form));

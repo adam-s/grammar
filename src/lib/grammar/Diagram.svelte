@@ -307,6 +307,7 @@
         auxKind: c.auxKind,
         gap: c.gap,
         index: c.index,
+        fusedWith: c.fusedWith,
       })}
       {@const labelWidth = nodeLabelWidth({
         form: c.form,
@@ -320,6 +321,7 @@
         auxKind: c.auxKind,
         gap: c.gap,
         index: c.index,
+        fusedWith: c.fusedWith,
       })}
       {@const on =
         (selection.kind === 'node' && selection.id === id) ||
@@ -385,6 +387,7 @@
           auxKind={c.auxKind}
           gap={c.gap}
           index={c.index}
+          fusedWith={c.fusedWith}
         />
       </g>
     {/each}
