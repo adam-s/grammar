@@ -220,31 +220,133 @@ export const functionMark = (fn: Func, obligatory = false): string =>
 export const functionName = (fn: Func, obligatory = false): string =>
   fn === 'adverbial' && obligatory ? 'obligatory adverbial' : label(fn);
 
-/** The substitution or inflection test that settles each form. */
-export const FORM_TEST: Record<string, string> = {
-  N: 'takes “the”; adds -s for plural',
-  V: 'changes for tense: walk / walked / walking',
-  Adj: 'takes “very”; describes a noun',
-  Adv: 'takes “very”; tells you how or when',
-  P: 'in, on, with, of — takes an object after it',
-  Det: 'the, a, this, my — starts a noun phrase',
-  Pron: 'she, it, them — stands for a whole noun phrase',
-  Aux: 'is, have, will — helps the main verb',
-  Conj: 'and, but, or — joins two equals',
-  Subord: 'because, although, that — starts a leaning clause',
-  Part: 'the “up” in “looked up the word”',
-  Num: 'counts or orders: three, first',
-  Interj: 'oh, well — stands outside the grammar',
-  S: 'a subject and a predicate, standing alone',
-  NP: 'replace the whole run with “it” or “they”',
-  Nom: 'what the determiner points at — replace it with “one”',
-  DP: 'the determiner and whatever narrows it: “almost every”',
-  VP: 'starts at the verb, runs to the end of what it governs',
-  PP: 'a preposition plus the noun phrase after it',
-  AdjP: 'put “very” in front of the whole run',
-  AdvP: 'the whole run tells you how, when, or where',
-  Cl: 'has its own subject and verb, inside a bigger sentence',
+/**
+ * The one test per form, in the two lengths it gets said.
+ *
+ * There were two catalogs of these. The menu read one and the grader kept its
+ * own, so they differed in wording and in coverage — nine forms had a menu line
+ * and no grader line at all, and a learner's test changed as their miss count
+ * did. One entry now, and both readings come out of it.
+ *
+ * `short` is the reminder on the row, for someone who knows the name and wants
+ * the check. `asked` is the whole question, for someone who has just got it
+ * wrong and needs the test rather than the label.
+ */
+export interface FormTest {
+  short: string;
+  asked: string;
+}
+
+export const FORM_TESTS: Record<Form, FormTest> = {
+  N: {
+    short: 'takes “the”; adds -s for plural',
+    asked: 'Can you put “the” in front of it, and does it take -s for plural? Then it is a noun.',
+  },
+  V: {
+    short: 'changes for tense: walk / walked / walking',
+    asked: 'Does it change for tense — walk / walked / walking? Then it is a verb.',
+  },
+  Adj: {
+    short: 'takes “very”; describes a noun',
+    asked:
+      'Can you put “very” in front of it, and does it describe a noun? Then it is an adjective.',
+  },
+  Adv: {
+    short: 'takes “very”; tells you how or when',
+    asked:
+      'Can you put “very” in front of it, and does it tell you how or when? Then it is an adverb.',
+  },
+  P: {
+    short: 'in, on, with, of — takes an object after it',
+    asked: 'Does it take an object after it — “in the market”? Then it is a preposition.',
+  },
+  Det: {
+    short: 'the, a, this, my — starts a noun phrase',
+    asked: 'Does it start a noun phrase — the, a, this, my? Then it is a determiner.',
+  },
+  Pron: {
+    short: 'she, it, them — stands for a whole noun phrase',
+    asked: 'Does it stand in for a whole noun phrase — she, it, them? Then it is a pronoun.',
+  },
+  Aux: {
+    short: 'is, have, will — helps the main verb',
+    asked: 'Does it help another verb — is going, has left, will run? Then it is an auxiliary.',
+  },
+  Conj: {
+    short: 'and, but, or — joins two equals',
+    asked: 'Does it join two things of the same kind — and, but, or? Then it is a conjunction.',
+  },
+  Subord: {
+    short: 'because, although, that — starts a leaning clause',
+    asked:
+      'Does it start a clause that cannot stand alone — because, although, that? ' +
+      'Then it is a subordinator.',
+  },
+  Part: {
+    short: 'the “up” in “looked up the word”',
+    asked:
+      'Does it belong to the verb without taking an object of its own — the “up” in ' +
+      '“looked up the word”? Then it is a particle.',
+  },
+  Num: {
+    short: 'counts or orders: three, first',
+    asked: 'Does it count or order — three, first? Then it is a number.',
+  },
+  Interj: {
+    short: 'oh, well — stands outside the grammar',
+    asked: 'Can you take it out and leave a whole sentence — oh, well? Then it is an interjection.',
+  },
+  S: {
+    short: 'a subject and a predicate, standing alone',
+    asked: 'Does it have a subject and a predicate and stand on its own? Then it is a sentence.',
+  },
+  NP: {
+    short: 'replace the whole run with “it” or “they”',
+    asked: 'Can the whole run be replaced by “it” or “they”? Then it is a noun phrase.',
+  },
+  Nom: {
+    short: 'what the determiner points at — replace it with “one”',
+    asked: 'Can the run be replaced by “one” after a determiner? Then it is a nominal.',
+  },
+  DP: {
+    short: 'the determiner and whatever narrows it: “almost every”',
+    asked:
+      'Is it the determiner plus what narrows it — “almost every”? ' +
+      'Then it is a determinative phrase.',
+  },
+  VP: {
+    short: 'starts at the verb, runs to the end of what it governs',
+    asked: 'Does it start at the verb and run to the end of what the verb governs?',
+  },
+  PP: {
+    short: 'a preposition plus the noun phrase after it',
+    asked: 'Does it start with a preposition and take a noun phrase after it?',
+  },
+  AdjP: {
+    short: 'put “very” in front of the whole run',
+    asked: 'Can you put “very” in front of the whole run?',
+  },
+  AdvP: {
+    short: 'the whole run tells you how, when, or where',
+    asked: 'Does the whole run tell you how, when, or where?',
+  },
+  Cl: {
+    short: 'has its own subject and verb, inside a bigger sentence',
+    asked:
+      'Does it have its own subject and verb while sitting inside a bigger sentence? ' +
+      'Then it is a clause.',
+  },
 };
+
+/** The reminder on the row. */
+export const FORM_TEST: Record<string, string> = Object.fromEntries(
+  Object.entries(FORM_TESTS).map(([f, t]) => [f, t.short]),
+);
+
+/** The whole question, for a learner who has just got it wrong. */
+export const FORMAL_TEST: Record<string, string> = Object.fromEntries(
+  Object.entries(FORM_TESTS).map(([f, t]) => [f, t.asked]),
+);
 
 /** The question that finds each function. */
 export const FUNCTION_TEST: Record<Func, string> = {

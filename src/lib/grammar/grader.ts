@@ -15,6 +15,7 @@
  */
 import { verbs } from './clause.ts';
 import { label } from './audits.ts';
+import { FORMAL_TEST } from './names.ts';
 import { isPhraseForm, isWordForm } from './types.ts';
 import type { BuildState, Span } from './builder.ts';
 import type {
@@ -36,27 +37,6 @@ export type Outcome =
   | { kind: 'correct'; readingId: string }
   | { kind: 'alternate'; readingId: string; gloss: string; canonicalGloss: string }
   | { kind: 'wrong'; reason: string; test?: string };
-
-/**
- * The formal tests. Mechanical, and they always work —
- * which is the whole argument against notional definitions. Shown at the moment
- * a learner gets the class wrong, when the test is worth something.
- */
-export const FORMAL_TEST: Partial<Record<Form, string>> = {
-  N: 'Can you put “the” in front of it, and does it take -s for plural? Then it is a noun.',
-  V: 'Does it change for tense — walk / walked / walking? Then it is a verb.',
-  Adj: 'Can you put “very” in front of it, and does it describe a noun? Then it is an adjective.',
-  Adv: 'Can you put “very” in front of it, and does it tell you how or when? Then it is an adverb.',
-  P: 'Does it take an object after it — “in the market”? Then it is a preposition.',
-  Det: 'Does it start a noun phrase — the, a, this, my? Then it is a determiner.',
-  Pron: 'Does it stand in for a whole noun phrase — she, it, them? Then it is a pronoun.',
-  Aux: 'Does it help another verb — is going, has left, will run? Then it is an auxiliary.',
-  NP: 'Can the whole run be replaced by “it” or “they”? Then it is a noun phrase.',
-  VP: 'Does it start at the verb and run to the end of what the verb governs?',
-  PP: 'Does it start with a preposition and take a noun phrase after it?',
-  AdjP: 'Can you put “very” in front of the whole run?',
-  AdvP: 'Does the whole run tell you how, when, or where?',
-};
 
 /** Plain-language names. A learner reads these; "is not a N" is not English. */
 export const PLAIN: Record<string, string> = {

@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { CLAUSE_FUNCTIONS, PHRASE_INTERNAL_FUNCTIONS, VERB_TYPES } from './types.ts';
+import {
+  CLAUSE_FUNCTIONS,
+  PHRASE_FORMS,
+  PHRASE_INTERNAL_FUNCTIONS,
+  VERB_TYPES,
+  WORD_FORMS,
+} from './types.ts';
 import {
   clauseKindMark,
   clauseKindName,
@@ -8,6 +14,9 @@ import {
   functionName,
   verbTypeMark,
   verbTypeName,
+  FORM_TEST,
+  FORM_TESTS,
+  FORMAL_TEST,
 } from './names.ts';
 import { CLAUSE_KINDS } from './node-variants.ts';
 
@@ -51,4 +60,28 @@ test('common function marks stay conventional and accessible', () => {
   assert.equal(functionName('directObject'), 'direct object');
   assert.equal(functionMark('adverbial', true), 'A!');
   assert.equal(functionName('adverbial', true), 'obligatory adverbial');
+});
+
+test('every form a learner can pick has both of its tests', () => {
+  // There were two catalogs of these, differing in wording and in coverage:
+  // nine forms had a menu line and no grader line, so a learner who got one of
+  // them wrong twice was told nothing the second time. One entry now, and this
+  // is what stops the next form from being added to only half of it.
+  for (const f of [...PHRASE_FORMS, ...WORD_FORMS]) {
+    const t = FORM_TESTS[f];
+    assert.ok(t, `${f} has no test`);
+    assert.ok(t.short.length > 0, `${f} has no menu line`);
+    assert.ok(t.asked.length > 0, `${f} has no question`);
+    assert.notEqual(t.short, t.asked, `${f} says the same thing twice`);
+    assert.equal(FORM_TEST[f], t.short);
+    assert.equal(FORMAL_TEST[f], t.asked);
+  }
+});
+
+test('the short line is a reminder and the long one is a question', () => {
+  for (const f of [...PHRASE_FORMS, ...WORD_FORMS]) {
+    const t = FORM_TESTS[f]!;
+    assert.ok(t.short.length < t.asked.length, `${f}: the reminder is not shorter`);
+    assert.match(t.asked, /\?/, `${f}: the long form should ask something`);
+  }
 });
