@@ -79,7 +79,47 @@ export class Workspace {
     this.setZoom(nextStop(this.viewport.z, dir), focus);
   };
 
+  /**
+   * The smallest zoom an automatic fit may choose. 0 means no floor.
+   *
+   * Set by whoever knows what is being drawn — the workspace cannot know that a
+   * 13px label stops being readable below about 0.7, and should not import
+   * something that does. See `READABLE_ZOOM_FLOOR` in `grammar/node-label.ts`.
+   */
+  fitFloor = 0;
+
+  /**
+   * Frame the work FOR the learner, and never smaller than it can be read at.
+   *
+   * "Show the whole tree" and "keep the labels legible" are two wishes, and
+   * this grants the second. The longest course sentences fitted a 390px phone
+   * at 38%, where a 13px node label renders at five pixels and a 7.5px
+   * qualifier at three: structurally perfect and unreadable.
+   *
+   * Below the floor it shows the START of the diagram rather than all of it. A
+   * sentence is read and built left to right, so the left edge is where the
+   * work is, and the rest is a pan away — a smaller cost than a tree nobody can
+   * read.
+   */
   zoomToFit = (rect: Rect, padding = fitPadding(this.stage)): void => {
+    if (rect.w <= 0 || rect.h <= 0 || this.stage.w === 0) return;
+    const whole = fit(rect, this.stage, padding);
+    if (this.fitFloor <= 0 || whole.z >= this.fitFloor) {
+      this.viewport = whole;
+      return;
+    }
+    const visible = Math.max(1, this.stage.w - padding * 2) / this.fitFloor;
+    this.viewport = centerOn({ ...rect, w: Math.min(rect.w, visible) }, this.stage, this.fitFloor);
+  };
+
+  /**
+   * Show all of it, whatever that costs in size.
+   *
+   * What the Fit control and ⇧! mean: the learner has ASKED for the overview,
+   * and answering "no, here is a readable part of it" would be refusing the
+   * request they made.
+   */
+  zoomToWhole = (rect: Rect, padding = fitPadding(this.stage)): void => {
     if (rect.w <= 0 || rect.h <= 0 || this.stage.w === 0) return;
     this.viewport = fit(rect, this.stage, padding);
   };

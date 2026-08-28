@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  MIN_READABLE_FORM_PX,
+  NODE_FORM_FONT_SIZE,
+  READABLE_ZOOM_FLOOR,
+} from '../grammar/node-label.ts';
+import {
   MAX_ZOOM,
   MIN_ZOOM,
   bounds,
@@ -124,4 +129,24 @@ test('formatZoom keeps a decimal only where it would round to nothing', () => {
   assert.equal(formatZoom(0.6789), '68%');
   assert.equal(formatZoom(0.02), '2%');
   assert.equal(formatZoom(0.025), '2.5%');
+});
+
+test('a readable fit never shrinks the labels past reading size', () => {
+  // The lesson-40 case measured on a phone: a 913x284 tree in a 390x844
+  // viewport fitted at 38%, where a 13px form label renders at five pixels.
+  const tree = { x: 0, y: 0, w: 913, h: 284 };
+  const phone = { w: 390, h: 844 };
+
+  const whole = fit(tree, phone, 24);
+  assert.ok(whole.z < READABLE_ZOOM_FLOOR, 'the whole tree does not fit above the floor');
+  assert.ok(NODE_FORM_FONT_SIZE * whole.z < 6, 'which is why it was unreadable');
+
+  // The floor is expressed as type size, not as a magic zoom.
+  assert.ok(NODE_FORM_FONT_SIZE * READABLE_ZOOM_FLOOR >= MIN_READABLE_FORM_PX - 1e-9);
+});
+
+test('and still shows the whole tree when it fits', () => {
+  // A short sentence on a desktop is well above the floor, so nothing changes.
+  const small = { x: 0, y: 0, w: 300, h: 200 };
+  assert.ok(fit(small, { w: 1440, h: 900 }, 96).z >= READABLE_ZOOM_FLOOR);
 });

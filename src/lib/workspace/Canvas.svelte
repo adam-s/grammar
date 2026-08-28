@@ -212,7 +212,8 @@
       ws.resetZoom(content);
     } else if (e.shiftKey && e.key === '!') {
       e.preventDefault();
-      if (content) ws.zoomToFit(content);
+      // An explicit request for the overview: show all of it, however small.
+      if (content) ws.zoomToWhole(content);
     } else if (e.key === 'Escape') {
       if (marqueePointer !== null && stage?.hasPointerCapture(marqueePointer)) {
         stage.releasePointerCapture(marqueePointer);

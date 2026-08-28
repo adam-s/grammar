@@ -68,6 +68,20 @@ export const NODE_QUALIFIER_ADVANCE = NODE_QUALIFIER_FONT_SIZE * 0.62;
 export const NODE_QUALIFIER_GAP = 3;
 export const NODE_LABEL_PADDING = 10;
 
+/**
+ * The smallest a node's form label may be drawn on screen before the diagram
+ * stops being something to read and becomes something to squint at.
+ *
+ * Nine CSS pixels is small; it is also the point below which the qualifiers
+ * beside it — already 7.5 to the form's 13 — fall under six. A phone fit of a
+ * lesson-40 tree put the form at five and the qualifier at three.
+ *
+ * Used as a floor on the fit the app performs FOR the learner, never on the
+ * Fit control, which is a request for an overview and should grant it.
+ */
+export const MIN_READABLE_FORM_PX = 9;
+export const READABLE_ZOOM_FLOOR = MIN_READABLE_FORM_PX / NODE_FORM_FONT_SIZE;
+
 export function nodeLabelOffsets(form: Form): { functionX: number; subtypeX: number } {
   const halfFormWidth = (String(form).length * NODE_FORM_ADVANCE) / 2;
   return {

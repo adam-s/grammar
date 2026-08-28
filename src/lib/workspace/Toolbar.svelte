@@ -73,7 +73,7 @@
     title="Zoom to fit — ⇧1"
     aria-label="Zoom to fit"
     disabled={!content}
-    onclick={() => content && ws.zoomToFit(content)}
+    onclick={() => content && ws.zoomToWhole(content)}
   >
     <Scan size={16} strokeWidth={1.75} />
   </button>

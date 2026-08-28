@@ -41,6 +41,7 @@
     type Selection,
   } from '$lib/grammar/options.ts';
   import { canonicalReading } from '$lib/grammar/types.ts';
+  import { READABLE_ZOOM_FLOOR } from '$lib/grammar/node-label.ts';
   import type { Form, Span } from '$lib/grammar/types.ts';
   import type { Rect } from '$lib/workspace/viewport.ts';
   import { replaySentence } from '$lib/course/sentence-renderer.ts';
@@ -58,6 +59,9 @@
   } from '$lib/course';
 
   const ws = new WorkspaceState();
+  // The workspace does not know what it is drawing. This is the one place that
+  // does, so it is the place that says how small a diagram may be fitted to.
+  ws.fitFloor = READABLE_ZOOM_FLOOR;
 
   const items: RailItem[] = [
     { id: 'sentences', label: 'Sentences', icon: Type },
