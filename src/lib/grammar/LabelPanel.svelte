@@ -323,6 +323,21 @@
     if (panel.blocked) return panel.blocked;
     return detail?.note ?? active?.question ?? panel.prompt;
   });
+
+  /**
+   * The line under the question, and what it says when nothing is urgent.
+   *
+   * A verdict wins, and so does a reason a pick is refused — both are about
+   * the decision in front of the learner. Otherwise, for a RUN of words, the
+   * space is better spent performing a test than describing one: a run that is
+   * one thing survives being singled out, and the learner hears that without
+   * being graded. A single word never gets one, because there is nothing about
+   * a single word that a constituency test could prove.
+   *
+   * One line either way. The panel is short on purpose, and showing the test
+   * and the same test performed would be saying it twice.
+   */
+  const performed = $derived(!verdict && !panel.blocked ? panel.singledOut : null);
 </script>
 
 <svelte:window onkeydown={globalKey} onpointerdown={outside} />
@@ -357,7 +372,13 @@
         {/if}
       </div>
 
-      <p class="information" class:status={!!verdict}>{information}</p>
+      {#if performed}
+        <p class="information tryit">
+          <span class="eyebrow">Say it</span>{performed.text}
+        </p>
+      {:else}
+        <p class="information" class:status={!!verdict}>{information}</p>
+      {/if}
     </header>
 
     <div class="menu-panes" class:mobile-detail={mobileDetail}>
@@ -514,6 +535,15 @@
     color: var(--ink-muted);
     font-size: 10.5px;
   }
+  .tryit {
+    font-style: italic;
+  }
+
+  .tryit .eyebrow {
+    margin-right: 6px;
+    font-style: normal;
+  }
+
   .information {
     flex: 1;
     min-width: 0;

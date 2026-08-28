@@ -47,6 +47,7 @@ import { CLAUSE_KINDS } from './node-variants.ts';
 import { FUSIONS, HEAD_FORMS } from './rules.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
+import { cleft, type Demonstration } from './transform.ts';
 import { FORM_TEST, FUNCTION_TEST, auxKindName, formName, label } from './names.ts';
 import {
   CLAUSE_FUNCTIONS,
@@ -187,6 +188,19 @@ export interface OptionGroup {
 export interface Panel {
   /** The words under the selection, quoted. Empty when nothing is selected. */
   subject: string;
+  /**
+   * The selection, singled out in a sentence of its own.
+   *
+   * Every other note here tells the learner a test. This one performs one:
+   * *It was the old red engine that she repaired* works, and *It was repaired
+   * the old that she red engine* does not, and the difference is audible
+   * without anybody grading it. The cleft, of the three available, because it
+   * is the sharpest — only one thing fits between *it was* and *that*.
+   *
+   * Null for a single word, which is the whole of when this is worth showing:
+   * the test proves a RUN is one thing, and one word needs no proving.
+   */
+  singledOut: Demonstration | null;
   /** Guidance that the open group's own question does not already give. */
   prompt: string;
   groups: OptionGroup[];
@@ -257,6 +271,7 @@ export function optionsFor(
 function idlePanel(scope: ChapterScope): Panel {
   return finish({
     subject: '',
+    singledOut: null,
     prompt: 'Select a word, or drag across a run of words.',
     groups: [
       {
@@ -351,6 +366,7 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
 
   return finish({
     subject: quote(words, span),
+    singledOut: span[0] === span[1] ? null : cleft(words, span),
     // The open group's question already asks; a second line saying the same
     // thing in other words is chrome, not guidance.
     prompt: blocked ?? '',
@@ -681,6 +697,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
 
   return finish({
     subject,
+    singledOut: c.span[0] === c.span[1] ? null : cleft(words, c.span),
     // The open group's question already asks; a second line saying the same
     // thing in other words is chrome, not guidance.
     prompt: c.parent === null && !isWord ? 'Group it with its neighbours to give it a job.' : '',
