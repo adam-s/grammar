@@ -506,10 +506,10 @@ Status values are deliberately explicit:
 | 4   | The book that I needed vanished.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 5   | The book I needed vanished.                          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 6   | She repaired the gate that the storm damaged.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 7   | The engine, which stalled, was old.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 8   | The child whose flag fell smiled.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 9   | The pipe that froze burst.                           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 10  | The jury believed the surveyor who testified.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 7   | The pipe that froze burst.                           | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 8   | The jury believed the surveyor who testified.        | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 9   | Those shutters that rattled broke.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 10  | The boat that the volunteers repaired sailed.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 
 ## Lesson 32 — Comparative clauses
 

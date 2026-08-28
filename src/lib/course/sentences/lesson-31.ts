@@ -1,32 +1,20 @@
 /**
- * Lesson 31 — Relative clauses.
+ * Lesson 31 — Relative clauses. Where the hole is, and whether anything marks it.
  *
- * A postmodifier, the same job lesson 21 gave a prepositional phrase, done by
- * a clause instead. Its subject slot is empty and the noun it modifies is what
- * fills it, which is what the gap after *that* records.
+ * All ten gaps in the built set were subject gaps and only *that* and *who*
+ * appeared. The zero relative is the sharpest omission: *The book I needed
+ * disappeared* has no relativizer at all, is completely ordinary, and is the
+ * case where the gap is hardest to see — which is what `gap` exists to teach.
  *
- * The main verbs vary. A relative clause modifies a noun phrase wherever that
- * phrase sits, and *the engine that stalled was old* is as ordinary as
- * anything transitive.
+ * Items 4 and 5 are one word apart. A learner who can find the hole in item 5
+ * has understood the machinery; one who can only find item 1's has learned to
+ * look for *that*.
  */
-import { adj, det, modifiedBy, sv, svc, svo, v } from './shape.ts';
+import { adj, det, modifiedBy, pron, sv, svc, svo, v } from './shape.ts';
 
 export const LESSON_31 = [
-  svo(
-    'c31-a',
-    31,
-    det('The', 'inspector'),
-    v('questioned', 'question', 'Vtr'),
-    modifiedBy('the', 'driver', {
-      marker: 'that',
-      subjectGap: true,
-      verb: v('complained', 'complain', 'Vint'),
-      kind: 'relative',
-    }),
-    'The inspector questioned the driver who had complained.',
-  ),
   svc(
-    'c31-b',
+    'c31-a',
     31,
     modifiedBy('The', 'engine', {
       marker: 'that',
@@ -36,10 +24,10 @@ export const LESSON_31 = [
     }),
     v('was', 'be', 'Vbe'),
     adj('old'),
-    'The engine which had stalled was an old one.',
+    'The engine that had cut out was worn.',
   ),
   sv(
-    'c31-c',
+    'c31-b',
     31,
     modifiedBy('Another', 'witness', {
       marker: 'who',
@@ -48,23 +36,62 @@ export const LESSON_31 = [
       kind: 'relative',
     }),
     v('returned', 'return', 'Vint'),
-    'Another witness who had paused came back.',
+    'A second witness, the one who held back, came again.',
   ),
   svo(
-    'c31-d',
+    'c31-c',
     31,
-    det('The', 'clerk'),
-    v('filed', 'file', 'Vtr'),
-    modifiedBy('the', 'report', {
+    det('The', 'inspector'),
+    v('questioned', 'question', 'Vtr'),
+    modifiedBy('the', 'driver', {
       marker: 'that',
       subjectGap: true,
-      verb: v('arrived', 'arrive', 'Vint'),
+      verb: v('complained', 'complain', 'Vint'),
       kind: 'relative',
     }),
-    'The clerk filed the report that had come.',
+    'The inspector challenged the driver who had objected.',
+  ),
+  sv(
+    'c31-d',
+    31,
+    modifiedBy('The', 'book', {
+      marker: 'that',
+      subject: pron('I'),
+      verb: v('needed', 'need', 'Vtr'),
+      objectGap: true,
+      kind: 'relative',
+    }),
+    v('vanished', 'vanish', 'Vint'),
+    'The book I had to have went missing.',
   ),
   sv(
     'c31-e',
+    31,
+    modifiedBy('The', 'book', {
+      subject: pron('I'),
+      verb: v('needed', 'need', 'Vtr'),
+      objectGap: true,
+      kind: 'relative',
+    }),
+    v('vanished', 'vanish', 'Vint'),
+    'The book I had to have went missing.',
+  ),
+  svo(
+    'c31-f',
+    31,
+    pron('She'),
+    v('repaired', 'repair', 'Vtr'),
+    modifiedBy('the', 'gate', {
+      marker: 'that',
+      subject: det('the', 'storm'),
+      verb: v('damaged', 'damage', 'Vtr'),
+      objectGap: true,
+      kind: 'relative',
+    }),
+    'She mended the gate the storm had harmed.',
+  ),
+  sv(
+    'c31-g',
     31,
     modifiedBy('The', 'pipe', {
       marker: 'that',
@@ -73,10 +100,10 @@ export const LESSON_31 = [
       kind: 'relative',
     }),
     v('burst', 'burst', 'Vint'),
-    'The pipe which froze then split.',
+    'The pipe that had iced up split open.',
   ),
   svo(
-    'c31-f',
+    'c31-h',
     31,
     det('The', 'jury'),
     v('believed', 'believe', 'Vtr'),
@@ -86,57 +113,31 @@ export const LESSON_31 = [
       verb: v('testified', 'testify', 'Vint'),
       kind: 'relative',
     }),
-    'The jury believed the surveyor who gave evidence.',
-  ),
-  svc(
-    'c31-g',
-    31,
-    modifiedBy('The', 'ferry', {
-      marker: 'that',
-      subjectGap: true,
-      verb: v('sailed', 'sail', 'Vint'),
-      kind: 'relative',
-    }),
-    v('seemed', 'seem', 'Vlink'),
-    adj('seaworthy'),
-    'The ferry which had sailed looked fit for sea.',
-  ),
-  svo(
-    'c31-h',
-    31,
-    det('The', 'landlord'),
-    v('evicted', 'evict', 'Vtr'),
-    modifiedBy('the', 'tenant', {
-      marker: 'who',
-      subjectGap: true,
-      verb: v('objected', 'object', 'Vint'),
-      kind: 'relative',
-    }),
-    'The landlord removed the tenant who objected.',
+    'The jury took the word of the surveyor who gave evidence.',
   ),
   sv(
     'c31-i',
     31,
-    modifiedBy('The', 'shutters', {
+    modifiedBy('Those', 'shutters', {
       marker: 'that',
       subjectGap: true,
       verb: v('rattled', 'rattle', 'Vint'),
       kind: 'relative',
     }),
     v('broke', 'break', 'Vint'),
-    'The rattling shutters broke.',
+    'The shutters that had been shaking gave way.',
   ),
-  svo(
+  sv(
     'c31-j',
     31,
-    det('The', 'board'),
-    v('thanked', 'thank', 'Vtr'),
-    modifiedBy('the', 'volunteers', {
-      marker: 'who',
-      subjectGap: true,
-      verb: v('stayed', 'stay', 'Vint'),
+    modifiedBy('The', 'boat', {
+      marker: 'that',
+      subject: det('the', 'volunteers'),
+      verb: v('repaired', 'repair', 'Vtr'),
+      objectGap: true,
       kind: 'relative',
     }),
-    'The board thanked the volunteers who remained.',
+    v('sailed', 'sail', 'Vint'),
+    'The boat the helpers had mended went out.',
   ),
 ];
