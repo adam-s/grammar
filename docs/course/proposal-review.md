@@ -483,18 +483,18 @@ Status values are deliberately explicit:
 
 ## Lesson 30 — Nominal clauses
 
-| #   | Sentence                                          | Natural reading      | Intended parse               | Scope reach         | Model / fixture                              |
-| --- | ------------------------------------------------- | -------------------- | ---------------------------- | ------------------- | -------------------------------------------- |
-| 1   | She knew that the belt broke.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 2   | That the belt broke surprised the driver.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 3   | We believed that the bridge was safe.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 4   | That the ferry sank was obvious.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 5   | The trouble was that the gate was locked.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 6   | That the wiring failed worried the inspector.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 7   | That storm surprised the driver.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 8   | That the storm arrived surprised the driver.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 9   | That the talks collapsed seemed unlikely.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
-| 10  | What the children wanted surprised their teacher. | Pending human review | Step recorded; parse pending | Pending reach audit | Fixture proves shape; proposal parse pending |
+| #   | Sentence                                       | Natural reading      | Intended parse               | Scope reach         | Model / fixture                              |
+| --- | ---------------------------------------------- | -------------------- | ---------------------------- | ------------------- | -------------------------------------------- |
+| 1   | She knew that the belt broke.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 2   | That the belt broke surprised the driver.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 3   | We believed that the bridge was safe.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 4   | That the ferry sank was obvious.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 5   | We believed the bridge held.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 6   | That the wiring failed worried the inspector.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 7   | That storm surprised the driver.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 8   | That the storm arrived surprised the driver.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 9   | That the talks collapsed seemed unlikely.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse                       |
+| 10  | That the archive flooded angered the trustees. | Pending human review | Step recorded; parse pending | Pending reach audit | Fixture proves shape; proposal parse pending |
 
 ## Lesson 31 — Relative clauses
 

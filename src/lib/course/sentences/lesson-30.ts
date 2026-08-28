@@ -1,20 +1,34 @@
 /**
- * Lesson 30 — Nominal clauses. A clause filling a noun-shaped slot.
+ * Lesson 30 — Nominal clauses. One variable at a time, at last.
  *
- * Nothing new is named. What is new is where the clause sits: lesson 28 put
- * one in the object slot, and these are SUBJECTS — so the *it* test from
- * lesson 4 works on them, which is the evidence they are doing a noun's job.
+ * Lesson 28's nominal clauses were all objects without markers; the built lesson
+ * 30's were all subjects with them. So between the two lessons the marker and
+ * the position moved together, and the commonest nominal clause in English —
+ * *She knew that the belt broke* — was in neither.
  *
- * Some of them link rather than act. *That the belt broke was obvious* is the
- * commonest thing anyone says about a clause in the subject slot, and ten
- * transitive main verbs would have made a subject clause look like something
- * that has to do things to people.
+ * Items 1 and 2 hold the clause still and move it. Items 7 and 8 are the sharper
+ * pair: *that* is a determiner at lesson 6, a marker at 29 and a relativizer at
+ * 31, and the course never put two of those side by side. Item 5 puts a nominal
+ * clause in a subject-complement slot, which appears nowhere in the course.
  */
-import { adj, clauseSubject, clauseSubjectIs, det, v } from './shape.ts';
+import { adj, clauseSubject, clauseSubjectIs, det, pron, svClause, svo, v } from './shape.ts';
 
 export const LESSON_30 = [
-  clauseSubject(
+  svClause(
     'c30-a',
+    30,
+    pron('She'),
+    v('knew', 'know', 'Vtr'),
+    {
+      marker: 'that',
+      subject: det('the', 'belt'),
+      verb: v('broke', 'break', 'Vint'),
+      kind: 'nominal',
+    },
+    'She was aware the belt had given way.',
+  ),
+  clauseSubject(
+    'c30-b',
     30,
     {
       marker: 'That',
@@ -24,10 +38,24 @@ export const LESSON_30 = [
     },
     v('surprised', 'surprise', 'Vtr'),
     det('the', 'driver'),
-    'The driver was surprised that the belt had broken.',
+    'The belt giving way took the driver aback.',
+  ),
+  svClause(
+    'c30-c',
+    30,
+    pron('We'),
+    v('believed', 'believe', 'Vtr'),
+    {
+      marker: 'that',
+      subject: det('the', 'bridge'),
+      verb: v('was', 'be', 'Vbe'),
+      complement: adj('safe'),
+      kind: 'nominal',
+    },
+    'We took the bridge to be sound.',
   ),
   clauseSubjectIs(
-    'c30-b',
+    'c30-d',
     30,
     {
       marker: 'That',
@@ -37,10 +65,18 @@ export const LESSON_30 = [
     },
     v('was', 'be', 'Vbe'),
     adj('obvious'),
-    'Everyone could see that the ferry had sunk.',
+    'The ferry going down was plain to see.',
+  ),
+  svClause(
+    'c30-e',
+    30,
+    pron('We'),
+    v('believed', 'believe', 'Vtr'),
+    { subject: det('the', 'bridge'), verb: v('held', 'hold', 'Vint'), kind: 'nominal' },
+    'We took the bridge to be standing.',
   ),
   clauseSubject(
-    'c30-c',
+    'c30-f',
     30,
     {
       marker: 'That',
@@ -49,24 +85,32 @@ export const LESSON_30 = [
       kind: 'nominal',
     },
     v('worried', 'worry', 'Vtr'),
-    det('that', 'inspector'),
-    'The failing wiring worried that inspector.',
+    det('the', 'inspector'),
+    'The wiring giving out troubled the inspector.',
+  ),
+  svo(
+    'c30-g',
+    30,
+    det('That', 'storm'),
+    v('surprised', 'surprise', 'Vtr'),
+    det('the', 'driver'),
+    'The storm mentioned before took the driver aback.',
   ),
   clauseSubject(
-    'c30-d',
+    'c30-h',
     30,
     {
       marker: 'That',
-      subject: det('the', 'archive'),
-      verb: v('flooded', 'flood', 'Vint'),
+      subject: det('the', 'storm'),
+      verb: v('arrived', 'arrive', 'Vint'),
       kind: 'nominal',
     },
-    v('angered', 'anger', 'Vtr'),
-    det('the', 'trustees'),
-    'The trustees were angry about the flood.',
+    v('surprised', 'surprise', 'Vtr'),
+    det('the', 'driver'),
+    'The storm turning up took the driver aback.',
   ),
   clauseSubjectIs(
-    'c30-e',
+    'c30-i',
     30,
     {
       marker: 'That',
@@ -76,71 +120,19 @@ export const LESSON_30 = [
     },
     v('seemed', 'seem', 'Vlink'),
     adj('unlikely'),
-    'It did not seem likely that the talks had collapsed.',
-  ),
-  clauseSubject(
-    'c30-f',
-    30,
-    {
-      marker: 'That',
-      subject: det('the', 'witness'),
-      verb: v('hesitated', 'hesitate', 'Vint'),
-      kind: 'nominal',
-    },
-    v('interested', 'interest', 'Vtr'),
-    det('the', 'jury'),
-    'The pause interested the jury.',
-  ),
-  clauseSubject(
-    'c30-g',
-    30,
-    {
-      marker: 'That',
-      subject: det('the', 'engine'),
-      verb: v('restarted', 'restart', 'Vint'),
-      kind: 'nominal',
-    },
-    v('relieved', 'relieve', 'Vtr'),
-    det('the', 'crew'),
-    'The crew were relieved it started again.',
-  ),
-  clauseSubjectIs(
-    'c30-h',
-    30,
-    {
-      marker: 'That',
-      subject: det('the', 'boundary'),
-      verb: v('shifted', 'shift', 'Vint'),
-      kind: 'nominal',
-    },
-    v('was', 'be', 'Vbe'),
-    adj('clear'),
-    'It was plain that the boundary had shifted.',
-  ),
-  clauseSubject(
-    'c30-i',
-    30,
-    {
-      marker: 'That',
-      subject: det('the', 'lock'),
-      verb: v('rusted', 'rust', 'Vint'),
-      kind: 'nominal',
-    },
-    v('annoyed', 'annoy', 'Vtr'),
-    det('her', 'landlord'),
-    'The rusted lock annoyed her landlord.',
+    'The talks breaking down looked improbable.',
   ),
   clauseSubject(
     'c30-j',
     30,
     {
       marker: 'That',
-      subject: det('the', 'queue'),
-      verb: v('lengthened', 'lengthen', 'Vint'),
+      subject: det('the', 'archive'),
+      verb: v('flooded', 'flood', 'Vint'),
       kind: 'nominal',
     },
-    v('alarmed', 'alarm', 'Vtr'),
-    det('the', 'baker'),
-    'The growing queue alarmed the baker.',
+    v('angered', 'anger', 'Vtr'),
+    det('the', 'trustees'),
+    'The archive filling with water made the trustees cross.',
   ),
 ];

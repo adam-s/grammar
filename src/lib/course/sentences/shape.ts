@@ -1031,6 +1031,40 @@ export const clauseSubjectIs = (
   gloss: string,
 ) => one(id, lesson, clause(cl(inner), verb, [complement('subjectComplement')], 'SVC'), gloss);
 
+/**
+ * *What the children wanted surprised the teacher.* — a fused relative.
+ *
+ * `Nom > Pron/head` is on difficulty.md's list of shapes a fixture proves and no
+ * lesson uses, assigned to lesson 30. *What* is doing two jobs at once: it is the
+ * thing wanted, and it is the head of the phrase that is the subject.
+ *
+ * It fills the slot a nominal clause as subject complement would have filled, and
+ * cannot: `subjectComplement` is licensed for `NP` and `AdjP` only, so *The
+ * trouble was that the gate was locked* has no representation. That is a model
+ * limit, recorded rather than worked around.
+ */
+export const fusedRelativeSubject = (
+  id: string,
+  lesson: number,
+  pronoun: string,
+  inner: Inner,
+  verb: Verb,
+  object: Phrase,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(
+      (fn) =>
+        n('NP', fn, [n('Nom', 'head', [w('Pron', 'head', pronoun), cl(inner)('postmodifier')])]),
+      verb,
+      [object('directObject')],
+      'SVO',
+    ),
+    gloss,
+  );
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>
