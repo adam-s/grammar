@@ -8,6 +8,10 @@ its lesson's scope and rebuilt through the real palette before it counts.
 The labelling interaction this sits on is documented in
 `src/lib/grammar/options.ts`, whose tests are its specification.
 
+[difficulty.md](difficulty.md) measures what the sentences do NOT yet do: no
+lesson gets harder as it goes, and nothing composes what came before. Read it
+before writing more of them.
+
 ## How the order is enforced
 
 The order is a dependency graph, and it used to be a graph written in prose.
