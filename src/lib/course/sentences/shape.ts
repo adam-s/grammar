@@ -76,6 +76,21 @@ export const pron =
   (fn) =>
     n('NP', fn, [w('Pron', 'head', word)]);
 
+/** *three witnesses* — a number pointing the noun out, which is a determiner's job. */
+export const numn =
+  (number: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [w('Num', 'determiner', number), w('N', 'head', noun)]);
+
+/** *unusually calm* — an adjective phrase with something in front of its head. */
+export const advadj =
+  (degree: string, adjective: string): Phrase =>
+  (fn) =>
+    n('AdjP', fn, [
+      n('AdvP', 'premodifier', [w('Adv', 'head', degree)]),
+      w('Adj', 'head', adjective),
+    ]);
+
 /** *salty* — an adjective phrase. */
 export const adj =
   (word: string): Phrase =>
@@ -123,6 +138,21 @@ function one(id: string, lesson: number, root: SpecNode, gloss: string) {
 /** *The kettle boiled.* */
 export const sv = (id: string, lesson: number, s: Phrase, verb: Verb, gloss: string) =>
   one(id, lesson, clause(s, verb, [], 'SV'), gloss);
+
+/**
+ * *The train arrived late.* An adverbial the verb does not require.
+ *
+ * The clause pattern stays `SV`, because the adverbial is not one of the slots
+ * the verb predicts — which is exactly the contrast lesson 14 drew.
+ */
+export const svPlus = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  where: Phrase,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [where('adverbial')], 'SV'), gloss);
 
 /** *The mechanic replaced the belt.* */
 export const svo = (

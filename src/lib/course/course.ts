@@ -31,6 +31,18 @@ import { LESSON_12 } from './sentences/lesson-12.ts';
 import { LESSON_13 } from './sentences/lesson-13.ts';
 import { LESSON_14 } from './sentences/lesson-14.ts';
 import { LESSON_15 } from './sentences/lesson-15.ts';
+import { LESSON_16 } from './sentences/lesson-16.ts';
+import { LESSON_17 } from './sentences/lesson-17.ts';
+import { LESSON_18 } from './sentences/lesson-18.ts';
+import { LESSON_19 } from './sentences/lesson-19.ts';
+import { LESSON_20 } from './sentences/lesson-20.ts';
+import { LESSON_21 } from './sentences/lesson-21.ts';
+import { LESSON_22 } from './sentences/lesson-22.ts';
+import { LESSON_23 } from './sentences/lesson-23.ts';
+import { LESSON_24 } from './sentences/lesson-24.ts';
+import { LESSON_25 } from './sentences/lesson-25.ts';
+import { LESSON_26 } from './sentences/lesson-26.ts';
+import { LESSON_27 } from './sentences/lesson-27.ts';
 import type { CourseStage } from './types.ts';
 
 export const COURSE_STAGES: CourseStage[] = [
@@ -183,6 +195,112 @@ export const COURSE_STAGES: CourseStage[] = [
         title: 'The six types, one procedure',
         teaches: {},
         sentences: LESSON_15,
+      },
+    ],
+  },
+  {
+    id: 'phrases',
+    title: 'Phrases',
+    lessons: [
+      {
+        id: '16-adjectives-before-nouns',
+        number: 16,
+        stage: 'Phrases',
+        title: 'Adjectives before nouns',
+        // An adjective before a noun modifies the NOUN, not the phrase, so it
+        // needs a layer to share with it. `Nom` is that layer, and it arrives
+        // here because this is the first sentence that cannot be drawn without
+        // one.
+        teaches: { forms: ['Nom'], functions: ['premodifier'] },
+        sentences: LESSON_16,
+      },
+      {
+        id: '17-adjective-phrases',
+        number: 17,
+        stage: 'Phrases',
+        title: 'Adjective phrases',
+        teaches: {},
+        sentences: LESSON_17,
+      },
+      {
+        id: '18-adverb-phrases',
+        number: 18,
+        stage: 'Phrases',
+        title: 'Adverbs and adverb phrases',
+        teaches: {},
+        sentences: LESSON_18,
+      },
+      {
+        id: '19-prepositional-phrases',
+        number: 19,
+        stage: 'Phrases',
+        title: 'Prepositional phrases',
+        teaches: {},
+        sentences: LESSON_19,
+      },
+      {
+        id: '20-form-is-not-function',
+        number: 20,
+        stage: 'Phrases',
+        title: 'Form is not function',
+        teaches: {},
+        sentences: LESSON_20,
+      },
+      {
+        id: '21-modifiers-after-the-head',
+        number: 21,
+        stage: 'Phrases',
+        title: 'Modifiers after the head',
+        teaches: { functions: ['postmodifier'] },
+        sentences: LESSON_21,
+      },
+      {
+        id: '22-appositives',
+        number: 22,
+        stage: 'Phrases',
+        title: 'Appositives',
+        teaches: { functions: ['appositive'] },
+        sentences: LESSON_22,
+      },
+      {
+        id: '23-numbers-in-noun-phrases',
+        number: 23,
+        stage: 'Phrases',
+        title: 'Numbers in noun phrases',
+        teaches: { forms: ['Num'] },
+        sentences: LESSON_23,
+      },
+      {
+        id: '24-auxiliary-verbs',
+        number: 24,
+        stage: 'Phrases',
+        title: 'Auxiliary verbs',
+        teaches: { forms: ['Aux'], functions: ['auxiliary'] },
+        sentences: LESSON_24,
+      },
+      {
+        id: '25-particles',
+        number: 25,
+        stage: 'Phrases',
+        title: 'Particles',
+        teaches: { forms: ['Part'], functions: ['particle'] },
+        sentences: LESSON_25,
+      },
+      {
+        id: '26-coordination-in-phrases',
+        number: 26,
+        stage: 'Phrases',
+        title: 'Coordination inside phrases',
+        teaches: { forms: ['Conj'], functions: ['coordinate', 'coordinator'] },
+        sentences: LESSON_26,
+      },
+      {
+        id: '27-attachment-changes-meaning',
+        number: 27,
+        stage: 'Phrases',
+        title: 'Attachment changes meaning',
+        teaches: {},
+        sentences: LESSON_27,
       },
     ],
   },
