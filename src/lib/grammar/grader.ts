@@ -38,7 +38,7 @@ export type Outcome =
   | { kind: 'wrong'; reason: string; test?: string };
 
 /**
- * The formal tests, from docs/pedagogy.md. Mechanical, and they always work —
+ * The formal tests. Mechanical, and they always work —
  * which is the whole argument against notional definitions. Shown at the moment
  * a learner gets the class wrong, when the test is worth something.
  */
@@ -232,7 +232,7 @@ export function gradeFunction(
 }
 
 /**
- * The hint ladder (docs/interaction.md). Two misses on the same span means
+ * The hint ladder. Two misses on the same span means
  * guessing, and guessing teaches nothing.
  *
  *   1 — the formal test, as text

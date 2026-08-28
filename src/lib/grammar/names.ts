@@ -1,7 +1,7 @@
 /**
  * Plain-language names and the formal test that goes with each label.
  *
- * The tests are the teaching (docs/pedagogy.md in the previous project): a
+ * The tests are the teaching: a
  * notional definition — "a noun is a person, place or thing" — fails on
  * *justice*, *arrival*, *the fact that he left*. A formal test is mechanical
  * and always works, so every option carries one. The palette exposes the active

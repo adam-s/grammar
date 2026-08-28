@@ -12,7 +12,7 @@
  *
  * `--action=label-sweep`: for every fixture (or just `--sentence=<id>`), walk
  * the whole build the way a learner does — select, read the palette, pick —
- * and assert the menu at every step against `docs/menu-states.md`. It drives
+ * and assert the menu at every step against `options.ts` and the tests beside it. It drives
  * `window.__grammar`, which calls the same handlers a pointer does, so a pass
  * here is a statement about the app rather than about a test harness.
  *
@@ -232,7 +232,7 @@ async function capture(browser, sentenceId, viewport) {
  * Runs in the page. Asserts the palette's invariants for the current
  * selection, then reports what is pickable so the driver can advance.
  *
- * These are the rules in docs/menu-states.md. They hold for every selection in
+ * These are the rules in `options.ts` module note. They hold for every selection in
  * every sentence, which is what makes them worth checking on all of them.
  */
 function inspectPanel() {
@@ -328,7 +328,7 @@ async function labelSweep(browser, sentenceId) {
     if (r.fails.length) {
       failures.push({ span, words: words.slice(span[0], span[1] + 1).join(' '), fails: r.fails });
     }
-    // Rule 8 in docs/menu-states.md: a palette with nothing pickable is the
+    // A palette with nothing pickable is the
     // ordinary case for a run of unnamed words. It is only a dead end if it
     // fails to say why, and rule 7 above already checks that.
     if (!r.pickable.length && r.groups.length && !r.everyRefusalExplained) {

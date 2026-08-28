@@ -1,5 +1,5 @@
 /**
- * Contextual label suggestions (docs/labeling-ux-review.md, P1).
+ * Contextual label suggestions.
  *
  * The chooser used to open on `Noun` whatever the learner had selected,
  * because the cursor followed taxonomy order. That is a reference sheet, not a

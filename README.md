@@ -3,9 +3,9 @@
 An app for building sentence diagrams — and for finding out whether the person building one
 actually knows how.
 
-This repository is a foundation. The workspace shell is real and works; what happens *on* the
-canvas is deliberately still open. See [`docs/labeling-patterns.md`](docs/labeling-patterns.md) for
-the question it exists to let us answer.
+This repository is a foundation. The workspace shell is real and works, and what happens *on* the
+canvas is now most of the point: `src/lib/grammar/` holds the model, the rules a learner builds
+against, and the audits that decide whether a finished tree is right.
 
 ## Commands
 
@@ -163,9 +163,12 @@ pinches, or zooms. The sheet reports measured space; it does not own camera arit
 
 ### What is not built yet
 
-Marquee selection, moving or creating objects on the canvas, multi-frame documents, persistence,
-undo. The toolbar deliberately contains only controls that work — a pill full of inert buttons is
-how a workspace starts feeling like a mock-up.
+Moving or creating objects on the canvas, multi-frame documents, persistence, undo. The toolbar
+deliberately contains only controls that work — a pill full of inert buttons is how a workspace
+starts feeling like a mock-up.
+
+Marquee selection used to be on this list and is not any more: `marquee-selection.ts` is wired
+into the page and has its own tests.
 
 ## Theming
 

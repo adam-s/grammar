@@ -1,5 +1,5 @@
 /**
- * Tidy-tree layout, re-targeted from docs/references/05-tree-layout.md.
+ * Tidy-tree layout.
  *
  * The parent version gave every leaf an identical slot, because its leaves were
  * array cells. Ours are WORDS, and words have different widths — so leaves take
@@ -41,9 +41,8 @@ export interface LayoutOpts {
   /**
    * Floor for the row count. The tree gets deeper as a learner builds and
    * shallower when they undo, and letting the row spacing follow it makes the
-   * whole picture jump every time — the reflow rule in
-   * docs/references/05-tree-layout.md, applied over time rather than across
-   * marks. Callers pass a high-water mark so the canvas only ever grows within
+   * whole picture jump every time — the no-reflow rule, applied over time
+   * rather than across marks. Callers pass a high-water mark so the canvas only ever grows within
    * a problem.
    */
   minDepth?: number;
