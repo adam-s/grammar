@@ -106,6 +106,26 @@ export const flatName =
       parts.map((part) => w('N', 'flat', part)),
     );
 
+/**
+ * *the old lock on the shed* — a premodifier and a postmodifier at once.
+ *
+ * difficulty.md's own example of a step that is not length: seven words, shorter
+ * than sentences already in lesson 21, and asking for more. Lesson 16 taught the
+ * premodifier and lesson 21 the postmodifier, and not one built sentence used
+ * both.
+ */
+export const adjpostmod =
+  (d: string, adjective: string, noun: string, after: Phrase): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [
+        w('Adj', 'premodifier', adjective),
+        w('N', 'head', noun),
+        after('postmodifier'),
+      ]),
+    ]);
+
 /** *water* — a noun phrase that is just its noun. */
 export const bare =
   (noun: string): Phrase =>
@@ -260,6 +280,36 @@ export const appos =
       // sentence as a sentence.
       ...(closing ? [pt(',')] : []),
     ]);
+
+/**
+ * *Lena, our new captain,* — a name renamed by a description.
+ *
+ * The first half is a bare name with no determiner to carry, so `appos` cannot
+ * build it. The relation is the same and either half can still be removed.
+ */
+export const apposName =
+  (name: string, other: Phrase, closing = true): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('N', 'head', name),
+      pt(','),
+      other('appositive'),
+      ...(closing ? [pt(',')] : []),
+    ]);
+
+/**
+ * *Our guide Arun* — an appositive with no commas at all.
+ *
+ * The same relation as `appos` and a different claim. *Our guide, Arun* names
+ * the only guide there is; *Our guide Arun* picks out which one. Nothing in
+ * either corpus had one, so a learner could find every appositive in lesson 22
+ * by hunting for punctuation — which is what lesson 39 exists to say you cannot
+ * do.
+ */
+export const closeAppos =
+  (d: string, noun: string, other: Phrase): Phrase =>
+  (fn) =>
+    n('NP', fn, [w('Det', 'determiner', d), w('N', 'head', noun), other('appositive')]);
 
 /** *the bread and the cheese* — two of the same rank, and the word that joins them. */
 export const both =

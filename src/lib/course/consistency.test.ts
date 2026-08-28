@@ -176,8 +176,12 @@ describe('the two corpora agree on how a construction is drawn', () => {
    * and whether *first* is a `Num` premodifying a noun or something else is an
    * open authoring question — lesson 23's proposal is where it gets decided.
    */
+  //
+  // *one* is left out on purpose. It is the only English numeral that doubles as
+  // a pro-form — *a rusty one* is a noun standing in for a noun phrase, not a
+  // count — so spelling does not settle it, which is this rule's whole premise.
   const CARDINAL =
-    /^(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|hundred|thousand|\d+)$/;
+    /^(zero|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|hundred|thousand|\d+)$/;
 
   it('a cardinal numeral is written as a Num', () => {
     let seen = 0;

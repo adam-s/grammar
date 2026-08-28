@@ -1,15 +1,15 @@
 /**
- * Lesson 22 — Appositives. A second noun phrase naming the same thing.
+ * Lesson 22 — Appositives. Punctuation stops being the definition.
  *
- * *a banker* renames *the treasurer* — the whole phrase, determiner included.
- * The test is that either half could be dropped and the sentence would still
- * name somebody, which is not true of a postmodifier.
+ * Every appositive in the built set was set off with commas, so a learner could
+ * find all ten by hunting for punctuation — and lesson 39 will later insist that
+ * punctuation is evidence rather than definition.
  *
- * Three of these rename an object rather than a subject, because an appositive
- * is not a fact about subjects and ten in the same slot would have taught the
- * slot instead of the rule.
+ * Items 2 and 3 are the pair: *Our guide Arun* picks out which guide, and *Our
+ * guide, Arun* names the only one there is. Same words, and the commas change
+ * what is claimed. It is lesson 39's question, seventeen lessons early.
  */
-import { adj, appos, bare, det, svc, sv, svo, v } from './shape.ts';
+import { adjn, appos, apposName, bare, closeAppos, det, sv, svo, svPlus, adv, v } from './shape.ts';
 
 export const LESSON_22 = [
   sv(
@@ -19,8 +19,31 @@ export const LESSON_22 = [
     v('resigned', 'resign', 'Vint'),
     'The treasurer, who was a banker, left the post.',
   ),
-  svo(
+  svPlus(
     'c22-b',
+    22,
+    closeAppos('Our', 'guide', bare('Arun')),
+    v('waved', 'wave', 'Vint'),
+    adv('twice'),
+    'The guide called Arun raised a hand two times.',
+  ),
+  svPlus(
+    'c22-c',
+    22,
+    appos('Our', 'guide', bare('Arun')),
+    v('waved', 'wave', 'Vint'),
+    adv('twice'),
+    'Our guide, whose name is Arun, raised a hand two times.',
+  ),
+  sv(
+    'c22-d',
+    22,
+    appos('The', 'witness', det('a', 'neighbour')),
+    v('hesitated', 'hesitate', 'Vint'),
+    'The witness, who lived nearby, held back.',
+  ),
+  svo(
+    'c22-e',
     22,
     det('The', 'court'),
     v('questioned', 'question', 'Vtr'),
@@ -28,33 +51,11 @@ export const LESSON_22 = [
     'The court questioned the surgeon, who was a stranger.',
   ),
   sv(
-    'c22-c',
+    'c22-f',
     22,
     appos('That', 'ferry', bare('Mermaid')),
     v('sailed', 'sail', 'Vint'),
     'That ferry, called Mermaid, sailed.',
-  ),
-  sv(
-    'c22-d',
-    22,
-    appos('The', 'witness', det('a', 'neighbour')),
-    v('hesitated', 'hesitate', 'Vint'),
-    'The witness, who lived next door, paused.',
-  ),
-  svc(
-    'c22-e',
-    22,
-    appos('The', 'chairman', det('a', 'lawyer')),
-    v('was', 'be', 'Vbe'),
-    adj('unmoved'),
-    'The chairman, a lawyer, was not persuaded.',
-  ),
-  sv(
-    'c22-f',
-    22,
-    appos('That', 'building', det('a', 'warehouse')),
-    v('collapsed', 'collapse', 'Vint'),
-    'That building, a warehouse, fell down.',
   ),
   svo(
     'c22-g',
@@ -62,14 +63,15 @@ export const LESSON_22 = [
     det('The', 'board'),
     v('appointed', 'appoint', 'Vtr'),
     appos('the', 'engineer', det('a', 'newcomer'), false),
-    'The board gave the post to the engineer, who was new.',
+    'The board appointed the engineer, who was new.',
   ),
-  sv(
+  svo(
     'c22-h',
     22,
-    appos('The', 'engine', det('a', 'diesel')),
-    v('failed', 'fail', 'Vint'),
-    'The engine, which was a diesel, broke down.',
+    apposName('Lena', adjn('our', 'new', 'captain')),
+    v('explained', 'explain', 'Vtr'),
+    det('the', 'route'),
+    'Lena, who is our new captain, set out the way to go.',
   ),
   svo(
     'c22-i',
@@ -77,7 +79,7 @@ export const LESSON_22 = [
     det('The', 'inspector'),
     v('interviewed', 'interview', 'Vtr'),
     appos('her', 'brother', det('a', 'teacher'), false),
-    'The inspector spoke to her brother, who taught.',
+    'The inspector interviewed her brother, who taught.',
   ),
   sv(
     'c22-j',

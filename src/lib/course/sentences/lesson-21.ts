@@ -1,92 +1,103 @@
 /**
- * Lesson 21 — Modifiers after the head.
+ * Lesson 21 — Modifiers after the head. Both modifiers, and nesting.
  *
- * *beyond the gate* tells you which path, so it belongs with *path* rather
- * than with the verb — the same phrase in the same shape doing a different job
- * from lesson 18's and lesson 19's.
+ * Two gaps in the built set. Its deepest postmodifier was a flat preposition
+ * plus noun phrase — zero nesting, while lesson 19 nests two deep after a verb —
+ * and, as difficulty.md puts it, *not one of lesson 21's ten sentences uses
+ * both* a premodifier and a postmodifier, though lesson 16 taught the
+ * premodifier five lessons earlier.
  *
- * A postmodifier is not a fact about subjects, so half of these put one in an
- * object or a complement instead. That is also where the contrast with lesson
- * 19 bites hardest: the same phrase, one word further left, changes what it
- * belongs to.
+ * Item 7 nests inside the noun phrase, which is the safe kind: *of the shed* can
+ * only attach to *the door*, so the depth costs no ambiguity.
  */
-import { adj, det, postmod, pp, pron, sv, svc, svo, svoo, v } from './shape.ts';
+import {
+  adj,
+  adjn,
+  adjpostmod,
+  det,
+  nounmod,
+  postmod,
+  pp,
+  pron,
+  sv,
+  svc,
+  svo,
+  v,
+} from './shape.ts';
 
 export const LESSON_21 = [
   sv(
     'c21-a',
     21,
-    postmod('The', 'path', pp('beyond', det('the', 'gate'))),
-    v('narrowed', 'narrow', 'Vint'),
-    'The path past the gate became narrow.',
+    postmod('The', 'map', pp('on', det('the', 'shelf'))),
+    v('fell', 'fall', 'Vint'),
+    'The map kept on the shelf dropped.',
   ),
-  svo(
+  sv(
     'c21-b',
     21,
-    det('The', 'surveyor'),
-    v('measured', 'measure', 'Vtr'),
-    postmod('the', 'field', pp('behind', det('the', 'mill'))),
-    'The surveyor measured the field that lies behind the mill.',
+    postmod('The', 'path', pp('beyond', det('the', 'gate'))),
+    v('narrowed', 'narrow', 'Vint'),
+    'The path past the gate grew tighter.',
   ),
   sv(
     'c21-c',
     21,
-    postmod('That', 'chimney', pp('above', det('the', 'kitchen'))),
-    v('cracked', 'crack', 'Vint'),
-    'That chimney over the kitchen split.',
+    adjpostmod('The', 'old', 'lock', pp('on', det('the', 'shed'))),
+    v('rusted', 'rust', 'Vint'),
+    'The worn lock on the shed corroded.',
+  ),
+  svo(
+    'c21-d',
+    21,
+    det('The', 'surveyor'),
+    v('measured', 'measure', 'Vtr'),
+    postmod('the', 'field', pp('behind', det('the', 'mill'))),
+    'The surveyor sized the field behind the mill.',
+  ),
+  sv(
+    'c21-e',
+    21,
+    adjpostmod('A', 'cheerful', 'child', pp('with', adjn('a', 'red', 'drum'))),
+    v('waved', 'wave', 'Vint'),
+    'A happy child holding a red drum raised a hand.',
   ),
   svc(
-    'c21-d',
+    'c21-f',
     21,
     postmod('The', 'lock', pp('on', det('the', 'shed'))),
     v('was', 'be', 'Vbe'),
     adj('rusty'),
-    'The shed lock had gone rusty.',
-  ),
-  svo(
-    'c21-e',
-    21,
-    det('The', 'committee'),
-    v('rejected', 'reject', 'Vtr'),
-    postmod('the', 'plan', pp('for', det('the', 'harbour'))),
-    'The committee turned down the harbour plan.',
+    'The lock on the shed had corroded.',
   ),
   sv(
-    'c21-f',
-    21,
-    postmod('The', 'argument', pp('over', det('the', 'boundary'))),
-    v('continued', 'continue', 'Vint'),
-    'The boundary argument went on.',
-  ),
-  svoo(
     'c21-g',
     21,
-    det('The', 'clerk'),
-    v('showed', 'show', 'Vg'),
-    postmod('the', 'visitor', pp('from', det('the', 'ministry'))),
-    det('a', 'map'),
-    'The clerk showed the ministry visitor a map.',
+    postmod('The', 'key', pp('to', postmod('the', 'door', pp('of', det('the', 'shed'))))),
+    v('vanished', 'vanish', 'Vint'),
+    'The key for the shed door went missing.',
+  ),
+  svo(
+    'c21-h',
+    21,
+    postmod('Those', 'workers', pp('from', nounmod('the', 'repair', 'shop'))),
+    v('checked', 'check', 'Vtr'),
+    det('every', 'window'),
+    'The workers sent by the repair shop looked at every window.',
   ),
   sv(
-    'c21-h',
+    'c21-i',
     21,
     postmod('The', 'ice', pp('under', det('the', 'bridge'))),
     v('thinned', 'thin', 'Vint'),
-    'The ice beneath the bridge grew thin.',
+    'The ice beneath the bridge grew thinner.',
   ),
   svo(
-    'c21-i',
+    'c21-j',
     21,
     pron('They'),
     v('repaired', 'repair', 'Vtr'),
     postmod('the', 'crack', pp('across', det('the', 'ceiling'))),
-    'They mended the crack that runs across the ceiling.',
-  ),
-  sv(
-    'c21-j',
-    21,
-    postmod('That', 'queue', pp('outside', det('the', 'bakery'))),
-    v('lengthened', 'lengthen', 'Vint'),
-    'That queue at the bakery grew longer.',
+    'They mended the crack running across the ceiling.',
   ),
 ];
