@@ -129,7 +129,10 @@ const TABLE: Row[] = [
   { fn: 'determiner', parentForm: 'VP', verbType: null, siblings: [], want: 'hidden' },
   { fn: 'complement', parentForm: 'PP', verbType: null, siblings: [], want: 'allowed' },
   { fn: 'complement', parentForm: 'NP', verbType: null, siblings: [], want: 'hidden' },
-  { fn: 'postmodifier', parentForm: 'NP', verbType: null, siblings: [], want: 'allowed' },
+  { fn: 'postmodifier', parentForm: 'Nom', verbType: null, siblings: [], want: 'allowed' },
+  { fn: 'postmodifier', parentForm: 'NP', verbType: null, siblings: [], want: 'hidden' },
+  { fn: 'premodifier', parentForm: 'Nom', verbType: null, siblings: [], want: 'allowed' },
+  { fn: 'premodifier', parentForm: 'NP', verbType: null, siblings: [], want: 'hidden' },
   { fn: 'premodifier', parentForm: 'AdjP', verbType: null, siblings: [], want: 'allowed' },
 ];
 

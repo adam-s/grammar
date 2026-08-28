@@ -46,7 +46,7 @@ export interface Word {
 /* ----------------------------------------------------------------- labels */
 
 /** Phrase-level form — what a constituent IS. Drives the node hue. */
-export type PhraseForm = 'S' | 'NP' | 'VP' | 'PP' | 'AdjP' | 'AdvP' | 'Cl';
+export type PhraseForm = 'S' | 'NP' | 'Nom' | 'VP' | 'PP' | 'AdjP' | 'AdvP' | 'Cl';
 
 /** Word-level form — the part of speech as the course names it. */
 export type WordForm =
@@ -66,7 +66,16 @@ export type WordForm =
 
 export type Form = PhraseForm | WordForm;
 
-export const PHRASE_FORMS: readonly PhraseForm[] = ['S', 'NP', 'VP', 'PP', 'AdjP', 'AdvP', 'Cl'];
+export const PHRASE_FORMS: readonly PhraseForm[] = [
+  'S',
+  'NP',
+  'Nom',
+  'VP',
+  'PP',
+  'AdjP',
+  'AdvP',
+  'Cl',
+];
 export const WORD_FORMS: readonly WordForm[] = [
   'N',
   'V',
@@ -382,6 +391,7 @@ export function canonicalReading(s: SentenceEntry): Reading {
 export function hueSlot(form: Form): number {
   switch (form) {
     case 'NP':
+    case 'Nom':
     case 'N':
     case 'Pron':
     case 'Det':

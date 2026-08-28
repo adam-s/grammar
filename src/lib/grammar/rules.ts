@@ -196,11 +196,19 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     case 'determiner':
       return p === 'NP' ? ALLOWED : HIDDEN;
 
+    // Modifiers of a noun live in the nominal, not in the noun phrase.
+    //
+    // This is what the `Nom` layer is for. In *the old red car* the determiner
+    // and the adjectives used to be siblings, which said *the* applied to the
+    // same thing *old* did. It does not: *the* points at the whole of *old red
+    // car*. Putting the modifiers one level down is how a diagram says so, and
+    // one-substitution agrees — *the old red car and the blue one*, where *one*
+    // stands for the nominal and not for the phrase.
     case 'premodifier':
-      return p === 'NP' || p === 'AdjP' || p === 'AdvP' ? ALLOWED : HIDDEN;
+      return p === 'Nom' || p === 'AdjP' || p === 'AdvP' ? ALLOWED : HIDDEN;
 
     case 'postmodifier':
-      return p === 'NP' ? ALLOWED : HIDDEN;
+      return p === 'Nom' ? ALLOWED : HIDDEN;
 
     case 'complement':
       return p === 'PP' || p === 'AdjP' ? ALLOWED : HIDDEN;
@@ -293,7 +301,7 @@ export function hypothesizes(fn: Func, ctx: LicenseContext): Verdict {
 }
 
 /** Phrase forms that must have exactly one head. `S`/`Cl` are not phrases. */
-export const HEAD_BEARING: readonly Form[] = ['NP', 'VP', 'PP', 'AdjP', 'AdvP'];
+export const HEAD_BEARING: readonly Form[] = ['NP', 'Nom', 'VP', 'PP', 'AdjP', 'AdvP'];
 
 /**
  * What may head each phrase. A phrase takes its name from its head, so this is
@@ -301,7 +309,8 @@ export const HEAD_BEARING: readonly Form[] = ['NP', 'VP', 'PP', 'AdjP', 'AdvP'];
  * The matching phrase form is included so a coordinated head still works.
  */
 export const HEAD_FORMS: Record<string, readonly Form[]> = {
-  NP: ['N', 'Pron', 'Num', 'NP'],
+  NP: ['N', 'Pron', 'Num', 'Nom', 'NP'],
+  Nom: ['N', 'Nom'],
   // Not `Aux`. A verb phrase is named after its main verb, and an auxiliary is
   // never that — in *was repaired* the phrase is about *repaired*. Auxiliaries
   // hang off the phrase under the `auxiliary` function instead.
@@ -313,6 +322,7 @@ export const HEAD_FORMS: Record<string, readonly Form[]> = {
 
 const HEAD_ARTICLE: Record<string, string> = {
   NP: 'a noun phrase',
+  Nom: 'a nominal',
   VP: 'a verb phrase',
   PP: 'a prepositional phrase',
   AdjP: 'an adjective phrase',
@@ -320,7 +330,8 @@ const HEAD_ARTICLE: Record<string, string> = {
 };
 
 const HEAD_NAMES: Record<string, string> = {
-  NP: 'a noun or a pronoun',
+  NP: 'a noun, a pronoun, or a nominal',
+  Nom: 'a noun',
   VP: 'a verb',
   PP: 'the preposition',
   AdjP: 'an adjective',

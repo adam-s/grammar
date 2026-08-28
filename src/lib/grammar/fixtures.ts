@@ -287,10 +287,12 @@ const telescopeModifier = build(
         w('V', 'head', 'saw', { lemma: 'see', verbType: 'Vtr' }),
         n('NP', 'directObject', [
           w('Det', 'determiner', 'the'),
-          w('N', 'head', 'man'),
-          n('PP', 'postmodifier', [
-            w('P', 'head', 'with'),
-            n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'telescope')]),
+          n('Nom', 'head', [
+            w('N', 'head', 'man'),
+            n('PP', 'postmodifier', [
+              w('P', 'head', 'with'),
+              n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'telescope')]),
+            ]),
           ]),
         ]),
       ]),
@@ -334,21 +336,26 @@ export const gardenPath = sentence(
         [
           n('NP', 'subject', [
             w('Det', 'determiner', 'The'),
-            w('N', 'head', 'horse'),
-            n(
-              'Cl',
-              'postmodifier',
-              [
-                n('VP', 'predicate', [
-                  w('V', 'head', 'raced', { lemma: 'race', verbType: 'Vint' }),
-                  n('PP', 'adverbial', [
-                    w('P', 'head', 'past'),
-                    n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'barn')]),
+            n('Nom', 'head', [
+              w('N', 'head', 'horse'),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'raced', { lemma: 'race', verbType: 'Vint' }),
+                    n('PP', 'adverbial', [
+                      w('P', 'head', 'past'),
+                      n('NP', 'complement', [
+                        w('Det', 'determiner', 'the'),
+                        w('N', 'head', 'barn'),
+                      ]),
+                    ]),
                   ]),
-                ]),
-              ],
-              { clauseKind: 'relative', clauseType: 'SV' },
-            ),
+                ],
+                { clauseKind: 'relative', clauseType: 'SV' },
+              ),
+            ]),
           ]),
           n('VP', 'predicate', [w('V', 'head', 'fell', { lemma: 'fall', verbType: 'Vint' })]),
         ],
@@ -436,10 +443,15 @@ export const deepNesting = sentence(
                 w('P', 'head', 'on'),
                 n('NP', 'complement', [
                   w('Det', 'determiner', 'the'),
-                  w('N', 'head', 'table'),
-                  n('PP', 'postmodifier', [
-                    w('P', 'head', 'in'),
-                    n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'hall')]),
+                  n('Nom', 'head', [
+                    w('N', 'head', 'table'),
+                    n('PP', 'postmodifier', [
+                      w('P', 'head', 'in'),
+                      n('NP', 'complement', [
+                        w('Det', 'determiner', 'the'),
+                        w('N', 'head', 'hall'),
+                      ]),
+                    ]),
                   ]),
                 ]),
               ],
@@ -853,6 +865,54 @@ export const supplement = sentence(
   ['Vint', 'supplement', 'punctuation'],
 );
 
+/* ------------- the nominal layer — She repaired the old red engine.
+ *
+ * *the* does not point at the same thing *old* describes. It points at the
+ * whole of *old red engine*, and the diagram has to be able to say so — which
+ * it could not while the determiner and the adjectives were siblings.
+ *
+ * One-substitution is the test: *the old red engine and the blue one*, where
+ * *one* stands in for *old red engine* without the determiner. Whatever *one*
+ * can replace is a constituent, and that constituent is the nominal.
+ *
+ * A noun phrase with nothing to scope over — *she*, *the engine* — still has
+ * no nominal. The layer appears where it does work.
+ */
+export const nominal = sentence(
+  'fix-nominal',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr' }),
+            n('NP', 'directObject', [
+              w('Det', 'determiner', 'the'),
+              n('Nom', 'head', [
+                w('Adj', 'premodifier', 'old'),
+                w('Adj', 'premodifier', 'red'),
+                w('N', 'head', 'engine'),
+              ]),
+            ]),
+          ]),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'She fixed the engine that is old and red.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'nominal', 'premodifier', 'determiner-scope'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -873,6 +933,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   infinitive,
   particle,
   supplement,
+  nominal,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(
