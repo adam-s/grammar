@@ -1203,6 +1203,103 @@ export const svAfterGerund = (
     gloss,
   );
 
+/** *Oh, the gate opened.* — an interjection as a supplement of the clause. */
+export function interjection(
+  id: string,
+  lesson: number,
+  word: string,
+  subject: Phrase,
+  verb: Verb,
+  gloss: string,
+  rest?: { object?: Phrase; complement?: Phrase },
+) {
+  const after: SpecNode[] = [];
+  if (rest?.object) after.push(rest.object('directObject'));
+  if (rest?.complement) after.push(rest.complement('subjectComplement'));
+  const pattern: ClauseType = rest?.object ? 'SVO' : rest?.complement ? 'SVC' : 'SV';
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        w('Interj', 'supplement', word),
+        pt(','),
+        subject('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+          ...after,
+        ]),
+        pt('.'),
+      ],
+      { clauseType: pattern },
+    ),
+    gloss,
+  );
+}
+
+/** *The engine, surprisingly, restarted.* — a supplement in the middle. */
+export function remarkMedial(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  word: string,
+  verb: Verb,
+  gloss: string,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        subject('subject'),
+        pt(','),
+        n('AdvP', 'supplement', [w('Adv', 'head', word)]),
+        pt(','),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        ]),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
+  );
+}
+
+/** *The engine restarted, surprisingly.* — a supplement at the end. */
+export function remarkLast(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  verb: Verb,
+  word: string,
+  gloss: string,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        subject('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        ]),
+        pt(','),
+        n('AdvP', 'supplement', [w('Adv', 'head', word)]),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
+  );
+}
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>

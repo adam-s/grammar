@@ -120,6 +120,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
     before: 'the same, one word over',
     are: 'a main verb and an auxiliary',
     clear: 'an adjective and a verb',
+    closed: 'an adjective and a verb — lesson 37 turns on exactly that',
     cost: 'a noun and a verb',
     damaged: 'an adjective and a verb',
     for: 'a marker and a preposition',

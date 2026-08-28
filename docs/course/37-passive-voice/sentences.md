@@ -22,10 +22,10 @@ nothing. Thirty-six lessons of a rule that always worked, and it stops here.
 | 4   | The guest was given a key.                  | the **indirect** object promoted              |
 | 5   | The driver was considered reliable.         | an object complement kept behind              |
 | 6   | The ledger was audited by the inspector.    | a plain transitive passive with an agent      |
-| 7   | The streets were deserted.                  | **two readings** — a state or a passive event |
+| 7   | The gates were closed.                      | **two readings** — a state or a passive event |
 | 8   | The narrow road was blocked by branches.    | a premodifier inside the promoted subject     |
 | 9   | The path was cleared.                       | agentless again, shortest frame               |
-| 10  | Young Mara was elected captain.             | an object complement with a name              |
+| 10  | Mara was elected captain.                   | an object complement with a name              |
 
 ## Notes
 

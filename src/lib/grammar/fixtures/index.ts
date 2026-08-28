@@ -84,7 +84,7 @@ import {
   cleft,
   comparative,
 } from './movement.ts';
-import { punctuation, supplement, existential, frontedAdverbial } from './edges.ts';
+import { punctuation, supplement, existential, frontedAdverbial, interjection } from './edges.ts';
 import { vpEllipsis, gapping, sluicing, stripping } from './ellipsis.ts';
 
 /** Every good fixture. All must pass every audit. */
@@ -141,6 +141,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   comparative,
   punctuation,
   supplement,
+  interjection,
   frontedAdverbial,
   existential,
   vpEllipsis,

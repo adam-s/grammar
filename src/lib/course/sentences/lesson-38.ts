@@ -1,99 +1,112 @@
 /**
  * Lesson 38 — Interjections and sentence-edge words.
  *
- * *Unfortunately* is not the subject, the predicate, or anything inside them.
- * It comments on the whole sentence from outside the frame, which is a real
- * job and needs a name that is honestly not a clause role.
+ * `form:Interj` was taught here and used in none of the four hundred sentences —
+ * the last of the two decisions the course taught and never exercised. Items 1
+ * and 2 use it.
  *
- * The sentence it comments on varies, because a supplement sits outside the
- * frame whatever the frame is — and ten intransitive frames would have made
- * that look like a coincidence rather than the rule.
+ * Every built supplement was sentence-initial with a comma, so free position —
+ * the clearest evidence of what a supplement is — was never shown. Items 4, 5
+ * and 6 move one word through three places with nothing else changing.
+ *
+ * Items 7 and 8 are the pair the lesson most needs. Both start with a word and a
+ * comma before a clause, and one is an adverbial while the other is a
+ * supplement. The removal test does NOT separate them — both drop. The question
+ * test does: *When did they play? Yesterday* works, and *How did they play?
+ * Sadly* does not, because *sadly* is the writer's view rather than the manner.
  */
-import { adj, det, pron, remark, v } from './shape.ts';
+import {
+  adv,
+  det,
+  interjection,
+  pron,
+  remark,
+  remarkLast,
+  remarkMedial,
+  svFronted,
+  v,
+} from './shape.ts';
 
 export const LESSON_38 = [
-  remark(
+  interjection(
     'c38-a',
     38,
-    'Unfortunately',
-    det('that', 'ferry'),
-    v('sank', 'sink', 'Vint'),
-    'The ferry sank, and the speaker regrets it.',
+    'Oh',
+    det('the', 'gate'),
+    v('opened', 'open', 'Vint'),
+    'The gate came open, and that is a surprise.',
   ),
-  remark(
+  interjection(
     'c38-b',
     38,
-    'Surprisingly',
-    det('the', 'engine'),
-    v('restarted', 'restart', 'Vint'),
-    'The engine started again, against expectation.',
+    'Well',
+    det('the', 'clerk'),
+    v('waited', 'wait', 'Vint'),
+    'The clerk stayed put, and that is how it went.',
   ),
   remark(
     'c38-c',
     38,
-    'Naturally',
-    det('the', 'tenants'),
-    v('refused', 'refuse', 'Vtr'),
-    'The tenants would not pay it, as anyone would expect.',
-    { object: det('the', 'increase') },
+    'Unfortunately',
+    det('that', 'ferry'),
+    v('sank', 'sink', 'Vint'),
+    'That ferry went down, which is a bad thing.',
   ),
   remark(
     'c38-d',
     38,
-    'Regrettably',
-    det('those', 'talks'),
-    v('collapsed', 'collapse', 'Vint'),
-    'The talks broke down, and the speaker is sorry.',
+    'Surprisingly',
+    det('the', 'engine'),
+    v('restarted', 'restart', 'Vint'),
+    'The engine got going again, which was unexpected.',
   ),
-  remark(
+  remarkMedial(
     'c38-e',
     38,
-    'Predictably',
-    det('the', 'queue'),
-    v('grew', 'grow', 'Vlink'),
-    'The queue became restless, as expected.',
-    { complement: adj('restless') },
+    det('The', 'engine'),
+    'surprisingly',
+    v('restarted', 'restart', 'Vint'),
+    'The engine got going again, which was unexpected.',
   ),
-  remark(
+  remarkLast(
     'c38-f',
     38,
-    'Curiously',
-    det('the', 'lock'),
-    v('opened', 'open', 'Vint'),
-    'The lock opened, oddly.',
+    det('The', 'engine'),
+    v('restarted', 'restart', 'Vint'),
+    'surprisingly',
+    'The engine got going again, which was unexpected.',
   ),
-  remark(
+  svFronted(
     'c38-g',
     38,
-    'Frankly',
-    pron('everyone'),
-    v('hesitated', 'hesitate', 'Vint'),
-    'Everyone paused, and the speaker is being blunt.',
+    adv('Yesterday'),
+    det('the', 'children'),
+    v('waited', 'wait', 'Vint'),
+    'The children stayed put the day before.',
   ),
   remark(
     'c38-h',
     38,
-    'Happily',
-    det('the', 'crew'),
-    v('saved', 'save', 'Vtr'),
-    'The crew rescued the archive, to the speaker’s relief.',
-    { object: det('the', 'archive') },
+    'Sadly',
+    det('the', 'children'),
+    v('waited', 'wait', 'Vint'),
+    'The children stayed put, which is a shame.',
   ),
   remark(
     'c38-i',
     38,
-    'Apparently',
-    det('the', 'clerk'),
-    v('resigned', 'resign', 'Vint'),
-    'The clerk resigned, so it is said.',
+    'Frankly',
+    pron('everyone'),
+    v('hesitated', 'hesitate', 'Vint'),
+    'Every one of them held back, and I will say so plainly.',
   ),
   remark(
     'c38-j',
     38,
-    'Sadly',
-    det('the', 'building'),
-    v('was', 'be', 'Vbe'),
-    'The building could not be saved, and the speaker regrets it.',
-    { complement: adj('unsafe') },
+    'Happily',
+    det('the', 'crew'),
+    v('saved', 'save', 'Vtr'),
+    'The crew got the archive out, which is a good thing.',
+    { object: det('the', 'archive') },
   ),
 ];

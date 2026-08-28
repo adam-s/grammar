@@ -1,56 +1,54 @@
 /**
- * Lesson 37 — Passive voice.
+ * Lesson 37 — Passive voice. Where the lesson-1 shortcut finally breaks.
  *
- * The same event with a different participant in the subject slot. Every label
- * stays what it was — noun phrase, verb phrase, subject — and what changes is
- * the relationship between them, which is why voice is a property and not a
- * shape.
+ * The palette's hint for the subject is *WHO or WHAT does it?*, and item 2 is
+ * the first sentence in the whole course whose subject does nothing. Thirty-six
+ * lessons of a rule that always worked, and it stops here.
  *
- * Half name the doer in a *by* phrase and half leave it out, because both
- * halves are the lesson: the passive lets you say who did it in a place where
- * it can be dropped, and dropping it is the commonest reason to use one.
- *
- * Two are not transitive. A giving verb has two objects and the passive
- * promotes only one, so the other stays put — *The guest was given a key* has
- * a direct object still. A naming verb loses its object and keeps the
- * complement, which now describes the subject. Ten transitive passives would
- * have taught that the passive empties the predicate, and it does not.
+ * Items 1 and 2 are the pair the built set lacked: the same event in both
+ * voices, adjacent, so *turn it back* is a test the learner runs rather than a
+ * rule they are told. Item 7 is the trap — *be* plus an *-ed* word that is a
+ * subject complement, so the form test is not sufficient on its own.
  */
 import {
   adj,
+  adjn,
+  bare,
   det,
   passive,
+  sv,
   passiveKeepingComplement,
   passiveKeepingObject,
   pp,
-  sv,
   svPlus,
+  svc,
+  svo,
   v,
 } from './shape.ts';
 
 export const LESSON_37 = [
-  svPlus(
+  svo(
     'c37-a',
+    37,
+    det('The', 'contractors'),
+    v('dredged', 'dredge', 'Vtr'),
+    det('the', 'harbour'),
+    'The contractors cleared the harbour bed.',
+  ),
+  svPlus(
+    'c37-b',
     37,
     det('The', 'harbour'),
     passive(v('dredged', 'dredge', 'Vtr'), 'was'),
     pp('by', det('the', 'contractors')),
-    'The contractors dredged the harbour.',
+    'The contractors cleared the harbour bed.',
   ),
   sv(
-    'c37-b',
+    'c37-c',
     37,
     det('Those', 'deeds'),
     passive(v('filed', 'file', 'Vtr'), 'were'),
     'Somebody filed the deeds, and who does not matter here.',
-  ),
-  svPlus(
-    'c37-c',
-    37,
-    det('The', 'engine'),
-    passive(v('repaired', 'repair', 'Vtr'), 'was'),
-    pp('by', det('a', 'mechanic')),
-    'A mechanic repaired the engine.',
   ),
   passiveKeepingObject(
     'c37-d',
@@ -58,52 +56,53 @@ export const LESSON_37 = [
     det('The', 'guest'),
     passive(v('given', 'give', 'Vg'), 'was'),
     det('a', 'key'),
-    'Somebody gave the guest a key.',
-  ),
-  svPlus(
-    'c37-e',
-    37,
-    det('The', 'ledger'),
-    passive(v('audited', 'audit', 'Vtr'), 'was'),
-    pp('by', det('the', 'inspector')),
-    'The inspector audited the ledger.',
-  ),
-  sv(
-    'c37-f',
-    37,
-    det('The', 'shutters'),
-    passive(v('painted', 'paint', 'Vtr'), 'were'),
-    'Somebody painted the shutters.',
-  ),
-  svPlus(
-    'c37-g',
-    37,
-    det('The', 'claim'),
-    passive(v('rejected', 'reject', 'Vtr'), 'was'),
-    pp('by', det('the', 'board')),
-    'The board rejected the claim.',
+    'Somebody handed the guest a key.',
   ),
   passiveKeepingComplement(
-    'c37-h',
+    'c37-e',
     37,
     det('The', 'driver'),
     passive(v('considered', 'consider', 'Vc'), 'was'),
     adj('reliable'),
-    'Somebody considered the driver reliable.',
+    'People took the driver to be dependable.',
   ),
   svPlus(
-    'c37-i',
+    'c37-f',
     37,
-    det('Several', 'crates'),
-    passive(v('stacked', 'stack', 'Vtr'), 'were'),
-    pp('by', det('the', 'porters')),
-    'The porters stacked several crates.',
+    det('The', 'ledger'),
+    passive(v('audited', 'audit', 'Vtr'), 'was'),
+    pp('by', det('the', 'inspector')),
+    'The inspector went through the ledger.',
+  ),
+  svc(
+    'c37-g',
+    37,
+    det('The', 'gates'),
+    v('were', 'be', 'Vbe'),
+    adj('closed'),
+    'The gates stood shut.',
+  ),
+  svPlus(
+    'c37-h',
+    37,
+    adjn('The', 'narrow', 'road'),
+    passive(v('blocked', 'block', 'Vtr'), 'was'),
+    pp('by', bare('branches')),
+    'Fallen branches shut the narrow road.',
   ),
   sv(
-    'c37-j',
+    'c37-i',
     37,
     det('The', 'path'),
     passive(v('cleared', 'clear', 'Vtr'), 'was'),
-    'Somebody cleared the path.',
+    'Somebody freed the path, and who does not matter here.',
+  ),
+  passiveKeepingComplement(
+    'c37-j',
+    37,
+    bare('Mara'),
+    passive(v('elected', 'elect', 'Vc'), 'was'),
+    bare('captain'),
+    'The members voted Mara into the captain post.',
   ),
 ];

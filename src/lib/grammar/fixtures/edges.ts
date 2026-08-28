@@ -172,3 +172,35 @@ export const frontedAdverbial = sentence(
   ],
   'r1',
 );
+
+/* ------------- an interjection — Oh, the gate opened.
+ *
+ * `form:Interj` was taught at lesson 38 and used in none of the four hundred
+ * course sentences, so the decision was one the course had not earned. It is a
+ * supplement of the clause, not the head of an adverb phrase: an adverb phrase's
+ * head must be an adverb, and *Oh* is not one.
+ *
+ * Removal leaves a whole sentence, which is what a supplement means.
+ */
+export const interjection = sentence(
+  'fix-interjection',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          w('Interj', 'supplement', 'Oh'),
+          pt(','),
+          n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'gate')]),
+          n('VP', 'predicate', [w('V', 'head', 'opened', { lemma: 'open', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The gate came open, and that is a surprise.' },
+    ),
+  ],
+  'r1',
+);
