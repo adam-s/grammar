@@ -1211,6 +1211,96 @@ export const extraposition = sentence(
   ['Vbe', 'extraposition', 'displacedSubject', 'nominal-clause', 'two-clause'],
 );
 
+/* ----------- a hollow clause — The box was too heavy to lift.
+ *
+ * *lift* is transitive and there is no object after it. What was to be lifted is
+ * the box, which is the subject of the sentence around it — so the object slot
+ * is a gap whose antecedent is outside its clause, the same as in a relative.
+ *
+ * "Hollow" is CGEL's name for exactly this: a non-finite clause with a hole in
+ * it that something further out fills.
+ */
+export const hollowClause = sentence(
+  'fix-hollow-clause',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'box')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'was', { xpos: 'VBD', lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [
+              w('Adv', 'premodifier', 'too'),
+              w('Adj', 'head', 'heavy'),
+              n(
+                'Cl',
+                'complement',
+                [
+                  w('Part', 'marker', 'to', { xpos: 'TO', partKind: 'infinitival' }),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'lift', { xpos: 'VB', lemma: 'lift', verbType: 'Vtr' }),
+                    gap('NP', 'directObject'),
+                  ]),
+                ],
+                { clauseKind: 'comparative', finiteness: 'infinitival', clauseType: 'SVO' },
+              ),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Nobody could lift the box, because of its weight.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'Vtr', 'hollow-clause', 'gap', 'infinitive', 'two-clause'],
+);
+
+/* ---------- a coordinated subject — The cat and the dog ran.
+ *
+ * Joining is not confined to clauses, and a joined noun phrase has no head:
+ * neither *the cat* nor *the dog* is the one the phrase is named after. That is
+ * the same reason a joined clause is not asked what kind of verb it has, and
+ * `auditHead` now excuses a join for it.
+ */
+export const coordinatedSubject = sentence(
+  'fix-coordinated-subject',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            n('NP', 'coordinate', [w('Det', 'determiner', 'The'), w('N', 'head', 'cat')]),
+            w('Conj', 'coordinator', 'and'),
+            n('NP', 'coordinate', [w('Det', 'determiner', 'the'), w('N', 'head', 'dog')]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'ran', { lemma: 'run', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Both animals ran.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vint', 'coordination', 'coordinated-subject'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -1238,6 +1328,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   question,
   particleShift,
   extraposition,
+  hollowClause,
+  coordinatedSubject,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

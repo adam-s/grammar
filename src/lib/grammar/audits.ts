@@ -431,15 +431,21 @@ export function auditGaps(ctx: Ctx): string[] {
 
   for (const [id, c] of Object.entries(ctx.cs)) {
     if (!c.gap) continue;
+    // A gap is indexed exactly when its clause holds the phrase that fills it.
+    // Where it does not, the antecedent is outside — the nominal a relative
+    // clause modifies, or the subject a hollow clause borrows: *The box was too
+    // heavy to lift __*. Nothing inside can be pointed at, so pointing would be
+    // a claim the structure cannot support.
     const clause = clauseOf(ctx.cs, id);
-    const inRelative = clause !== null && ctx.cs[clause]!.clauseKind === 'relative';
-    if (c.index === undefined && !inRelative) {
-      f.push(`the gap "${id}" is not tied to anything — say which phrase fills it`);
+    const fronted =
+      clause !== null && ctx.cs[clause]!.children.some((k) => ctx.cs[k]?.function === 'prenucleus');
+    if (c.index === undefined && fronted) {
+      f.push(`the gap "${id}" is not tied to the fronted phrase in its own clause`);
     }
-    if (c.index !== undefined && inRelative) {
+    if (c.index !== undefined && !fronted) {
       f.push(
-        `the gap "${id}" is in a relative clause, so what fills it is the noun outside — ` +
-          'there is nothing inside to tie it to',
+        `the gap "${id}" claims a filler, but its clause has none — what fills it is ` +
+          'outside, and there is nothing inside to tie it to',
       );
     }
     if (c.function === null) {
@@ -510,6 +516,10 @@ export function auditHead(ctx: Ctx): string[] {
     // be, and asking what the missing phrase is headed by is asking about
     // something the sentence never said.
     if (c.gap) continue;
+    // Neither does a coordination. *The cat and the dog* is two noun phrases
+    // joined, and neither is the head of the other — the same reason a joined
+    // clause is not asked what kind of verb it has.
+    if (isCoordination(ctx.cs, id)) continue;
     if (!HEAD_BEARING.includes(c.form)) continue;
     const heads = c.children.filter((k) => ctx.cs[k]?.function === 'head');
     if (heads.length === 0) f.push(`"${id}" is a ${c.form} with no head`);

@@ -360,10 +360,12 @@ describe('gaps and the phrases that fill them', () => {
     });
     const all = auditReading(r, s.words).all.join(' | ');
     assert.match(all, /is on 1 nodes/);
-    assert.match(all, /not tied to anything/);
+    assert.match(all, /not tied to the fronted phrase in its own clause/);
   });
 
-  it('a gap in a relative clause must not claim a filler inside it', () => {
+  it('a gap whose clause has no fronted phrase must not claim a filler', () => {
+    // The antecedent of a relative clause's gap is the nominal outside it, and
+    // a hollow clause borrows the matrix subject. Neither is inside to point at.
     const { r, s } = broken(subjectRelative, (r) => {
       r.constituents[idOf(r, (c) => c.gap === true)]!.index = 9;
       r.constituents[idOf(r, (c) => c.form === 'Subord')]!.index = 9;
