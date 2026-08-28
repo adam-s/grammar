@@ -1,5 +1,5 @@
 import { build, n, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ------------------------- ambiguous — I saw the man with the telescope. */
 
@@ -61,5 +61,4 @@ export const ambiguous = sentence(
   'contract fixture',
   [telescopeInstrument, telescopeModifier],
   'r1',
-  ['Vtr', 'PP-attachment', 'ambiguity'],
 );

@@ -208,19 +208,6 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
     }
   }
 
-  for (let i = a; i <= b; i++) {
-    // Punctuation inside the run is skipped, not waited for. It never gets a
-    // node, so requiring one would make *the mechanic repaired the engine, and
-    // the car started* impossible to group at the top.
-    if (isPunctuation(words[i]!)) continue;
-    if (rootAt(state, i) === null) {
-      return {
-        state: 'disabled',
-        reason: `Name what “${words[i]?.text}” is before grouping it with anything.`,
-      };
-    }
-  }
-
   // Grouping puts a new node over nodes that are currently loose. If one node
   // already covers all of these words and more, there is nothing loose in here
   // to group, and the pick would have done nothing at all.
@@ -286,7 +273,13 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
     // be folded into the first.
     if (isPhraseForm(form)) {
       if (!leaf) {
-        return state; // nothing to wrap yet; canWrap() explains why
+        // A phrase over a word nobody has named yet. Legal, and unfinished:
+        // `auditStructure` is what says a phrase needs something inside it, and
+        // it says so when the parse is graded rather than while it is drawn.
+        if (isPunctuation(words[a]!)) return state;
+        const id = `c${++seq}`;
+        cs[id] = { form, function: null, parent: null, children: [], span: [a, a] };
+        return { constituents: cs, seq };
       }
       if (cs[leaf]!.form === form) return state; // a node cannot go inside itself
       const id = `c${++seq}`;
@@ -307,12 +300,19 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   const kids = roots({ ...state, constituents: cs }).filter(
     (id) => !cs[id]!.gap && inSpan(span, cs[id]!.span[0]),
   );
-  if (kids.length === 0) return state;
-  // The node's extent is what it actually holds, not what the pointer swept.
-  // A selection that runs over the closing period should produce a sentence
-  // that ends at the last word, not one that claims the period.
-  const lo = Math.min(...kids.map((k) => cs[k]!.span[0]));
-  const hi = Math.max(...kids.map((k) => cs[k]!.span[1]));
+  // The node's extent is the run that was chosen, minus any punctuation at its
+  // edges: a selection dragged over the closing period should produce a
+  // sentence that ends at the last word, not one that claims the period.
+  //
+  // Taken from the selection and not from the union of the children, because a
+  // phrase may be drawn before the words inside it are named — top-down is how
+  // the course works, and a span inferred from children would silently shrink
+  // the node to whichever words happened to be labelled already.
+  const inside: number[] = [];
+  for (let i = a; i <= b; i++) if (!isPunctuation(words[i]!)) inside.push(i);
+  if (inside.length === 0) return state;
+  const lo = inside[0]!;
+  const hi = inside.at(-1)!;
   const id = `c${++seq}`;
   cs[id] = { form, function: null, parent: null, children: kids, span: [lo, hi] };
   for (const k of kids) cs[k]!.parent = id;

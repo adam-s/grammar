@@ -5,32 +5,33 @@
  * a long time, and stopped being true the moment a fixture held two — a number
  * nobody derives is a number nobody checks.
  */
-import { textOf, type BuiltReading } from '../build.ts';
-import type { SentenceEntry } from '../types.ts';
+import { textOf, type BuiltReading } from './build.ts';
+import type { SentenceEntry, SentenceProvenance, SentenceSource } from './types.ts';
 
 export function sentence(
   id: string,
   locator: string,
   built: BuiltReading[],
   canonicalId: string,
-  features: string[],
+  source: Partial<SentenceSource> = {},
+  provenance: Partial<SentenceProvenance> = {},
 ): SentenceEntry {
   const words = built[0]!.words;
   const depth = Math.max(...built.map((b) => depthOf(b)));
   return {
     id,
     text: textOf(words),
-    source: { work: 'fixture', gutenbergId: 0, locator },
+    source: { work: 'fixture', locator, ...source },
     words,
     readings: built.map((b) => b.reading),
     canonicalId,
-    features,
     metrics: { tokens: words.length, clauses: clausesOf(built[0]!), depth },
     provenance: {
       parser: 'hand',
       reviewedBy: 'contract',
       reviewedAt: '2026-08-27',
       audits: 'pass',
+      ...provenance,
     },
   };
 }

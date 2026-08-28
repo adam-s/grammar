@@ -8,7 +8,11 @@ test('every lesson has a stable, distinct route', () => {
   const hrefs = COURSE_LESSONS.map((lesson) => lessonHref(lesson.id));
 
   assert.equal(new Set(hrefs).size, COURSE_LESSONS.length);
-  assert.deepEqual(hrefs, ['/lessons/01-introduction', '/lessons/02-sentence-frame']);
+  // The shape, not a second copy of the running order. Listing the hrefs here
+  // meant every new lesson broke a test that was checking nothing.
+  for (const lesson of COURSE_LESSONS) {
+    assert.equal(lessonHref(lesson.id), `/lessons/${lesson.id}`);
+  }
 });
 
 test('lesson route segments are URL-safe', () => {

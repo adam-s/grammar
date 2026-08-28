@@ -99,14 +99,12 @@ describe('states carry the message', () => {
     assert.match(p.prompt, /select/i);
   });
 
-  it('blocks every form with the same reason when the SPAN cannot be a group', () => {
-    // Nothing is named yet, so "She repaired" is not groupable at all.
+  it('offers a phrase over a run nobody has named yet', () => {
+    // "She repaired" is groupable with nothing labelled inside it. Naming the
+    // parts is a later question, not a precondition.
     const p = optionsFor(emptyBuild(), W, { kind: 'span', span: [0, 1] });
-    assert.ok(p.blocked);
-    const g = group(p, 'phrase-form')!;
-    assert.ok(g.options.every((o) => o.state === 'blocked'));
-    assert.ok(g.options.every((o) => o.note === p.blocked));
-    assert.equal(pickable(p).length, 0);
+    assert.equal(p.blocked, undefined);
+    assert.ok(isPickable(opt(p, 'form:NP')!));
   });
 
   it('blocks a crossing bracket with the words it would cut', () => {
@@ -115,14 +113,12 @@ describe('states carry the message', () => {
     assert.match(p.blocked ?? '', /the engine/);
   });
 
-  it('blocks one-word phrases until the word itself has a class', () => {
+  it('offers a one-word phrase on a word that has no class yet', () => {
     const p = optionsFor(emptyBuild(), W, { kind: 'span', span: [3, 3] });
-    // The word class is open…
+    // Both rows work, and they mean different things: one names the word, the
+    // other puts a phrase over it. A one-word predicate needs the second.
     assert.ok(isPickable(opt(p, 'form:N')!));
-    // …but "engine is a noun phrase" is a claim about a noun you have not made.
-    const np = opt(p, 'form:NP')!;
-    assert.equal(np.state, 'blocked');
-    assert.match(np.note ?? '', /engine/);
+    assert.ok(isPickable(opt(p, 'form:NP')!));
   });
 
   it('marks the label already applied as chosen', () => {

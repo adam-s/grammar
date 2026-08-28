@@ -1,5 +1,5 @@
 import { build, gap, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ------------- the nominal layer — She repaired the old red engine.
  *
@@ -46,7 +46,6 @@ export const nominal = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'nominal', 'premodifier', 'determiner-scope'],
 );
 
 /* ---------------- stacking on the same words — Old engines stall.
@@ -85,7 +84,6 @@ export const stacked = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'nominal', 'same-span-stack', 'premodifier'],
 );
 
 /* ---- a determinative phrase and a name — Almost every driver knows New York.
@@ -133,7 +131,6 @@ export const determinativeAndName = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'determinative-phrase', 'flat', 'proper-name'],
 );
 
 /* ------- one word, two jobs — Most were gone, and the poor complained.
@@ -195,7 +192,6 @@ export const fused = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'Vint', 'fusion', 'determiner-head', 'modifier-head', 'two-clause'],
 );
 
 /* --------- a fused relative — What he wants is a rest.
@@ -254,5 +250,4 @@ export const fusedRelative = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'Vtr', 'fused-relative', 'gap', 'two-clause'],
 );

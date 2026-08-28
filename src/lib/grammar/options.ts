@@ -39,7 +39,6 @@ import {
   gappableSlots,
   hypothesisFor,
   nodeOver,
-  roots,
   type BuildState,
   type Span,
 } from './builder.ts';
@@ -237,10 +236,20 @@ export interface Panel {
   blocked?: string;
 }
 
-/** Which labels a chapter has taught. Absent means "everything". */
+/**
+ * Which labels a lesson has taught. An absent list means "everything".
+ *
+ * Four axes, because the course introduces them on four different schedules:
+ * the six verb types arrive one lesson at a time while the phrase forms are
+ * already all in play, and a clause kind is a third thing again. A scope that
+ * only knew about forms and functions would show a lesson-8 learner all six
+ * verb types on the day they meet their first one.
+ */
 export interface ChapterScope {
   forms?: readonly Form[];
   functions?: readonly Func[];
+  verbTypes?: readonly VerbType[];
+  clauseKinds?: readonly ClauseKind[];
 }
 
 export type Selection =
@@ -330,23 +339,16 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
   const verdict = canWrap(state, words, span);
   const blocked = verdict.state === 'disabled' ? verdict.reason : undefined;
 
-  // A one-word phrase is built OVER a labelled word, so the word class comes
-  // first. This is the rule the old chooser expressed by silently doing
-  // nothing when you picked `Noun phrase` on an unnamed word.
-  const leaf = roots(state).find((id) => state.constituents[id]!.word === span[0]);
-  const needsWordClass = single && !leaf ? `Name what ${quote(words, span)} is first.` : undefined;
-
   const existing = nodeOver(state, span);
   const chosenForm = existing ? state.constituents[existing]!.form : null;
 
   const evidence = new Map(suggest(words, span).map((s) => [s.form, s.evidence]));
 
-  const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
+  const build = (forms: readonly Form[]): LabelOption[] =>
     forms.map((f) => {
       const answered = chosenForm !== null && forms.includes(chosenForm);
       if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
       if (blocked) return formOption(f, 'blocked', blocked);
-      if (phrase && needsWordClass) return formOption(f, 'blocked', needsWordClass);
       if (f === chosenForm) return formOption(f, 'chosen');
       // Evidence helps answer an open question. Once this group already has an
       // answer, promoting a conflicting heuristic makes the current label look
@@ -361,16 +363,13 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
           id: 'word-class',
           question: `What is ${quote(words, span)}?`,
           notes: 'ondemand',
-          options: build(WORD_FORMS, false),
+          options: build(WORD_FORMS),
         },
         {
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',
           notes: 'ondemand',
-          options: build(
-            PHRASE_FORMS.filter((f) => f !== 'S'),
-            true,
-          ),
+          options: build(PHRASE_FORMS.filter((f) => f !== 'S')),
         },
       ]
     : [
@@ -380,7 +379,7 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
           // not merely disabled here — the question is a different one.
           question: `What is ${quote(words, span)}?`,
           notes: 'ondemand',
-          options: build(PHRASE_FORMS, false),
+          options: build(PHRASE_FORMS),
         },
       ];
 
@@ -438,8 +437,12 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     options: VERB_TYPE_MENU.map((v) => ({
       key: `vt:${v.type}`,
       label: v.label,
-      note: v.example,
-      state: (c.verbType === v.type ? 'chosen' : 'available') as OptionState,
+      note: inScope(v.type, scope.verbTypes) ? v.example : 'not taught yet',
+      state: (c.verbType === v.type
+        ? 'chosen'
+        : inScope(v.type, scope.verbTypes)
+          ? 'available'
+          : 'untaught') as OptionState,
       verbType: v.type,
     })),
   };
@@ -545,8 +548,12 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     options: CLAUSE_KINDS.map((value) => ({
       key: `kind:${value}`,
       label: value === 'interrogative' ? 'question' : value,
-      note: CLAUSE_KIND_NOTE[value],
-      state: (c.clauseKind === value ? 'chosen' : 'available') as OptionState,
+      note: inScope(value, scope.clauseKinds) ? CLAUSE_KIND_NOTE[value] : 'not taught yet',
+      state: (c.clauseKind === value
+        ? 'chosen'
+        : inScope(value, scope.clauseKinds)
+          ? 'available'
+          : 'untaught') as OptionState,
       clauseKind: value,
     })),
   };

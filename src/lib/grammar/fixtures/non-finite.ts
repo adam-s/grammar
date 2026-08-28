@@ -1,5 +1,5 @@
 import { build, gap, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ---------------- an infinitive clause — She wanted to leave the engine.
  *
@@ -55,7 +55,6 @@ export const infinitive = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'infinitive', 'nominal-clause', 'marker', 'non-finite', 'two-clause'],
 );
 
 /* ------------------ a verbal particle — She looked up the number.
@@ -94,7 +93,6 @@ export const particle = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'particle', 'phrasal-verb', 'directObject'],
 );
 
 /* --------- particle shift — She looked the number up.
@@ -134,7 +132,6 @@ export const particleShift = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'particle', 'particle-shift', 'phrasal-verb'],
 );
 
 /* ----------- a hollow clause — The box was too heavy to lift.
@@ -187,7 +184,6 @@ export const hollowClause = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'Vtr', 'hollow-clause', 'gap', 'infinitive', 'two-clause'],
 );
 
 /* -- two introducing words — The box was too heavy for anyone to lift.
@@ -245,5 +241,4 @@ export const twoMarkers = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'Vtr', 'two-markers', 'infinitive', 'gap', 'two-clause'],
 );

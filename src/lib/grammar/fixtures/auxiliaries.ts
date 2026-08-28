@@ -1,5 +1,5 @@
 import { build, n, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ---- an auxiliary chain — The mechanic has been repairing the engine.
  *
@@ -39,7 +39,6 @@ export const auxiliaryChain = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'auxiliary', 'auxiliary-chain', 'directObject'],
 );
 
 /* ---- the passive — The engine was repaired by the mechanic.
@@ -88,5 +87,4 @@ export const passive = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'passive', 'auxiliary', 'voice'],
 );

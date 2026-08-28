@@ -1,5 +1,5 @@
 import { build, gap, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* --- verb-phrase ellipsis — She repaired the engine, and he will too.
  *
@@ -73,7 +73,6 @@ export const vpEllipsis = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'ellipsis', 'vp-ellipsis', 'coordination', 'two-clause'],
 );
 
 /* ---- gapping — The PM arrived at six and the Queen at seven.
@@ -143,7 +142,6 @@ export const gapping = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'ellipsis', 'gapping', 'coordination', 'two-clause'],
 );
 
 /* ---- sluicing — She repaired something, but I forgot what.
@@ -221,7 +219,6 @@ export const sluicing = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'ellipsis', 'sluicing', 'prenucleus', 'two-clause'],
 );
 
 /* --- stripping — She repaired the engine, and the car too.
@@ -287,5 +284,4 @@ export const stripping = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'ellipsis', 'stripping', 'coordination', 'two-clause'],
 );

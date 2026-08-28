@@ -1,5 +1,5 @@
 import { build, gap, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ------------------------------ two clauses — The horse raced past the barn fell.
  *
@@ -56,7 +56,6 @@ export const gardenPath = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'relative-clause', 'reduced-relative', 'garden-path', 'two-clause'],
 );
 
 /* ------------------------- a clause as an object — She knew the engine stalled.
@@ -101,7 +100,6 @@ export const objectClause = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'Vint', 'nominal-clause', 'two-clause', 'clause-as-object'],
 );
 
 /* ------------- deep nesting — The keys are on the table in the hall. (S V A)
@@ -156,7 +154,6 @@ export const deepNesting = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'obligatory-adverbial', 'PP-in-PP', 'deep'],
 );
 
 /* ------- an adverbial clause — The engine stalled because the belt broke.
@@ -207,7 +204,6 @@ export const adverbialClause = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'adverbial-clause', 'subordinator', 'marker', 'two-clause'],
 );
 
 /* ----- a subject relative — The engine that stalled was repaired.
@@ -273,5 +269,4 @@ export const subjectRelative = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'Vtr', 'relative-clause', 'gap', 'passive', 'two-clause'],
 );

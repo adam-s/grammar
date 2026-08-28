@@ -1,5 +1,5 @@
 import { build, gap, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ------- a fronted phrase and its gap — He knew what she repaired.
  *
@@ -51,7 +51,6 @@ export const frontedPhrase = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'gap', 'coindexation', 'prenucleus', 'nominal-clause', 'two-clause'],
 );
 
 /* ------------- a question — What did the mechanic repair?
@@ -96,7 +95,6 @@ export const question = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'question', 'inversion', 'gap', 'prenucleus'],
 );
 
 /* ------- extraposition — It is a good thing that we left.
@@ -149,7 +147,6 @@ export const extraposition = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'extraposition', 'placeholderSubject', 'nominal-clause', 'two-clause'],
 );
 
 /* -------- extraposition from a noun phrase — A man came in who I knew.
@@ -210,7 +207,6 @@ export const tailClause = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'Vtr', 'postnucleus', 'extraposition-from-NP', 'gap', 'two-clause'],
 );
 
 /* ------- a cleft — It was John who broke the belt.
@@ -264,7 +260,6 @@ export const cleft = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'Vtr', 'cleft', 'postnucleus', 'gap', 'two-clause'],
 );
 
 /* --- a comparative — More people came than we expected.
@@ -317,7 +312,6 @@ export const comparative = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'Vtr', 'comparative', 'postnucleus', 'gap', 'two-clause'],
 );
 
 /* ---- one question of two clauses — What did John buy and Mary sell?
@@ -383,5 +377,4 @@ export const acrossTheBoard = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'across-the-board', 'gap', 'coordination', 'prenucleus', 'two-clause'],
 );

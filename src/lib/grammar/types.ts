@@ -405,10 +405,13 @@ export interface Reading {
 }
 
 export interface SentenceSource {
+  /** The work it was taken from, or `constructed` when nobody took it. */
   work: string;
-  gutenbergId: number;
+  /** Where in that work — or, for a constructed sentence, what it was made for. */
   locator: string;
-  translation?: string;
+  /** Only for a Project Gutenberg text. A constructed sentence has no id, and
+      storing 0 to fill the field made every sentence look sourced. */
+  gutenbergId?: number;
 }
 
 export interface SentenceMetrics {
@@ -432,40 +435,9 @@ export interface SentenceEntry {
   readings: Reading[];
   /** Reading id that matches what the source passage actually means. */
   canonicalId: string;
-  /** Index for problem authoring: "sentences with Vg and a relative clause". */
-  features: string[];
   metrics: SentenceMetrics;
   provenance: SentenceProvenance;
 }
-
-/* -------------------------------------------------------------- problems */
-
-export type TaskKind =
-  'classify-verb' | 'label-spans' | 'click-the-part' | 'reattach' | 'find-alternate';
-
-export interface Problem {
-  id: string;
-  chapter: number;
-  sentenceId: string;
-  readingId: string;
-  task: TaskKind;
-  /** Constituent ids pre-placed for the learner. */
-  given: string[];
-  /** Constituent ids the learner must produce. */
-  toFind: string[];
-  hints?: string[];
-}
-
-/* -------------------------------------------------------------- glossary */
-
-export interface GlossaryEntry {
-  short: string;
-  test?: string;
-  example?: string;
-  seeAlso?: string[];
-}
-
-export type Glossary = Record<string, GlossaryEntry>;
 
 /* --------------------------------------------------------------- helpers */
 

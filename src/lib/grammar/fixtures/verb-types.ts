@@ -1,5 +1,5 @@
 import { build, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* -------------------------------------------------- Vint — The engine stalled. */
 
@@ -25,7 +25,6 @@ export const vint = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'determiner'],
 );
 
 /* ---------------------------------------------- Vtr — She repaired the engine. */
@@ -55,7 +54,6 @@ export const vtr = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'directObject'],
 );
 
 /* ------------------------------------- Vbe — The keys are on the table. (S V A) */
@@ -98,7 +96,6 @@ export const vbe = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'obligatory-adverbial', 'PP'],
 );
 
 /* ------------------------------------------ Vlink — The soup tasted salty. */
@@ -128,7 +125,6 @@ export const vlink = sentence(
     ),
   ],
   'r1',
-  ['Vlink', 'subjectComplement', 'AdjP'],
 );
 
 /* --------------------------------------------- Vg — He gave her the keys. */
@@ -162,7 +158,6 @@ export const vg = sentence(
     ),
   ],
   'r1',
-  ['Vg', 'indirectObject'],
 );
 
 /* ------------------------------------ Vc — They considered him reliable. */
@@ -193,7 +188,6 @@ export const vc = sentence(
     ),
   ],
   'r1',
-  ['Vc', 'objectComplement'],
 );
 
 /* ---- forms written down — The mechanic broke the belt.
@@ -252,5 +246,4 @@ export const irregular = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'irregular-verb', 'authored-forms'],
 );

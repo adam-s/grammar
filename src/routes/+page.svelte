@@ -71,9 +71,7 @@
   const lessonId = $derived(lessonById(routeLessonId).id);
   let middleView = $state<'lesson' | 'diagram'>('lesson');
   const lesson = $derived(lessonById(lessonId));
-  const lessonSentences = $derived(
-    lesson.sentenceIds.map((id) => FIXTURES.find((sentence) => sentence.id === id)!),
-  );
+  const lessonSentences = $derived(lesson.sentences);
   /** A lesson with authored prose reads as a document; one without still shows
       its finished diagrams, so an unwritten lesson is visibly unwritten. */
   const doc = $derived(lessonDoc(lessonId));

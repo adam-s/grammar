@@ -1,5 +1,5 @@
 import { build, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* -- punctuation — The mechanic repaired the engine, and the car started.
  *
@@ -59,7 +59,6 @@ export const punctuation = sentence(
     ),
   ],
   'r1',
-  ['Vtr', 'Vint', 'coordination', 'punctuation', 'two-clause'],
 );
 
 /* ------------- a supplement — Unfortunately, the engine stalled.
@@ -98,7 +97,6 @@ export const supplement = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'supplement', 'punctuation'],
 );
 
 /* ------------- existential "there" — There is a problem.
@@ -141,5 +139,4 @@ export const existential = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'existential', 'placeholder', 'displaced'],
 );

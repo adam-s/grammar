@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
 import {
+  asConstituents,
   canWrap,
   emptyBuild,
   hypothesisFor,
@@ -64,10 +65,27 @@ describe('single words', () => {
 });
 
 describe('grouping', () => {
-  it('refuses to group words that have not been named', () => {
-    const v = canWrap(emptyBuild(), W, [2, 3]);
-    assert.equal(v.state, 'disabled');
-    if (v.state === 'disabled') assert.match(v.reason, /Name what “the” is before grouping/);
+  it('groups words that have not been named, because the course works top-down', () => {
+    // Finding the subject comes before naming the words in it. The builder used
+    // to refuse this, which made lesson 1 impossible to build: every sentence
+    // holds a determiner, and determiners are lesson 6.
+    assert.equal(canWrap(emptyBuild(), W, [2, 3]).state, 'allowed');
+    const s = wrap(emptyBuild(), W, [2, 3], 'NP');
+    const np = roots(s)[0]!;
+    assert.deepEqual(s.constituents[np]!.span, [2, 3]);
+    assert.deepEqual(s.constituents[np]!.children, []);
+  });
+
+  it('leaves a phrase drawn over bare words unfinished, and says so when graded', () => {
+    // Legal to draw, not a finished parse. The rule did not disappear; it moved
+    // to the one place that can tell the difference.
+    const s = wrap(emptyBuild(), W, [2, 3], 'NP');
+    const report = auditReading(
+      { id: 'r', status: 'canonical', gloss: 'unfinished', constituents: asConstituents(s) },
+      W,
+    );
+    assert.equal(report.ok, false);
+    assert.match(report.all.join(' '), /NP with no children/);
   });
 
   it('groups named words into a phrase whose children are those words', () => {

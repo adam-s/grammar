@@ -1,5 +1,5 @@
 import { build, n, pt, w } from '../build.ts';
-import { sentence } from './sentence.ts';
+import { sentence } from '../entry.ts';
 
 /* ---------------- coordination — The engine stalled and the car stopped.
  *
@@ -54,7 +54,6 @@ export const coordination = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'coordination', 'two-clause'],
 );
 
 /* ---------- a coordinated subject — The cat and the dog ran.
@@ -91,5 +90,4 @@ export const coordinatedSubject = sentence(
     ),
   ],
   'r1',
-  ['Vint', 'coordination', 'coordinated-subject'],
 );
