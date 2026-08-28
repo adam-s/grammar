@@ -217,9 +217,9 @@ Status values are deliberately explicit:
 | 2   | They painted the shutters green.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 3   | The court declared the contract void.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 4   | The members elected the lawyer chair.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 5   | They called her a taxi.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | They called her a genius.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The porter handed the guest a key.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 5   | They made her a cake.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | They made her a partner.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | The clerk handed the visitor a form.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | The board appointed the engineer adviser. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | The owners named the boat Endeavour.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 10  | The inspector judged the wiring unsafe.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
@@ -228,14 +228,14 @@ Status values are deliberately explicit:
 
 | #   | Sentence                                | Natural reading                                    | Intended parse               | Scope reach         | Model / fixture        |
 | --- | --------------------------------------- | -------------------------------------------------- | ---------------------------- | ------------------- | ---------------------- |
-| 1   | The keys are on the table.              | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 1   | Our keys are on that table.             | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 2   | The museum is beside the river.         | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 3   | She put the milk in the fridge.         | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | She placed the files on the desk.       | Rewritten after review; human confirmation pending | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 5   | The children played outside.            | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | She placed some files on the desk.      | Rewritten after review; human confirmation pending | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 5   | Those children played outside.          | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 6   | She placed the box under the bench.     | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 7   | She opened the box under the bench.     | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | The ladder is against the wall.         | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | A ladder is against the wall.           | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | The driver waited at the depot.         | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 10  | The driver put the engine at the depot. | Rewritten after review; human confirmation pending | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 

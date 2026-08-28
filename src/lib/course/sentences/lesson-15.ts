@@ -1,45 +1,47 @@
 /**
- * Lesson 15 — The six types, one procedure. All seven patterns in one set.
+ * Lesson 15 — The six types, one procedure. Where counting stops working.
  *
- * Nothing new is taught here. The point is that the same first question —
- * find the verb, ask what it needs — settles every one of them, so the
- * sentences arrive unsorted and the learner has to run the procedure rather
- * than remember which lesson they are in.
+ * Items 1 to 7 are the paradigm, one sentence per frame, in the order the verb
+ * adds demands. Items 8 and 9 are why the procedure is needed: five words each,
+ * three noun phrases each, and only the `be` test tells them apart — *she is a
+ * genius* holds, *she is a taxi* does not.
+ *
+ * The hardest sentence in the lesson is one of the shortest, which is the whole
+ * argument of docs/course/difficulty.md in one row.
  */
 import { adj, det, pp, pron, sv, sva, svc, svo, svoa, svoc, svoo, v } from './shape.ts';
 
 export const LESSON_15 = [
-  svoa(
-    'c15-a',
-    15,
-    pron('She'),
-    v('put', 'put', 'Vtr'),
-    det('the', 'letter'),
-    pp('on', det('the', 'desk')),
-    'She placed the letter on the desk.',
-  ),
   sv(
-    'c15-b',
+    'c15-a',
     15,
     det('Those', 'negotiations'),
     v('collapsed', 'collapse', 'Vint'),
-    'Those negotiations broke down.',
+    'Those talks broke down.',
   ),
   svo(
-    'c15-c',
+    'c15-b',
     15,
     det('The', 'auditor'),
     v('questioned', 'question', 'Vtr'),
     det('the', 'figures'),
-    'The auditor challenged the figures.',
+    'The auditor challenged the numbers.',
   ),
   svc(
-    'c15-d',
+    'c15-c',
     15,
     det('The', 'explanation'),
     v('sounded', 'sound', 'Vlink'),
     adj('plausible'),
-    'The explanation seemed believable.',
+    'The account seemed believable.',
+  ),
+  svc(
+    'c15-d',
+    15,
+    det('That', 'chairman'),
+    v('was', 'be', 'Vbe'),
+    det('a', 'banker'),
+    'That chairman worked in banking.',
   ),
   svoo(
     'c15-e',
@@ -48,7 +50,7 @@ export const LESSON_15 = [
     v('gave', 'give', 'Vg'),
     det('the', 'apprentice'),
     det('a', 'warning'),
-    'The foreman warned the apprentice.',
+    'The foreman warned the trainee.',
   ),
   svoc(
     'c15-f',
@@ -57,7 +59,7 @@ export const LESSON_15 = [
     v('declared', 'declare', 'Vc'),
     det('the', 'building'),
     adj('unsafe'),
-    'The inspector ruled the building unsafe.',
+    'The inspector ruled the building dangerous.',
   ),
   sva(
     'c15-g',
@@ -65,34 +67,33 @@ export const LESSON_15 = [
     det('The', 'archive'),
     v('is', 'be', 'Vbe'),
     pp('below', det('the', 'stairs')),
-    'The archive is kept below the stairs.',
+    'The records are kept under the stairs.',
   ),
-  svo(
+  svoo(
     'c15-h',
     15,
-    det('The', 'flood'),
-    v('destroyed', 'destroy', 'Vtr'),
-    det('the', 'harvest'),
-    'The flood ruined the harvest.',
+    pron('They'),
+    v('called', 'call', 'Vg'),
+    pron('her'),
+    det('a', 'taxi'),
+    'They booked a cab for her.',
   ),
-  svc(
+  svoc(
     'c15-i',
     15,
-    det('That', 'chairman'),
-    v('was', 'be', 'Vbe'),
-    det('a', 'banker'),
-    'That chairman worked as a banker.',
+    pron('They'),
+    v('called', 'call', 'Vc'),
+    pron('her'),
+    det('a', 'genius'),
+    'They said she was brilliant.',
   ),
   svoa(
     'c15-j',
     15,
-    det('The', 'porters'),
-    // `carried` is not the verb for this pattern: *The porters carried the
-    // crates* is already a sentence, so the place phrase would be an ordinary
-    // adverbial and not a required one. `placed` cannot be left bare.
-    v('placed', 'place', 'Vtr'),
-    det('the', 'crates'),
-    pp('in', det('the', 'hall')),
-    'The porters set the crates down in the hall.',
+    pron('She'),
+    v('kept', 'keep', 'Vtr'),
+    det('the', 'milk'),
+    pp('in', det('the', 'fridge')),
+    'She stored the milk in the cold.',
   ),
 ];

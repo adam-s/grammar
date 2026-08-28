@@ -1,20 +1,25 @@
 /**
- * Lesson 14 — When an adverbial is required. Take the place phrase away and
- * what is left is not a sentence.
+ * Lesson 14 — When an adverbial is required. Now with optional ones to reject.
  *
- * *The keys are* is not English. That failure is the test, and it is what
- * separates a required adverbial from the ordinary kind that can be dropped.
+ * The built set was the most clearly broken lesson in Stage 2: all ten of its
+ * adverbials were obligatory and none was optional, so the removal test — the
+ * whole point of the lesson — had nothing to turn down, and every verb was a
+ * form of `be`.
+ *
+ * Items 6 and 7 differ by one word, and that word decides whether the phrase can
+ * go. *She opened the box.* is a sentence; *She placed the box.* is not. Items 9
+ * and 10 do it again with a different verb pair.
  */
-import { det, pp, pron, sva, v } from './shape.ts';
+import { adv, det, pp, pron, sva, svoa, svoPlus, svPlus, v } from './shape.ts';
 
 export const LESSON_14 = [
   sva(
     'c14-a',
     14,
-    det('The', 'keys'),
+    det('Our', 'keys'),
     v('are', 'be', 'Vbe'),
-    pp('on', det('the', 'table')),
-    'The keys are lying on the table.',
+    pp('on', det('that', 'table')),
+    'The keys lie on the table.',
   ),
   sva(
     'c14-b',
@@ -22,70 +27,75 @@ export const LESSON_14 = [
     det('The', 'museum'),
     v('is', 'be', 'Vbe'),
     pp('beside', det('the', 'river')),
-    'The museum stands next to the river.',
+    'The museum stands by the river.',
   ),
-  sva(
+  svoa(
     'c14-c',
     14,
-    det('Those', 'children'),
-    v('were', 'be', 'Vbe'),
-    pp('in', det('the', 'garden')),
-    'Those children were out in the garden.',
+    pron('She'),
+    v('put', 'put', 'Vtr'),
+    det('the', 'milk'),
+    pp('in', det('the', 'fridge')),
+    'She stored the milk in the cold.',
   ),
-  sva(
+  svoa(
     'c14-d',
     14,
-    det('The', 'meeting'),
-    v('is', 'be', 'Vbe'),
-    pp('at', det('the', 'library')),
-    'The meeting takes place at the library.',
+    pron('She'),
+    v('placed', 'place', 'Vtr'),
+    det('some', 'files'),
+    pp('on', det('the', 'desk')),
+    'She set the files down on the desk.',
   ),
-  sva(
+  svPlus(
     'c14-e',
     14,
-    det('Several', 'letters'),
-    v('are', 'be', 'Vbe'),
-    pp('under', det('the', 'mat')),
-    'Several letters lie under the mat.',
+    det('Those', 'children'),
+    v('played', 'play', 'Vint'),
+    adv('outside'),
+    'The children amused themselves out of doors.',
   ),
-  sva(
+  svoa(
     'c14-f',
     14,
-    det('The', 'fault'),
-    v('was', 'be', 'Vbe'),
-    pp('in', det('the', 'wiring')),
-    'The wiring was where the fault lay.',
+    pron('She'),
+    v('placed', 'place', 'Vtr'),
+    det('the', 'box'),
+    pp('under', det('the', 'bench')),
+    'She set the box down beneath the bench.',
   ),
-  sva(
+  svoPlus(
     'c14-g',
     14,
     pron('She'),
-    v('was', 'be', 'Vbe'),
-    pp('at', det('the', 'window')),
-    'She stood at the window.',
+    v('opened', 'open', 'Vtr'),
+    det('the', 'box'),
+    pp('under', det('the', 'bench')),
+    'She undid the box while beneath the bench.',
   ),
   sva(
     'c14-h',
     14,
-    det('The', 'ladder'),
+    det('A', 'ladder'),
     v('is', 'be', 'Vbe'),
     pp('against', det('the', 'wall')),
-    'The ladder leans against the wall.',
+    'The ladder leans on the wall.',
   ),
-  sva(
+  svPlus(
     'c14-i',
     14,
-    det('The', 'answer'),
-    v('was', 'be', 'Vbe'),
-    pp('on', det('the', 'board')),
-    'The answer had been written on the board.',
+    det('The', 'driver'),
+    v('waited', 'wait', 'Vint'),
+    pp('at', det('the', 'depot')),
+    'The driver stayed put at the yard.',
   ),
-  sva(
+  svoa(
     'c14-j',
     14,
-    det('The', 'boats'),
-    v('are', 'be', 'Vbe'),
-    pp('past', det('the', 'bridge')),
-    'The boats lie beyond the bridge.',
+    det('The', 'driver'),
+    v('put', 'put', 'Vtr'),
+    det('the', 'engine'),
+    pp('at', det('the', 'depot')),
+    'The driver left the engine at the yard.',
   ),
 ];

@@ -1,11 +1,16 @@
 /**
- * Lesson 12 — Two objects. Someone is given something.
+ * Lesson 12 — Two objects. The article stops being the answer.
  *
- * The receiver comes first and neither slot can be dropped: *the porter
- * handed the guest* is not a sentence, and neither is *the porter handed a
- * key* in the sense this one has.
+ * In all ten built sentences the indirect object was definite and the direct
+ * object began with *a*, so looking for the article scored ten out of ten and
+ * the *to* or *for* paraphrase was never needed. Items 4, 5 and 7 break that three
+ * different ways.
+ *
+ * Item 8 is the paraphrase made into a sentence: *gave a map to us* has the same
+ * words as *gave us a map* and a different tree — one object and an adverbial,
+ * not two objects. It is what stops "three noun phrases" becoming the rule.
  */
-import { det, pron, svoo, v } from './shape.ts';
+import { adjn, det, pp, pron, svo, svoPlus, svoo, v } from './shape.ts';
 
 export const LESSON_12 = [
   svoo(
@@ -15,79 +20,77 @@ export const LESSON_12 = [
     v('handed', 'hand', 'Vg'),
     det('the', 'guest'),
     det('a', 'key'),
-    'The porter gave the guest a key.',
+    'The porter passed a key to the guest.',
   ),
   svoo(
     'c12-b',
-    12,
-    det('The', 'bank'),
-    v('sold', 'sell', 'Vg'),
-    det('the', 'couple'),
-    det('a', 'mortgage'),
-    'The bank sold a mortgage to the couple.',
-  ),
-  svoo(
-    'c12-c',
     12,
     pron('She'),
     v('told', 'tell', 'Vg'),
     det('the', 'children'),
     det('a', 'story'),
-    'She recounted a story to the children.',
+    'She recounted a story for the children.',
   ),
   svoo(
-    'c12-d',
+    'c12-c',
     12,
     det('The', 'teacher'),
     v('gave', 'give', 'Vg'),
     det('the', 'class'),
     det('a', 'warning'),
-    'The teacher warned the class.',
+    'The teacher warned the whole class.',
+  ),
+  svoo(
+    'c12-d',
+    12,
+    det('The', 'clerk'),
+    v('showed', 'show', 'Vg'),
+    det('a', 'visitor'),
+    det('the', 'map'),
+    'The clerk displayed the map to somebody visiting.',
   ),
   svoo(
     'c12-e',
     12,
-    det('The', 'landlord'),
-    v('offered', 'offer', 'Vg'),
-    det('the', 'tenant'),
-    det('a', 'lease'),
-    'The landlord proposed a lease to the tenant.',
+    pron('He'),
+    v('wrote', 'write', 'Vg'),
+    det('his', 'sister'),
+    det('the', 'letter'),
+    'He addressed the letter to his sister.',
   ),
-  svoo(
+  svo(
     'c12-f',
     12,
-    det('The', 'nurse'),
-    v('brought', 'bring', 'Vg'),
-    det('the', 'patient'),
-    det('a', 'blanket'),
-    'The nurse fetched the patient a blanket.',
+    det('The', 'porter'),
+    v('carried', 'carry', 'Vtr'),
+    adjn('the', 'heavy', 'cases'),
+    'The porter lifted the weighty luggage.',
   ),
   svoo(
     'c12-g',
     12,
-    det('The', 'clerk'),
-    v('showed', 'show', 'Vg'),
-    det('the', 'visitor'),
-    det('a', 'map'),
-    'The clerk displayed a map to the visitor.',
+    det('The', 'porter'),
+    v('brought', 'bring', 'Vg'),
+    det('the', 'guests'),
+    det('their', 'cases'),
+    'The porter fetched the luggage for them.',
   ),
-  svoo(
+  svoPlus(
     'c12-h',
     12,
-    pron('He'),
-    v('wrote', 'write', 'Vg'),
-    det('his', 'sister'),
-    det('a', 'postcard'),
-    'He composed a postcard for his sister.',
+    det('The', 'guide'),
+    v('gave', 'give', 'Vtr'),
+    det('a', 'map'),
+    pp('to', pron('us')),
+    'The guide handed a map in our direction.',
   ),
-  svoo(
+  svo(
     'c12-i',
     12,
-    det('The', 'charity'),
-    v('sent', 'send', 'Vg'),
-    det('the', 'village'),
-    det('a', 'pump'),
-    'The charity dispatched a pump to the village.',
+    det('The', 'nurse'),
+    v('brought', 'bring', 'Vtr'),
+    det('a', 'blanket'),
+    'The nurse fetched a cover.',
   ),
   svoo(
     'c12-j',
@@ -96,6 +99,6 @@ export const LESSON_12 = [
     v('taught', 'teach', 'Vg'),
     det('the', 'squad'),
     det('a', 'routine'),
-    'The coach instructed the squad in a routine.',
+    'The coach drilled the team in a routine.',
   ),
 ];

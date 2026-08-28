@@ -14,14 +14,14 @@ The fix is matched pairs, the same design lesson 20 already uses successfully.
 
 | #   | Sentence                                | The step                                            |
 | --- | --------------------------------------- | --------------------------------------------------- |
-| 1   | The keys are on the table.              | _be_ plus a place, which cannot be removed          |
+| 1   | Our keys are on that table.             | _be_ plus a place, which cannot be removed          |
 | 2   | The museum is beside the river.         | the same frame, so the pattern is visible           |
 | 3   | She put the milk in the fridge.         | **a verb that is not _be_**, and an object too      |
-| 4   | She placed the files on the desk.       | a second object-plus-place frame                    |
-| 5   | The children played outside.            | **an optional adverbial** — the first in the lesson |
+| 4   | She placed some files on the desk.      | a second object-plus-place frame                    |
+| 5   | Those children played outside.          | **an optional adverbial** — the first in the lesson |
 | 6   | She placed the box under the bench.     | required                                            |
 | 7   | She opened the box under the bench.     | **the same words, optional**                        |
-| 8   | The ladder is against the wall.         | back to _be_ after the pair                         |
+| 8   | A ladder is against the wall.           | back to _be_ after the pair                         |
 | 9   | The driver waited at the depot.         | optional                                            |
 | 10  | The driver put the engine at the depot. | **the same place phrase, required**                 |
 

@@ -21,9 +21,9 @@ Two clean formal tests exist and neither is in the app:
 | 2   | They painted the shutters green.          | the complement is the result, not a description |
 | 3   | The court declared the contract void.     | a formal frame, adjective complement            |
 | 4   | The members elected the lawyer chair.     | **a noun phrase as the complement**             |
-| 5   | They called her a taxi.                   | **two objects** — the _be_ test fails           |
-| 6   | They called her a genius.                 | **the same five words, an object complement**   |
-| 7   | The porter handed the guest a key.        | two objects again, from lesson 12               |
+| 5   | They made her a cake.                     | **two objects** — the _be_ test fails           |
+| 6   | They made her a partner.                  | **the same five words, an object complement**   |
+| 7   | The clerk handed the visitor a form.      | two objects again, from lesson 12               |
 | 8   | The board appointed the engineer adviser. | back to an object complement                    |
 | 9   | The owners named the boat Endeavour.      | a name as the complement                        |
 | 10  | The inspector judged the wiring unsafe.   | close on an adjective complement                |
