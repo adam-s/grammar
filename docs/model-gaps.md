@@ -44,6 +44,9 @@ thing blocked because no fixture used it.
 | Extraposition | *__It__ is a good thing that we left* | `placeholderSubject` and `extraposed`, audited as a pair |
 | Hollow clauses | *too heavy to lift __* | the gap rule generalised: a gap is indexed only when its own clause holds the filler |
 | Coordinated phrases | *the cat and the dog* | `auditHead` excusing a join, one level below the clause |
+| A tail position | *A man came in __who I knew__* | `postnucleus`, and an anchor link the learner chooses |
+| Clefts and comparatives | *It was __John__ who broke it* | the same tail position |
+| Two markers on one clause | *__for__ anyone __to__ lift* | one of each kind, rather than one in total |
 
 Each has a fixture, and every fixture is proved buildable through the interface
 by `--action=build-sweep`, not only well-formed on paper.
@@ -66,17 +69,38 @@ worse than a missing entry — it sends someone to fix what is not broken.
 - **Catenatives** — *seems to work*. An infinitival clause as the object of the
   first verb, which the infinitive work already made writable.
 
+## Discontinuity, and why it is not needed
+
+This was the last shape the tree could not take, and closing it took no code
+for it at all.
+
+*A man came in **who I knew*** looks like a noun phrase split by a verb, and
+three drafts of this document said so. It is not. English moves heavy material
+to the end rather than leaving it in the middle, so the relative clause is
+written where it is said — in the tail position — with a link back to what it
+belongs to. Both facts are on the page and every node is still a run of words.
+
+The same shape handles the families that were filed with it:
+
+| Was said to need a split node | Written instead as |
+| --- | --- |
+| *A man came in who I knew* | a tail clause tied to *a man* |
+| *It was John who broke the belt* | a tail clause tied to *John* |
+| *More people came than we expected* | a tail clause tied to *more people* |
+| *Did she repair it?* | an auxiliary hanging off the clause |
+| *She looked the number up* | three siblings in the predicate |
+
+That is the same result CGELBank reaches, and for the same reason: with gaps,
+fillers and a tail position, the trees come out projective. `auditContiguity`
+keeps saying a constituent is a run of words with no gaps, because it is.
+
+**What would still need it** is not a construction I can name in English. If
+one turns up, it will turn up as a sentence that cannot be written, and that is
+the right way to find out.
+
 ## What is still open
 
-Four things, and only one of them is close.
-
-**True discontinuity.** `auditContiguity` states the rule outright — *a
-constituent is a run of words with no gaps* — measured over the words a node
-could hold, so a comma inside a run is not a hole. What it still forbids is a
-node whose pieces are genuinely apart: *A man came in **who I knew***, where the
-noun phrase is split by the verb. Earlier drafts filed inversion, particle
-shift and heavy-NP shift under this heading; none of them belong there, and the
-family is one construction rather than five.
+Two things, and neither is close.
 
 **Ellipsis.** Gapping (*The PM arrived at six and the Queen an hour later*), VP
 ellipsis (*I will if you will*), sluicing, stripping. Probed: a `VP` whose head
@@ -89,14 +113,11 @@ is one id. CGEL needs a node doing two jobs at once — Determiner-Head in *__mo
 were gone* — and a supplement arguably has two parents. Everything that walks the
 tree assumes one of each.
 
-**Missing categories.** Smaller, and each is an enum entry plus a rule:
-
-| Missing | Example |
-| --- | --- |
-| `DP`, a determinative phrase | ***almost every*** *student* |
-| Interrogative and exclamative clause kinds | *whether he left*, *how tall he is* |
-| `flat` / `compounding` | *New York* — no internal head worth arguing about |
-| `postnucleus` | the tail position, which extraposition currently covers by name only |
+The list of missing categories that used to sit here is empty. `DP`, `flat`,
+`postnucleus`, and the interrogative and exclamative clause kinds all landed,
+and I have no probed candidate to replace them with. That is not the same as
+saying the inventory is complete — it means the next missing one will be found
+by a sentence that cannot be written, rather than by reading the enum.
 
 ## What the six verb types still cannot say
 

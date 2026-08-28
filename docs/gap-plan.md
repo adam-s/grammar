@@ -3,7 +3,8 @@
 Written 27 August 2026 after a night of closing gaps, replacing the earlier
 version of this file — which listed nine items, of which seven are now done.
 [model-gaps.md](model-gaps.md) says what the model can and cannot express; this
-says what to do next and roughly what it costs.
+says what to do next and roughly what it costs. Of the nine items it started
+with, eight are done and the ninth turned out not to be a thing.
 
 **Hour** means one sitting: a rule, a fixture, a test. **Day** means it touches
 the shared model and every fixture has to be re-checked. Sizes are honest
@@ -35,25 +36,16 @@ rather than quietly.
 lesson content all name `FIXTURES` or `BY_ID`; keep both names and the split is
 invisible to them.
 
-## 2 · Discontinuity — day, and a design question first
+## 2 · Discontinuity — DONE, by not doing it
 
-The last shape the tree cannot take. A node whose pieces are genuinely apart:
-*A man came in **who I knew***, where the noun phrase is split by the verb.
+Closed by probing rather than by building. `postnucleus` plus an anchor link
+writes extraposition from NP, the *it*-cleft and comparatives contiguously, and
+inversion, particle shift and heavy-NP shift never needed anything. The trees
+come out projective, which is what CGELBank gets and for the same reason.
 
-**What it touches:** `auditContiguity` states the opposite rule and would need
-a permission list rather than a blanket one; `layout.ts` draws a node's bracket
-from one left edge to one right edge and would need two; `nodeOver` and the
-selection model assume a node is a run.
-
-**The decision first,** and it is not obvious: which nodes may be discontinuous?
-"Any" is wrong — it would let a learner build nonsense and call it movement.
-The likely answer is the same shape as the gap rule: a node may be split only
-where something has moved out of it, which means discontinuity is a consequence
-of a filler-gap link rather than a thing you assert on its own.
-
-**Do not bundle** inversion, particle shift or heavy-NP shift into this. The
-earlier version of this file did; all three were already buildable, and none of
-them involves a split node.
+`auditContiguity` still says a constituent is a run of words with no gaps,
+because it is. If a construction turns up that genuinely needs a split node, it
+will turn up as a sentence nobody can write.
 
 ## 3 · Ellipsis — days
 
@@ -77,14 +69,10 @@ tree a graph. Everything that walks the tree assumes one parent.
 Worth recording and worth leaving alone. Nothing in the course plan needs it,
 and the cost lands on every file.
 
-## 5 · The small missing categories — DONE except one
+## 5 · The small missing categories — DONE
 
-`DP`, `flat`, and the interrogative and exclamative clause kinds are in, each
-with a fixture. What is left:
-
-- **`postnucleus`** — the tail position. `extraposed` covers the one case that
-  needed it, which is not the same as having the position. It has no second
-  case until discontinuity exists, so it waits on 2.
+`DP`, `flat`, `postnucleus`, and the interrogative and exclamative clause kinds
+are all in, each with a fixture.
 
 ## 6 · Things the model holds but does not record
 
@@ -121,5 +109,6 @@ part of the model.
 ## The order I would take them
 
 1 first, because it is an hour and every later item adds fixtures to the file it
-fixes. Then 2, which wants a clear afternoon and a decision made before any
-code — and which 5's last item and 3 both wait on. 3 after 2. 4 probably never.
+fixes — it is now 34 fixtures in one file. Then 3, which is the only substantial
+gap left and wants a story before it wants code. 4 probably never; 6 whenever
+there is an hour and someone wants to probe first.
