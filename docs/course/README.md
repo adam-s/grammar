@@ -1,9 +1,9 @@
 # The course
 
-Drafted 27 August 2026; lessons 1–15 built and tested 28 August. Stages 1 and 2
-are now a record — the order below is data in `src/lib/course/course.ts`, and
-every claim it makes is checked. Stages 3 to 5 are still a plan, and have not
-been run through the ladder described below.
+Drafted 27 August 2026, built and tested 28 August. All five stages are now a
+record rather than a plan: forty lessons, ten sentences each, the order below
+is data in `src/lib/course/course.ts`, and every lesson sentence is pruned to
+its lesson's scope and rebuilt through the real palette before it counts.
 
 The labelling interaction this sits on is documented in
 `src/lib/grammar/options.ts`, whose tests are its specification.
@@ -198,7 +198,7 @@ first lessons. This is the readable copy.
 | Phrase forms: Nom, DP, Cl                               | 16, later, 28                      |
 | Word forms: V, N, Det, Pron                             | 3, 5, 6, 7                         |
 | Word forms: Adj, P, Adv                                 | 10, 14, 14                         |
-| Word forms: Num, Aux, Part, Conj, Subord, Interj        | 23, 24, 25 and 34, 26, 29, 38      |
+| Word forms: Num, Aux, Part, Conj, Subord, Interj        | 23, 24, 25, 26, 29, 38             |
 | Clause functions: subject, predicate                    | 1                                  |
 | Clause functions: direct object, subject complement     | 9, 10                              |
 | Clause functions: indirect object, object complement    | 12, 13                             |
@@ -208,13 +208,18 @@ first lessons. This is the readable copy.
 | Phrase functions: premodifier, postmodifier, appositive | 16, 21, 22                         |
 | Phrase function: coordinate                             | 26                                 |
 | Verb types: Vint, Vtr, Vlink, Vbe, Vg, Vc               | 8–13                               |
-| Clause kinds: adverbial, nominal, relative, comparative | 29–32                              |
+| Clause kinds: nominal, adverbial, relative, comparative | 28, 29, 31, 32                     |
 | Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA    | 8–15                               |
 | Ambiguity and alternate readings                        | 1, demonstrated fully in 27 and 40 |
 
 `head` moved from 5 to 3 because the palette makes you give every word a job,
 and the job of the verb at the centre of a predicate is head. Lesson 5
 generalises it to the noun rather than introducing it.
+
+`nominal` is taught at 28 and not with the other clause kinds, because a clause
+has to be some kind of clause and 28 is the first lesson that draws one. Lesson
+25 teaches the form `Part`; lesson 34 teaches its infinitival kind, which is a
+separate decision the palette asks separately.
 
 ### What the learner can do after each stage
 
@@ -385,13 +390,30 @@ that lesson 1 no longer owned, which threw on load. Neither was visible from
 reading the code, and one was invisible to every test, because no test loads the
 page.
 
-Then all four hundred were read, because green is not the same as true. That
-pass found four things no test can see: two sentences in lesson 27 whose second
-reading nobody would take, ten participials in lesson 35 that were grammatical
-and unsayable, ten agentless passives in lesson 37 that hid the very
-participant the lesson is about, and a gloss that contradicted its own
-sentence. `provenance.reviewedBy` still says `unreviewed` on all four hundred,
-and it should until a person has read them.
+Then all four hundred sentences and all four hundred and ten glosses were read,
+because green is not the same as true. Reading found what no check had:
+
+- Two sentences in lesson 27 whose second reading nobody would take, which is
+  the opposite of what an ambiguity fixture is for.
+- Ten participials in lesson 35 that were grammatical and unsayable.
+- Ten agentless passives in lesson 37 that hid the participant the lesson is
+  about.
+- Thirty of the forty lessons practising one clause pattern ten times, which is
+  the blocked practice `../lesson/README.md` says measures worst.
+- `the` as ninety-one per cent of all determiners, in a course that teaches
+  determiners as a class.
+- Three sentences reading _a stranger,._ — a comma before the full stop, which
+  every audit ignored because punctuation is outside the tree.
+- Twenty-one glosses that were their own sentence retyped, fifteen that
+  described the sentence instead of paraphrasing it, and one that counted the
+  porters when the sentence counted the crates.
+
+Some of those became tests afterwards and some cannot. A gloss that generalises
+— _the ferry and the tug_ as _both boats_ — is better than one that repeats the
+nouns, and no rule separates it from a gloss that says nothing.
+
+`provenance.reviewedBy` still says `unreviewed` on all four hundred, and it
+should until a person has read them.
 
 No parsing pipeline yet. It gets built when lesson volume demands one, and 400
 is not that.
