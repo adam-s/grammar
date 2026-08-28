@@ -37,8 +37,8 @@ visible and unlabelled.
 
 | #   | Lesson                   | One new idea                                                                        | The turn                                       |
 | --- | ------------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
-| 1   | Introduction             | none — build one diagram with guidance                                              | the same words can make two structures         |
-| 2   | A sentence has two parts | subject and predicate make the sentence frame                                       | the subject is a run of words                  |
+| 1   | Introduction             | subject and predicate make the sentence frame                                       | the same words can make two structures         |
+| 2   | A sentence has two parts | none — the same cut, on a longer subject                                            | the subject is a run of words                  |
 | 3   | Find the main verb       | the tense test finds the verb at the predicate's center; naming it is naming a head | several words work together as one noun phrase |
 | 4   | Noun phrases             | replace the whole run with _it_ or _they_                                           | one word controls the phrase                   |
 | 5   | Find the head            | a phrase is named after its head                                                    | a small word points the noun out               |
