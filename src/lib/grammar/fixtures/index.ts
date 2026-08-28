@@ -43,6 +43,7 @@ import { auxiliaryChain, passive } from './auxiliaries.ts';
 import { infinitive, particle, particleShift, hollowClause, twoMarkers } from './non-finite.ts';
 import { nominal, stacked, determinativeAndName, fused, fusedRelative } from './noun-phrases.ts';
 import {
+  acrossTheBoard,
   frontedPhrase,
   question,
   extraposition,
@@ -83,6 +84,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   fusedRelative,
   frontedPhrase,
   question,
+  acrossTheBoard,
   extraposition,
   tailClause,
   cleft,

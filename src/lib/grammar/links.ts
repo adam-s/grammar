@@ -61,20 +61,33 @@ export function links(cs: ConstituentMap): Link[] {
 
   const out: Link[] = [];
   for (const [index, ids] of [...byIndex].sort((a, b) => a[0] - b[0])) {
-    if (ids.length !== 2) continue;
-    const [a, b] = ids as [string, string];
-    const gap = isGap(cs, a) ? a : isGap(cs, b) ? b : null;
+    if (ids.length < 2) continue;
+    const gaps = ids.filter((id) => isGap(cs, id));
+    const rest = ids.filter((id) => !isGap(cs, id));
 
-    if (gap) {
-      const other = gap === a ? b : a;
-      // An elision was never anywhere else, so it is not a movement — the arc
-      // points at the words that say what it leaves out.
-      out.push({ from: gap, to: other, kind: isElision(cs, gap) ? 'repeat' : 'movement', index });
+    // One phrase can answer for several holes: *What did John buy __ and Mary
+    // sell __?* asks one question of two clauses, and each hole gets its own
+    // arc back to the same phrase.
+    if (gaps.length > 0) {
+      if (rest.length !== 1) continue;
+      const filler = rest[0]!;
+      for (const gap of gaps) {
+        // An elision was never anywhere else, so it is not a movement — the arc
+        // points at the words that say what it leaves out.
+        out.push({
+          from: gap,
+          to: filler,
+          kind: isElision(cs, gap) ? 'repeat' : 'movement',
+          index,
+        });
+      }
       continue;
     }
 
     // No gap, so this is a tail phrase and the thing it was moved off. The arc
     // runs from where it belongs to where it ended up.
+    if (ids.length !== 2) continue;
+    const [a, b] = ids as [string, string];
     const tail =
       cs[a]!.function === 'postnucleus' ? a : cs[b]!.function === 'postnucleus' ? b : null;
     if (!tail) continue;

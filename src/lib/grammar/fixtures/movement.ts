@@ -319,3 +319,69 @@ export const comparative = sentence(
   'r1',
   ['Vint', 'Vtr', 'comparative', 'postnucleus', 'gap', 'two-clause'],
 );
+
+/* ---- one question of two clauses — What did John buy and Mary sell?
+ *
+ * *What* is asked once and answered twice: *buy* has no object and neither
+ * does *sell*, and both holes are the same question. Linguists call it
+ * across-the-board extraction, and it is the construction usually given as the
+ * reason a syntax tree needs a node with two parents.
+ *
+ * It does not need one here. An index joins a phrase to the holes it answers
+ * for, and nothing said it had to be one hole — one phrase can answer for
+ * several, though a hole still has exactly one answer.
+ *
+ * The fronted phrase sits outside the clauses that hold the holes, which is why
+ * "is there a fronted phrase for this gap" is a walk up rather than a look at
+ * one clause.
+ */
+export const acrossTheBoard = sentence(
+  'fix-across-the-board',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'prenucleus', [w('Pron', 'head', 'What', { xpos: 'WP' })], { index: 1 }),
+          w('Aux', 'auxiliary', 'did', { xpos: 'VBD', lemma: 'do', auxKind: 'do' }),
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [n('Nom', 'head', [w('N', 'head', 'John', { xpos: 'NNP' })])]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'buy', { xpos: 'VB', verbType: 'Vtr' }),
+                gap('NP', 'directObject', { index: 1 }),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVO' },
+          ),
+          w('Conj', 'coordinator', 'and'),
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [n('Nom', 'head', [w('N', 'head', 'Mary', { xpos: 'NNP' })])]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'sell', { xpos: 'VB', verbType: 'Vtr' }),
+                gap('NP', 'directObject', { index: 1 }),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVO' },
+          ),
+          pt('?'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The question asks which one thing John bought and Mary sold.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'across-the-board', 'gap', 'coordination', 'prenucleus', 'two-clause'],
+);

@@ -26,7 +26,6 @@ import {
   isElision,
   governingVerbType,
   governingVoice,
-  isClauseNode,
   verbs,
 } from './clause.ts';
 import {
@@ -478,28 +477,46 @@ export function linkFillers(state: BuildState): BuildState {
   const cs = state.constituents;
   const pending: [string, string][] = [];
   for (const id of Object.keys(cs)) {
-    if (!isClauseNode(cs, id)) continue;
-    const filler = cs[id]!.children.find((k) => cs[k]?.function === 'prenucleus');
-    if (!filler || cs[filler]!.index !== undefined) continue;
+    const c = cs[id]!;
     // A moved gap only. An elided one is not what the fronted phrase came off
     // — *I forgot what __* leaves out the predicate, and *what* was fronted
     // from inside the material that is no longer there to point at.
-    const gapId = Object.keys(cs).find(
-      (k) =>
-        cs[k]!.gap && !isElision(cs, k) && cs[k]!.index === undefined && clauseOf(cs, k) === id,
-    );
-    if (gapId) pending.push([filler, gapId]);
+    if (!c.gap || c.index !== undefined || isElision(cs, id)) continue;
+    const filler = frontedAbove(cs, id);
+    if (filler) pending.push([filler, id]);
   }
   if (pending.length === 0) return state;
 
   const next = cloneMap(cs);
-  let index = Math.max(0, ...Object.values(next).map((c) => c.index ?? 0));
+  let free = Math.max(0, ...Object.values(next).map((c) => c.index ?? 0));
   for (const [filler, gapId] of pending) {
-    index += 1;
-    next[filler]!.index = index;
-    next[gapId]!.index = index;
+    // One fronted phrase can answer for several holes — *What did John buy __
+    // and Mary sell __?* — so a filler that already has a number keeps it.
+    if (next[filler]!.index === undefined) next[filler]!.index = ++free;
+    next[gapId]!.index = next[filler]!.index;
   }
   return { ...state, constituents: next };
+}
+
+/**
+ * The fronted phrase this gap answers to, if there is one.
+ *
+ * A walk up rather than a look at one clause: a coordination puts the fronted
+ * phrase outside the clauses that hold the holes. It stops at a relative or
+ * comparative clause with no fronted phrase of its own, because what fills a
+ * gap there is the noun outside — never a phrase further out still.
+ */
+function frontedAbove(cs: ConstituentMap, id: string): string | null {
+  let clause = clauseOf(cs, id);
+  let guard = 0;
+  while (clause && guard++ < 200) {
+    const c = cs[clause]!;
+    const filler = c.children.find((k) => cs[k]?.function === 'prenucleus');
+    if (filler) return filler;
+    if (c.clauseKind === 'relative' || c.clauseKind === 'comparative') return null;
+    clause = clauseOf(cs, clause);
+  }
+  return null;
 }
 
 /**

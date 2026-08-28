@@ -361,7 +361,7 @@ describe('gaps and the phrases that fill them', () => {
       delete r.constituents[idOf(r, (c) => c.gap === true)]!.index;
     });
     const all = auditReading(r, s.words).all.join(' | ');
-    assert.match(all, /is on 1 nodes/);
+    assert.match(all, /is on one node/);
     assert.match(all, /not tied to the fronted phrase in its own clause/);
   });
 

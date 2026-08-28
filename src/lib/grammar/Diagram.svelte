@@ -397,7 +397,9 @@
          kind of thing a sentence can say: that a phrase belongs somewhere it is
          not, or that a silence repeats something said earlier. They were
          matching numbers before, which is honest and unreadable. -->
-    {#each arcs as arc (arc.index)}
+    <!-- Keyed on the lane, not the index: one phrase can answer for several
+         holes, so two arcs share an index and only their lanes are unique. -->
+    {#each arcs as arc (arc.lane)}
       {@const y = wordY + 14 + arc.lane * LINK_LANE}
       {@const dir = arc.to.x > arc.from.x ? 1 : -1}
       <g class="link" class:repeat={arc.kind === 'repeat'}>

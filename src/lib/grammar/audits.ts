@@ -482,8 +482,8 @@ export function auditGaps(ctx: Ctx): string[] {
   }
 
   for (const [index, ids] of byIndex) {
-    if (ids.length !== 2) {
-      f.push(`index ${index} is on ${ids.length} nodes (${ids.join(', ')}); a link joins two`);
+    if (ids.length < 2) {
+      f.push(`index ${index} is on one node (${ids[0]}); a link joins at least two`);
       continue;
     }
     // One end has to be displaced or unsaid, or the link says nothing: two
@@ -491,8 +491,18 @@ export function auditGaps(ctx: Ctx): string[] {
     const moved = ids.filter((id) => ctx.cs[id]!.gap || ctx.cs[id]!.function === 'postnucleus');
     if (moved.length === 0) {
       f.push(
-        `index ${index} joins two phrases that are both where they belong; a link says ` +
-          'one of them was moved',
+        `index ${index} joins ${ids.length} phrases that are all where they belong; a link ` +
+          'says one of them was moved',
+      );
+      continue;
+    }
+    // More than two ends is one phrase answering for several holes at once:
+    // *What did John buy __ and Mary sell __?* asks one question of two
+    // clauses. So every extra end has to be a hole — a hole has one answer.
+    if (ids.length - moved.length > 1) {
+      f.push(
+        `index ${index} joins ${ids.length - moved.length} phrases to ${moved.length} holes; ` +
+          'one phrase can answer for several holes, but a hole has one answer',
       );
     }
   }
@@ -562,14 +572,15 @@ export function auditGaps(ctx: Ctx): string[] {
       }
       continue;
     }
-    // A gap is indexed exactly when its clause holds the phrase that fills it.
-    // Where it does not, the antecedent is outside — the nominal a relative
-    // clause modifies, or the subject a hollow clause borrows: *The box was too
-    // heavy to lift __*. Nothing inside can be pointed at, so pointing would be
-    // a claim the structure cannot support.
-    const clause = clauseOf(ctx.cs, id);
-    const fronted =
-      clause !== null && ctx.cs[clause]!.children.some((k) => ctx.cs[k]?.function === 'prenucleus');
+    // A gap is indexed exactly when there is a fronted phrase it could answer
+    // to. Walking up rather than looking at one clause, because a coordination
+    // puts the fronted phrase outside the clauses that hold the holes: *What
+    // did John buy __ and Mary sell __?* fronts once and gaps twice.
+    //
+    // Where there is none, the antecedent is outside the sentence's reach — the
+    // nominal a relative clause modifies, or the subject a hollow clause
+    // borrows: *The box was too heavy to lift __*.
+    const fronted = frontedAbove(ctx.cs, id);
     if (c.index === undefined && fronted) {
       f.push(`the gap "${id}" is not tied to the fronted phrase in its own clause`);
     }
@@ -584,6 +595,29 @@ export function auditGaps(ctx: Ctx): string[] {
     }
   }
   return f;
+}
+
+/**
+ * Is there a fronted phrase this gap could be answering to?
+ *
+ * Stops at a relative or comparative clause, whose gaps answer to something
+ * outside the clause entirely — so a fronted phrase further out is not theirs.
+ */
+function frontedAbove(cs: ConstituentMap, id: string): boolean {
+  let clause = clauseOf(cs, id);
+  let guard = 0;
+  while (clause && guard++ < 200) {
+    const c = cs[clause]!;
+    // Its own first. A *wh*-relative fronts a phrase inside itself — *who I
+    // knew __* — and that phrase is exactly what its gap answers to.
+    if (c.children.some((k) => cs[k]?.function === 'prenucleus')) return true;
+    // A relative or comparative with none is answered from outside: the noun it
+    // modifies, or the phrase being compared. A fronted phrase further out is
+    // not its answer, so the walk stops rather than borrowing one.
+    if (c.clauseKind === 'relative' || c.clauseKind === 'comparative') return false;
+    clause = clauseOf(cs, clause);
+  }
+  return false;
 }
 
 /* ------------------------------------------------------------- 8: finiteness */
