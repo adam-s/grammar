@@ -30,6 +30,7 @@ import {
   type ClauseKind,
   type Finiteness,
   type PartKind,
+  type Reading,
   type SentenceEntry,
   type VerbType,
   type Voice,
@@ -111,8 +112,13 @@ function applyFunction(
   return setFunction(state, generatedId, constituent.function, constituent.obligatory === true);
 }
 
-export function replaySentence(sentence: SentenceEntry): SentenceReplay {
-  const reading = canonicalReading(sentence);
+/**
+ * @param only  Which reading to replay. Defaults to the canonical one — pass a
+ *   lesson's pruned target to replay just the part that lesson asks for, which
+ *   is the only part its palette will let anyone build.
+ */
+export function replaySentence(sentence: SentenceEntry, only?: Reading): SentenceReplay {
+  const reading = only ?? canonicalReading(sentence);
   const order: string[] = [];
   for (const root of roots(reading)) postorder(reading, root, order);
 

@@ -1,44 +1,75 @@
 # The course
 
-Drafted 27 August 2026. This is a plan, not a record. The labelling interaction
-it sits on top of is documented in `src/lib/grammar/options.ts`, whose tests are
-its specification.
-The lesson presentation and data architecture are specified in
-the code.
+Drafted 27 August 2026; lessons 1–15 built and tested 28 August. Stages 1 and 2
+are now a record — the order below is data in `src/lib/course/course.ts`, and
+every claim it makes is checked. Stages 3 to 5 are still a plan, and have not
+been run through the ladder described below.
+
+The labelling interaction this sits on is documented in
+`src/lib/grammar/options.ts`, whose tests are its specification.
+
+## How the order is enforced
+
+The order is a dependency graph, and it used to be a graph written in prose.
+Prose does not fail. Now each lesson declares the labels it is the **first** to
+teach, cumulative scope is the union of every lesson up to it, and three things
+follow from that one field:
+
+- The palette greys a label from a later lesson instead of offering it.
+- Every lesson sentence is pruned to what its lesson has taught and rebuilt
+  through the real palette. A sentence that needs a forward concept fails.
+- No label may be claimed by two lessons, because then it has no first one.
+
+**The rule is about what the learner is asked to produce, not what the sentence
+contains.** Every English sentence holds a determiner, and determiners are
+lesson 6; _The engine stalled_ carries `Det`, `V` and `Vint` on the day lesson
+1 asks only where the sentence splits. So a lesson sentence is a whole sentence
+with a restricted question asked of it, and the words below the question stay
+visible and unlabelled.
 
 ## What a lesson is
 
 ### Stage 1 — See the frame
 
-| #   | Lesson                   | One new idea                                            | The turn                                       |
-| --- | ------------------------ | ------------------------------------------------------- | ---------------------------------------------- |
-| 1   | Introduction             | none — build one diagram with guidance                  | the same words can make two structures         |
-| 2   | A sentence has two parts | subject and predicate make the sentence frame           | the subject is a run of words                  |
-| 3   | Find the main verb       | the tense test finds the verb at the predicate's center | several words work together as one noun phrase |
-| 4   | Noun phrases             | replace the whole run with _it_ or _they_               | one word controls the phrase                   |
-| 5   | Find the head            | a phrase is named after its head                        | a small word points the noun out               |
-| 6   | Determiners              | a determiner starts or limits a noun phrase             | one word can stand for a whole noun phrase     |
-| 7   | Pronouns                 | a pronoun can fill a noun phrase by itself              | some verbs need nothing after them             |
+| #   | Lesson                   | One new idea                                                                        | The turn                                       |
+| --- | ------------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 1   | Introduction             | none — build one diagram with guidance                                              | the same words can make two structures         |
+| 2   | A sentence has two parts | subject and predicate make the sentence frame                                       | the subject is a run of words                  |
+| 3   | Find the main verb       | the tense test finds the verb at the predicate's center; naming it is naming a head | several words work together as one noun phrase |
+| 4   | Noun phrases             | replace the whole run with _it_ or _they_                                           | one word controls the phrase                   |
+| 5   | Find the head            | a phrase is named after its head                                                    | a small word points the noun out               |
+| 6   | Determiners              | a determiner starts or limits a noun phrase                                         | one word can stand for a whole noun phrase     |
+| 7   | Pronouns                 | a pronoun can fill a noun phrase by itself                                          | some verbs need nothing after them             |
 
 Lesson 4 no longer tries to teach noun phrases, heads, and determiners at once.
 Those are three observable decisions, so they get three lessons.
 
 ### Stage 2 — Let the verb predict the clause
 
-| #   | Lesson                        | One new idea                                                                              | The turn                                                       |
-| --- | ----------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 8   | Verbs that stand alone        | an intransitive verb makes S V                                                            | a verb leaves a question unanswered                            |
-| 9   | Verbs that take an object     | a transitive verb licenses a direct object: “verb what?”                                  | _the soup tasted salty_ — the final word describes the subject |
-| 10  | Linking verbs                 | a linking verb licenses a subject complement                                              | _he is a doctor_ uses a special verb                           |
-| 11  | The verb _be_                 | _be_ has its own verb type even when it links subject and complement                      | one verb gives something to someone                            |
-| 12  | Two objects                   | a giving verb licenses an indirect object before the direct object                        | a verb renames or describes its object                         |
-| 13  | Naming the object             | an object-complement verb licenses an object complement                                   | _the keys are on the table_ cannot lose its place phrase       |
-| 14  | When an adverbial is required | removal distinguishes an obligatory adverbial from an optional one                        | six verb types now need one repeatable decision                |
-| 15  | The six types, one procedure  | the verb-first procedure predicts S V, S V O, S V C, S V A, S V O O, S V O C, and S V O A | a phrase can grow without changing its head                    |
+| #   | Lesson                        | One new idea                                                                                                         | The turn                                                       |
+| --- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 8   | Verbs that stand alone        | an intransitive verb makes S V                                                                                       | a verb leaves a question unanswered                            |
+| 9   | Verbs that take an object     | a transitive verb licenses a direct object: “verb what?”                                                             | _the soup tasted salty_ — the final word describes the subject |
+| 10  | Linking verbs                 | a linking verb licenses a subject complement, which is usually an adjective phrase                                   | _he is a doctor_ uses a special verb                           |
+| 11  | The verb _be_                 | _be_ has its own verb type even when it links subject and complement                                                 | one verb gives something to someone                            |
+| 12  | Two objects                   | a giving verb licenses an indirect object before the direct object                                                   | a verb renames or describes its object                         |
+| 13  | Naming the object             | an object-complement verb licenses an object complement                                                              | _the keys are on the table_ cannot lose its place phrase       |
+| 14  | When an adverbial is required | removal distinguishes an obligatory adverbial from an optional one; an adverbial is a prepositional or adverb phrase | six verb types now need one repeatable decision                |
+| 15  | The six types, one procedure  | the verb-first procedure predicts S V, S V O, S V C, S V A, S V O O, S V O C, and S V O A                            | a phrase can grow without changing its head                    |
 
 Lessons 8–13 teach the six verb types in the same shape. Lesson 14 adds the
 required-adverbial distinction without inventing a seventh type. Lesson 15 is a
 cumulative checkpoint, not a seventh classification lesson.
+
+**A verb-type lesson teaches the phrase form its new slot needs, on the day the
+slot appears.** This is the rule that building the ladder forced. Lesson 10's
+subject complement is _salty_, and holding `AdjP` back to the phrase stage would
+have left the lesson nothing but noun complements to work with. Lesson 14's
+required adverbial is _on the table_, which is a `PP`. Teaching that the verb
+predicts its slots while forbidding the shapes that fill them is not an order at
+all. So `Adj` and `AdjP` arrive at 10, and `P`, `PP`, `Adv`, `AdvP` and
+`complement` at 14; stage 3 is then about modification rather than about
+re-introducing forms stage 2 already needed.
 
 ### Stage 3 — Build phrases from the inside out
 
@@ -121,24 +152,34 @@ The order above is a dependency graph, not just a table of contents.
 This table is the completeness check for the current app taxonomy. Adding a
 public label to the app requires assigning it a first lesson here.
 
+For lessons 1–15 this table is no longer the authority — `teaches` in
+`src/lib/course/course.ts` is, and a test refuses to let one label have two
+first lessons. This is the readable copy.
+
 | Inventory                                               | First taught                       |
 | ------------------------------------------------------- | ---------------------------------- |
-| Phrase forms: S, NP, VP                                 | 2, 4, 2–3                          |
-| Phrase forms: AdjP, AdvP, PP, Cl                        | 17, 18, 19, 28                     |
-| Word forms: N, V, Det, Pron                             | 5, 3, 6, 7                         |
-| Word forms: Adj, Adv, P, Num                            | 16, 18, 19, 23                     |
-| Word forms: Aux, Part, Conj, Subord, Interj             | 24, 25 and 34, 26, 29, 38          |
-| Clause functions: subject, predicate                    | 2                                  |
+| Phrase forms: S, NP, VP                                 | 1                                  |
+| Phrase forms: AdjP, PP, AdvP                            | 10, 14, 14                         |
+| Phrase forms: Nom, DP, Cl                               | 16, later, 28                      |
+| Word forms: V, N, Det, Pron                             | 3, 5, 6, 7                         |
+| Word forms: Adj, P, Adv                                 | 10, 14, 14                         |
+| Word forms: Num, Aux, Part, Conj, Subord, Interj        | 23, 24, 25 and 34, 26, 29, 38      |
+| Clause functions: subject, predicate                    | 1                                  |
 | Clause functions: direct object, subject complement     | 9, 10                              |
 | Clause functions: indirect object, object complement    | 12, 13                             |
-| Clause function: adverbial, including obligatory        | 18; required form in 14            |
-| Phrase functions: head, determiner, premodifier         | 5, 6, 16                           |
-| Phrase functions: complement, postmodifier, appositive  | 19, 21, 22                         |
+| Clause function: adverbial, including obligatory        | 14                                 |
+| Phrase function: head                                   | 3, on the verb; generalised at 5   |
+| Phrase functions: determiner, complement                | 6, 14                              |
+| Phrase functions: premodifier, postmodifier, appositive | 16, 21, 22                         |
 | Phrase function: coordinate                             | 26                                 |
 | Verb types: Vint, Vtr, Vlink, Vbe, Vg, Vc               | 8–13                               |
 | Clause kinds: adverbial, nominal, relative, comparative | 29–32                              |
-| Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA    | 8–14                               |
+| Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA    | 8–15                               |
 | Ambiguity and alternate readings                        | 1, demonstrated fully in 27 and 40 |
+
+`head` moved from 5 to 3 because the palette makes you give every word a job,
+and the job of the verb at the centre of a predicate is head. Lesson 5
+generalises it to the noun rather than introducing it.
 
 ### What the learner can do after each stage
 
@@ -189,71 +230,65 @@ inversion from being inserted before learners understand auxiliaries, or a
 lesson on ellipsis from appearing before coordination. Any later course starts
 at lesson 51; it does not renumber either sequence.
 
-## Materials to author
+## What a lesson ships
 
-The sequence is not ready merely because every lesson has a title. Each lesson
-must be complete in the same dimensions before sentence authoring begins.
+The sentences come first and the page comes last. A lesson's sentences are the
+part that can be checked without a reader; its prose is the part that cannot,
+so writing prose against sentences that have not been proved is writing twice.
 
-Every lesson manifest records:
+Each lesson holds **ten sentences**, and a sentence is only its parse. Nothing
+else is stored:
 
-```yaml
-lesson: 19
-title: Prepositional phrases
-requires: [head, noun-phrase]
-teaches: [P, PP, complement]
-reviews: [NP, head]
-tests: [preposition-takes-an-NP-complement]
-patterns: []
-tasks: [click-the-part, label-spans]
-turnTo: 20
-```
+- Which lesson it belongs to is the file it is in.
+- What the lesson asks for is derived by pruning the parse to the lesson's
+  scope, so a lesson never keeps a second, staler copy of its own answer.
+- What labels it uses is computed when something needs to know.
 
-And every lesson ships with all of these materials:
+There used to be a lesson manifest here — `requires`, `teaches`, `reviews`,
+`tests`, `patterns`, `tasks`, `turnTo` — and a list of ten materials per lesson,
+both written as the contract for a content compiler. The compiler does not
+exist, and following the manifest meant authoring nine kinds of metadata before
+a single sentence. `teaches` survived because something reads it. The rest was
+deleted along with the `Problem`, `TaskKind` and `Glossary` types it was
+designed to fill, none of which any code had ever referenced.
 
-1. one opening sentence and question;
-2. one eight-word-or-shorter line for the new idea;
-3. one formal test the learner can perform;
-4. one learner-driven worked example with a change ledger;
-5. five to eight escalating problems;
-6. at least two cumulative problems using earlier material;
-7. one diagnosed wrong-answer path for each new choice;
-8. glossary entries for every new term;
-9. one turn sentence that becomes the next lesson's opener;
-10. source, reading gloss, difficulty metrics, and accessibility text for every
-    sentence.
+The lesson page, when it is written, still owes the learner an opening
+question, one short line for the new idea, a test they can perform, a worked
+example, and a turn sentence that becomes the next lesson's opener. That is a
+writing job, not a data format.
 
-The manifest fields are the future content compiler's contract. `requires`
-must refer backward, `teaches` must agree with the coverage audit, and
-`turnTo` must point to the next lesson. A build should eventually reject a
-course with a missing glossary entry, an untaught required label, an unused
-public label, or a broken turn-to-opener link.
+### Where the sentences come from
 
-## Model commitments before later content is written
+Constructed, and they say so: `source.work` is `constructed` and
+`provenance.reviewedBy` is `unreviewed`.
 
-Stages 1–4 fit the current taxonomy. Stage 5 exposes model decisions that need
-to be made before its sentence bank is authored. They are recorded now so the
-course does not promise distinctions the diagrams cannot show.
+Lessons 8 to 14 each need ten clean examples of one clause pattern. Literature
+does not supply that on demand — ten transitive clauses with no auxiliary, no
+coordination and no modifier is a shape you write, not a shape you find. Public
+domain prose belongs to the later stages, where sentence length stops being an
+obstacle and becomes the point.
 
-- **Finiteness is separate from clause kind.** Relative, nominal, and
-  adverbial say what kind of clause it is; finite, infinitival, participial, and
-  gerund-participial say what verb form it has. The model needs both axes.
-- **Voice is a property, not a phrase form.** Active and passive readings keep
-  NP, VP, subject, and object labels; voice records the changed relationship
-  between them.
-- **A conjunction is not a coordinate.** The joined units have function
-  `coordinate`; _and_, _but_, or _or_ needs a distinct `coordinator` function.
-- **Infinitival _to_ is not a verbal particle.** Both may remain in the broad
-  word class `Part`, but the stored subtype and learner-facing explanation must
-  distinguish them.
-- **Sentence-edge material needs a home.** An interjection can be named now but
-  cannot honestly attach as a clause role. Add a `supplement` function before
-  lesson 38 content is frozen.
-- **Punctuation is evidence, not a constituent label.** Punctuation tokens stay
-  visible and selectable for explanation, but they do not receive one of the
-  thirteen word-class labels.
+**Nothing automatic can tell a wrong attachment from a right one.** The audits
+prove a parse is well formed; they cannot prove it is true. Two errors in the
+first hundred and fifty were caught by rereading rather than by testing: an
+object complement nobody would say, and a place phrase marked required when the
+sentence stands without it. `reviewedBy` stays `unreviewed` until a person has
+actually read them.
 
-These are content-model requirements, not optional polish. Until they exist,
-the corresponding lessons remain planned rather than authorable.
+## Model commitments — all met
+
+Stage 5 needed six model decisions before its sentences could be written. All
+six are in the code; `src/lib/grammar/types.ts` is the authority and this is
+only the list.
+
+Finiteness is a separate axis from clause kind. Voice is a property rather than
+a phrase form. A conjunction has its own `coordinator` function and is not a
+coordinate. Infinitival _to_ is distinguished from a verbal particle by
+`partKind`. Sentence-edge material has a `supplement` function. Punctuation is
+visible, selectable, and takes no word class.
+
+This section used to say those lessons remained planned rather than authorable.
+They are authorable.
 
 ## The shell
 
@@ -303,16 +338,20 @@ single-learner app; nothing here needs a server.
 
 ## Content
 
-The bank is hand-authored to start. Fifteen or so verified sentences carry
-lessons 1–3, and no parsing pipeline gets built until lesson volume actually
-demands one. The previous attempt planned sixteen build slices and eleven
-reference documents before anything was usable; the part of that plan which was
-right is the note saying the first chapter must not wait on the pipeline.
+Lessons 1–15 hold 150 hand-authored sentences: ten each, every one audited,
+scope-checked, and rebuilt through the palette in a browser.
 
-Sentences come from public-domain literature. Expect short, concrete narrative
-prose to carry the early lessons and long periodic sentences to carry the later
-ones on subordination and coordination, where their difficulty stops being an
-obstacle and becomes the point.
+They were built as a **vertical slice** — one sentence for every lesson first,
+all the way to 15, before any lesson got its second. That order is the reason
+the cost of the two architectural problems it found was fifteen rewrites rather
+than a hundred and fifty. The builder refused to group words that had not been
+named, which made lesson 1 impossible; and the route opened a hardcoded fixture
+that lesson 1 no longer owned, which threw on load. Neither was visible from
+reading the code, and one was invisible to every test, because no test loads the
+page.
+
+No parsing pipeline yet. It gets built when lesson volume demands one, and 150
+is not that.
 
 ## Legal footing
 
@@ -332,7 +371,7 @@ normal way, in further reading.
 
 ## Prior art
 
-**Max Morenberg, *Doing Grammar* (Oxford), is the pedagogical source.** He
+**Max Morenberg, _Doing Grammar_ (Oxford), is the pedagogical source.** He
 teaches analysis by having the reader perform it, building each sentence from
 the bottom up and letting the terminology follow the work. The lesson shape here
 comes from that: one sentence, one decision at a time, and a formal test in

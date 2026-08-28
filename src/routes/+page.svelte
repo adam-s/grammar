@@ -42,6 +42,7 @@
     type LabelOption,
     type Selection,
   } from '$lib/grammar/options.ts';
+  import { canonicalReading } from '$lib/grammar/types.ts';
   import type { Form, Span } from '$lib/grammar/types.ts';
   import type { Rect } from '$lib/workspace/viewport.ts';
   import { replaySentence } from '$lib/course/sentence-renderer.ts';
@@ -55,6 +56,8 @@
     lessonById,
     lessonDoc,
     scopeThrough,
+    targetReading,
+    type FullScope,
   } from '$lib/course';
 
   const ws = new WorkspaceState();
@@ -178,17 +181,25 @@
   });
   const targetKey = $derived(targetSpan ? `${targetSpan[0]}-${targetSpan[1]}` : '');
   /**
-   * What this lesson has taught. The palette shows the whole inventory either
+   * The lesson this SENTENCE belongs to, which is not always the lesson whose
+   * page you are on. Opening a lesson-9 sentence from the lesson-1 page used to
+   * hand over the whole palette, because the scope came from the route.
+   */
+  const owner = $derived(
+    COURSE_LESSONS.find((l) => l.sentences.some((s) => s.id === sentence.id)) ?? null,
+  );
+  /**
+   * What that lesson has taught. The palette shows the whole inventory either
    * way — a learner who never sees a row does not learn the choice exists — but
    * a label from a later lesson is marked `untaught` rather than offered.
    *
-   * A sentence opened from outside the course carries no scope, so the free
-   * workspace keeps the full palette.
+   * A sentence outside the course carries no scope, so the free workspace and
+   * the contract fixtures keep the full palette.
    */
-  const scope = $derived(
-    lessonSentences.some((s) => s.id === sentence.id)
-      ? scopeThrough(COURSE_LESSONS, lesson.number)
-      : {},
+  const scope = $derived(owner ? scopeThrough(COURSE_LESSONS, owner.number) : {});
+  /** The part of the answer this lesson actually asks for. */
+  const target = $derived(
+    owner ? targetReading(canonicalReading(sentence), scope as FullScope) : null,
   );
   const choices = $derived(
     blockRejectedOptions(optionsFor(build, words, selection, scope), rejected[targetKey] ?? {}),
@@ -263,7 +274,10 @@
        * a driver hook: nothing in the interface may read it.
        */
       plan: () =>
-        replaySentence(sentence).steps.map((step) => ({
+        // The lesson's target, not the whole answer: under a lesson's scope the
+        // rest of the parse is not merely unasked-for, it is unbuildable, and a
+        // driver told to build it reports failures that are the point.
+        replaySentence(sentence, target ?? undefined).steps.map((step) => ({
           kind: step.kind,
           span: step.span,
           nodeId: step.nodeId,

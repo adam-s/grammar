@@ -439,7 +439,11 @@ async function buildSweep(browser, sentenceId) {
     };
   });
   if (done.roots !== 1) failures.push({ step: -1, fails: [`finished with ${done.roots} roots, want 1`] });
-  if (done.classified !== done.verbs) {
+  // A lesson that has not reached the verb types yet asks for no classification,
+  // and its plan says so. Demanding one here reported every early-lesson
+  // sentence as broken for doing exactly what its lesson wanted.
+  const classifies = plan.some((step) => step.key.startsWith('vt:'));
+  if (classifies && done.classified !== done.verbs) {
     failures.push({
       step: -1,
       fails: [`${done.verbs} verbs but ${done.classified} classified — a clause went unasked`],
