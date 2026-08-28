@@ -18,7 +18,7 @@ export const LESSON_33 = [
     { subject: det('The', 'kettle'), verb: v('boiled', 'boil', 'Vint') },
     'and',
     { subject: det('the', 'lights'), verb: v('dimmed', 'dim', 'Vint') },
-    'Both things happened.',
+    'The kettle came to the boil, and the lights went dim.',
   ),
   joined(
     'c33-b',
@@ -30,7 +30,7 @@ export const LESSON_33 = [
       verb: v('called', 'call', 'Vtr'),
       object: det('a', 'mechanic'),
     },
-    'One followed the other.',
+    'The engine stopped, so the driver sent for a mechanic.',
   ),
   joined(
     'c33-c',
@@ -38,7 +38,7 @@ export const LESSON_33 = [
     { subject: det('The', 'tide'), verb: v('turned', 'turn', 'Vint') },
     'but',
     { subject: det('the', 'ferry'), verb: v('waited', 'wait', 'Vint') },
-    'The second happened despite the first.',
+    'The tide changed, but the ferry stayed where it was.',
   ),
   joined(
     'c33-d',
@@ -50,7 +50,7 @@ export const LESSON_33 = [
       verb: v('were', 'be', 'Vbe'),
       complement: adj('passable'),
     },
-    'The crowd came back once the rain let up.',
+    'The rain let up, and the streets could be used again.',
   ),
   joined(
     'c33-e',
@@ -58,7 +58,7 @@ export const LESSON_33 = [
     { subject: det('The', 'pipe'), verb: v('froze', 'freeze', 'Vint') },
     'and',
     { subject: det('the', 'ceiling'), verb: v('cracked', 'crack', 'Vint') },
-    'Both damages occurred.',
+    'The pipe froze, and a crack opened in the ceiling.',
   ),
   joined(
     'c33-f',

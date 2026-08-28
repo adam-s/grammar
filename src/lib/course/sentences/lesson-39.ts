@@ -23,7 +23,7 @@ export const LESSON_39 = [
       verb: v('recorded', 'record', 'Vtr'),
       object: det('the', 'result'),
     },
-    'Two people each did a job.',
+    'The surveyor took the measurement and the clerk wrote it down.',
     true,
   ),
   joined(
@@ -40,7 +40,7 @@ export const LESSON_39 = [
       verb: v('signed', 'sign', 'Vtr'),
       object: det('the', 'docket'),
     },
-    'Each did their own task.',
+    'The porter piled the crates up and the driver signed for them.',
     true,
   ),
   joined(
@@ -70,7 +70,7 @@ export const LESSON_39 = [
     },
     'and',
     { subject: det('the', 'porter'), verb: v('opened', 'open', 'Vtr'), object: det('the', 'door') },
-    'They worked together.',
+    'The nurse brought the tray while the porter held the door.',
     true,
   ),
   joined(
@@ -87,7 +87,7 @@ export const LESSON_39 = [
       verb: v('reviewed', 'review', 'Vtr'),
       object: det('the', 'case'),
     },
-    'Both stages happened.',
+    'The jury listened, and then the judge went over the case.',
     true,
   ),
   joined(
@@ -147,7 +147,7 @@ export const LESSON_39 = [
     },
     'and',
     { subject: det('the', 'clerk'), verb: v('filed', 'file', 'Vtr'), object: det('the', 'report') },
-    'Test then paperwork.',
+    'The inspector checked the wiring and the clerk wrote it up.',
     true,
   ),
   joined(
