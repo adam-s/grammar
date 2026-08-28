@@ -46,6 +46,8 @@ export interface SpecNode {
   auxKind?: AuxKind;
   /** A second job this node does at the same time as its function. */
   fusedWith?: Func;
+  /** Word forms that cannot be worked out from the spelling: *broke* → *broken*. */
+  forms?: Record<string, string>;
   /** This node covers no words. Its position comes from where it is written. */
   gap?: true;
   /** Ties a gap to its filler. Shared by exactly two nodes. */
@@ -213,6 +215,7 @@ export function build(
         upos: UPOS_OF[wf] ?? 'X',
         xpos: node.xpos ?? XPOS_OF[wf] ?? 'XX',
         lemma: node.lemma ?? (node.text ?? '?').toLowerCase(),
+        ...(node.forms ? { forms: node.forms } : {}),
       });
       self.word = i;
       self.span = [i, i];

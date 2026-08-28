@@ -29,7 +29,7 @@ export * from './movement.ts';
 export * from './edges.ts';
 export * from './ellipsis.ts';
 
-import { vint, vtr, vbe, vlink, vg, vc } from './verb-types.ts';
+import { vint, vtr, vbe, vlink, vg, vc, irregular } from './verb-types.ts';
 import { ambiguous } from './ambiguity.ts';
 import {
   gardenPath,
@@ -62,6 +62,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   vlink,
   vg,
   vc,
+  irregular,
   ambiguous,
   gardenPath,
   objectClause,

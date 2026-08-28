@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { nominal, punctuation, vtr } from './fixtures.ts';
-import { cleft, demonstrations, front, pseudoCleft, substitute } from './transform.ts';
+import { frontedPhrase, nominal, punctuation, vtr } from './fixtures.ts';
+import {
+  cleft,
+  demonstrations,
+  front,
+  passive,
+  performed,
+  pseudoCleft,
+  substitute,
+} from './transform.ts';
 
 describe('the tests you perform', () => {
   // *She repaired the engine* — one of the older fixtures, written before
@@ -63,5 +71,49 @@ describe('the tests you perform', () => {
       assert.ok(d.did.length > 0 && d.did[0] === d.did[0]!.toUpperCase());
       assert.ok(!d.did.endsWith('.'), 'it is a label, not a sentence');
     }
+  });
+});
+
+describe('turning a sentence round', () => {
+  const w = vtr.words; // She repaired the engine
+
+  it('promotes the object, agrees the verb, and puts the doer after "by"', () => {
+    const d = passive({ words: w, subject: [0, 0], verb: 1, object: [2, 3] });
+    assert.ok(performed(d));
+    assert.equal(d.text, 'The engine was repaired by her');
+  });
+
+  it('agrees with what is promoted, not with what was there', () => {
+    // *The mechanic repaired the engine, and the car started* — a plural
+    // promoted subject takes "were".
+    const words = punctuation.words;
+    const one = passive({ words, subject: [0, 1], verb: 2, object: [3, 4] });
+    assert.ok(performed(one));
+    assert.match(one.text, /^The engine was repaired by the mechanic/);
+  });
+
+  it('says what it assumed when it had to derive a form', () => {
+    // *repaired* is right; the rule that made it would have made *smited* with
+    // the same confidence, so it says which verb it took on trust.
+    const d = passive({ words: w, subject: [0, 0], verb: 1, object: [2, 3] });
+    assert.ok(performed(d));
+    assert.match(d.assumed!, /“repair” is a regular verb/);
+  });
+
+  it('takes the sentence at its word, and then assumes nothing', () => {
+    const words = [...w];
+    words[1] = { ...words[1]!, lemma: 'smite', forms: { participle: 'smitten' } };
+    const d = passive({ words, subject: [0, 0], verb: 1, object: [2, 3] });
+    assert.ok(performed(d));
+    assert.equal(d.text, 'The engine was smitten by her');
+    assert.equal(d.assumed, undefined, 'nothing was guessed, so nothing is flagged');
+  });
+
+  it('uses the table for an irregular verb', () => {
+    // *He knew what she repaired* — "knew" is irregular and the table has it.
+    const words = frontedPhrase.words;
+    const d = passive({ words, subject: [0, 0], verb: 1, object: [2, 4] });
+    assert.ok(performed(d));
+    assert.match(d.text, /was known by him/);
   });
 });

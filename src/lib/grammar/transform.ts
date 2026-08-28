@@ -10,12 +10,15 @@
  * three of them into sentences to say out loud, which is the difference between
  * being told a rule and watching it decide something.
  *
- * **No morphology.** Each transform below moves words that are already on the
- * page and adds a fixed handful — *it was*, *that*, *what*. Nothing is
- * conjugated, nothing is inflected, and nothing needs a table of irregular
- * verbs. The passive test needs all three and is deliberately not here: it is a
- * content problem wearing a code problem's clothes, and the six verb types
- * already ask the question it would answer.
+ * **The constituency tests need no morphology.** Substitution, fronting and
+ * clefting move words that are already on the page and add a fixed handful —
+ * *it was*, *that*, *what*. Nothing is conjugated and nothing is inflected.
+ *
+ * **The passive does**, and that is `morphology.ts`: *She repaired the engine*
+ * becomes *The engine was repaired by her*, where *was* has to agree,
+ * *repaired* has to be a participle, and *she* has to become *her*. Regular
+ * verbs are derived; irregular ones are a table that is a seed rather than a
+ * dictionary, and the transform says so rather than inventing *breaked*.
  *
  * **Nothing here judges the result.** The transform produces a sentence; the
  * learner reads it and hears whether it is English. That is how the book works
@@ -23,10 +26,11 @@
  * module could decide, and pretending otherwise would teach the wrong lesson
  * about where the answer comes from.
  */
+import { beFor, formsOf, objectCase, type Tense } from './morphology.ts';
 import type { Span } from './builder.ts';
 import type { Word } from './types.ts';
 
-export type TransformKind = 'substitute' | 'front' | 'cleft' | 'pseudo-cleft';
+export type TransformKind = 'substitute' | 'front' | 'cleft' | 'pseudo-cleft' | 'passive';
 
 export interface Demonstration {
   kind: TransformKind;
@@ -34,7 +38,33 @@ export interface Demonstration {
   did: string;
   /** The sentence that comes out. Read it and hear whether it works. */
   text: string;
+  /**
+   * What was taken on trust to produce it.
+   *
+   * Only the passive sets this, and only when a form was derived rather than
+   * known: *repaired* is right and *smited* is not, and the rule that produced
+   * them cannot tell the difference. Refusing outright would refuse every
+   * regular verb, and staying quiet would put a wrong word on the screen with
+   * a straight face — so it says what it assumed, and the fix is one word
+   * written onto the sentence.
+   */
+  assumed?: string;
 }
+
+/**
+ * Why a transform could not be performed.
+ *
+ * Reported rather than swallowed: "I do not know the past participle of
+ * *smite*" is a real answer and a useful one, and a silent null would send
+ * somebody looking for a bug in the transform instead of a gap in the table.
+ */
+export interface Unavailable {
+  why: string;
+}
+
+export type Attempt = Demonstration | Unavailable;
+
+export const performed = (a: Attempt | null): a is Demonstration => a !== null && 'text' in a;
 
 /** Words joined the way a sentence is written, with punctuation pulled back. */
 function say(parts: string[]): string {
@@ -175,4 +205,64 @@ export function demonstrations(words: Word[], span: Span): Demonstration[] {
     cleft(words, span),
     pseudoCleft(words, span),
   ].filter((d): d is Demonstration => d !== null);
+}
+
+/* ------------------------------------------------------------ the passive */
+
+/** Where the passive gets its three parts from. */
+export interface PassiveInput {
+  /** The words of the clause, in order. */
+  words: Word[];
+  /** The subject — the doer, which ends up after *by*. */
+  subject: Span;
+  /** The verb, which becomes *be* plus a participle. */
+  verb: number;
+  /** The direct object, which ends up in front. */
+  object: Span;
+}
+
+/**
+ * Turn a clause round: *She repaired the engine* → *The engine was repaired by
+ * her*.
+ *
+ * Morenberg's test for a direct object, and the only one in this file that
+ * needs to know anything about English beyond word order. What comes out is a
+ * sentence to read, not a claim — if the object was not really the object, the
+ * result is not really English, and that is the point.
+ *
+ * The tense comes from the verb as it is written, and the agreement from what
+ * is being promoted: *the engine was* against *the engines were*.
+ */
+export function passive(input: PassiveInput): Attempt | null {
+  const { words, subject, verb, object } = input;
+  const v = words[verb];
+  if (!v) return null;
+
+  const forms = formsOf(v.lemma, v.forms);
+  if (!forms) return { why: `I do not know the forms of “${v.lemma}”.` };
+
+  const { body, end } = stripEnd(words);
+  if (subject[1] >= body.length || object[1] >= body.length || verb >= body.length) return null;
+
+  const moved = body.slice(object[0], object[1] + 1);
+  const doer = body.slice(subject[0], subject[1] + 1);
+  if (moved.length === 0 || doer.length === 0) return null;
+
+  const plural = moved.some((w) => w.xpos === 'NNS' || w.xpos === 'NNPS');
+  const tense: Tense = v.xpos === 'VBD' || v.xpos === 'VBN' ? 'past' : 'present';
+  const by = doer.map((w, i) => (i === 0 ? objectCase(uncapital(w)) : w.text));
+
+  return {
+    kind: 'passive',
+    did: 'Turned the sentence round',
+    ...(forms.source === 'derived' ? { assumed: `that “${v.lemma}” is a regular verb` } : {}),
+    text: say([
+      capital(text(moved, true)),
+      beFor(tense, !plural),
+      forms.participle,
+      'by',
+      by.join(' '),
+      end,
+    ]),
+  };
 }

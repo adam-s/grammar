@@ -43,6 +43,21 @@ export interface Word {
   /** Penn fine tag (VBD, NNS, JJR). Teaches the formal inflection tests. */
   xpos: string;
   lemma: string;
+  /**
+   * Forms of this word that cannot be worked out from it.
+   *
+   * The passive needs a participle — *broke* becomes *broken* — and nothing in
+   * the spelling says so. A rule can derive a regular verb and cannot tell a
+   * regular verb from an irregular one it has never met, so *smite* comes out
+   * as *smited* with exactly as much confidence as *repaired*.
+   *
+   * So whoever writes the sentence writes the form. They know it; a rule does
+   * not. Absent means "derive it and say that you did", which is safe for the
+   * overwhelming majority and honest about the rest.
+   *
+   * See `morphology.ts` for the shape and for the fallback order.
+   */
+  forms?: Record<string, string>;
 }
 
 /* ----------------------------------------------------------------- labels */

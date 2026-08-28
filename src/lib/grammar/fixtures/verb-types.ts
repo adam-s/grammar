@@ -1,4 +1,4 @@
-import { build, n, w } from '../build.ts';
+import { build, n, pt, w } from '../build.ts';
 import { sentence } from './sentence.ts';
 
 /* -------------------------------------------------- Vint — The engine stalled. */
@@ -194,4 +194,63 @@ export const vc = sentence(
   ],
   'r1',
   ['Vc', 'objectComplement'],
+);
+
+/* ---- forms written down — The mechanic broke the belt.
+ *
+ * The template for an irregular verb. *broke* → *broken* cannot be worked out
+ * from the spelling, and no rule can tell an irregular verb it has never met
+ * from a regular one — *smite* comes out as *smited* with exactly as much
+ * confidence as *repaired*.
+ *
+ * So the form is written onto the word, by whoever wrote the sentence. Copy
+ * this shape for any verb whose past or participle is not `lemma + ed`:
+ *
+ *     w('V', 'head', 'broke', {
+ *       lemma: 'break',
+ *       verbType: 'Vtr',
+ *       forms: { past: 'broke', participle: 'broken' },
+ *     })
+ *
+ * `morphology.ts` takes the sentence at its word first, falls back to a short
+ * table of common irregulars, and derives last — saying which of the three it
+ * did, so nothing is ever built on a guess without admitting it.
+ */
+export const irregular = sentence(
+  'fix-irregular',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [w('N', 'head', 'mechanic')]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'broke', {
+              lemma: 'break',
+              verbType: 'Vtr',
+              forms: { past: 'broke', participle: 'broken' },
+            }),
+            n('NP', 'directObject', [
+              w('Det', 'determiner', 'the'),
+              n('Nom', 'head', [w('N', 'head', 'belt')]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The mechanic snapped the belt.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'irregular-verb', 'authored-forms'],
 );
