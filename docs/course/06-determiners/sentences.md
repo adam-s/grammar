@@ -16,18 +16,18 @@ then meets the label on ten unfamiliar words.
 
 ## Sentences
 
-| #   | Sentence                    | The step                                         |
-| --- | --------------------------- | ------------------------------------------------ |
-| 1   | The brass bell rang.        | the commonest determiner of all, named at last   |
-| 2   | A window opened.            | the other article                                |
-| 3   | Those dogs barked.          | a demonstrative — the slot, not the word         |
-| 4   | My phone buzzed loudly.     | a possessive in the same slot                    |
-| 5   | Every seat squeaked.        | a quantity in the same slot                      |
-| 6   | Guests complained.          | **no determiner at all** — the slot can be empty |
-| 7   | Water boiled over.          | an empty slot again, with a mass noun            |
-| 8   | Several boats returned.     | back to a filled slot after two empty ones       |
-| 9   | Most agreed.                | a determiner with no noun after it               |
-| 10  | Almost every seat squeaked. | a phrase in the determiner slot                  |
+| #   | Sentence                               | The step                                         |
+| --- | -------------------------------------- | ------------------------------------------------ |
+| 1   | The bell rang.                         | the commonest determiner of all, named at last   |
+| 2   | A window opened.                       | the other article                                |
+| 3   | Those dogs barked.                     | a demonstrative — the slot, not the word         |
+| 4   | My phone buzzed loudly.                | a possessive in the same slot                    |
+| 5   | Every seat squeaked.                   | a quantity in the same slot                      |
+| 6   | Guests complained.                     | **no determiner at all** — the slot can be empty |
+| 7   | Water boiled over.                     | an empty slot again, with a mass noun            |
+| 8   | Several boats returned to the harbour. | back to a filled slot after two empty ones       |
+| 9   | Most agreed.                           | a determiner with no noun after it               |
+| 10  | Almost every seat squeaked.            | a phrase in the determiner slot                  |
 
 ## Notes
 
