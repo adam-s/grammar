@@ -51,8 +51,15 @@ subjects, three completely different relationships to the verb, one identical
 structure. The learner builds all three, sees the trees match, and that is the
 lesson. Nothing was ungradeable, because nothing semantic was ever asked for.
 
-This shape only exists in a tree-building app. A worksheet cannot show you that
-two sentences got the same answer.
+There is an inverse shape, used once:
+
+> **Sentences that mean the same thing and get different trees.**
+
+_The contractors dredged the harbour._ against _The harbour was dredged by the
+contractors._ Two structures, one event.
+
+Both shapes only exist in a tree-building app. A worksheet cannot show you that
+two sentences got the same answer, or that one answer came out twice.
 
 ## Why they earn their place
 
@@ -71,18 +78,28 @@ deserves to be taught rather than buried.
 **They are honest about the boundary.** A course that only shows what it can
 test leaves the learner thinking the tested things are all there is.
 
-## The two proposed first
+## The four
 
-|                                | Follows                    | About                              | Same tree, different meaning                                       |
-| ------------------------------ | -------------------------- | ---------------------------------- | ------------------------------------------------------------------ |
-| [`03a`](03a-doer-and-subject/) | Find the main verb         | the subject is not always the doer | _The audience clapped_ / _The bridge collapsed_ / _The rain eased_ |
-| [`18a`](18a-kinds-of-adverb/)  | Adverbs and adverb phrases | manner, time, place and frequency  | _He ran quickly_ / _He ran yesterday_                              |
+Every lesson from 1 to 40 was reviewed for whether an optional companion would
+add anything. Four earned one.
 
-They are deliberately a pair, because they fail differently. In 3a the grammar
-and the meaning come apart and you can watch it happen. In 18a the grammar
-cannot see the distinction at all.
+|                                     | Follows                    | About                               | Why it earns a place                                                                          |
+| ----------------------------------- | -------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------- |
+| [`03a`](03a-doer-and-subject/)      | Find the main verb         | the subject is not always the doer  | the app's own subject hint is the notional definition, and it never fails before lesson 37    |
+| [`18a`](18a-kinds-of-adverb/)       | Adverbs and adverb phrases | manner, time, place and frequency   | the model refuses this split for a good reason nobody but a code reader ever sees             |
+| [`24a`](24a-what-the-helper-means/) | Auxiliary verbs            | prediction, possibility, obligation | `aux:modal` is one label over several unrelated meanings, and _should_ is genuinely ambiguous |
+| [`37a`](37a-same-event/)            | Passive voice              | why choose one voice                | the passive lets you not say who did it, and no tree records why                              |
 
-Both run on sentences already in the corpus, so neither needs new grammar.
+They fail in different ways on purpose. In 3a the grammar and the meaning come
+apart and you can watch it happen. In 18a the grammar cannot see the distinction
+at all. In 24a one label covers several ideas. In 37a two structures describe one
+event.
+
+**3a and 37a are a pair across the whole course.** 3a plants the doubt about the
+doer at lesson 3; 37a is where the passive finally breaks the rule, thirty-four
+lessons later. Neither is worth as much alone.
+
+All four run on sentences already in the corpus. None needs new grammar.
 
 ## What would have to change in the code
 
@@ -108,8 +125,9 @@ to defend that.
 
 ## Open questions
 
-- **How many?** Two is a demonstration. More than about five and the course has
-  a shadow curriculum with none of the guarantees the real one has.
+- **How many?** Four is the working answer, from a pass over all forty lessons.
+  More than about five and the course has a shadow curriculum with none of the
+  guarantees the real one has.
 - **Does the learner see them by default?** Offered and dismissable is not the
   same as hidden behind a menu, and the two produce very different courses.
 - **Do the glosses belong here?** Every sentence already has a paraphrase, which
