@@ -1,81 +1,77 @@
 /**
- * Lesson 4 — Noun phrases. Where the subject ends.
+ * Lesson 4 — Noun phrases. How much can the subject slot hold?
  *
- * Each subject runs long enough that the eye cannot settle it, so the *it*
- * test has real work to do: replace the whole run and the sentence survives;
- * replace part of it and it does not.
+ * The lesson teaches no label, and pruned to its own scope a six-word subject
+ * asks exactly what a two-word one asks. So the sentences cannot make the TASK
+ * harder — what they can do is move the boundary, and that is what these are
+ * for: the subject runs from one word to five and back, and the substitution
+ * test settles every one.
+ *
+ * Items 6 and 9 are a pair: the same sentence with and without the phrase
+ * inside the subject.
  */
-import { det, postmod, pp, sv, v } from './shape.ts';
+import { adjn, adv, bare, det, postmod, pp, pron, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_04 = [
-  sv(
-    'c04-a',
-    4,
-    postmod('The', 'man', pp('in', det('the', 'coat'))),
-    v('laughed', 'laugh', 'Vint'),
-    'The man wearing the coat laughed.',
-  ),
-  sv(
-    'c04-b',
-    4,
-    postmod('The', 'book', pp('on', det('the', 'shelf'))),
-    v('fell', 'fall', 'Vint'),
-    'The book that was on the shelf fell.',
-  ),
+  sv('c04-a', 4, pron('She'), v('waited', 'wait', 'Vint'), 'She stayed put.'),
+  sv('c04-b', 4, det('The', 'engine'), v('stalled', 'stall', 'Vint'), 'The motor cut out.'),
   sv(
     'c04-c',
     4,
-    postmod('The', 'house', pp('at', det('the', 'corner'))),
-    v('burned', 'burn', 'Vint'),
-    'The house at the corner caught fire.',
+    adjn('My', 'quiet', 'neighbour'),
+    v('waved', 'wave', 'Vint'),
+    'The soft-spoken person next door raised a hand.',
   ),
-  sv(
+  svPlus(
     'c04-d',
     4,
-    postmod('The', 'path', pp('through', det('the', 'wood'))),
-    v('flooded', 'flood', 'Vint'),
-    'The path through the wood filled with water.',
+    adjn('The', 'old', 'engine'),
+    v('stalled', 'stall', 'Vint'),
+    adv('again'),
+    'The worn motor cut out one more time.',
   ),
   sv(
     'c04-e',
     4,
-    postmod('The', 'window', pp('above', det('the', 'sink'))),
-    v('rattled', 'rattle', 'Vint'),
-    'The window above the sink shook.',
+    postmod('My', 'neighbour', pp('from', bare('Leeds'))),
+    v('waved', 'wave', 'Vint'),
+    'The person next door who comes from Leeds raised a hand.',
   ),
   sv(
     'c04-f',
     4,
-    postmod('The', 'letter', pp('from', det('the', 'bank'))),
-    v('arrived', 'arrive', 'Vint'),
-    'The bank sent a letter and it arrived.',
+    postmod('The', 'parcel', pp('by', det('the', 'stairs'))),
+    v('vanished', 'vanish', 'Vint'),
+    'The package left beside the steps went missing.',
   ),
   sv(
     'c04-g',
     4,
-    postmod('The', 'noise', pp('under', det('the', 'floor'))),
-    v('continued', 'continue', 'Vint'),
-    'The noise beneath the floor kept on.',
+    postmod('The', 'engine', pp('near', det('the', 'gate'))),
+    v('stalled', 'stall', 'Vint'),
+    'The motor by the entrance cut out.',
   ),
-  sv(
+  svPlus(
     'c04-h',
     4,
-    postmod('The', 'gate', pp('beside', det('the', 'barn'))),
-    v('opened', 'open', 'Vint'),
-    'The gate next to the barn opened.',
+    pron('Everyone'),
+    v('left', 'leave', 'Vint'),
+    adv('early'),
+    'All of them went ahead of time.',
   ),
   sv(
     'c04-i',
     4,
-    postmod('The', 'clock', pp('in', det('the', 'hall'))),
-    v('stopped', 'stop', 'Vint'),
-    'The hall clock stopped.',
+    det('The', 'parcel'),
+    v('vanished', 'vanish', 'Vint'),
+    'The package went missing.',
   ),
-  sv(
+  svPlus(
     'c04-j',
     4,
-    postmod('The', 'stream', pp('behind', det('the', 'mill'))),
-    v('froze', 'freeze', 'Vint'),
-    'The stream behind the mill turned to ice.',
+    adjn('That', 'same', 'engine'),
+    v('stalled', 'stall', 'Vint'),
+    adv('again'),
+    'The very motor mentioned before cut out once more.',
   ),
 ];

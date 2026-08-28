@@ -27,7 +27,6 @@ import { COURSE_LESSONS } from './course.ts';
 const UNIFORM: Record<number, string> = {
   1: 'nothing but S V is in scope until lesson 9',
   2: 'nothing but S V is in scope until lesson 9',
-  3: 'nothing but S V is in scope until lesson 9',
   4: 'nothing but S V is in scope until lesson 9',
   5: 'nothing but S V is in scope until lesson 9',
   6: 'nothing but S V is in scope until lesson 9',

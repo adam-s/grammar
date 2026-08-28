@@ -214,13 +214,24 @@ describe('every row a lesson withholds explains itself', () => {
 describe('the session closes a question the lesson has finished', () => {
   const lesson = COURSE_LESSONS.find((l) => l.number === 3)!;
   const scope = scopeThrough(COURSE_LESSONS, lesson.number);
-  const sentence = lesson.sentences[0]!; // The visitors waited.
+  const sentence = lesson.sentences[0]!;
+  // Where the verb is, rather than where it used to be. This said [2, 2] with a
+  // comment naming the sentence, and stopped meaning the verb the moment lesson
+  // 3 opened on a three-word subject.
+  const verbAt = (() => {
+    const cs = sentence.readings[0]!.constituents;
+    const v = Object.keys(cs)
+      .map((id) => cs[id]!)
+      .find((c) => c.form === 'V');
+    assert.ok(v, 'lesson 3 sentence 1 has no verb');
+    return v.span as [number, number];
+  })();
 
   it('clears the verdict under the lesson, and would not without it', () => {
     // A verb inside its verb phrase, with the word class settled and the job
     // still to give — the state a lesson-3 learner is in on their last pick.
-    let build = wrap(emptyBuild(), sentence.words, [2, 2], 'V');
-    build = wrap(build, sentence.words, [2, 2], 'VP');
+    let build = wrap(emptyBuild(), sentence.words, verbAt, 'V');
+    build = wrap(build, sentence.words, verbAt, 'VP');
     const verb = Object.keys(build.constituents).find(
       (id) => build.constituents[id]!.form === 'V',
     )!;
