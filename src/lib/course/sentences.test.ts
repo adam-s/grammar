@@ -17,6 +17,7 @@ import { verbs } from '../grammar/clause.ts';
 import { formsOf } from '../grammar/morphology.ts';
 import { canonicalReading, isPunctuation } from '../grammar/types.ts';
 import { COURSE_LESSONS } from './course.ts';
+import { isAssessmentReady, isReviewed, reviewStatus } from './readiness.ts';
 
 const SENTENCES = COURSE_LESSONS.flatMap((lesson) =>
   lesson.sentences.map((sentence) => ({ lesson, sentence })),
@@ -79,12 +80,30 @@ describe('the sentence bank holds what it claims', () => {
     }
   });
 
-  it('every sentence says it was constructed and unreviewed', () => {
+  it('every sentence says it was constructed', () => {
     for (const { sentence } of SENTENCES) {
       assert.equal(sentence.source.work, 'constructed');
-      assert.equal(sentence.provenance.reviewedBy, 'unreviewed');
       assert.equal(sentence.source.gutenbergId, undefined);
     }
+  });
+
+  /**
+   * Not "every sentence is unreviewed" — that assertion would have to be
+   * deleted the day somebody starts reading them, which is the wrong incentive
+   * for a test to create. It reports the state instead, and `readiness.ts`
+   * owns what the state means.
+   */
+  it('reports how much of the course a person has actually read', () => {
+    const status = reviewStatus(COURSE_LESSONS);
+    assert.equal(status.total, SENTENCES.length);
+    assert.equal(
+      status.reviewed + status.outstanding.length,
+      status.total,
+      'every sentence is either signed for or outstanding',
+    );
+    // The current, honest state. Change this number when the reading is done.
+    assert.equal(status.reviewed, 0, `${status.reviewed} readings now have a named reviewer`);
+    assert.equal(isAssessmentReady(COURSE_LESSONS), false);
   });
 
   it('every sentence ends in punctuation and holds a subject and a verb', () => {
@@ -95,5 +114,25 @@ describe('the sentence bank holds what it claims', () => {
       assert.ok(real.length >= 2, `“${sentence.text}” is too short to have a frame`);
       assert.ok(isPunctuation(sentence.words.at(-1)!), `“${sentence.text}” has no end mark`);
     }
+  });
+});
+
+describe('sign-off is a name and a date, not a flag', () => {
+  const one = COURSE_LESSONS[0]!.sentences[0]!;
+
+  it('refuses the placeholder, a blank, and a missing date', () => {
+    assert.equal(isReviewed(one), false, 'as written');
+    const withName = { ...one, provenance: { ...one.provenance, reviewedBy: 'A. Sohn' } };
+    assert.equal(isReviewed(withName), true, 'a name and the date it already carries');
+    assert.equal(
+      isReviewed({ ...withName, provenance: { ...withName.provenance, reviewedAt: 'soon' } }),
+      false,
+      'a name with no real date is not sign-off',
+    );
+    assert.equal(
+      isReviewed({ ...one, provenance: { ...one.provenance, reviewedBy: '  ' } }),
+      false,
+      'nor is a blank',
+    );
   });
 });

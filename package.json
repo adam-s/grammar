@@ -11,8 +11,10 @@
     "lint": "eslint . && prettier --check \"src/**/*.{ts,svelte,css}\"",
     "format": "prettier --write \"src/**/*.{ts,svelte,css}\"",
     "test": "node --test \"src/lib/**/*.test.ts\"",
-    "all": "npm run lint && npm run check && npm run test && npm run build",
-    "snapshot": "node scripts/snapshot.mjs"
+    "all": "npm run lint && npm run check && npm run test && npm run build && npm run course:readiness",
+    "snapshot": "node scripts/snapshot.mjs",
+    "course:readiness": "node scripts/course-readiness.mjs",
+    "course:release": "npm run all && node scripts/course-readiness.mjs --require-reviewed"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
