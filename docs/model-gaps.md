@@ -35,10 +35,26 @@ about the sentence in front of you — so a flag for it would be a lexical fact
 wearing a syntactic hat, with nothing in the tree able to check it. Left alone
 on purpose.
 
-**The passive as a performed test.** `transform.ts` performs substitution,
-fronting and clefting, because those only move words already on the page. The
-passive needs irregular participles, pronoun case and *be* agreement: a content
-table, not code. The six verb types already ask the question it would answer.
+That is the whole list. The passive, which was here as "too expensive", is
+done — see below.
+
+## Morphology, and who supplies it
+
+A rule turns *repair* into *repaired* and *smite* into *smited* with the same
+confidence, and cannot tell which of those is right. So a dictionary is not an
+optimisation here; it is the only thing between the app and a wrong word said
+with a straight face.
+
+**The sentence carries the form.** `Word.forms` is written by whoever writes
+the sentence, which is a model doing the parsing — it knows *broke* is *broken*
+and a rule never can. `fix-irregular` is the template.
+
+`morphology.ts` answers in three tiers and says which one answered: `authored`
+wins, a short table of common irregulars sits beneath it so a hand-written
+sentence still usually works, and `derived` is last and is labelled. The passive
+returns what it assumed — *The engine was repaired by her*, "assumed that
+*repair* is a regular verb" — because refusing outright would refuse every
+regular verb and staying quiet would print *smited*.
 
 ## What was never blocked
 

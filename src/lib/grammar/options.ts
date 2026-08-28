@@ -43,11 +43,12 @@ import {
   type BuildState,
   type Span,
 } from './builder.ts';
+import { verbs } from './clause.ts';
 import { CLAUSE_KINDS } from './node-variants.ts';
 import { FUSIONS, HEAD_FORMS } from './rules.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
-import { cleft, type Demonstration } from './transform.ts';
+import { cleft, passiveFor, performed, type Demonstration } from './transform.ts';
 import { FORM_TEST, FUNCTION_TEST, auxKindName, formName, label } from './names.ts';
 import {
   CLAUSE_FUNCTIONS,
@@ -199,6 +200,11 @@ export interface Panel {
    *
    * Null for a single word, which is the whole of when this is worth showing:
    * the test proves a RUN is one thing, and one word needs no proving.
+   *
+   * For a run sitting after the verb it is the PASSIVE instead, because that is
+   * the sharper question there: not "is this one thing" but "is this what the
+   * verb acted on", which is Morenberg's test and the one the course is built
+   * around.
    */
   singledOut: Demonstration | null;
   /** Guidance that the open group's own question does not already give. */
@@ -366,7 +372,7 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
 
   return finish({
     subject: quote(words, span),
-    singledOut: span[0] === span[1] ? null : cleft(words, span),
+    singledOut: demonstrationFor(state, words, span),
     // The open group's question already asks; a second line saying the same
     // thing in other words is chrome, not guidance.
     prompt: blocked ?? '',
@@ -697,7 +703,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
 
   return finish({
     subject,
-    singledOut: c.span[0] === c.span[1] ? null : cleft(words, c.span),
+    singledOut: demonstrationFor(state, words, c.span),
     // The open group's question already asks; a second line saying the same
     // thing in other words is chrome, not guidance.
     prompt: c.parent === null && !isWord ? 'Group it with its neighbours to give it a job.' : '',
@@ -785,6 +791,24 @@ const AUX_KIND_NOTE: Record<AuxKind, string> = {
   passive: '“be” plus an -ed or -en verb, and the subject has it done to it',
   do: '“do” standing in so a question or a negative has something to move',
 };
+
+/**
+ * The test to perform on this run of words.
+ *
+ * The passive where it applies, because after the verb the live question is
+ * what the verb acted on. The cleft otherwise, because before the verb the live
+ * question is whether these words are one thing at all.
+ *
+ * Nothing for a single word: both tests prove something about a RUN.
+ */
+function demonstrationFor(state: BuildState, words: Word[], span: Span): Demonstration | null {
+  if (span[0] === span[1]) return null;
+  // `verbs` names nodes; the transform needs word positions.
+  const at = verbs(state.constituents).map((id) => state.constituents[id]!.span[0]);
+  const turned = passiveFor(words, at, span);
+  if (performed(turned)) return turned;
+  return cleft(words, span);
+}
 
 /** What each clause kind does, in the learner's language. */
 const CLAUSE_KIND_NOTE: Record<ClauseKind, string> = {

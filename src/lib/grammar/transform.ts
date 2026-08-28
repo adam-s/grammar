@@ -266,3 +266,29 @@ export function passive(input: PassiveInput): Attempt | null {
     ]),
   };
 }
+
+/**
+ * The passive test for a run of words a learner thinks is the direct object.
+ *
+ * Morenberg's test, and the reason this file exists. To find out whether *the
+ * engine* is what *repaired* acted on, turn the sentence round and listen: *The
+ * engine was repaired by her* works, and *The repaired was engine by her* does
+ * not.
+ *
+ * Deliberately loose about where the parts come from. The learner is asking
+ * whether this run is the object, so the tree usually has no verb phrase yet
+ * and cannot be consulted — the verb is whichever one the sentence has, and the
+ * subject is everything in front of it. That is a hypothesis in the same spirit
+ * as `hypothesizes` in `rules.ts`: it lets the question be asked at the moment
+ * it is being asked.
+ *
+ * Null when the sentence has anything other than one verb, because with two
+ * clauses "turn it round" has two answers and neither is this one.
+ */
+export function passiveFor(words: Word[], verbs: number[], span: Span): Attempt | null {
+  if (verbs.length !== 1) return null;
+  const verb = verbs[0]!;
+  if (span[0] <= verb) return null;
+  if (verb === 0) return null;
+  return passive({ words, subject: [0, verb - 1], verb, object: span });
+}
