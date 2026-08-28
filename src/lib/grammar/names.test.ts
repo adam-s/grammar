@@ -31,7 +31,7 @@ test('the transitive mark stays terse while its accessible name stays complete',
 });
 
 test('every clause kind has a compact, distinct diagram mark', () => {
-  const marks = CLAUSE_KINDS.map(clauseKindMark);
+  const marks = CLAUSE_KINDS.map((kind) => clauseKindMark(kind));
   assert.equal(new Set(marks).size, CLAUSE_KINDS.length);
   assert.ok(marks.every((mark) => mark.length <= 4));
   assert.equal(clauseKindName('relative'), 'relative clause');

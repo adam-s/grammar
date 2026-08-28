@@ -19,10 +19,21 @@
     verbType = null,
     voice = null,
     clauseKind = null,
+    finiteness = null,
+    partKind = null,
   }: Props = $props();
 
   const parts = $derived(
-    nodeLabelParts({ form, function: fn, obligatory, verbType, voice, clauseKind }),
+    nodeLabelParts({
+      form,
+      function: fn,
+      obligatory,
+      verbType,
+      voice,
+      clauseKind,
+      finiteness,
+      partKind,
+    }),
   );
   const offsets = $derived(nodeLabelOffsets(form));
 </script>

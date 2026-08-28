@@ -196,7 +196,7 @@ describe('functions follow an actual or prospective parent', () => {
 });
 
 describe('a completed build satisfies the audits', () => {
-  it('builds "She repaired the engine." bottom-up and passes all seven', () => {
+  it('builds "She repaired the engine." bottom-up and passes every audit', () => {
     let s = setOnlyVerbType(labelled(), 'Vtr');
 
     // "She" is a one-word noun phrase; "the engine" is a two-word one.

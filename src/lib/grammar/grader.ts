@@ -16,7 +16,18 @@
 import { verbs } from './clause.ts';
 import { label } from './audits.ts';
 import type { BuildState, Span } from './builder.ts';
-import type { Constituent, Form, Func, Reading, SentenceEntry, VerbType, Voice } from './types.ts';
+import type {
+  ClauseKind,
+  Constituent,
+  Finiteness,
+  Form,
+  Func,
+  PartKind,
+  Reading,
+  SentenceEntry,
+  VerbType,
+  Voice,
+} from './types.ts';
 
 export type Outcome =
   | { kind: 'correct'; readingId: string }
@@ -262,6 +273,84 @@ export function gradeVoice(sentence: SentenceEntry, wordIndex: number, voice: Vo
     reason: voice === 'passive' ? 'This one is not passive.' : 'This one is passive.',
     test: VOICE_TEST,
   };
+}
+
+/** The test that tells the two kinds of `Part` apart. */
+export const PART_KIND_TEST =
+  'Does a verb follow it with no tense? That is infinitival “to”. Does it belong to ' +
+  'the verb before it? That is a particle.';
+
+export function gradePartKind(sentence: SentenceEntry, wordIndex: number, kind: PartKind): Outcome {
+  for (const r of ordered(sentence)) {
+    const part = Object.keys(r.constituents).find(
+      (id) => r.constituents[id]!.form === 'Part' && r.constituents[id]!.span[0] === wordIndex,
+    );
+    if (part && r.constituents[part]!.partKind === kind) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'Not that kind of particle here.', test: PART_KIND_TEST };
+}
+
+/** The test for clause kind: what could stand in its place? */
+export const CLAUSE_KIND_TEST =
+  'Take the clause out and put something simpler in its place. A noun phrase fits a ' +
+  'nominal; an adverb fits an adverbial; an adjective fits a relative.';
+
+export function gradeClauseKind(sentence: SentenceEntry, span: Span, kind: ClauseKind): Outcome {
+  for (const r of ordered(sentence)) {
+    const clause = Object.keys(r.constituents).find((id) => {
+      const c = r.constituents[id]!;
+      return c.form === 'Cl' && c.span[0] === span[0] && c.span[1] === span[1];
+    });
+    if (clause && r.constituents[clause]!.clauseKind === kind) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'Not that kind of clause here.', test: CLAUSE_KIND_TEST };
+}
+
+/** The test for finiteness: can the verb change for tense on its own? */
+export const FINITENESS_TEST =
+  'Put the clause on its own and change the time. If the verb can move from ' +
+  'present to past by itself, it is finite.';
+
+export function gradeFiniteness(
+  sentence: SentenceEntry,
+  span: Span,
+  finiteness: Finiteness,
+): Outcome {
+  for (const r of ordered(sentence)) {
+    const clause = Object.keys(r.constituents).find((id) => {
+      const c = r.constituents[id]!;
+      return (c.form === 'S' || c.form === 'Cl') && c.span[0] === span[0] && c.span[1] === span[1];
+    });
+    if (clause && (r.constituents[clause]!.finiteness ?? 'finite') === finiteness) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'Not that verb form here.', test: FINITENESS_TEST };
 }
 
 export type Hint =

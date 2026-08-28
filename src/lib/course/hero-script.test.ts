@@ -100,7 +100,14 @@ test('every step names the words it is about and the option it takes', () => {
   for (const s of replaySentence(gardenPath).steps) {
     assert.ok(s.span[0] <= s.span[1], 'span runs forward');
     assert.ok(s.nodeId, 'a step names the node it landed on');
-    const choice = s.choice.form ?? s.choice.func ?? s.choice.verbType;
+    const choice =
+      s.choice.form ??
+      s.choice.func ??
+      s.choice.verbType ??
+      s.choice.voice ??
+      s.choice.partKind ??
+      s.choice.finiteness ??
+      s.choice.clauseKind;
     assert.ok(choice, `${s.kind} step has no option to click`);
   }
 });

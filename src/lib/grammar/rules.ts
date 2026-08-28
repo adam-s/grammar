@@ -213,8 +213,26 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // not the clause's head, and giving it any other role misdescribes it.
     case 'marker':
       if (!CLAUSAL.includes(p)) return HIDDEN;
-      if (!childIs('Subord')) return HIDDEN;
+      // `Part` as well as `Subord`, because infinitival *to* introduces a
+      // clause the same way *because* does: *she wanted __to__ leave*. It is
+      // not the clause's head and it fills none of its slots.
+      if (!childIs('Subord', 'Part')) return HIDDEN;
       return has('marker') ? no('This clause already has an introducing word.') : ALLOWED;
+
+    // A particle belongs to its verb — *looked up* is one verb, and *up* is
+    // not a preposition here because it takes no object of its own. Inside the
+    // verb phrase, and nowhere else.
+    case 'particle':
+      if (p !== 'VP') return HIDDEN;
+      if (!childIs('Part')) return HIDDEN;
+      return has('particle') ? no('This verb already has a particle.') : ALLOWED;
+
+    // Sentence-edge material: in the sentence without filling a slot in it.
+    // Licensed on a clause or a noun phrase, which is where asides attach.
+    case 'supplement':
+      if (!CLAUSAL.includes(p) && p !== 'NP') return HIDDEN;
+      if (!childIs('AdvP', 'AdjP', 'PP', 'NP', 'Cl', 'Interj')) return HIDDEN;
+      return ALLOWED;
 
     case 'coordinate':
       return ALLOWED;

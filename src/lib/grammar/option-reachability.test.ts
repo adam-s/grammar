@@ -6,7 +6,10 @@ import {
   hypothesisFor,
   licenseFor,
   nodeOver,
+  setClauseKind,
+  setFiniteness,
   setFunction,
+  setPartKind,
   setVerbType,
   setVoice,
   wrap,
@@ -187,6 +190,36 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
         );
         state = setVoice(state, created, 'passive');
       }
+    }
+
+    // Which kind of `Part` this is, and what verb form a clause has. Both are
+    // answers on the node itself rather than roles under a parent, so they are
+    // taken here, straight after the form that made the question askable.
+    if (source.form === 'Part') {
+      const want = source.partKind!;
+      const option = optionFor(state, sentence.words, created, `part:${want}`);
+      assert.ok(
+        option && isPickable(option),
+        `${sentence.id}/${reading.id}: cannot choose ${want} for a particle`,
+      );
+      state = setPartKind(state, created, want);
+    }
+    if (source.form === 'Cl' && source.clauseKind) {
+      const want = source.clauseKind;
+      const option = optionFor(state, sentence.words, created, `kind:${want}`);
+      assert.ok(
+        option && isPickable(option),
+        `${sentence.id}/${reading.id}: cannot choose a ${want} clause`,
+      );
+      state = setClauseKind(state, created, want);
+    }
+    if ((source.form === 'S' || source.form === 'Cl') && source.finiteness) {
+      const option = optionFor(state, sentence.words, created, `fin:${source.finiteness}`);
+      assert.ok(
+        option && isPickable(option),
+        `${sentence.id}/${reading.id}: cannot choose ${source.finiteness}`,
+      );
+      state = setFiniteness(state, created, source.finiteness);
     }
 
     // Some functions depend on siblings (indirect object follows direct object,

@@ -4,10 +4,12 @@ import {
   formName,
   functionMark,
   functionName,
+  partKindMark,
+  partKindName,
   verbTypeMark,
   verbTypeName,
 } from './names.ts';
-import type { ClauseKind, Form, Func, VerbType, Voice } from './types.ts';
+import type { ClauseKind, Finiteness, Form, Func, PartKind, VerbType, Voice } from './types.ts';
 
 /** Everything visible around the primary form label of one diagram node. */
 export interface NodeLabelValue {
@@ -18,6 +20,10 @@ export interface NodeLabelValue {
   /** Only meaningful beside `verbType`. Absent means active. */
   voice?: Voice | null;
   clauseKind?: ClauseKind | null;
+  /** Only meaningful on a clause. Absent means finite. */
+  finiteness?: Finiteness | null;
+  /** Only meaningful on a `Part`. */
+  partKind?: PartKind | null;
 }
 
 export interface NodeLabelParts {
@@ -60,18 +66,23 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
   const fnMark = value.function ? functionMark(value.function, value.obligatory === true) : null;
   const fnName = value.function ? functionName(value.function, value.obligatory === true) : null;
   const voice = value.voice ?? 'active';
+  const finiteness = value.finiteness ?? 'finite';
   const subtypeMark =
     value.form === 'V' && value.verbType
       ? verbTypeMark(value.verbType, voice)
-      : value.form === 'Cl' && value.clauseKind
-        ? clauseKindMark(value.clauseKind)
-        : null;
+      : value.form === 'Cl' && (value.clauseKind || finiteness !== 'finite')
+        ? clauseKindMark(value.clauseKind ?? null, finiteness)
+        : value.form === 'Part' && value.partKind
+          ? partKindMark(value.partKind)
+          : null;
   const subtypeName =
     value.form === 'V' && value.verbType
       ? verbTypeName(value.verbType, voice)
-      : value.form === 'Cl' && value.clauseKind
-        ? clauseKindName(value.clauseKind)
-        : null;
+      : value.form === 'Cl' && (value.clauseKind || finiteness !== 'finite')
+        ? clauseKindName(value.clauseKind ?? null, finiteness)
+        : value.form === 'Part' && value.partKind
+          ? partKindName(value.partKind)
+          : null;
   const primaryName = formName(value.form);
   return {
     form: value.form,

@@ -282,6 +282,8 @@
         verbType: c.verbType,
         voice: c.voice,
         clauseKind: c.clauseKind,
+        finiteness: c.finiteness,
+        partKind: c.partKind,
       })}
       {@const labelWidth = nodeLabelWidth({
         form: c.form,
@@ -290,6 +292,8 @@
         verbType: c.verbType,
         voice: c.voice,
         clauseKind: c.clauseKind,
+        finiteness: c.finiteness,
+        partKind: c.partKind,
       })}
       {@const on =
         (selection.kind === 'node' && selection.id === id) ||
@@ -350,6 +354,8 @@
           verbType={c.verbType}
           voice={c.voice}
           clauseKind={c.clauseKind}
+          finiteness={c.finiteness}
+          partKind={c.partKind}
         />
       </g>
     {/each}

@@ -393,3 +393,37 @@ describe('the joining word is not one of the things joined', () => {
     assert.equal(at('NP', 'Conj', ['coordinator', 'coordinate', 'coordinate']), 'allowed');
   });
 });
+
+describe('the two kinds of particle, and material at the edge', () => {
+  const lic = (fn: Func, parentForm: Form, childForm: Form, siblings: Func[] = []) =>
+    licenses(fn, { parentForm, verbType: 'Vtr', siblings, childForm }).state;
+
+  it('infinitival "to" introduces a clause the way a subordinator does', () => {
+    assert.equal(lic('marker', 'Cl', 'Part'), 'allowed');
+    assert.equal(lic('marker', 'Cl', 'Subord'), 'allowed');
+    assert.equal(lic('marker', 'VP', 'Part'), 'hidden', 'a verb phrase has no marker');
+  });
+
+  it('a verbal particle belongs to its verb and appears once', () => {
+    assert.equal(lic('particle', 'VP', 'Part'), 'allowed');
+    assert.equal(lic('particle', 'VP', 'Part', ['particle']), 'disabled');
+    assert.equal(lic('particle', 'NP', 'Part'), 'hidden');
+    assert.equal(
+      lic('particle', 'VP', 'P'),
+      'hidden',
+      'a preposition takes an object; this does not',
+    );
+  });
+
+  it('a supplement attaches at the edge of a clause or a noun phrase', () => {
+    assert.equal(lic('supplement', 'S', 'AdvP'), 'allowed');
+    assert.equal(lic('supplement', 'Cl', 'Interj'), 'allowed');
+    assert.equal(lic('supplement', 'NP', 'Cl'), 'allowed');
+    assert.equal(lic('supplement', 'VP', 'AdvP'), 'hidden');
+    assert.equal(lic('supplement', 'PP', 'AdvP'), 'hidden');
+  });
+
+  it('a supplement may repeat: a sentence can carry more than one aside', () => {
+    assert.equal(lic('supplement', 'S', 'AdvP', ['supplement']), 'allowed');
+  });
+});

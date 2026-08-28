@@ -12,6 +12,8 @@
 import type {
   ClauseKind,
   ClauseType,
+  Finiteness,
+  PartKind,
   Constituent,
   ConstituentMap,
   Form,
@@ -35,6 +37,10 @@ export interface SpecNode {
   xpos?: string;
   lemma?: string;
   clauseKind?: ClauseKind;
+  /** On a clause node. Omitted means finite. */
+  finiteness?: Finiteness;
+  /** On a `Part` leaf. */
+  partKind?: PartKind;
   obligatory?: boolean;
   /** On a `V` leaf. */
   verbType?: VerbType;
@@ -163,6 +169,8 @@ export function build(
       self.span = [i, i];
       if (node.obligatory) self.obligatory = true;
       if (node.clauseKind) self.clauseKind = node.clauseKind;
+      if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
+      if (node.partKind) self.partKind = node.partKind;
       if (node.verbType) self.verbType = node.verbType;
       if (node.voice === 'passive') self.voice = 'passive';
       if (node.clauseType) self.clauseType = node.clauseType;
@@ -181,6 +189,8 @@ export function build(
     self.span = [lo, hi];
     if (node.obligatory) self.obligatory = true;
     if (node.clauseKind) self.clauseKind = node.clauseKind;
+    if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
+    if (node.partKind) self.partKind = node.partKind;
     if (node.verbType) self.verbType = node.verbType;
     if (node.voice === 'passive') self.voice = 'passive';
     if (node.clauseType) self.clauseType = node.clauseType;

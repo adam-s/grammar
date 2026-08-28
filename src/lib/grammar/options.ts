@@ -43,6 +43,9 @@ import {
   WORD_FORMS,
   type Form,
   type Func,
+  type ClauseKind,
+  type Finiteness,
+  type PartKind,
   type VerbType,
   type Voice,
   type Word,
@@ -116,6 +119,9 @@ export interface LabelOption {
   obligatory?: boolean;
   verbType?: VerbType;
   voice?: Voice;
+  partKind?: PartKind;
+  finiteness?: Finiteness;
+  clauseKind?: ClauseKind;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -407,6 +413,82 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     ],
   };
 
+  /**
+   * The two kinds of `Part`. Neither is the default, because neither is
+   * commoner and guessing for the learner would hide the distinction the group
+   * exists to teach.
+   */
+  const partKind: OptionGroup = {
+    id: 'part-kind',
+    question: 'Which kind of particle?',
+    notes: 'always',
+    options: [
+      {
+        key: 'part:infinitival',
+        label: 'infinitival “to”',
+        note: 'marks a verb with no tense — “wanted TO leave”',
+        state: (c.partKind === 'infinitival' ? 'chosen' : 'available') as OptionState,
+        partKind: 'infinitival' as PartKind,
+      },
+      {
+        key: 'part:verbal',
+        label: 'verbal particle',
+        note: 'belongs to the verb, and takes no object — “looked UP the number”',
+        state: (c.partKind === 'verbal' ? 'chosen' : 'available') as OptionState,
+        partKind: 'verbal' as PartKind,
+      },
+    ],
+  };
+
+  /**
+   * What job an embedded clause is doing. Not asked of the sentence itself,
+   * which is not embedded in anything and so does not have a kind.
+   */
+  const clauseKind: OptionGroup = {
+    id: 'clause-kind',
+    question: 'What kind of clause is it?',
+    notes: 'always',
+    options: (
+      [
+        ['relative', 'relative', 'it modifies a noun — “the belt THAT BROKE”'],
+        ['nominal', 'nominal', 'it stands where a noun phrase could — “what he wants”'],
+        ['adverbial', 'adverbial', 'it says how, when, or why — “because the belt broke”'],
+        ['comparative', 'comparative', 'it completes a comparison — “than she expected”'],
+      ] as const
+    ).map(([value, label, note]) => ({
+      key: `kind:${value}`,
+      label,
+      note,
+      state: (c.clauseKind === value ? 'chosen' : 'available') as OptionState,
+      clauseKind: value as ClauseKind,
+    })),
+  };
+
+  /**
+   * What verb form the clause has. A separate axis from what kind of clause it
+   * is, so it is a separate group; `finite` stands as the answer until someone
+   * changes it, and so never interrupts.
+   */
+  const finiteness: OptionGroup = {
+    id: 'finiteness',
+    question: 'What shape is its verb in?',
+    notes: 'always',
+    options: (
+      [
+        ['finite', 'finite', 'it changes for tense — “the belt BROKE”'],
+        ['infinitival', 'infinitival', 'the plain form after “to” — “to LEAVE”'],
+        ['participial', 'participial', 'an -ed or -en form — “REPAIRED last week”'],
+        ['gerund-participial', '-ing', 'an -ing form — “LEAVING the engine”'],
+      ] as const
+    ).map(([value, label, note]) => ({
+      key: `fin:${value}`,
+      label,
+      note,
+      state: ((c.finiteness ?? 'finite') === value ? 'chosen' : 'available') as OptionState,
+      finiteness: value as Finiteness,
+    })),
+  };
+
   const groups: OptionGroup[] = isWord
     ? [
         {
@@ -416,6 +498,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
           options: build(WORD_FORMS, false),
         },
         ...(c.form === 'V' ? [verbType, voice] : []),
+        ...(c.form === 'Part' ? [partKind] : []),
         {
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',
@@ -433,6 +516,8 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
           notes: 'ondemand',
           options: build(PHRASE_FORMS, false),
         },
+        ...(c.form === 'Cl' ? [clauseKind] : []),
+        ...(c.form === 'S' || c.form === 'Cl' ? [finiteness] : []),
       ];
 
   groups.push(functionGroup(state, id, subject, scope));

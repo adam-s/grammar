@@ -5,7 +5,10 @@
 import { verbs } from '../grammar/clause.ts';
 import {
   emptyBuild,
+  setClauseKind,
+  setFiniteness,
   setFunction,
+  setPartKind,
   setVerbType,
   setVoice,
   wrap,
@@ -17,13 +20,16 @@ import {
   type Constituent,
   type Form,
   type Func,
+  type ClauseKind,
+  type Finiteness,
+  type PartKind,
   type SentenceEntry,
   type VerbType,
   type Voice,
 } from '../grammar/types.ts';
 
 export type RenderStep = {
-  kind: 'form' | 'function' | 'verb-type' | 'voice';
+  kind: 'form' | 'function' | 'verb-type' | 'voice' | 'part-kind' | 'finiteness' | 'clause-kind';
   canonicalId: string | null;
   state: BuildState;
   /** The words the decision is about — what a learner would have selected. */
@@ -31,7 +37,16 @@ export type RenderStep = {
   /** The node in `state` the decision landed on. */
   nodeId: string;
   /** The palette option a learner would have clicked to produce this step. */
-  choice: { form?: Form; func?: Func; obligatory?: boolean; verbType?: VerbType; voice?: Voice };
+  choice: {
+    form?: Form;
+    func?: Func;
+    obligatory?: boolean;
+    verbType?: VerbType;
+    voice?: Voice;
+    partKind?: PartKind;
+    finiteness?: Finiteness;
+    clauseKind?: ClauseKind;
+  };
 };
 
 export type SentenceReplay = { steps: RenderStep[]; final: BuildState };
@@ -117,6 +132,48 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
         span: reading.constituents[canonicalId]!.span,
         nodeId,
         choice: { voice: 'passive' },
+      });
+    }
+  }
+
+  // Which kind of `Part` each one is, and what verb form each clause has.
+  // Both are answers on a node rather than roles under a parent, so they come
+  // with the classifications rather than with the functions below.
+  for (const canonicalId of order) {
+    const constituent = reading.constituents[canonicalId]!;
+    const nodeId = generated.get(canonicalId)!;
+    if (constituent.form === 'Part' && constituent.partKind) {
+      state = setPartKind(state, nodeId, constituent.partKind);
+      steps.push({
+        kind: 'part-kind',
+        canonicalId,
+        state,
+        span: constituent.span,
+        nodeId,
+        choice: { partKind: constituent.partKind },
+      });
+    }
+    if (constituent.form === 'Cl' && constituent.clauseKind) {
+      state = setClauseKind(state, nodeId, constituent.clauseKind);
+      steps.push({
+        kind: 'clause-kind',
+        canonicalId,
+        state,
+        span: constituent.span,
+        nodeId,
+        choice: { clauseKind: constituent.clauseKind },
+      });
+    }
+    // Finite is the standing answer, so only a non-finite clause costs a step.
+    if (constituent.finiteness && constituent.finiteness !== 'finite') {
+      state = setFiniteness(state, nodeId, constituent.finiteness);
+      steps.push({
+        kind: 'finiteness',
+        canonicalId,
+        state,
+        span: constituent.span,
+        nodeId,
+        choice: { finiteness: constituent.finiteness },
       });
     }
   }

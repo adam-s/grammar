@@ -9,7 +9,7 @@
  * `title` attribute would be inaccessible on touch and fragile by keyboard.
  */
 import { label } from './audits.ts';
-import type { ClauseKind, Form, Func, VerbType, Voice } from './types.ts';
+import type { ClauseKind, Finiteness, Form, Func, PartKind, VerbType, Voice } from './types.ts';
 
 export { label };
 
@@ -75,6 +75,41 @@ export const verbTypeMark = (type: VerbType, voice: Voice = 'active'): string =>
 export const verbTypeName = (type: VerbType, voice: Voice = 'active'): string =>
   voice === 'passive' ? `passive ${VERB_TYPE_NAME[type]}` : VERB_TYPE_NAME[type];
 
+/**
+ * Compact marks for the two kinds of `Part`.
+ *
+ * Both are the same word class and neither is the commoner one, so both are
+ * marked. Leaving one blank would make it indistinguishable from a question
+ * nobody has answered yet.
+ */
+export const PART_KIND_MARK: Record<PartKind, string> = {
+  infinitival: 'Inf',
+  verbal: 'Prt',
+};
+
+export const PART_KIND_NAME: Record<PartKind, string> = {
+  infinitival: 'infinitival “to”',
+  verbal: 'verbal particle',
+};
+
+export const partKindMark = (kind: PartKind): string => PART_KIND_MARK[kind];
+export const partKindName = (kind: PartKind): string => PART_KIND_NAME[kind];
+
+/** Finiteness rides the clause-kind mark, the way voice rides the verb type. */
+export const FINITENESS_MARK: Record<Finiteness, string> = {
+  finite: '',
+  infinitival: 'inf',
+  participial: 'part',
+  'gerund-participial': 'ger',
+};
+
+export const FINITENESS_NAME: Record<Finiteness, string> = {
+  finite: 'finite',
+  infinitival: 'infinitival',
+  participial: 'participial',
+  'gerund-participial': 'gerund-participial',
+};
+
 /** Compact right-hand qualifiers for the four clause subtypes. */
 export const CLAUSE_KIND_MARK: Record<ClauseKind, string> = {
   relative: 'Rel',
@@ -90,8 +125,24 @@ export const CLAUSE_KIND_NAME: Record<ClauseKind, string> = {
   comparative: 'comparative clause',
 };
 
-export const clauseKindMark = (kind: ClauseKind): string => CLAUSE_KIND_MARK[kind];
-export const clauseKindName = (kind: ClauseKind): string => CLAUSE_KIND_NAME[kind];
+/**
+ * The clause's mark. Either axis may be answered without the other, so either
+ * may stand alone: a clause known to be infinitival and not yet known to be
+ * nominal should say the half it knows rather than nothing.
+ */
+export const clauseKindMark = (
+  kind: ClauseKind | null,
+  finiteness: Finiteness = 'finite',
+): string =>
+  [kind ? CLAUSE_KIND_MARK[kind] : '', FINITENESS_MARK[finiteness]].filter(Boolean).join(' ');
+
+export const clauseKindName = (
+  kind: ClauseKind | null,
+  finiteness: Finiteness = 'finite',
+): string =>
+  [finiteness === 'finite' ? '' : FINITENESS_NAME[finiteness], kind ? CLAUSE_KIND_NAME[kind] : '']
+    .filter(Boolean)
+    .join(' ') || 'clause';
 
 /**
  * Compact function marks for diagram nodes. Form stays primary in the centre;
@@ -114,6 +165,8 @@ export const FUNCTION_MARK: Record<Func, string> = {
   complement: 'C',
   coordinate: 'Co',
   coordinator: 'Cj',
+  particle: 'Prt',
+  supplement: 'Sup',
   appositive: 'App',
   marker: 'Mk',
 };
@@ -165,6 +218,8 @@ export const FUNCTION_TEST: Record<Func, string> = {
   complement: 'completes the preposition or adjective',
   coordinate: 'joined to an equal by and / but / or',
   coordinator: 'and, but, or — the word doing the joining',
+  particle: 'the “up” in “looked up the word” — it belongs to the verb',
+  supplement: 'set off from the sentence, and fills no slot in it',
   appositive: 'renames the noun beside it',
   marker: 'introduces the clause and joins it on',
 };

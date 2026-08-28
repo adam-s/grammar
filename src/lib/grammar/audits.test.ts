@@ -2,7 +2,19 @@ import { verbs } from './clause.ts';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
-import { FIXTURES, auxiliaryChain, passive, punctuation, vbe, vint, vtr } from './fixtures.ts';
+import {
+  FIXTURES,
+  adverbialClause,
+  auxiliaryChain,
+  coordination,
+  infinitive,
+  particle,
+  passive,
+  punctuation,
+  vbe,
+  vint,
+  vtr,
+} from './fixtures.ts';
 import type { Reading, SentenceEntry } from './types.ts';
 
 const clone = <T>(x: T): T => structuredClone(x);
@@ -25,7 +37,7 @@ const idOf = (
 
 describe('good fixtures', () => {
   for (const s of FIXTURES) {
-    it(`${s.id} — every reading passes all seven audits`, () => {
+    it(`${s.id} — every reading passes every audit`, () => {
       for (const r of s.readings) {
         const report = auditReading(r, s.words);
         assert.equal(report.ok, true, `${s.id}/${r.id}: ${report.all.join(' | ')}`);
@@ -270,5 +282,53 @@ describe('punctuation is in the sentence and not in the tree', () => {
     const report = auditReading(r, s.words);
     assert.equal(report.ok, false);
     assert.match(report.all.join(' | '), /is punctuation, so it belongs in no node/);
+  });
+});
+
+describe('the two axes of a clause, and the two kinds of Part', () => {
+  it('a particle that does not say which kind is unfinished', () => {
+    const { r, s } = broken(particle, (r) => {
+      delete r.constituents[idOf(r, (c) => c.form === 'Part')]!.partKind;
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /does not say which kind/);
+  });
+
+  it('a particle introducing a clause is infinitival, not verbal', () => {
+    const { r, s } = broken(infinitive, (r) => {
+      r.constituents[idOf(r, (c) => c.form === 'Part')]!.partKind = 'verbal';
+    });
+    assert.match(
+      auditReading(r, s.words).all.join(' | '),
+      /infinitival "to" rather than a particle/,
+    );
+  });
+
+  it('a clause introduced by "to" cannot be recorded finite', () => {
+    const { r, s } = broken(infinitive, (r) => {
+      delete r.constituents[idOf(r, (c) => c.form === 'Cl')]!.finiteness;
+    });
+    assert.match(
+      auditReading(r, s.words).all.join(' | '),
+      /so the clause is infinitival, not finite/,
+    );
+  });
+
+  it('a clause introduced by a subordinator is finite', () => {
+    const { r, s } = broken(adverbialClause, (r) => {
+      r.constituents[idOf(r, (c) => c.form === 'Cl')]!.finiteness = 'infinitival';
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /which starts a finite clause/);
+  });
+
+  it('an embedded clause says what kind it is; a coordinate is not asked', () => {
+    const { r, s } = broken(infinitive, (r) => {
+      delete r.constituents[idOf(r, (c) => c.form === 'Cl')]!.clauseKind;
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /does not say what kind/);
+
+    // Two main clauses joined are not one inside the other, so neither is
+    // doing a job the four kinds name.
+    const co = auditReading(coordination.readings[0]!, coordination.words);
+    assert.equal(co.ok, true, co.all.join(' | '));
   });
 });

@@ -23,7 +23,18 @@
 import { governingVerb, governingVerbType, governingVoice, verbs } from './clause.ts';
 import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm, isPunctuation } from './types.ts';
-import type { Constituent, ConstituentMap, Form, Func, VerbType, Voice, Word } from './types.ts';
+import type {
+  ClauseKind,
+  Constituent,
+  ConstituentMap,
+  Finiteness,
+  Form,
+  Func,
+  PartKind,
+  VerbType,
+  Voice,
+  Word,
+} from './types.ts';
 
 export interface BuildState {
   constituents: ConstituentMap;
@@ -325,6 +336,34 @@ export function setVoice(state: BuildState, id: string, voice: Voice): BuildStat
   const cs = cloneMap(state.constituents);
   if (voice === 'active') delete cs[id]!.voice;
   else cs[id]!.voice = voice;
+  return { ...state, constituents: cs };
+}
+
+/** Say which kind of `Part` a word is: infinitival *to*, or a verbal particle. */
+export function setPartKind(state: BuildState, id: string, partKind: PartKind): BuildState {
+  const c = state.constituents[id];
+  if (!c || c.form !== 'Part') return state;
+  const cs = cloneMap(state.constituents);
+  cs[id]!.partKind = partKind;
+  return { ...state, constituents: cs };
+}
+
+/** Say what job an embedded clause is doing. */
+export function setClauseKind(state: BuildState, id: string, clauseKind: ClauseKind): BuildState {
+  const c = state.constituents[id];
+  if (!c || c.form !== 'Cl') return state;
+  const cs = cloneMap(state.constituents);
+  cs[id]!.clauseKind = clauseKind;
+  return { ...state, constituents: cs };
+}
+
+/** Say what verb form a clause has. Finite is the standing answer. */
+export function setFiniteness(state: BuildState, id: string, finiteness: Finiteness): BuildState {
+  const c = state.constituents[id];
+  if (!c || (c.form !== 'S' && c.form !== 'Cl')) return state;
+  const cs = cloneMap(state.constituents);
+  if (finiteness === 'finite') delete cs[id]!.finiteness;
+  else cs[id]!.finiteness = finiteness;
   return { ...state, constituents: cs };
 }
 

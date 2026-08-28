@@ -32,6 +32,9 @@
     emptyBuild,
     nodeOver,
     setFunction,
+    setClauseKind,
+    setFiniteness,
+    setPartKind,
     setVerbType,
     setVoice,
     stacksOver,
@@ -40,18 +43,30 @@
   } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
   import {
+    CLAUSE_KIND_TEST,
+    FINITENESS_TEST,
+    PART_KIND_TEST,
     PLAIN,
     VERB_TYPE_TEST,
     VOICE_TEST,
+    gradeClauseKind,
+    gradeFiniteness,
     gradeForm,
     gradeFunction,
+    gradePartKind,
     gradeVerbType,
     gradeVoice,
     type Outcome,
   } from '$lib/grammar/grader.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
-  import { FORM_TEST, FUNCTION_TEST, label } from '$lib/grammar/names.ts';
+  import {
+    FORM_TEST,
+    FUNCTION_TEST,
+    clauseKindName,
+    label,
+    partKindName,
+  } from '$lib/grammar/names.ts';
 
   import { LONG } from '$lib/grammar/rules.ts';
   import {
@@ -260,7 +275,13 @@
                   : `func:${step.choice.func}`
                 : step.choice.voice !== undefined
                   ? `voice:${step.choice.voice}`
-                  : `vt:${step.choice.verbType}`,
+                  : step.choice.partKind !== undefined
+                    ? `part:${step.choice.partKind}`
+                    : step.choice.finiteness !== undefined
+                      ? `fin:${step.choice.finiteness}`
+                      : step.choice.clauseKind !== undefined
+                        ? `kind:${step.choice.clauseKind}`
+                        : `vt:${step.choice.verbType}`,
         })),
       reset,
     };
@@ -465,6 +486,60 @@
           kind: 'wrong',
           text: outcome?.reason ?? 'Not that voice here.',
           test: outcome?.test ?? VOICE_TEST,
+        };
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
+    if (o.partKind && selection.kind === 'node') {
+      const at = build.constituents[selection.id]?.span[0];
+      const outcome = at === undefined ? null : gradePartKind(sentence, at, o.partKind);
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setPartKind(build, selection.id, o.partKind);
+        verdict = { kind: 'correct', text: `Yes — this is ${partKindName(o.partKind)}.` };
+        closeIfComplete();
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: outcome?.reason ?? 'Not that kind of particle here.',
+          test: outcome?.test ?? PART_KIND_TEST,
+        };
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
+    if (o.clauseKind && selection.kind === 'node') {
+      const span = build.constituents[selection.id]?.span;
+      const outcome = span ? gradeClauseKind(sentence, span, o.clauseKind) : null;
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setClauseKind(build, selection.id, o.clauseKind);
+        verdict = { kind: 'correct', text: `Yes — this is ${clauseKindName(o.clauseKind)}.` };
+        closeIfComplete();
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: outcome?.reason ?? 'Not that kind of clause here.',
+          test: outcome?.test ?? CLAUSE_KIND_TEST,
+        };
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
+    if (o.finiteness && selection.kind === 'node') {
+      const span = build.constituents[selection.id]?.span;
+      const outcome = span ? gradeFiniteness(sentence, span, o.finiteness) : null;
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setFiniteness(build, selection.id, o.finiteness);
+        verdict = { kind: 'correct', text: `Yes — this clause is ${o.finiteness}.` };
+        closeIfComplete();
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: outcome?.reason ?? 'Not that verb form here.',
+          test: outcome?.test ?? FINITENESS_TEST,
         };
         reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
       }

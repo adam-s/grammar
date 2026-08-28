@@ -87,6 +87,34 @@ export const WORD_FORMS: readonly WordForm[] = [
 export type ClauseKind = 'relative' | 'nominal' | 'adverbial' | 'comparative';
 
 /**
+ * What verb form a clause has — a separate axis from what kind of clause it is.
+ *
+ * *what he wants* and *what to want* are both nominal clauses; one has a tensed
+ * verb and the other does not. Kind says what job the clause does, finiteness
+ * says what shape its verb is in, and neither predicts the other.
+ *
+ * Absent means finite, which is the ordinary case.
+ */
+export type Finiteness = 'finite' | 'infinitival' | 'participial' | 'gerund-participial';
+export const FINITENESS: readonly Finiteness[] = [
+  'finite',
+  'infinitival',
+  'participial',
+  'gerund-participial',
+];
+
+/**
+ * Which kind of `Part` a word is.
+ *
+ * *She wants **to** leave* and *She looked **up** the word* both hold a word
+ * the course calls a particle, and they are doing unrelated jobs: the first
+ * marks a verb with no tense, the second belongs to the verb beside it. The
+ * broad class stays; the subtype separates them.
+ */
+export type PartKind = 'infinitival' | 'verbal';
+export const PART_KINDS: readonly PartKind[] = ['infinitival', 'verbal'];
+
+/**
  * Function — what a constituent DOES. Orthogonal to form: a PP may be an
  * adverbial, a postmodifier, or a complement. Keeping these two axes separate
  * is the whole point (docs/taxonomy.md §3).
@@ -116,6 +144,14 @@ export type PhraseInternalFunction =
   | 'coordinate'
   /** The word that joins the coordinates: *and*, *but*, *or*. Not one of them. */
   | 'coordinator'
+  /** A particle that belongs to its verb: the *up* in *looked up the word*. */
+  | 'particle'
+  /**
+   * Sentence-edge material that is not integrated into the clause: an
+   * interjection, a parenthetical, an aside. It is in the sentence without
+   * filling any of its slots.
+   */
+  | 'supplement'
   | 'appositive'
   /** The word that introduces a clause: *__that__ he left*, *__because__ it broke*. */
   | 'marker';
@@ -140,6 +176,8 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'complement',
   'coordinate',
   'coordinator',
+  'particle',
+  'supplement',
   'appositive',
   'marker',
 ];
@@ -193,6 +231,10 @@ export interface Constituent {
   word?: number;
   /** For `form: 'Cl'`. */
   clauseKind?: ClauseKind;
+  /** For a clause node (`S` or `Cl`): what verb form it has. Absent means finite. */
+  finiteness?: Finiteness;
+  /** For `form: 'Part'` — infinitival *to*, or a particle belonging to a verb. */
+  partKind?: PartKind;
   /**
    * For `form: 'V'` — which of Morenberg's six this verb is.
    *

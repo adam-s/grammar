@@ -718,7 +718,142 @@ export const punctuation = sentence(
   ['Vtr', 'Vint', 'coordination', 'punctuation', 'two-clause'],
 );
 
-/** Every good fixture. All must pass all seven audits. */
+/* ---------------- an infinitive clause — She wanted to leave the engine.
+ *
+ * *to* introduces the clause the way *because* does — it is not the clause's
+ * head and it fills none of its slots — so it is a marker, and `marker` now
+ * accepts a `Part` as well as a `Subord`.
+ *
+ * Two axes, recorded separately. The clause is nominal because of the job it
+ * does (it is the object of *wanted*), and infinitival because of the shape its
+ * verb is in. Neither predicts the other: *what he wants* is nominal and
+ * finite.
+ *
+ * The inner clause has no subject and needs none. A nominal clause after a verb
+ * like *want* takes its subject from the sentence around it, and nothing in the
+ * model requires a clause to have one.
+ */
+export const infinitive = sentence(
+  'fix-infinitive',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'wanted', { lemma: 'want', verbType: 'Vtr' }),
+            n(
+              'Cl',
+              'directObject',
+              [
+                w('Part', 'marker', 'to', { xpos: 'TO', partKind: 'infinitival' }),
+                n('VP', 'predicate', [
+                  w('V', 'head', 'leave', { xpos: 'VB', lemma: 'leave', verbType: 'Vtr' }),
+                  n('NP', 'directObject', [
+                    w('Det', 'determiner', 'the'),
+                    w('N', 'head', 'engine'),
+                  ]),
+                ]),
+              ],
+              { clauseKind: 'nominal', finiteness: 'infinitival', clauseType: 'SVO' },
+            ),
+          ]),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'What she wanted was to leave the engine.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'infinitive', 'nominal-clause', 'marker', 'non-finite', 'two-clause'],
+);
+
+/* ------------------ a verbal particle — She looked up the number.
+ *
+ * The other kind of `Part`, and the reason the subtype has to exist. *up*
+ * belongs to *looked*: together they mean something neither means alone, and
+ * *up* takes no object of its own, which is what separates it from the
+ * preposition spelled the same way.
+ *
+ * It is not a premodifier and not an adverbial. It is part of the verb, so it
+ * gets a function that says exactly that and nothing more.
+ */
+export const particle = sentence(
+  'fix-particle',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'looked', { lemma: 'look', verbType: 'Vtr' }),
+            w('Part', 'particle', 'up', { xpos: 'RP', partKind: 'verbal' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'number')]),
+          ]),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'She found the number by looking it up.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'particle', 'phrasal-verb', 'directObject'],
+);
+
+/* ------------- a supplement — Unfortunately, the engine stalled.
+ *
+ * *Unfortunately* is in the sentence and fills no slot in it. It is not the
+ * subject, not an object, and not an adverbial modifying *stalled* — it
+ * comments on the whole thing from outside. Before `supplement` existed there
+ * was no honest place to put it, and an interjection could be named but not
+ * attached.
+ *
+ * The comma is doing real work here and still takes no label: it is the
+ * evidence that the adverb is set off rather than integrated.
+ */
+export const supplement = sentence(
+  'fix-supplement',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('AdvP', 'supplement', [w('Adv', 'head', 'Unfortunately')]),
+          pt(','),
+          n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'engine')]),
+          n('VP', 'predicate', [w('V', 'head', 'stalled', { lemma: 'stall', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The engine stopped running, and the speaker regrets it.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vint', 'supplement', 'punctuation'],
+);
+
+/** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
   vtr,
@@ -735,6 +870,9 @@ export const FIXTURES: readonly SentenceEntry[] = [
   auxiliaryChain,
   passive,
   punctuation,
+  infinitive,
+  particle,
+  supplement,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

@@ -1,7 +1,7 @@
 /**
- * The seven structural audits (docs/taxonomy.md §5).
+ * The structural audits.
  *
- * Every frozen reading must pass all seven, in CI, on every commit. They are
+ * Every frozen reading must pass all of them, in CI, on every commit. They are
  * also the specification the S04 menu enforces live, via `rules.ts` — a parse
  * the learner can build is a parse the audits accept.
  *
@@ -339,6 +339,56 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
   return f;
 }
 
+/* ------------------------------------------------------------- 8: finiteness */
+
+/**
+ * Which kind of `Part` a word is, and whether the clause agrees.
+ *
+ * *She wants **to** leave* and *She looked **up** the word* hold the same word
+ * class doing unrelated jobs. One marks a verb with no tense; the other belongs
+ * to the verb beside it. Recording which is which is what lets the two be
+ * taught apart, so a `Part` with no answer is an unfinished reading — the same
+ * standard the verb type is held to.
+ */
+export function auditFiniteness(ctx: Ctx): string[] {
+  const f: string[] = [];
+  for (const [id, c] of Object.entries(ctx.cs)) {
+    if (c.form !== 'Part') continue;
+    const word = ctx.words[c.span[0]]?.text ?? id;
+    if (!c.partKind) {
+      f.push(`"${word}" is a particle but does not say which kind — infinitival or verbal`);
+      continue;
+    }
+    if (c.function === 'marker' && c.partKind !== 'infinitival') {
+      f.push(`"${word}" introduces a clause, so it is infinitival "to" rather than a particle`);
+    }
+    if (c.function === 'particle' && c.partKind !== 'verbal') {
+      f.push(`"${word}" belongs to a verb, so it is a verbal particle rather than infinitival`);
+    }
+  }
+
+  for (const clause of clauseNodes(ctx.cs)) {
+    const c = ctx.cs[clause]!;
+    // The four kinds name the jobs a clause can do inside another clause. The
+    // sentence itself does no such job, and neither does a coordinate: *the
+    // engine stalled and the car stopped* is two main clauses joined, not one
+    // sitting inside the other. Every clause that does fill a role says which.
+    if (c.form === 'Cl' && c.function !== 'coordinate' && !c.clauseKind) {
+      f.push(`"${clause}" is a clause but does not say what kind — relative, nominal, adverbial`);
+    }
+    const marker = c.children.find((k) => ctx.cs[k]?.function === 'marker');
+    const markerForm = marker ? ctx.cs[marker]!.form : null;
+    const finite = c.finiteness ?? 'finite';
+    if (markerForm === 'Part' && finite !== 'infinitival') {
+      f.push(`"${clause}" is introduced by "to", so the clause is infinitival, not ${finite}`);
+    }
+    if (markerForm === 'Subord' && finite !== 'finite') {
+      f.push(`"${clause}" is introduced by a subordinator, which starts a finite clause`);
+    }
+  }
+  return f;
+}
+
 /* ----------------------------------------------------------------------- 7: head */
 
 /** Every phrase has exactly one head. `S` and `Cl` are clauses, not phrases. */
@@ -364,12 +414,13 @@ const AUDITS: readonly [string, (ctx: Ctx) => string[]][] = [
   ['contiguity', auditContiguity],
   ['licensing', auditLicensing],
   ['verbType', auditVerbType],
+  ['finiteness', auditFiniteness],
   ['head', auditHead],
 ];
 
 /**
- * Run all seven. `structure` runs first and short-circuits: the other six walk
- * the tree, and a broken tree makes their output noise rather than signal.
+ * Run them all. `structure` runs first and short-circuits: the rest walk the
+ * tree, and a broken tree makes their output noise rather than signal.
  */
 export function auditReading(reading: Reading, words: Word[]): AuditReport {
   const cs = reading.constituents;
@@ -408,6 +459,8 @@ export function label(fn: Func): string {
       return 'object complement';
     case 'auxiliary':
       return 'helping verb';
+    case 'supplement':
+      return 'supplement';
     default:
       return fn;
   }
