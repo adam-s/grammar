@@ -28,62 +28,16 @@
     wordRowRect,
   } from '$lib/grammar/Diagram.svelte';
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
-  import {
-    addGap,
-    emptyBuild,
-    setAnchor,
-    setAuxKind,
-    setFusion,
-    nodeOver,
-    setFunction,
-    setClauseKind,
-    setFiniteness,
-    setPartKind,
-    setVerbType,
-    setVoice,
-    unwrap,
-    wrap,
-  } from '$lib/grammar/builder.ts';
+  import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
-  import {
-    ANCHOR_TEST,
-    AUX_KIND_TEST,
-    CLAUSE_KIND_TEST,
-    FINITENESS_TEST,
-    FUSION_TEST,
-    GAP_TEST,
-    PART_KIND_TEST,
-    PLAIN,
-    VERB_TYPE_TEST,
-    VOICE_TEST,
-    gradeAnchor,
-    gradeAuxKind,
-    gradeClauseKind,
-    gradeFiniteness,
-    gradeForm,
-    gradeFunction,
-    gradeFusion,
-    gradeGap,
-    gradePartKind,
-    gradeVerbType,
-    gradeVoice,
-    type Outcome,
-  } from '$lib/grammar/grader.ts';
+  import { answer } from '$lib/grammar/session.ts';
+  import {} from '$lib/grammar/grader.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
-  import {
-    FORM_TEST,
-    FUNCTION_TEST,
-    auxKindName,
-    clauseKindName,
-    label,
-    partKindName,
-  } from '$lib/grammar/names.ts';
+  import {} from '$lib/grammar/names.ts';
 
-  import { LONG } from '$lib/grammar/rules.ts';
   import {
     blockRejectedOptions,
-    isPanelComplete,
     optionsFor,
     type LabelOption,
     type Selection,
@@ -363,46 +317,8 @@
             : { kind: 'none' };
   }
 
-  /**
-   * @param what   what was confirmed, for a correct answer
-   * @param refused what was rejected, for a first miss — never what is right
-   * @param firstMiss the rejected label's OWN test, so it can be applied and fail
-   * @param key    identifies the thing being answered, so misses accumulate
-   */
-  function toVerdict(
-    o: Outcome,
-    what: string,
-    refused: string,
-    firstMiss: string,
-    key: string,
-  ): Verdict {
-    if (o.kind === 'correct') return { kind: 'correct', text: `Yes — ${what}.` };
-    if (o.kind === 'alternate') {
-      return {
-        kind: 'alternate',
-        text: `Also correct, but it means something else: ${o.gloss}`,
-        test: `Here it means: ${o.canonicalGloss}`,
-      };
-    }
-    const n = (misses[key] ?? 0) + 1;
-    misses = { ...misses, [key]: n };
-    return n === 1
-      ? { kind: 'wrong', text: `Not ${refused}.`, test: firstMiss }
-      : { kind: 'wrong', text: o.reason, test: o.test };
-  }
-
-  const sentenceCase = (t: string) => `${t.charAt(0).toUpperCase()}${t.slice(1).trimEnd()}.`;
-
   function grew() {
     depthMark = Math.max(depthMark, layout(build.constituents, words).maxDepth);
-  }
-
-  function reject(option: LabelOption, text: string) {
-    if (!targetKey) return;
-    rejected = {
-      ...rejected,
-      [targetKey]: { ...rejected[targetKey], [option.key]: text },
-    };
   }
 
   function closePalette() {
@@ -437,246 +353,23 @@
     closeDrawer?.();
   }
 
-  /** Close a completed decision, but keep the palette for a real follow-up. */
-  function closeIfComplete() {
-    if (isPanelComplete(optionsFor(build, words, selection))) closePalette();
-  }
-
+  /**
+   * One decision, handled by `session.ts`.
+   *
+   * Grading, the miss ladder, refusals and where the selection lands are the
+   * same transaction whatever kind of question was asked, and they are testable
+   * only outside a component — so they live there and this is the glue.
+   */
   function pick(o: LabelOption) {
-    const span = targetSpan;
-    if (!span) return;
-
-    // Before the form branch: a gap row carries a form too — it is what the
-    // missing piece would have been — and reading it as "name these words that"
-    // graded a claim about an empty slot as a claim about the words beside it.
-    if (o.gap && o.func && selection.kind === 'node') {
-      const c = build.constituents[selection.id]!;
-      const outcome = gradeGap(sentence, c.span, c.form, o.func);
-      verdict = toVerdict(
-        outcome,
-        `nothing fills the ${label(o.func)} here`,
-        `a missing ${label(o.func)}`,
-        GAP_TEST,
-        `gap:${c.span[0]}-${c.span[1]}:${o.func}`,
-      );
-      if (outcome.kind !== 'wrong') {
-        build = addGap(build, selection.id, o.func, o.form);
-        closeIfComplete();
-      } else {
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.form) {
-      // The level the row belongs to, so "not a noun" is answered with
-      // "pronoun" rather than with "noun phrase" — both true, and only one of
-      // them answers the question that was on screen.
-      const outcome = gradeForm(sentence, span, o.form, o.level);
-      const named = PLAIN[o.form] ?? o.form;
-      verdict = toVerdict(
-        outcome,
-        `that is ${named}`,
-        named,
-        sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`),
-        `form:${span[0]}-${span[1]}`,
-      );
-      // A wrong answer never enters the structure. The diagram is a record of
-      // what the learner has established, not of what they have tried.
-      if (outcome.kind === 'wrong') {
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-        return;
-      }
-
-      let next = build;
-      const nodeId = selection.kind === 'node' ? selection.id : null;
-      const cur = nodeId ? build.constituents[nodeId] : undefined;
-      // `wrap` always puts a node OVER what is there, so renaming means taking
-      // the old one away first. Which of the two this is comes from the row the
-      // learner clicked rather than from a guess about the form.
-      if (!o.stack && nodeId && cur && cur.parent === null && cur.word === undefined) {
-        next = unwrap(next, nodeId);
-      }
-      build = wrap(next, words, span, o.form);
-      grew();
-      const id = nodeOver(build, span);
-      if (id) selection = { kind: 'node', id };
-      closeIfComplete();
-      return;
-    }
-
-    if (o.anchor && selection.kind === 'node') {
-      const me = build.constituents[selection.id]!;
-      const target = build.constituents[o.anchor];
-      const outcome = target
-        ? gradeAnchor(sentence, me.span, me.form, target.span, target.form)
-        : null;
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setAnchor(build, selection.id, o.anchor);
-        verdict = { kind: 'correct', text: `Yes — it belongs to ${o.label}.` };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? 'It does not belong to that one.',
-          test: outcome?.test ?? ANCHOR_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.fusedWith && selection.kind === 'node') {
-      const c = build.constituents[selection.id]!;
-      const outcome = gradeFusion(sentence, c.span, c.form, o.fusedWith);
-      verdict = toVerdict(
-        outcome,
-        `it is the ${label(o.fusedWith)} and the head at once`,
-        `both at once`,
-        FUSION_TEST,
-        `fuse:${c.span[0]}-${c.span[1]}`,
-      );
-      if (outcome.kind !== 'wrong') {
-        build = setFusion(build, selection.id, o.fusedWith);
-        closeIfComplete();
-      } else {
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.func && selection.kind === 'node') {
-      const c = build.constituents[selection.id]!;
-      const outcome = gradeFunction(sentence, c.span, c.form, o.func, o.obligatory);
-      verdict = toVerdict(
-        outcome,
-        `it is the ${o.label}`,
-        `the ${o.label}`,
-        sentenceCase(`the ${label(o.func)} answers: ${FUNCTION_TEST[o.func]}`),
-        `func:${c.span[0]}-${c.span[1]}`,
-      );
-      if (outcome.kind !== 'wrong') {
-        build = setFunction(build, selection.id, o.func, o.obligatory ?? false);
-        closeIfComplete();
-      } else {
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.voice && selection.kind === 'node') {
-      // Graded against the verb that was selected, like the type above it: a
-      // sentence can hold a passive clause inside an active one.
-      const at = build.constituents[selection.id]?.span[0];
-      const outcome = at === undefined ? null : gradeVoice(sentence, at, o.voice);
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setVoice(build, selection.id, o.voice);
-        verdict = {
-          kind: 'correct',
-          text: o.voice === 'passive' ? 'Yes — this one is passive.' : 'Yes — this one is active.',
-        };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? 'Not that voice here.',
-          test: outcome?.test ?? VOICE_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.auxKind && selection.kind === 'node') {
-      const at = build.constituents[selection.id]?.span[0];
-      const outcome = at === undefined ? null : gradeAuxKind(sentence, at, o.auxKind);
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setAuxKind(build, selection.id, o.auxKind);
-        verdict = { kind: 'correct', text: `Yes — this is ${auxKindName(o.auxKind)}.` };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? 'That is not what it is helping with.',
-          test: outcome?.test ?? AUX_KIND_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.partKind && selection.kind === 'node') {
-      const at = build.constituents[selection.id]?.span[0];
-      const outcome = at === undefined ? null : gradePartKind(sentence, at, o.partKind);
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setPartKind(build, selection.id, o.partKind);
-        verdict = { kind: 'correct', text: `Yes — this is ${partKindName(o.partKind)}.` };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? 'Not that kind of particle here.',
-          test: outcome?.test ?? PART_KIND_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.clauseKind && selection.kind === 'node') {
-      const span = build.constituents[selection.id]?.span;
-      const outcome = span ? gradeClauseKind(sentence, span, o.clauseKind) : null;
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setClauseKind(build, selection.id, o.clauseKind);
-        verdict = { kind: 'correct', text: `Yes — this is ${clauseKindName(o.clauseKind)}.` };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? 'Not that kind of clause here.',
-          test: outcome?.test ?? CLAUSE_KIND_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.finiteness && selection.kind === 'node') {
-      const span = build.constituents[selection.id]?.span;
-      const outcome = span ? gradeFiniteness(sentence, span, o.finiteness) : null;
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setFiniteness(build, selection.id, o.finiteness);
-        verdict = { kind: 'correct', text: `Yes — this clause is ${o.finiteness}.` };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? 'Not that verb form here.',
-          test: outcome?.test ?? FINITENESS_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-      return;
-    }
-
-    if (o.verbType && selection.kind === 'node') {
-      // A sentence can hold more than one verb, so the answer is graded against
-      // the verb that was selected rather than against the sentence.
-      const at = build.constituents[selection.id]?.span[0];
-      const outcome = at === undefined ? null : gradeVerbType(sentence, at, o.verbType);
-      if (outcome && outcome.kind !== 'wrong') {
-        build = setVerbType(build, selection.id, o.verbType);
-        verdict = { kind: 'correct', text: `Yes — this verb is ${LONG[o.verbType]}.` };
-        closeIfComplete();
-      } else {
-        verdict = {
-          kind: 'wrong',
-          text: outcome?.reason ?? `Not ${LONG[o.verbType]} here.`,
-          test: outcome?.test ?? VERB_TYPE_TEST,
-        };
-        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
-      }
-    }
+    const before = build;
+    const next = answer({ build, selection, verdict, misses, rejected }, sentence, words, o);
+    build = next.build;
+    selection = next.selection;
+    verdict = next.verdict;
+    misses = next.misses;
+    rejected = next.rejected;
+    if (next.build !== before) grew();
+    if (next.selection.kind === 'none') preview = null;
   }
 </script>
 
