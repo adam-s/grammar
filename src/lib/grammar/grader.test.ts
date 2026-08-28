@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { emptyBuild, setFunction, setOnlyVerbType, wrap } from './builder.ts';
-import { ambiguous, vbe, vtr } from './fixtures.ts';
+import { BY_ID, ambiguous, vbe, vtr } from './fixtures.ts';
 import { gradeBuild, gradeForm, gradeFunction, hintFor, type Outcome } from './grader.ts';
-import type { Form, Func, Span } from './types.ts';
+import { replaySentence } from '../course/sentence-renderer.ts';
+import type { Constituent, Form, Func, Span } from './types.ts';
 
 type Row = {
   what: string;
@@ -191,7 +192,10 @@ describe('grading a whole build', () => {
   it('names the wrong verb type', () => {
     const s = setOnlyVerbType(complete(), 'Vint');
     const { wrong } = gradeBuild(s, vtr);
-    assert.ok(wrong.some((w) => /verb at word 1 is Vtr, not Vint/.test(w)));
+    assert.ok(
+      wrong.some((w) => /missing: .*Vtr verb/.test(w)),
+      wrong.join(' | '),
+    );
   });
 
   it('flags a group the answer does not have', () => {
@@ -202,8 +206,152 @@ describe('grading a whole build', () => {
     s = wrap(s, vtr.words, [0, 1], 'NP');
     const { wrong } = gradeBuild(s, vtr);
     assert.ok(
-      wrong.some((w) => /extra NP over words 0–1/.test(w)),
+      wrong.some((w) => /not in the answer: .*NP@0-1/.test(w)),
       wrong.join(' | '),
     );
+  });
+});
+
+describe('every decision the palette asks for is graded', () => {
+  /**
+   * One row per learner-settable field, each mutating a correct build in a
+   * single place and requiring a specific complaint.
+   *
+   * This table is the reason `facts()` enumerates rather than checking fields
+   * by hand. Before it, eight of these rows passed: the build was graded on
+   * span, form, function, verb type and voice, and everything else the palette
+   * asks a learner was accepted whatever they answered.
+   *
+   * A field added to `Constituent` and not to `facts()` shows up here as a row
+   * that stops failing, which is a failing test rather than a false pass.
+   */
+  const ROWS: {
+    what: string;
+    fixture: string;
+    change: (c: Constituent) => boolean;
+    says: RegExp;
+  }[] = [
+    {
+      what: 'clause kind',
+      fixture: 'fix-object-clause',
+      change: (c) => (c.clauseKind === 'nominal' ? ((c.clauseKind = 'relative'), true) : false),
+      says: /nominal clause/,
+    },
+    {
+      what: 'finiteness',
+      fixture: 'fix-infinitive',
+      change: (c) => (c.finiteness === 'infinitival' ? ((c.finiteness = 'finite'), true) : false),
+      says: /infinitival/,
+    },
+    {
+      what: 'auxiliary job',
+      fixture: 'fix-auxiliary-chain',
+      change: (c) => (c.auxKind === 'perfect' ? ((c.auxKind = 'do'), true) : false),
+      says: /perfect auxiliary/,
+    },
+    {
+      what: 'particle kind',
+      fixture: 'fix-particle',
+      change: (c) => (c.partKind === 'verbal' ? ((c.partKind = 'infinitival'), true) : false),
+      says: /verbal kind of particle/,
+    },
+    {
+      what: 'fusion',
+      fixture: 'fix-fused',
+      change: (c) => (c.fusedWith ? ((c.fusedWith = undefined), true) : false),
+      says: /is also the determiner/,
+    },
+    {
+      what: 'obligatory adverbial',
+      fixture: 'fix-vbe',
+      change: (c) => (c.obligatory ? ((c.obligatory = undefined), true) : false),
+      says: /required by the verb/,
+    },
+    {
+      what: 'voice',
+      fixture: 'fix-passive',
+      change: (c) => (c.voice === 'passive' ? ((c.voice = undefined), true) : false),
+      says: /is passive/,
+    },
+    {
+      what: 'verb type',
+      fixture: 'fix-vtr',
+      change: (c) => (c.verbType === 'Vtr' ? ((c.verbType = 'Vint'), true) : false),
+      says: /Vtr verb/,
+    },
+    {
+      what: 'a gap',
+      fixture: 'fix-subject-relative',
+      change: (c) => (c.gap ? ((c.gap = undefined), (c.span = [3, 3]), true) : false),
+      says: /is empty/,
+    },
+    {
+      what: 'a filler-gap link',
+      fixture: 'fix-fronted-phrase',
+      change: (c) => (c.index !== undefined ? ((c.index = undefined), true) : false),
+      says: /is tied to/,
+    },
+    {
+      what: 'a function',
+      fixture: 'fix-vtr',
+      change: (c) =>
+        c.function === 'directObject' ? ((c.function = 'subjectComplement'), true) : false,
+      says: /direct object/,
+    },
+  ];
+
+  for (const row of ROWS) {
+    it(`catches a wrong ${row.what}`, () => {
+      const sentence = BY_ID[row.fixture]!;
+      const build = replaySentence(sentence).final;
+      const changed = Object.values(build.constituents).some((c) => row.change(c));
+      assert.equal(changed, true, `${row.fixture} has nothing to change`);
+      const { readingId, wrong } = gradeBuild(build, sentence);
+      assert.equal(readingId, null, `graded as correct: ${row.what}`);
+      assert.ok(
+        wrong.some((w) => row.says.test(w)),
+        `expected ${row.says} in: ${wrong.join(' | ')}`,
+      );
+    });
+  }
+
+  it('and still passes a build that is right', () => {
+    for (const id of ['fix-vtr', 'fix-passive', 'fix-fused', 'fix-across-the-board']) {
+      const sentence = BY_ID[id]!;
+      const { readingId, wrong } = gradeBuild(replaySentence(sentence).final, sentence);
+      assert.equal(wrong.length, 0, `${id}: ${wrong.join(' | ')}`);
+      assert.equal(readingId, sentence.canonicalId);
+    }
+  });
+});
+
+describe('feedback answers the question that was asked', () => {
+  it('corrects a word class with a word class, not with the phrase over it', () => {
+    // *She* is a pronoun AND a one-word noun phrase. Both are true; only one
+    // answers the group that was open.
+    const word = gradeForm(vtr, [0, 0], 'N', 'word');
+    assert.equal(word.kind, 'wrong');
+    assert.match(word.kind === 'wrong' ? word.reason : '', /it is a pronoun/);
+
+    const phrase = gradeForm(vtr, [0, 0], 'VP', 'phrase');
+    assert.match(phrase.kind === 'wrong' ? phrase.reason : '', /it is a noun phrase/);
+  });
+
+  it('withholds the answer rather than picking one of two', () => {
+    // With no level, both forms are candidates. Naming one of them "the"
+    // answer teaches that the other is wrong.
+    const either = gradeForm(vtr, [0, 0], 'N');
+    assert.equal(either.kind, 'wrong');
+    assert.doesNotMatch(either.kind === 'wrong' ? either.reason : '', / it is /);
+  });
+
+  it('still says so when the span is not a group at all', () => {
+    const none = gradeForm(vtr, [1, 2], 'NP', 'phrase');
+    assert.match(none.kind === 'wrong' ? none.reason : '', /not a group on its own/);
+  });
+
+  it('a right answer is right at either level', () => {
+    assert.equal(gradeForm(vtr, [0, 0], 'Pron', 'word').kind, 'correct');
+    assert.equal(gradeForm(vtr, [0, 0], 'NP', 'phrase').kind, 'correct');
   });
 });

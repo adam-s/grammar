@@ -55,6 +55,7 @@ import {
   PHRASE_FORMS,
   PHRASE_INTERNAL_FUNCTIONS,
   WORD_FORMS,
+  isWordForm,
   type Form,
   type Func,
   AUX_KINDS,
@@ -153,6 +154,14 @@ export interface LabelOption {
   anchor?: string;
   /** This row says the node does two jobs at once. The other job it names. */
   fusedWith?: Func;
+  /**
+   * Which question this row is an answer to.
+   *
+   * A word carries two forms stacked — the class and the one-word phrase over
+   * it — so "wrong" has two different right answers and the useful one is the
+   * one the open group asked for.
+   */
+  level?: 'word' | 'phrase';
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -307,6 +316,11 @@ function formOption(f: Form, state: OptionState, note?: string): LabelOption {
     note: note ?? FORM_TEST[f],
     state,
     form: f,
+    // Which question this row answers, so a wrong answer is corrected at the
+    // level it was given. `isWordForm` rather than the group it happens to sit
+    // in, because the two form groups are built by the same helper and the row
+    // itself is what carries the claim.
+    level: isWordForm(f) ? 'word' : 'phrase',
   };
 }
 

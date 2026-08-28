@@ -15,11 +15,13 @@
  */
 import { verbs } from './clause.ts';
 import { label } from './audits.ts';
+import { isPhraseForm, isWordForm } from './types.ts';
 import type { BuildState, Span } from './builder.ts';
 import type {
   AuxKind,
   ClauseKind,
   Constituent,
+  ConstituentMap,
   Finiteness,
   Form,
   Func,
@@ -99,8 +101,24 @@ function ordered(sentence: SentenceEntry): Reading[] {
   return [c, ...sentence.readings.filter((r) => r.id !== c.id)];
 }
 
-/** Did the learner give this span the right FORM? */
-export function gradeForm(sentence: SentenceEntry, span: Span, form: Form): Outcome {
+/**
+ * Did the learner give this span the right FORM?
+ *
+ * `level` is which question was asked. A single word usually carries two forms
+ * stacked — the word class and the one-word phrase over it — and answering the
+ * word-class question with "it is a noun phrase" answers a different question
+ * than the one on screen. Without it, picking `N` for *She* was told "it is a
+ * noun phrase", which is true, useless, and not what the open group asked.
+ *
+ * Omitted means "any level", which is right for a run of words: a run has one
+ * form and there is nothing to disambiguate.
+ */
+export function gradeForm(
+  sentence: SentenceEntry,
+  span: Span,
+  form: Form,
+  level?: 'word' | 'phrase',
+): Outcome {
   for (const r of ordered(sentence)) {
     if (at(r, span).some((c) => c.form === form)) {
       return r.id === sentence.canonicalId
@@ -116,19 +134,29 @@ export function gradeForm(sentence: SentenceEntry, span: Span, form: Form): Outc
 
   // Say what it IS, when every reading agrees — a learner who is wrong about a
   // word learns more from the right answer plus its test than from "no".
-  const forms = new Set(ordered(sentence).flatMap((r) => at(r, span).map((c) => c.form)));
+  const all = new Set(ordered(sentence).flatMap((r) => at(r, span).map((c) => c.form)));
+  const here = level
+    ? [...all].filter((f) => (level === 'word' ? isWordForm(f) : isPhraseForm(f)))
+    : [...all];
   const words = sentence.words
     .slice(span[0], span[1] + 1)
     .map((w) => w.text)
     .join(' ');
-  if (forms.size === 0) {
+
+  if (all.size === 0) {
     return {
       kind: 'wrong',
       reason: `“${words}” is not a group on its own here.`,
       test: FORMAL_TEST[form],
     };
   }
-  const truth = [...forms][0]!;
+  // Nothing at the level being asked about, or more than one thing there.
+  // Withhold rather than pick from a set: naming one of two right answers as
+  // "the" answer teaches that the other is wrong.
+  if (here.length !== 1) {
+    return { kind: 'wrong', reason: `“${words}” is not ${plain(form)}.`, test: FORMAL_TEST[form] };
+  }
+  const truth = here[0]!;
   return {
     kind: 'wrong',
     reason: `“${words}” is not ${plain(form)} — it is ${plain(truth)}.`,
@@ -531,43 +559,69 @@ export function gradeBuild(
   return { readingId: null, wrong: compare(build, canonical(sentence)) };
 }
 
-function compare(build: BuildState, reading: Reading): string[] {
-  const out: string[] = [];
-  const theirs = Object.values(build.constituents);
-  const mine = Object.values(reading.constituents);
+/**
+ * Every claim a build makes, as a set of sentences that can be compared.
+ *
+ * The old comparison matched nodes by span and form and then checked three
+ * fields by hand, so eight learner decisions were graded as correct whatever
+ * the learner answered — clause kind, finiteness, auxiliary job, particle kind,
+ * fusion, obligatoriness, gaps and links all passed silently. Adding a ninth
+ * field to the model would have gone the same way.
+ *
+ * So nothing is checked by hand. Each node contributes one fact per thing it
+ * says, the two sets are diffed, and a field added to `Constituent` without
+ * being added here shows up as a fixture that no longer grades — which is a
+ * failing test rather than a false pass.
+ *
+ * **Nodes are named by their path**, not by their span. A verb phrase and its
+ * only child cover the same words, and naming by span graded a claim about one
+ * against the other.
+ *
+ * **Links are named by both ends**, because the index itself is arbitrary: two
+ * builds that pair the same nodes are the same answer even if one numbered them
+ * 1 and the other 7.
+ */
+function facts(cs: ConstituentMap): Set<string> {
+  const out = new Set<string>();
+  const path = (id: string): string => {
+    const steps: string[] = [];
+    let cur: string | null = id;
+    let guard = 0;
+    while (cur && guard++ < 200) {
+      steps.unshift(cs[cur]!.form);
+      cur = cs[cur]!.parent;
+    }
+    const c = cs[id]!;
+    return `${steps.join('>')}@${c.span[0]}-${c.span[1]}`;
+  };
 
-  for (const c of mine) {
-    const hit = theirs.find((t) => sameSpan(t, c.span) && t.form === c.form);
-    if (!hit) {
-      out.push(`missing ${c.form} over words ${c.span[0]}–${c.span[1]}`);
-    } else if (c.function !== null && hit.function !== c.function) {
-      out.push(`${c.form} over words ${c.span[0]}–${c.span[1]} should be the ${label(c.function)}`);
+  for (const id of Object.keys(cs)) {
+    const c = cs[id]!;
+    const at = path(id);
+    out.add(`${at} exists`);
+    if (c.function !== null) out.add(`${at} is the ${label(c.function)}`);
+    if (c.fusedWith) out.add(`${at} is also the ${label(c.fusedWith)}`);
+    if (c.verbType) out.add(`${at} is a ${c.verbType} verb`);
+    if (c.voice === 'passive') out.add(`${at} is passive`);
+    if (c.clauseKind) out.add(`${at} is a ${c.clauseKind} clause`);
+    if (c.finiteness && c.finiteness !== 'finite') out.add(`${at} is ${c.finiteness}`);
+    if (c.auxKind) out.add(`${at} is the ${c.auxKind} auxiliary`);
+    if (c.partKind) out.add(`${at} is the ${c.partKind} kind of particle`);
+    if (c.obligatory) out.add(`${at} is required by the verb`);
+    if (c.gap) out.add(`${at} is empty`);
+    if (c.index !== undefined) {
+      const other = Object.keys(cs).find((k) => k !== id && cs[k]!.index === c.index);
+      if (other) out.add(`${at} is tied to ${path(other)}`);
     }
   }
-  for (const t of theirs) {
-    if (!mine.some((c) => sameSpan(c, t.span) && c.form === t.form)) {
-      out.push(`extra ${t.form} over words ${t.span[0]}–${t.span[1]}`);
-    }
-  }
-  // Each clause answers for its own verb, so compare verb by verb rather than
-  // once for the sentence.
-  for (const theirVerb of verbs(reading.constituents)) {
-    const want = reading.constituents[theirVerb]!;
-    const mineVerb = verbs(build.constituents).find(
-      (id) => build.constituents[id]!.span[0] === want.span[0],
-    );
-    const got = mineVerb ? (build.constituents[mineVerb]!.verbType ?? null) : null;
-    if (got !== (want.verbType ?? null)) {
-      out.push(
-        `the verb at word ${want.span[0]} is ${want.verbType ?? 'unclassified'}, ` +
-          `not ${got ?? 'unclassified'}`,
-      );
-    }
-    const wantVoice = want.voice ?? 'active';
-    const gotVoice = mineVerb ? (build.constituents[mineVerb]!.voice ?? 'active') : 'active';
-    if (gotVoice !== wantVoice) {
-      out.push(`the verb at word ${want.span[0]} is ${wantVoice}, not ${gotVoice}`);
-    }
-  }
+  return out;
+}
+
+function compare(build: BuildState, reading: Reading): string[] {
+  const want = facts(reading.constituents);
+  const got = facts(build.constituents);
+  const out: string[] = [];
+  for (const f of want) if (!got.has(f)) out.push(`missing: ${f}`);
+  for (const f of got) if (!want.has(f)) out.push(`not in the answer: ${f}`);
   return out;
 }

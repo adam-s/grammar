@@ -218,10 +218,20 @@
    *
    * It exposes the SAME functions the interface calls — `pick` is the one a
    * click runs, `choices` is what the palette is showing — so a sweep exercises
-   * the real path rather than a parallel one written for testing. Anything a
-   * driver could do here, a person can do with a pointer.
+   * the real path rather than a parallel one written for testing.
+   *
+   * `plan()` is different in kind from the rest: it reads the stored answer and
+   * hands back every decision in order. Nothing a person could do with a
+   * pointer, and it is the thing the course promises not to do. It ships in no
+   * build.
    */
   $effect(() => {
+    // Development only. `plan()` below returns the answer, in order, as option
+    // keys — a solution API, whatever the comment above calls it. A browser
+    // global has no boundary a comment can give it, so the boundary is the
+    // build: `import.meta.env.DEV` is true under `npm run dev`, which is what
+    // the sweep drives, and false in everything shipped.
+    if (!import.meta.env.DEV) return;
     const w = window as unknown as Record<string, unknown>;
     w['__grammar'] = {
       get sentenceId() {
@@ -459,7 +469,10 @@
     }
 
     if (o.form) {
-      const outcome = gradeForm(sentence, span, o.form);
+      // The level the row belongs to, so "not a noun" is answered with
+      // "pronoun" rather than with "noun phrase" — both true, and only one of
+      // them answers the question that was on screen.
+      const outcome = gradeForm(sentence, span, o.form, o.level);
       const named = PLAIN[o.form] ?? o.form;
       verdict = toVerdict(
         outcome,
