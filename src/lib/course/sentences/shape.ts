@@ -91,14 +91,19 @@ export const numn =
   (fn) =>
     n('NP', fn, [w('Num', 'determiner', number), w('N', 'head', noun)]);
 
-/** *unusually calm* — an adjective phrase with something in front of its head. */
+/**
+ * *unusually calm* — an adjective phrase with something in front of its head.
+ *
+ * The degree word is a bare `Adv` and not an `AdvP`. Both are well formed and
+ * both pass every audit, which is exactly the danger: two analyses of one
+ * construction inside one corpus means the grader accepts a learner's answer
+ * in one sentence and rejects the identical answer in another. The fixtures
+ * got here first — *too heavy*, *Almost every* — so they decide.
+ */
 export const advadj =
   (degree: string, adjective: string): Phrase =>
   (fn) =>
-    n('AdjP', fn, [
-      n('AdvP', 'premodifier', [w('Adv', 'head', degree)]),
-      w('Adj', 'head', adjective),
-    ]);
+    n('AdjP', fn, [w('Adv', 'premodifier', degree), w('Adj', 'head', adjective)]);
 
 /** *salty* — an adjective phrase. */
 export const adj =
