@@ -5,6 +5,8 @@ Researched 28 August 2026. An author's dossier, not a page for a learner. See
 
 **Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
 
+**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+
 ## What the lesson decides
 
 **Nothing new.** `teaches` is empty in `src/lib/course/course.ts`. Every label
@@ -84,12 +86,14 @@ the lesson is ten repetitions of lesson 1.
 
 ## Bearing on the lesson format
 
-[../../lesson/README.md](../../lesson/README.md) records that interleaved
-practice beats blocked practice, and that a unit built around a label and
-practised in a block is the shape that measured badly. Lesson 2 is ten
-consecutive sentences of one shape, which is blocked practice by definition. A
-lesson that teaches no new label is the safest place in the course to interleave
-earlier work instead, because there is nothing new to protect.
+[../../lesson/README.md](../../lesson/README.md) separates the static explanation
+from practice. The page should answer _where does the subject end?_ with an
+annotated long subject, a shorter contrast, and the substitution test. It earns
+its place through that procedure and contrast, not through a new label.
+
+The practice problem remains: ten consecutive sentences of one shape are
+blocked practice by definition. Because this lesson introduces no label, its
+practice can safely mix earlier shapes with longer subjects.
 
 ## Sources
 

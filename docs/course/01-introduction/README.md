@@ -1,13 +1,15 @@
 # Lesson 1 — Introduction
 
 Researched 28 August 2026. This is an **author's dossier**, not a page for a
-learner. [../../lesson/README.md](../../lesson/README.md) already found that a
-lesson which explains before it lets you try is the one shape the evidence
-argues against, and this repo deleted its lesson container because of it. What
-follows feeds the sentences, the palette hints, and the scope ladder. Nothing
-here is meant to be read before someone is allowed to build.
+learner. [../../lesson/README.md](../../lesson/README.md) defines the learner's
+page as a static, standalone visual explanation. What follows supplies its
+direct answer, diagrams, tests, and common confusion. It also informs the
+separate practice sentences, palette hints, and scope ladder. The page explains
+the topic without gating the builder.
 
 **Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
+**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
 
 ## What the lesson decides
 
@@ -149,7 +151,8 @@ The app's own hint text takes the notional one.
 
 ## What this should change
 
-Three things follow from the research, and none of them is a lesson page.
+Three changes follow from the research. They shape both the visual lesson and
+the separate practice, but this dossier is not learner copy.
 
 1. **`FUNCTION_TEST.subject` in `src/lib/grammar/names.ts` currently reads
    "WHO or WHAT does it?"** That is the notional definition, and it is the

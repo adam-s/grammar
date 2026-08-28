@@ -8,19 +8,21 @@ Researched 28 August 2026. An author's dossier, not a page for a learner.
 
 **Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
 
+**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+
 ## What the lesson decides
 
 **Nothing.** `teaches` is empty and must stay empty.
 
 This lesson is unusual: it exists to explain a label the app deliberately does
-**not** have. Everything the learner clicks is `adverbial`, the same as lesson
-14 and lesson 18. What they take away is why that one label covers four things
-most books separate.
+**not** have. Every completed diagram uses `adverbial`, the same as lessons 14
+and 18. The page explains why that one label covers four things most books
+separate.
 
 ## Why this lesson exists
 
 The refusal is already written down, in `src/lib/grammar/types.ts` on the
-`adverbial` function. It is a good argument and no learner will ever see it:
+`adverbial` function. It is a good argument, but code comments do not teach it:
 
 > The other four — manner, time, place, frequency — are deliberately not
 > separated, because the tree does not record the semantic difference. _He ran
@@ -75,9 +77,9 @@ Four sentences, one from each kind, all already in the corpora:
 
 Four kinds by meaning. Every one of them is drawn `VP > AdvP/adverbial` — one
 attachment path across all four, checked against both corpora rather than
-assumed. The learner builds them and gets **the same answer four times**.
+assumed. The page places those four completed structures side by side.
 
-Then the evidence is run in front of them:
+The page then explains the evidence:
 
 - **Omission.** All four drop and leave a whole sentence, which supports their
   shared adverbial function.
@@ -105,7 +107,7 @@ So this is not a lesson about them. They are named, said to be real, and said to
 be outside what this app can currently draw. That is an honest thing to tell a
 learner and it costs nothing.
 
-## What to say to the learner
+## Direct answer for the learner page
 
 > Books split adverbs four ways by meaning: how, when, where, how often. English
 > grammar does not. All four sat in the same place, moved the same way, and

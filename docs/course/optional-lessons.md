@@ -24,11 +24,11 @@ scope through lesson 3 is identical whether or not 3a was taken, so no later
 lesson can require anything it introduced. This is what "skippable" has to mean
 in a course whose whole order is a dependency graph.
 
-**It never affects course credit.** The ordinary builder still says whether a
-structural label is right, but the result records no score, satisfies no
-readiness gate, and cannot change later access. The moment a semantic judgment
-counts toward progress, the problem `readiness.ts` exists to prevent comes back
-through the side door.
+**It never affects course credit.** The page is static and records no score,
+satisfies no readiness gate, and cannot change later access. If it links to an
+ordinary practice sentence, that practice remains optional. The moment a
+semantic judgment counts toward progress, the problem `readiness.ts` exists to
+prevent comes back through the side door.
 
 **It says at the top what it is.** The learner is told, before they start, that
 this one is about meaning, that the answers are arguable, and that skipping it
@@ -36,22 +36,19 @@ costs them nothing later.
 
 ## What the learner actually does
 
-This is the part that nearly sank the idea. The app is a labelling tool. If
-there is no label to apply, there is nothing to click, and a lesson with nothing
-to click is a page you read before you are allowed to try, which is the exact
-shape [../lesson/README.md](../lesson/README.md) argues against.
+An optional lesson is a static visual explanation under
+[the same page contract](../lesson/README.md) as every required lesson. Its main
+evidence is a pair or small set of completed diagrams. The reader compares the
+structures; there is nothing to click and no answer to submit.
 
-The way out is that **an optional lesson is built out of ordinary builds.** The
-learner labels two to four sentences the normal way, with the normal palette
-and immediate structural feedback. What makes the lesson semantic is not the task. It is
-what the sentences are chosen to show:
+Two visual shapes cover the four optional lessons. The first is:
 
 > **Sentences that mean very different things and get the same tree.**
 
 _The audience clapped._ _The bridge collapsed._ _The rain eased._ Three
-subjects, three completely different relationships to the verb, one identical
-structure. The learner builds all three, sees the trees match, and that is the
-lesson. Nothing was ungradeable, because nothing semantic was ever asked for.
+subjects, three different relationships to the verb, one identical structure.
+The diagrams make the boundary visible without asking the reader to label a
+meaning-based role.
 
 There is an inverse shape, used once:
 
@@ -60,8 +57,10 @@ There is an inverse shape, used once:
 _The contractors dredged the harbour._ against _The harbour was dredged by the
 contractors._ Two structures, one event.
 
-Both shapes only exist in a tree-building app. A worksheet cannot show you that
-two sentences got the same answer, or that one answer came out twice.
+Both shapes depend on the app's diagram data, but the explanation does not need
+the builder to be interactive. Side-by-side static trees show that different
+meanings can share a structure and that different structures can describe the
+same event.
 
 ## Why they earn their place
 
@@ -101,7 +100,9 @@ event.
 doer at lesson 3; 37a is where the passive finally breaks the rule, thirty-four
 lessons later. Neither is worth as much alone.
 
-All four run on sentences already in the corpus. None needs new grammar.
+The four pages use approved sentence parses where available and proposed parses
+where the review ledger still says pending. None may claim a visual until that
+parse is accepted. The pages need no new learner-facing grammar label.
 
 ## What would have to change in the code
 

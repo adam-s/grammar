@@ -8,10 +8,12 @@ Researched 28 August 2026. An author's dossier, not a page for a learner.
 
 **Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
 
+**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+
 ## What the lesson decides
 
-**Nothing.** `teaches` is empty, and must stay empty. The learner labels three
-sentences with the palette they already have. No new label appears.
+**Nothing.** `teaches` is empty, and must stay empty. The page compares three
+completed diagrams using labels the learner already knows. No new label appears.
 
 ## Why this lesson exists
 
@@ -27,7 +29,8 @@ This lesson is where the rule is shown to be about meaning.
 
 ## The three sentences
 
-All three are already in lesson 1's corpus. None needs new grammar.
+All three use only lesson 1 grammar. The page needs approved parses for the two
+sentences that are not yet in the corpus.
 
 | Sentence                | Did the subject choose this? | Role    |
 | ----------------------- | ---------------------------- | ------- |
@@ -35,9 +38,9 @@ All three are already in lesson 1's corpus. None needs new grammar.
 | _The bridge collapsed._ | no — it underwent a change   | theme   |
 | _The rain eased._       | there is nobody to choose    | neither |
 
-The learner builds all three. **The trees are identical.** `S` over `NP`
-subject and `VP` predicate, every time. Whatever changed between the sentences,
-the structure did not record it.
+The page shows all three completed diagrams. **The trees are identical.** `S`
+over `NP` subject and `VP` predicate, every time. Whatever changed between the
+sentences, the structure did not record it.
 
 That is the lesson, and it needs no ungradeable question to make its point.
 
@@ -71,12 +74,12 @@ Same grammatical role, different semantic role. The subject slot is a position,
 not a meaning.
 
 **None of these labels goes in the tree.** They are the author's vocabulary for
-choosing sentences. If a role ever became a thing the learner clicks, this stops
-being an optional lesson.
+choosing sentences. If a role becomes a required learner label, this stops being
+an optional lesson.
 
-## What to say to the learner
+## Direct answer for the learner page
 
-Short, and at the end rather than the start:
+State this near the top, after the first diagram establishes the shared tree:
 
 > All three got the same tree. The audience decided to clap. The bridge did not
 > decide to collapse. The rain is not a thing that decides. English puts all

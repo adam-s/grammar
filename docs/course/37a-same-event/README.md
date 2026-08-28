@@ -8,6 +8,8 @@ Researched 28 August 2026. An author's dossier.
 
 **Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
 
+**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+
 ## What the lesson decides
 
 **Nothing.** `teaches` is empty and must stay empty.
@@ -25,8 +27,8 @@ things and get the same tree**. This one shows the opposite: sentences that
 
 Two structures. One event. Nothing happened differently.
 
-The learner builds both, the trees come out different, and the point is that the
-difference is not about the world.
+The page puts both completed trees side by side. Their structural difference is
+visible even though they describe the same event.
 
 ## Why it earns its place, and why it goes here
 
@@ -54,7 +56,7 @@ careful or evasive depends entirely on the sentence.
 That is the judgment, and it is genuinely arguable, which is what makes this
 optional rather than a lesson.
 
-## What to say to the learner
+## Direct answer for the learner page
 
 > Both sentences describe the same thing happening. The grammar is different and
 > the facts are not. English gives you the choice mainly so you can decide what
@@ -83,10 +85,10 @@ enough to be harmful, and is rejected in
 [../37-passive-voice/README.md](../37-passive-voice/README.md). The lesson
 describes a choice; it does not recommend one.
 
-**The structural builds may receive immediate feedback; the choice of voice must
-not affect course credit.** Which voice is better for a given sentence is exactly
-the kind of judgment `src/lib/course/readiness.ts` exists to keep out of course
-progress.
+**Linked structural practice may give immediate feedback; the choice of voice
+must not affect course credit.** Which voice is better for a given sentence is
+exactly the kind of judgment `src/lib/course/readiness.ts` exists to keep out of
+course progress.
 
 ## Sources
 

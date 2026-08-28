@@ -173,9 +173,9 @@ visible against the same sentence without one.
 
 The order above is a dependency graph, not just a table of contents.
 
-- A lesson's **turn becomes the next lesson's opening problem**. The learner
-  first meets the exception as a real difficulty, then receives one new idea
-  that resolves it.
+- A lesson's **turn names the next useful distinction**. In course order it
+  creates continuity; on a standalone page it appears as a forward connection,
+  not as a cliffhanger the reader must follow.
 - A problem may require only labels already taught. If its sentence contains an
   untaught structure, that structure is supplied as a given node or the sentence
   waits for a later lesson.
@@ -293,9 +293,27 @@ at lesson 51; it does not renumber either sequence.
 
 ## What a lesson ships
 
-The sentences come first and the page comes last. A lesson's sentences are the
-part that can be checked without a reader; its prose is the part that cannot,
-so writing prose against sentences that have not been proved is writing twice.
+Each lesson has two separate learner surfaces: a static visual explanation and
+an interactive practice set. The explanation is a standalone reference page,
+written to answer the search question implied by the lesson title. The sentence
+builder remains the place where a learner acts, receives feedback, and earns
+completion.
+
+The full page contract is in
+[../lesson/README.md](../lesson/README.md). A typical page gives a direct answer,
+an annotated main diagram, a reusable identification procedure, a side-by-side
+contrast, one common confusion, several examples, and backward and forward
+connections. It does not require clicking, hovering, animation, or completing
+practice to reveal its explanation.
+
+The sentences still come first and the final page comes last. The visualizations
+must come from accepted parses, so writing polished prose against sentences that
+have not been proved is writing twice.
+
+This is the target design. The current source has one earlier lesson prototype
+in `src/lib/course/lesson-content.ts`; it ends by opening a builder sentence and
+uses a shorter copy budget. It is implementation evidence, not the contract for
+the remaining pages, and it must change before the static lesson system ships.
 
 [`proposal-review.md`](proposal-review.md) is the adoption gate for the 413
 required and optional proposals. It records natural-reading review, intended
@@ -318,10 +336,10 @@ a single sentence. `teaches` survived because something reads it. The rest was
 deleted along with the `Problem`, `TaskKind` and `Glossary` types it was
 designed to fill, none of which any code had ever referenced.
 
-The lesson page, when it is written, still owes the learner an opening
-question, one short line for the new idea, a test they can perform, a worked
-example, and a turn sentence that becomes the next lesson's opener. That is a
-writing job, not a data format.
+The lesson page is a writing and visualization job, not a second content
+manifest. Its first paragraph answers the topic directly. Its diagrams explain
+the structure without interaction, and its last connection points toward the
+next useful distinction without making this page depend on it.
 
 ### Where the sentences come from
 
@@ -362,8 +380,9 @@ Three regions surround one contextual tool:
 
 - **Left sidebar — Sentences.** The problems assigned to the current lesson.
   Selecting one opens its diagram. The sidebar is collapsible.
-- **Middle — Lesson or diagram.** Never both. Opening a lesson shows its prose
-  and worked example; opening a sentence shows the interactive workspace.
+- **Middle — Lesson or diagram.** Never both. Opening a lesson shows a static,
+  search-style visual explanation; opening a sentence shows the interactive
+  workspace.
 - **Right sidebar — Courses.** The staged course outline, lesson progress, and
   later the course switcher. The sidebar is collapsible.
 - **At the selection — Labels.** The chooser opens near the selected word or
@@ -378,7 +397,9 @@ two-column popup. Opening navigation or labels must not discard diagram state.
 
 This arrangement gives each kind of movement one home: the right side moves
 through the curriculum, the left side moves through the current practice set,
-and the popup moves through the labels for the current selection.
+and the popup moves through the labels for the current selection. The lesson
+page remains useful outside that shell because its explanation is complete
+without either sidebar.
 
 ### Completion and the checkmark
 

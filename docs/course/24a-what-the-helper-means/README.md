@@ -8,10 +8,12 @@ Researched 28 August 2026. An author's dossier.
 
 **Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
 
+**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+
 ## What the lesson decides
 
-**Nothing.** `teaches` is empty and must stay empty. The learner builds three
-sentences with the palette they already have.
+**Nothing.** `teaches` is empty and must stay empty. The page compares three
+completed diagrams using the palette labels the learner already knows.
 
 ## Why this lesson exists
 
@@ -32,15 +34,15 @@ anywhere in the structure.
 
 ## The demonstration
 
-The learner builds all three and the trees match. Then the question is put to
-them and left open:
+The page shows all three trees together, then puts the unresolved meaning beside
+the visual match:
 
 > _The board should approve the plan._ Does that mean they are required to, or
 > that you expect them to? Both are ordinary readings. Nothing in the sentence
 > decides, and nothing in the tree records which one you picked.
 
-That is the lesson. It needs no ungradeable question, because the building was
-ordinary and only the observation is semantic.
+That is the lesson. It needs no submitted question because the visual evidence
+is structural and only the observation is semantic.
 
 ## Why it earns its place
 

@@ -8,6 +8,11 @@ complaint here had a better home.
 What remains is the part that is not about any one lesson: **the argument, the
 contract, and the list of things the course has never built.**
 
+This contract governs the separate practice set, not the static lesson page.
+The lesson explains one distinction with approved diagrams; the ten sentences
+control how slowly the learner practises and combines it. See
+[../lesson/README.md](../lesson/README.md) for the page contract.
+
 Every number comes from `node scripts/measure-course.mjs`, which defines its
 metrics. An earlier draft called its numbers reproducible while the script that
 made them sat in a scratch directory, and two of them did not survive

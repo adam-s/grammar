@@ -94,6 +94,16 @@ possible." Say it, or cut it.
 **Generic examples.** A metaphor that would fit any subject fits none. The Maine
 dairy case works because it is about this and nothing else.
 
+**Search-result padding.** "In this lesson, we will explore" delays the answer
+and pretends the reader arrived through the course shell. A lesson page must
+also work for someone who landed there from a search. Answer the likely question
+in the first paragraph, then earn the detail that follows.
+
+**Decorative diagrams.** A tree beside a paragraph is not evidence merely
+because both mention the same sentence. Each visual needs a claim, direct
+labels, and a caption that says what the comparison proves. If removing the
+diagram changes nothing, the diagram was decoration.
+
 **Sycophancy and stage directions.** "Great question." "Let's dive in." "I hope
 this helps." Anything addressed to the reader about the writing rather than
 about the subject.
@@ -103,14 +113,28 @@ about the subject.
 Teaching prose is parallel by nature, which is the failure mode here. A lesson
 slips when it builds a triad of tests where the subject has two, when it defines
 a term by first saying what the term is not, or when it closes by reaching for
-significance instead of handing over the next action.
+significance instead of answering the question cleanly.
+
+The static lesson contract creates another risk: forty-four pages with the same
+cadence. The shared structure controls coverage, not paragraph rhythm. One topic
+may need a matched pair; another may need a procedure followed by three small
+examples. The visualization should follow the distinction being taught rather
+than a fixed page template.
 
 Headings are the highest-risk line in a lesson. They are written last, read
 first, and rarely read aloud, which is how a heading that parses two ways ships.
 
-The copy budgets are enforced by tests
-in `src/lib/course/lesson-content.test.ts`. Slop is verbose, so a tight budget
-kills most of it before an editor sees it.
+A search-style page still belongs to this course. It should name the connection
+to earlier and later lessons, but it must not require either one to explain its
+main point. Avoid shell-dependent lines such as "as you just saw" and "you will
+need this next."
+
+The earlier lesson prototype has copy budgets enforced by
+`src/lib/course/lesson-content.test.ts`. Those limits still test the prototype;
+they do not override the static page lengths in
+[`lesson/README.md`](lesson/README.md). When the implementation changes, its
+tests must enforce the new contract. A budget helps, but it cannot distinguish a
+complete search answer from compressed filler.
 
 ## Sources
 
