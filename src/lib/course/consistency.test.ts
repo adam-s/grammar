@@ -19,15 +19,21 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { FIXTURES } from '../grammar/fixtures.ts';
-import { isLeaf, type Constituent, type Reading } from '../grammar/types.ts';
+import { isLeaf, type Constituent, type Reading, type Word } from '../grammar/types.ts';
 import { COURSE_LESSONS } from './course.ts';
 
-type Entry = { id: string; readings: readonly Reading[] };
+type Entry = { id: string; readings: readonly Reading[]; words: readonly Word[] };
 
 const CORPUS: Entry[] = [...FIXTURES, ...COURSE_LESSONS.flatMap((lesson) => lesson.sentences)];
 
 /** Every constituent in every reading, with enough context to name it. */
-function* all(): Generator<{ where: string; c: Constituent; parent: Constituent | null }> {
+function* all(): Generator<{
+  where: string;
+  c: Constituent;
+  parent: Constituent | null;
+  entry: Entry;
+  cs: Readonly<Record<string, Constituent>>;
+}> {
   for (const entry of CORPUS) {
     for (const reading of entry.readings) {
       const cs = reading.constituents;
@@ -37,6 +43,8 @@ function* all(): Generator<{ where: string; c: Constituent; parent: Constituent 
           where: `${entry.id}/${reading.id}/${id}`,
           c,
           parent: c.parent ? (cs[c.parent] ?? null) : null,
+          entry,
+          cs,
         };
       }
     }
@@ -91,6 +99,149 @@ describe('the two corpora agree on how a construction is drawn', () => {
     for (const { where, c } of all()) {
       if (c.form !== 'V' || c.gap) continue;
       assert.ok(c.verbType, `${where}: a verb with no type`);
+    }
+  });
+
+  /**
+   * Eighteen words in the corpus are genuinely two things, and the course
+   * teaches most of them on purpose — `up` as a particle and a preposition is
+   * lesson 25, `that` as a determiner and a marker spans lessons 6 and 29.
+   *
+   * Everything else is spelt one way and analysed one way, and that regularity
+   * is worth defending, because the commonest authoring slip is reaching for
+   * the wrong helper. Writing `Two birds` with `det()` instead of `numn()`
+   * gives `Two` a `Det` where every other numeral has `Num`, and it passes the
+   * audits, the shape check and the sweep: `NP > Det/determiner` is exactly
+   * what an article does.
+   */
+  const TWO_WAYS: Record<string, string> = {
+    after: 'a marker before a clause, a preposition before a noun phrase',
+    are: 'a main verb and an auxiliary',
+    clear: 'an adjective and a verb',
+    for: 'a marker and a preposition',
+    her: 'a determiner and a pronoun',
+    in: 'a preposition and a verb particle',
+    is: 'a main verb and an auxiliary',
+    new: 'an adjective and part of a name',
+    out: 'a preposition and a verb particle',
+    outside: 'a preposition and an adverb',
+    question: 'a noun and a verb',
+    repair: 'a noun and a verb',
+    rusted: 'an adjective and a verb',
+    that: 'a determiner and a clause marker',
+    up: 'a preposition and a verb particle',
+    was: 'a main verb and an auxiliary',
+    were: 'a main verb and an auxiliary',
+    who: 'a pronoun and a clause marker',
+  };
+
+  it('a word is analysed one way, unless it is on the list of words that are two things', () => {
+    const forms = new Map<string, Map<string, string>>();
+    for (const { where, c, entry } of all()) {
+      if (c.word === undefined || c.gap) continue;
+      const text = entry.words[c.word]?.text;
+      if (!text) continue;
+      const key = text.toLowerCase();
+      if (!forms.has(key)) forms.set(key, new Map());
+      forms.get(key)!.set(c.form, where);
+    }
+    for (const [word, seen] of forms) {
+      if (seen.size < 2) continue;
+      const kinds = [...seen.keys()].sort().join(' and ');
+      assert.ok(
+        TWO_WAYS[word],
+        `"${word}" is written as ${kinds} — ${[...seen.values()].join(', ')}. ` +
+          'If that is deliberate, add it to TWO_WAYS with the reason. If it is a slip, ' +
+          'it is probably the wrong shape helper.',
+      );
+    }
+  });
+
+  /**
+   * The word-by-word rule above cannot see this one. It asks whether a word is
+   * analysed two ways, and a numeral written with the wrong helper is analysed
+   * ONE way — consistently wrongly. `det('Three', 'witnesses')` gives *Three* a
+   * `Det` in the only sentence it appears in, so there is nothing to disagree
+   * with.
+   *
+   * Spelling settles a cardinal. Every numeral in both corpora is a `Num`, with
+   * no exceptions, so this is a rule the corpus already keeps and the check only
+   * has to hold it there.
+   *
+   * Ordinals are deliberately not covered. None appears in either corpus yet,
+   * and whether *first* is a `Num` premodifying a noun or something else is an
+   * open authoring question — lesson 23's proposal is where it gets decided.
+   */
+  const CARDINAL =
+    /^(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|hundred|thousand|\d+)$/;
+
+  it('a cardinal numeral is written as a Num', () => {
+    let seen = 0;
+    for (const { where, c, entry } of all()) {
+      if (c.word === undefined || c.gap) continue;
+      const text = entry.words[c.word]?.text?.toLowerCase();
+      if (!text || !CARDINAL.test(text)) continue;
+      seen += 1;
+      assert.equal(
+        c.form,
+        'Num',
+        `${where}: "${text}" is a ${c.form}. A cardinal is a Num whatever slot it fills — ` +
+          'this is what reaching for det() instead of numn() looks like.',
+      );
+    }
+    assert.ok(seen > 5, `only ${seen} numerals were examined — the rule is not reaching them`);
+  });
+
+  /**
+   * `The clerk filed the deeds under the counter` shipped with the place phrase
+   * marked required, and `The clerk filed the deeds` is a complete sentence in
+   * the same sense — so a learner who judged it optional was told they were
+   * wrong. Every audit passed it, because nothing in a single tree can see that
+   * the same verb elsewhere manages without one.
+   *
+   * A verb that genuinely demands a place demands it every time. If one appears
+   * both ways, one of the two is a judgment somebody has to make.
+   */
+  it('a verb that requires an adverbial requires it everywhere', () => {
+    // The lemma lives on the WORD, not on the constituent. Reading it off the
+    // constituent leaves it undefined, and the rule then passes by finding
+    // nothing at all — which is how the first version of this test shipped.
+    const needs = new Map<string, string>();
+    const without = new Map<string, string>();
+    let counted = 0;
+    for (const { where, c, entry, cs } of all()) {
+      if (c.form !== 'V' || c.gap || !c.parent || c.word === undefined) continue;
+      const lemma = entry.words[c.word]?.lemma?.toLowerCase();
+      if (!lemma) continue;
+      counted += 1;
+      const siblings = Object.keys(cs)
+        .map((id) => cs[id]!)
+        .filter((x) => x.parent === c.parent);
+      // A phrasal verb is a different lexical item from the verb it is spelt
+      // with. `put the letter on the desk` demands a place; `put away the
+      // crates` does not, and neither fact says anything about the other.
+      if (siblings.some((x) => x.function === 'particle')) continue;
+      const adverbials = siblings.filter((x) => x.function === 'adverbial');
+      if (adverbials.some((x) => x.obligatory)) needs.set(lemma, where);
+      else if (adverbials.length === 0) without.set(lemma, where);
+    }
+    assert.ok(counted > 100, `only ${counted} verbs were examined — the rule is not reaching them`);
+    assert.ok(
+      needs.size > 0,
+      'no verb in either corpus requires an adverbial — the rule is vacuous',
+    );
+    // `be` takes a complement and takes a place, and both are ordinary: *He is
+    // a doctor* against *The keys are on the table*. It is the one verb in
+    // either corpus whose frames differ without one of them being wrong.
+    const MANY_FRAMES = new Set(['be']);
+    for (const [lemma, where] of needs) {
+      if (MANY_FRAMES.has(lemma)) continue;
+      const other = without.get(lemma);
+      assert.ok(
+        !other,
+        `"${lemma}" requires an adverbial at ${where} and manages without one at ${other}. ` +
+          'One of the two is wrong, or the verb has two senses and the corpus draws them alike.',
+      );
     }
   });
 });
