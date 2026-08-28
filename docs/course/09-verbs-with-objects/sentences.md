@@ -11,15 +11,15 @@ answered it. Two distinct asked-shapes across ten sentences.
 | #   | Sentence                             | The step                                          |
 | --- | ------------------------------------ | ------------------------------------------------- |
 | 1   | The mechanic replaced the belt.      | the clearest "verb what?" there is                |
-| 2   | She answered the question.           | an object that nothing receives                   |
+| 2   | She answered every question.         | an object that nothing receives                   |
 | 3   | The baker sold the loaf.             | same frame, a verb that must have one             |
-| 4   | The storm damaged the roof.          | the subject is not a person                       |
+| 4   | The storm damaged our roof.          | the subject is not a person                       |
 | 5   | The gate opened.                     | **no object at all** — the frame has to be tested |
 | 6   | She opened the gate.                 | **the same verb, with one**                       |
-| 7   | The committee rejected the proposal. | back to a plain transitive after the pair         |
-| 8   | He wrote the letter.                 | a short frame, so length is not the signal        |
-| 9   | Those negotiations collapsed.        | a second intransitive, no pair to lean on         |
-| 10  | The crew repaired the track.         | close on the frame the lesson teaches             |
+| 7   | The committee rejected his proposal. | back to a plain transitive after the pair         |
+| 8   | He wrote a letter.                   | a short frame, so length is not the signal        |
+| 9   | The audience hushed.                 | a second intransitive, no pair to lean on         |
+| 10  | Several workers repaired the track.  | close on the frame the lesson teaches             |
 
 ## Notes
 

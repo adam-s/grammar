@@ -23,7 +23,7 @@ short version has to be written.
 
 ## Notes
 
-The learner builds all four and gets the same structural answer four times.
+The page shows four completed diagrams with the same structural answer.
 Omission supports their shared adverbial function: each drops and leaves a whole
 sentence. Position is less uniform—fronting is ordinary for some words and
 marked for others—but it does not divide them into four stable syntax classes.
@@ -39,8 +39,8 @@ Then:
 
 **A note on the corpus.** Manner has 4 distinct adverbs across both corpora and
 time has 4, but **place has one** — _outside_ — and **frequency has one** —
-_twice_. The lesson is buildable today and has no alternates for half of itself.
-Two short sentences would fix that.
+_twice_. The page can be drafted today, but it has no alternate evidence for
+half of the comparison. Two short sentences would fix that.
 
 Conjunctive adverbs — _however_, _therefore_, _meanwhile_ — are named and not
 built. Neither corpus contains one and they have no home in the model. Saying so

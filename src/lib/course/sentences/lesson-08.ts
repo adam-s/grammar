@@ -1,38 +1,67 @@
 /**
- * Lesson 8 — Verbs that stand alone. The verb that leaves no question open.
+ * Lesson 8 — Verbs that stand alone. Intransitive here, not intransitive always.
  *
- * Ask *flickered what?* and there is no answer to give. That is the test, and
- * these are ten verbs it passes.
+ * The built set put the verb last in all ten and used no verb that appears
+ * anywhere else in another sense, so a learner left with the idea that a verb
+ * HAS a type. Items 4 and 7 are seeds: *turn* comes back as a linking verb in
+ * lesson 10, *open* as a transitive one in lesson 9.
+ *
+ * Item 5 matters for a different reason — something does follow the verb and it
+ * is not an object, so "nothing comes after an intransitive verb" fails inside
+ * the lesson that would otherwise teach it.
  */
-import { det, pron, sv, v } from './shape.ts';
+import { adjn, adv, det, pp, pron, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_08 = [
+  sv('c08-a', 8, det('The', 'baby'), v('slept', 'sleep', 'Vint'), 'The infant was asleep.'),
+  sv('c08-b', 8, det('Those', 'lights'), v('flickered', 'flicker', 'Vint'), 'Those lamps wavered.'),
   sv(
-    'c08-a',
+    'c08-c',
     8,
-    det('Those', 'lights'),
-    v('flickered', 'flicker', 'Vint'),
-    'Those lights went on and off.',
+    det('Several', 'guests'),
+    v('arrived', 'arrive', 'Vint'),
+    'A few visitors turned up.',
   ),
-  sv('c08-b', 8, det('The', 'baby'), v('slept', 'sleep', 'Vint'), 'The baby was asleep.'),
-  sv('c08-c', 8, det('Several', 'guests'), v('arrived', 'arrive', 'Vint'), 'Several guests came.'),
-  sv('c08-d', 8, det('The', 'balloon'), v('burst', 'burst', 'Vint'), 'The balloon broke open.'),
-  sv('c08-e', 8, pron('She'), v('smiled', 'smile', 'Vint'), 'She showed a smile.'),
-  sv('c08-f', 8, det('The', 'tide'), v('turned', 'turn', 'Vint'), 'The tide changed direction.'),
-  sv(
-    'c08-g',
+  sv('c08-d', 8, det('The', 'tide'), v('turned', 'turn', 'Vint'), 'The sea changed direction.'),
+  svPlus(
+    'c08-e',
+    8,
+    pron('She'),
+    v('smiled', 'smile', 'Vint'),
+    pp('at', pron('us')),
+    'She looked at us with pleasure.',
+  ),
+  svPlus(
+    'c08-f',
+    8,
+    adjn('The', 'old', 'bridge'),
+    v('collapsed', 'collapse', 'Vint'),
+    adv('overnight'),
+    'The worn crossing fell down during the night.',
+  ),
+  sv('c08-g', 8, det('The', 'hatch'), v('opened', 'open', 'Vint'), 'The small door came open.'),
+  svPlus(
+    'c08-h',
+    8,
+    det('The', 'balloon'),
+    v('burst', 'burst', 'Vint'),
+    adv('loudly'),
+    'The balloon broke with a bang.',
+  ),
+  svPlus(
+    'c08-i',
+    8,
+    det('The', 'plan'),
+    v('failed', 'fail', 'Vint'),
+    adv('completely'),
+    'The scheme came to nothing at all.',
+  ),
+  svPlus(
+    'c08-j',
     8,
     det('The', 'volunteers'),
     v('gathered', 'gather', 'Vint'),
-    'The volunteers came together.',
+    adv('outside'),
+    'The helpers came together beyond the door.',
   ),
-  sv(
-    'c08-h',
-    8,
-    det('The', 'kettle'),
-    v('screamed', 'scream', 'Vint'),
-    'The kettle gave a high whistle.',
-  ),
-  sv('c08-i', 8, det('The', 'plan'), v('failed', 'fail', 'Vint'), 'The plan did not work.'),
-  sv('c08-j', 8, det('The', 'audience'), v('hushed', 'hush', 'Vint'), 'The audience went quiet.'),
 ];

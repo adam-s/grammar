@@ -21,7 +21,7 @@ later.
 | 4   | The tide turned.                    | **a verb that is linking in lesson 10**        |
 | 5   | She smiled at us.                   | something does follow, and it is not an object |
 | 6   | The old bridge collapsed overnight. | a longer predicate that still takes no object  |
-| 7   | The gate opened.                    | **a verb that is transitive in lesson 9**      |
+| 7   | The hatch opened.                   | **a verb that is transitive in lesson 9**      |
 | 8   | The balloon burst loudly.           | the verb comes off the end                     |
 | 9   | The plan failed completely.         | an abstract subject, no participant to add     |
 | 10  | The volunteers gathered outside.    | a place after the verb, still no object        |

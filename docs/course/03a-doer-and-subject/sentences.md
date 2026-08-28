@@ -4,8 +4,9 @@
 [README.md](README.md).
 
 Three sentences, not ten. An optional lesson is a demonstration, and the
-demonstration is that **all three come out as the same tree**. Checked: they do,
-and every one is already in lesson 1's corpus.
+demonstration is that **all three come out as the same tree**. _The audience
+clapped_ is in lesson 1. The other two need approved parses before their diagrams
+can appear on the page.
 
 ## Sentences
 
@@ -17,12 +18,13 @@ and every one is already in lesson 1's corpus.
 
 ## Notes
 
-The learner builds all three with the ordinary palette and immediate structural
-feedback. No result affects course credit, and nothing semantic is graded. The
-trees match — `S > NP/subject + VP/predicate`, `NP > Det/determiner + N/head`,
-`VP > V/head` — and that is the whole lesson.
+The page shows all three completed trees — `S > NP/subject + VP/predicate`,
+`NP > Det/determiner + N/head`, `VP > V/head` — and that visual match is the
+evidence. A separate optional practice link may let the learner rebuild them
+with immediate structural feedback, but no result affects course credit and
+nothing semantic is graded.
 
-Then, at the end and not the start:
+The direct answer belongs near the top, once the first diagram is visible:
 
 > All three got the same tree. The audience decided to clap. The bridge did not
 > decide to collapse. The rain is not a thing that decides. English puts all

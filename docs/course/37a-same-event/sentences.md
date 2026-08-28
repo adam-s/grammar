@@ -21,9 +21,9 @@ it has to be written.
 
 ## Notes
 
-The learner builds all three with the ordinary palette. Items 1 and 2 come out
-differently — subject, verb, direct object against subject, auxiliary, verb,
-adverbial — and nothing happened differently in the world.
+The page shows all three completed diagrams. Items 1 and 2 come out differently
+— subject, verb, direct object against subject, auxiliary, verb, adverbial — and
+nothing happened differently in the world.
 
 Item 3 is where the judgment lives. **There is no active version of it.** To
 write it actively you must supply a subject, and if you do not know one you must
@@ -44,7 +44,7 @@ thirty-four lessons later.
 **It must not become style advice.** "Avoid the passive" is common, wrong often
 enough to be harmful, and rejected in
 [../37-passive-voice/README.md](../37-passive-voice/README.md). The lesson
-describes a choice; it does not recommend one. The structural builds may receive
-immediate feedback, but the voice choice must not affect course credit. That is
-exactly the judgment `src/lib/course/readiness.ts` exists to keep out of course
-progress.
+describes a choice; it does not recommend one. Linked structural practice may
+give immediate feedback, but the voice choice must not affect course credit.
+That is exactly the judgment `src/lib/course/readiness.ts` exists to keep out of
+course progress.

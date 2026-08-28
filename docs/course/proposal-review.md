@@ -7,6 +7,10 @@ the built corpus only after all four review fields are resolved. “Probe passes
 means the smallest construction survives the grammar audits; it does not approve
 this sentence’s parse, reading, or lesson scope.
 
+The same gate applies when a sentence supplies a static lesson diagram. A page
+may be outlined against a pending proposal, but it may not present that tree as
+evidence until the reading and parse are accepted.
+
 Status values are deliberately explicit:
 
 - **Pending human review:** nobody has accepted the ordinary reading yet.
@@ -140,7 +144,7 @@ Status values are deliberately explicit:
 | 4   | The tide turned.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | She smiled at us.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 6   | The old bridge collapsed overnight. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The gate opened.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | The hatch opened.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | The balloon burst loudly.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | The plan failed completely.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 10  | The volunteers gathered outside.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
@@ -150,15 +154,15 @@ Status values are deliberately explicit:
 | #   | Sentence                             | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
 | --- | ------------------------------------ | -------------------- | ---------------------------- | ------------------- | ---------------------- |
 | 1   | The mechanic replaced the belt.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 2   | She answered the question.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 2   | She answered every question.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 3   | The baker sold the loaf.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | The storm damaged the roof.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | The storm damaged our roof.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | The gate opened.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 6   | She opened the gate.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The committee rejected the proposal. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | He wrote the letter.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 9   | Those negotiations collapsed.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 10  | The crew repaired the track.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | The committee rejected his proposal. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | He wrote a letter.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 9   | The audience hushed.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 10  | Several workers repaired the track.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 10 — Linking verbs
 
