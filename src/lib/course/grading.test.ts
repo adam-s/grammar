@@ -137,3 +137,42 @@ describe('a lesson refuses an untaught label, in the module and not just the vie
     assert.equal(Object.values(after.build.constituents)[0]!.form, 'NP');
   });
 });
+
+/**
+ * A withheld row has to say it is withheld.
+ *
+ * The row stays on screen and stays focusable — `aria-disabled`, not
+ * `disabled` — so someone arrowing through the palette lands on it. What they
+ * hear is the label plus the note, because the note is rendered into the
+ * button's accessible name. Without a note they hear "Adverb phrase" and no
+ * reason it will not respond, which is worse than not offering it at all.
+ *
+ * The browser sweep checks this over 5,446 selections and takes half an hour.
+ * This takes a second and fails in the same place.
+ */
+describe('every row a lesson withholds explains itself', () => {
+  for (const lesson of COURSE_LESSONS) {
+    const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+
+    it(`${lesson.id}`, () => {
+      for (const sentence of lesson.sentences) {
+        const spans: [number, number][] = [
+          [0, 0],
+          [0, 1],
+          [sentence.words.length - 2, sentence.words.length - 2],
+        ];
+        for (const span of spans) {
+          if (span[0] < 0 || span[1] >= sentence.words.length) continue;
+          const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span }, scope);
+          for (const o of panel.groups.flatMap((g) => g.options)) {
+            if (o.state !== 'untaught') continue;
+            assert.ok(
+              o.note,
+              `${sentence.id} [${span}]: “${o.label}” is withheld and says nothing about why`,
+            );
+          }
+        }
+      }
+    });
+  }
+});
