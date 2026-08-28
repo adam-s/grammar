@@ -292,7 +292,8 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
     const constituent = reading.constituents[canonicalId]!;
     const links =
       constituent.function === 'postnucleus' ||
-      (constituent.gap === true && constituent.function === 'head');
+      (constituent.gap === true &&
+        (constituent.function === 'head' || constituent.function === 'predicate'));
     if (!links || constituent.index === undefined) continue;
     const anchorCanonical = Object.keys(reading.constituents).find(
       (id) => id !== canonicalId && reading.constituents[id]!.index === constituent.index,

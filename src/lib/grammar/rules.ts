@@ -226,21 +226,37 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // one-substitution agrees — *the old red car and the blue one*, where *one*
     // stands for the nominal and not for the phrase.
     case 'premodifier':
-      return p === 'Nom' || p === 'DP' || p === 'AdjP' || p === 'AdvP' ? ALLOWED : HIDDEN;
+      // Inside a nominal, what narrows a noun; inside anything else, what
+      // grades it. Unrestricted, this said *the* could premodify *engine*,
+      // which is what a determiner does and is a different claim.
+      if (p === 'Nom') return childIs('Adj', 'AdjP', 'N', 'Nom', 'Num', 'AdvP') ? ALLOWED : HIDDEN;
+      if (p === 'DP' || p === 'AdjP' || p === 'AdvP') {
+        return childIs('Adv', 'AdvP', 'Num', 'PP') ? ALLOWED : HIDDEN;
+      }
+      return HIDDEN;
 
     // A name with no internal head. Every piece is flat or none is, which
     // `auditHead` relies on to know it should not be asking.
     case 'flat':
-      return p === 'Nom' || p === 'NP' ? ALLOWED : HIDDEN;
+      if (p !== 'Nom' && p !== 'NP') return HIDDEN;
+      return childIs('N', 'Num', 'Adj', 'Pron') ? ALLOWED : HIDDEN;
 
     case 'postmodifier':
-      return p === 'Nom' ? ALLOWED : HIDDEN;
+      if (p !== 'Nom') return HIDDEN;
+      return childIs('PP', 'Cl', 'AdjP', 'AdvP', 'NP') ? ALLOWED : HIDDEN;
 
     case 'complement':
-      return p === 'PP' || p === 'AdjP' ? ALLOWED : HIDDEN;
+      // What a preposition or an adjective takes to finish it. A preposition
+      // takes a noun phrase or a clause, never a bare determiner — which the
+      // unrestricted rule was happy to allow.
+      if (p === 'PP') return childIs('NP', 'Nom', 'Cl', 'PP', 'AdvP') ? ALLOWED : HIDDEN;
+      if (p === 'AdjP') return childIs('NP', 'Cl', 'PP') ? ALLOWED : HIDDEN;
+      return HIDDEN;
 
     case 'appositive':
-      return p === 'NP' ? ALLOWED : HIDDEN;
+      // A phrase renaming the one beside it, so it is the same kind of thing.
+      if (p !== 'NP' && p !== 'Nom') return HIDDEN;
+      return childIs('NP', 'Nom', 'Cl') ? ALLOWED : HIDDEN;
 
     // The word that introduces a clause and is not part of what it says.
     // Only a clause has one, and only a subordinator can be one — a marker is
@@ -308,6 +324,14 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!childIs('Cl', 'NP')) return HIDDEN;
       return has('extraposed') ? no('This clause already has an extraposed part.') : ALLOWED;
 
+    // *There is a problem* is not about *there*. The subject slot is held by a
+    // word that names nothing, and what the sentence is about waits behind the
+    // verb — so it sits in the predicate and says what it is.
+    case 'displaced':
+      if (p !== 'VP') return HIDDEN;
+      if (!childIs('NP')) return HIDDEN;
+      return has('displaced') ? no('This verb already has a displaced subject.') : ALLOWED;
+
     // Sentence-edge material: in the sentence without filling a slot in it.
     // Licensed on a clause or a noun phrase, which is where asides attach.
     case 'supplement':
@@ -315,8 +339,17 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!childIs('AdvP', 'AdjP', 'PP', 'NP', 'Cl', 'Interj')) return HIDDEN;
       return ALLOWED;
 
+    // Only where something is doing the joining. Licensed everywhere and for
+    // everything, `coordinate` made every other function on every node look
+    // like one of two possibilities, which is why *the* had to be told it was
+    // a determiner rather than being one visibly.
+    //
+    // A join made with a comma alone is not recognised, and cannot be until
+    // punctuation is part of the structure (docs/model-gaps.md).
     case 'coordinate':
-      return ALLOWED;
+      return (ctx.siblingForms ?? []).includes('Conj') || siblings.includes('coordinate')
+        ? ALLOWED
+        : no('Nothing here is joining anything — a coordinate needs an “and”, “but” or “or”.');
 
     // The joining word is not one of the things joined. *and* in *the engine
     // stalled and the car stopped* is doing the joining, so labelling it a

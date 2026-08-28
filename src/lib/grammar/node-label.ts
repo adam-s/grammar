@@ -86,9 +86,10 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
   // abbreviating an informative one.
   const redundant =
     (value.form === 'Aux' && value.function === 'auxiliary') ||
-    // An elided piece is always the head of what it sits in — that is what
-    // being elided means here — so the mark says nothing and costs room the
-    // node does not have.
+    // An elided HEAD is always the head of what it sits in — that is what
+    // being elided means there — so the mark says nothing and costs room the
+    // node does not have. An elided predicate keeps its mark, because a clause
+    // holds other things and which one is missing is the point.
     (value.gap === true && value.function === 'head');
   // A particle's kind and its function say the same thing — `auditFiniteness`
   // enforces exactly that — and over a short word the pair collided with the
@@ -127,6 +128,8 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
   // reader who cannot see it sees two unrelated phrases. The number is the
   // notation, and it means only that these two are one thing.
   const tie = value.index === undefined || value.index === null ? '' : String(value.index);
+  // An elided piece and a moved one are both empty and are not the same claim.
+  const unsaid = value.function === 'head' || value.function === 'predicate';
   if (value.gap) {
     // The mark has to say the slot is empty, or a reader sees a phrase that has
     // simply lost its words.
@@ -136,17 +139,17 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
       functionMark: fnMark,
       functionName: fnName,
       // An elided piece says what it repeats; a moved one says it is empty.
-      subtypeMark:
-        value.function === 'head' ? (tie ? `= ${tie}` : '=') : tie ? `gap ${tie}` : 'gap',
-      subtypeName:
-        value.function === 'head'
-          ? tie
-            ? `left unsaid, repeating ${tie}`
-            : 'left unsaid'
-          : tie
-            ? `gap, filled by phrase ${tie}`
-            : 'gap',
-      accessibleName: [primaryName, 'gap', fnName].filter(Boolean).join(', '),
+      subtypeMark: unsaid ? (tie ? `= ${tie}` : '=') : tie ? `gap ${tie}` : 'gap',
+      subtypeName: unsaid
+        ? tie
+          ? `left unsaid, repeating ${tie}`
+          : 'left unsaid'
+        : tie
+          ? `gap, filled by phrase ${tie}`
+          : 'gap',
+      accessibleName: [primaryName, unsaid ? 'left unsaid' : 'gap', fnName]
+        .filter(Boolean)
+        .join(', '),
     };
   }
   const withTie = tie ? [subtypeMark, tie].filter(Boolean).join(' ') : subtypeMark;

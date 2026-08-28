@@ -86,6 +86,13 @@ export function predicateOf(cs: ConstituentMap, clauseId: string): string | null
 export function verbOfClause(cs: ConstituentMap, clauseId: string): string | null {
   const vp = predicateOf(cs, clauseId);
   if (!vp) return null;
+  // The predicate itself may be the thing left unsaid: *I forgot what __*
+  // elides everything after the fronted phrase. Then the verb comes from the
+  // predicate it copies, one step further out than usual.
+  if (cs[vp]!.gap) {
+    const source = antecedentOf(cs, vp);
+    return source ? verbOfPhrase(cs, source) : null;
+  }
   const head = cs[vp]?.children.find((k) => cs[k]?.function === 'head' && cs[k]?.form === 'V');
   if (head) return head;
   // The verb may not be said at all: *She repaired the engine, and he will __*.
@@ -106,6 +113,12 @@ export function elidedHeadOf(cs: ConstituentMap, id: string): string | null {
   return cs[id]?.children.find((k) => cs[k]?.gap && cs[k]?.function === 'head') ?? null;
 }
 
+/** Is this node one the sentence leaves unsaid rather than one it moved? */
+export function isElision(cs: ConstituentMap, id: string): boolean {
+  const c = cs[id];
+  return c?.gap === true && (c.function === 'head' || c.function === 'predicate');
+}
+
 /** The node an elided piece copies: the other end of its index. */
 export function antecedentOf(cs: ConstituentMap, id: string): string | null {
   const index = cs[id]?.index;
@@ -116,7 +129,10 @@ export function antecedentOf(cs: ConstituentMap, id: string): string | null {
 /** The head `V` of a phrase, following one more elision if it finds one. */
 function verbOfPhrase(cs: ConstituentMap, id: string, guard = 0): string | null {
   if (guard > 20) return null;
-  const head = cs[id]?.children.find((k) => cs[k]?.function === 'head' && cs[k]?.form === 'V');
+  if (cs[id]?.form === 'V' && !cs[id]!.gap) return id;
+  const head = cs[id]?.children.find(
+    (k) => cs[k]?.function === 'head' && cs[k]?.form === 'V' && !cs[k]!.gap,
+  );
   if (head) return head;
   const elided = elidedHeadOf(cs, id);
   if (!elided) return null;
@@ -124,9 +140,22 @@ function verbOfPhrase(cs: ConstituentMap, id: string, guard = 0): string | null 
   return source ? verbOfPhrase(cs, source, guard + 1) : null;
 }
 
-/** The head `V` of a verb phrase. */
+/**
+ * The head `V` of a verb phrase, following an elision if the verb is not said.
+ *
+ * *and the Queen __ at seven* has a verb-shaped hole where its head goes, and
+ * everything that asks this question — which slots are licensed here, what kind
+ * of verb is in charge — has to get the answer from the verb it copies. A hole
+ * that answered "nothing" would make the whole clause unlicensable.
+ */
 export function headVerbOf(cs: ConstituentMap, vpId: string): string | null {
-  return cs[vpId]?.children.find((k) => cs[k]?.function === 'head' && cs[k]?.form === 'V') ?? null;
+  const head = cs[vpId]?.children.find((k) => cs[k]?.function === 'head' && cs[k]?.form === 'V');
+  if (head && !cs[head]!.gap) return head;
+  const elided = head ?? elidedHeadOf(cs, vpId);
+  if (!elided) return null;
+  const source = antecedentOf(cs, elided);
+  if (!source) return null;
+  return cs[source]!.form === 'V' ? source : verbOfPhrase(cs, source);
 }
 
 /**

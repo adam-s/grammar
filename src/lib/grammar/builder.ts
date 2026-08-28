@@ -23,6 +23,7 @@
 import {
   clauseOf,
   governingVerb,
+  isElision,
   governingVerbType,
   governingVoice,
   isClauseNode,
@@ -451,8 +452,12 @@ export function linkFillers(state: BuildState): BuildState {
     if (!isClauseNode(cs, id)) continue;
     const filler = cs[id]!.children.find((k) => cs[k]?.function === 'prenucleus');
     if (!filler || cs[filler]!.index !== undefined) continue;
+    // A moved gap only. An elided one is not what the fronted phrase came off
+    // — *I forgot what __* leaves out the predicate, and *what* was fronted
+    // from inside the material that is no longer there to point at.
     const gapId = Object.keys(cs).find(
-      (k) => cs[k]!.gap && cs[k]!.index === undefined && clauseOf(cs, k) === id,
+      (k) =>
+        cs[k]!.gap && !isElision(cs, k) && cs[k]!.index === undefined && clauseOf(cs, k) === id,
     );
     if (gapId) pending.push([filler, gapId]);
   }
@@ -479,8 +484,7 @@ export function linkFillers(state: BuildState): BuildState {
 export function setAnchor(state: BuildState, tailId: string, anchorId: string): BuildState {
   const tail = state.constituents[tailId];
   const anchor = state.constituents[anchorId];
-  const links =
-    tail?.function === 'postnucleus' || (tail?.gap === true && tail.function === 'head');
+  const links = tail?.function === 'postnucleus' || isElision(state.constituents, tailId);
   if (!tail || !anchor || !links || tailId === anchorId) return state;
   const cs = cloneMap(state.constituents);
   const index = 1 + Math.max(0, ...Object.values(cs).map((c) => c.index ?? 0));
@@ -501,7 +505,7 @@ export function anchorsFor(state: BuildState, id: string): string[] {
   // An elided head copies something said earlier of exactly its own kind, and
   // "earlier" is the whole of the search: nothing after it can be what it
   // repeats.
-  if (node.gap && node.function === 'head') {
+  if (isElision(state.constituents, id)) {
     return Object.keys(state.constituents)
       .filter((k) => {
         const c = state.constituents[k]!;
@@ -572,14 +576,23 @@ export function gappableSlots(state: BuildState, id: string): GappableSlot[] {
   // Only where something earlier could be what it repeats. Nothing is left
   // unsaid the first time it is said, so with no antecedent there is nothing
   // to offer — which also keeps the row off every half-built phrase.
+  const saidEarlier = (form: Form) =>
+    Object.keys(state.constituents).some((k) => {
+      const other = state.constituents[k]!;
+      return k !== id && !other.gap && other.form === form && other.span[1] < c.span[0];
+    });
+
   if (!siblings.includes('head') && HEAD_FORMS[c.form]) {
     for (const form of HEAD_FORMS[c.form]!) {
-      const said = Object.keys(state.constituents).some((k) => {
-        const other = state.constituents[k]!;
-        return k !== id && !other.gap && other.form === form && other.span[1] < c.span[0];
-      });
-      if (said) out.push({ fn: 'head', form, elided: true });
+      if (saidEarlier(form)) out.push({ fn: 'head', form, elided: true });
     }
+  }
+
+  // A clause may leave out everything it would have said: *I forgot what __*.
+  // That is a bigger hole than a missing head, and the only place it fits is
+  // the predicate slot, which is why the elision rules cover both.
+  if ((c.form === 'S' || c.form === 'Cl') && !siblings.includes('predicate') && saidEarlier('VP')) {
+    out.push({ fn: 'predicate', form: 'VP', elided: true });
   }
   return out;
 }

@@ -314,8 +314,9 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
   // An elided predicate borrows its verb, and its slots with it. There is
   // nothing in THIS clause to check against a frame: *and he will __* has no
   // object because the object is in the clause it copies, which answers for
-  // both of them.
-  if (elidedHeadOf(ctx.cs, vpId)) {
+  // both of them. The predicate may be the elided thing itself — *I forgot
+  // what __* leaves out everything the clause would have said.
+  if (ctx.cs[vpId]!.gap || elidedHeadOf(ctx.cs, vpId)) {
     if (!verbId) {
       f.push(`${where} leaves its verb unsaid and does not say which verb it copies`);
     }
@@ -375,7 +376,11 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
     const hasObligAdv = vp.children.some(
       (k) => ctx.cs[k]?.function === 'adverbial' && ctx.cs[k]?.obligatory === true,
     );
-    if (!hasSC && !hasObligAdv) {
+    // Or a displaced subject: *There is a problem* completes its *be* with the
+    // thing the sentence is about, which is behind the verb rather than in
+    // front of it.
+    const hasDisplaced = vp.children.some((k) => ctx.cs[k]?.function === 'displaced');
+    if (!hasSC && !hasObligAdv && !hasDisplaced) {
       f.push(
         '"be" needs either a subject complement or an adverbial it requires ' +
           '(mark that adverbial `obligatory`)',
@@ -471,9 +476,13 @@ export function auditGaps(ctx: Ctx): string[] {
   for (const clause of clauseNodes(ctx.cs)) {
     const kids = ctx.cs[clause]!.children;
     const held = kids.some((k) => ctx.cs[k]?.function === 'placeholderSubject');
-    const moved = kids.some((k) => ctx.cs[k]?.function === 'extraposed');
+    const predicate = predicateOf(ctx.cs, clause);
+    const moved =
+      kids.some((k) => ctx.cs[k]?.function === 'extraposed') ||
+      (predicate !== null &&
+        ctx.cs[predicate]!.children.some((k) => ctx.cs[k]?.function === 'displaced'));
     if (held && !moved) {
-      f.push(`"${clause}" has a placeholder subject and nothing at the end for it to hold`);
+      f.push(`"${clause}" has a placeholder subject and nothing for it to be holding a place for`);
     }
     if (moved && !held) {
       f.push(`"${clause}" has an extraposed part and nothing holding its place`);
@@ -489,7 +498,7 @@ export function auditGaps(ctx: Ctx): string[] {
     // So it always has an index — there is no reading of an elided phrase
     // without knowing what it copies — and what it points at must be a real
     // phrase of the same kind, said earlier.
-    if (c.function === 'head') {
+    if (c.function === 'head' || c.function === 'predicate') {
       const source = antecedentOf(ctx.cs, id);
       if (!source) {
         f.push(`the elided "${c.form}" at ${c.span[0]} does not say what it copies`);
@@ -679,6 +688,8 @@ export function label(fn: Func): string {
       return 'placeholder subject';
     case 'extraposed':
       return 'extraposed part';
+    case 'displaced':
+      return 'displaced subject';
     default:
       return fn;
   }

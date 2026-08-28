@@ -145,3 +145,147 @@ export const gapping = sentence(
   'r1',
   ['Vint', 'ellipsis', 'gapping', 'coordination', 'two-clause'],
 );
+
+/* ---- sluicing — She repaired something, but I forgot what.
+ *
+ * The third family, and the biggest thing left unsaid: everything the clause
+ * would have said, except the one word being asked about. *what __* is a whole
+ * clause with a fronted phrase and nothing else.
+ *
+ * So the elided piece here is the predicate itself rather than its head, and
+ * the clause borrows its verb one step further out than a verb-phrase ellipsis
+ * does. Same link, bigger hole.
+ *
+ * *what* points at nothing. The gap it was fronted off is inside the material
+ * that was never said, so there is nothing on the page to tie it to — which is
+ * the honest answer and the reason nothing requires a fronted phrase to be
+ * tied to anything.
+ */
+export const sluicing = sentence(
+  'fix-sluicing',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [w('Pron', 'head', 'She')]),
+              n(
+                'VP',
+                'predicate',
+                [
+                  w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr' }),
+                  n('NP', 'directObject', [w('Pron', 'head', 'something')]),
+                ],
+                { index: 1 },
+              ),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVO' },
+          ),
+          pt(','),
+          w('Conj', 'coordinator', 'but'),
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [w('Pron', 'head', 'I')]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'forgot', { lemma: 'forget', verbType: 'Vtr' }),
+                n(
+                  'Cl',
+                  'directObject',
+                  [
+                    n('NP', 'prenucleus', [w('Pron', 'head', 'what', { xpos: 'WP' })]),
+                    gap('VP', 'predicate', { index: 1 }),
+                  ],
+                  { clauseKind: 'interrogative', clauseType: 'SVO' },
+                ),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVO' },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'She repaired a thing, and the speaker has forgotten which thing.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'ellipsis', 'sluicing', 'prenucleus', 'two-clause'],
+);
+
+/* --- stripping — She repaired the engine, and the car too.
+ *
+ * The fourth. Everything goes but one phrase and the word marking it as an
+ * addition — no subject, no verb, just *the car too* leaning on the clause
+ * before it.
+ *
+ * A clause with no subject at all, which nothing in the model ever required.
+ * The verb is elided the way gapping elides it, and the slots come with it, so
+ * *the car* is licensed as an object by a verb that is not there.
+ */
+export const stripping = sentence(
+  'fix-stripping',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('NP', 'subject', [w('Pron', 'head', 'She')]),
+              n('VP', 'predicate', [
+                w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr', index: 1 }),
+                n('NP', 'directObject', [
+                  w('Det', 'determiner', 'the'),
+                  n('Nom', 'head', [w('N', 'head', 'engine')]),
+                ]),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVO' },
+          ),
+          pt(','),
+          w('Conj', 'coordinator', 'and'),
+          n(
+            'Cl',
+            'coordinate',
+            [
+              n('VP', 'predicate', [
+                gap('V', 'head', { index: 1 }),
+                n('NP', 'directObject', [
+                  w('Det', 'determiner', 'the'),
+                  n('Nom', 'head', [w('N', 'head', 'car')]),
+                ]),
+                n('AdvP', 'adverbial', [w('Adv', 'head', 'too')]),
+              ]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SVO' },
+          ),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'She repaired the engine and she repaired the car as well.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'ellipsis', 'stripping', 'coordination', 'two-clause'],
+);

@@ -100,3 +100,46 @@ export const supplement = sentence(
   'r1',
   ['Vint', 'supplement', 'punctuation'],
 );
+
+/* ------------- existential "there" — There is a problem.
+ *
+ * The sentence is not about *there*. Nothing is; the word names nothing at all.
+ * It holds the subject slot open while what the sentence IS about waits behind
+ * the verb, which is why *there* is a placeholder and *a problem* is the
+ * displaced subject.
+ *
+ * It built as an ordinary *be* clause long before this, with *a problem* as a
+ * subject complement — which says the sentence describes *there*, and it does
+ * not. Being buildable and being right are different properties.
+ */
+export const existential = sentence(
+  'fix-existential',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'placeholderSubject', [w('Pron', 'head', 'There', { xpos: 'EX' })]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'is', { xpos: 'VBZ', lemma: 'be', verbType: 'Vbe' }),
+            n('NP', 'displaced', [
+              w('Det', 'determiner', 'a'),
+              n('Nom', 'head', [w('N', 'head', 'problem')]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'A problem exists.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vbe', 'existential', 'placeholder', 'displaced'],
+);

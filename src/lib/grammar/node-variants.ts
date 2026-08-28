@@ -56,6 +56,7 @@ const FUNCTION_FORM: Record<Func, Form> = {
   postnucleus: 'Cl',
   placeholderSubject: 'NP',
   extraposed: 'Cl',
+  displaced: 'NP',
   flat: 'N',
   particle: 'Part',
   supplement: 'AdvP',

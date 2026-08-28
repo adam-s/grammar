@@ -50,8 +50,8 @@ import {
   cleft,
   comparative,
 } from './movement.ts';
-import { punctuation, supplement } from './edges.ts';
-import { vpEllipsis, gapping } from './ellipsis.ts';
+import { punctuation, supplement, existential } from './edges.ts';
+import { vpEllipsis, gapping, sluicing, stripping } from './ellipsis.ts';
 
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
@@ -87,8 +87,11 @@ export const FIXTURES: readonly SentenceEntry[] = [
   comparative,
   punctuation,
   supplement,
+  existential,
   vpEllipsis,
   gapping,
+  sluicing,
+  stripping,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

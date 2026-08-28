@@ -194,6 +194,11 @@ export type PhraseInternalFunction =
   | 'placeholderSubject'
   /** The clause the placeholder is standing in for, moved to the end. */
   | 'extraposed'
+  /**
+   * What an existential sentence is actually about, sitting after the verb
+   * while *there* holds the subject slot: *There is __a problem__.*
+   */
+  | 'displaced'
   /** A particle that belongs to its verb: the *up* in *looked up the word*. */
   /**
    * A part of a name that has no head worth arguing about: *__New__ York*.
@@ -236,6 +241,7 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'postnucleus',
   'placeholderSubject',
   'extraposed',
+  'displaced',
   'flat',
   'particle',
   'supplement',

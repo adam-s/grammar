@@ -202,8 +202,11 @@ export const FUNCTION_MARK: Record<Func, string> = {
   coordinator: 'Cj',
   prenucleus: 'Fr',
   postnucleus: 'Tail',
-  placeholderSubject: 'It',
+  // Not "It". The mark covered *it* when extraposition was its only case, and
+  // then sat over the word *There* saying something else.
+  placeholderSubject: 'Ph',
   extraposed: 'Ex',
+  displaced: 'Ds',
   flat: 'Fl',
   particle: 'Prt',
   supplement: 'Sup',
@@ -262,8 +265,9 @@ export const FUNCTION_TEST: Record<Func, string> = {
   coordinator: 'and, but, or — the word doing the joining',
   prenucleus: 'moved to the front, and answers to a gap further in',
   postnucleus: 'moved to the end, and belongs to something earlier',
-  placeholderSubject: 'the “it” holding the subject slot for something at the end',
+  placeholderSubject: 'it holds the subject slot; the real one is elsewhere',
   extraposed: 'the real content, moved to the end because it is long',
+  displaced: 'what the sentence is about, sitting behind the verb',
   flat: 'part of a name, with no head to argue about',
   particle: 'the “up” in “looked up the word” — it belongs to the verb',
   supplement: 'set off from the sentence, and fills no slot in it',

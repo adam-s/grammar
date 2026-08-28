@@ -302,7 +302,9 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
   // What each moved or unsaid piece points at, after the whole tree exists: the
   // things it could point at have to be there before one of them can be named.
   for (const [canonicalId, c] of Object.entries(reading.constituents)) {
-    const links = c.function === 'postnucleus' || (c.gap === true && c.function === 'head');
+    const links =
+      c.function === 'postnucleus' ||
+      (c.gap === true && (c.function === 'head' || c.function === 'predicate'));
     if (!links || c.index === undefined) continue;
     const anchorCanonical = Object.keys(reading.constituents).find(
       (id) => id !== canonicalId && reading.constituents[id]!.index === c.index,
