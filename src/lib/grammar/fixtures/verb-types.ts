@@ -247,3 +247,34 @@ export const irregular = sentence(
   ],
   'r1',
 );
+
+/* ------------- a noun as object complement — The club made him treasurer.
+ *
+ * `fix-vc` names its object with an adjective — *considered him reliable*.
+ * This one names it with a noun phrase, which is the other half of what an
+ * object-complement verb licenses and is what the course uses at lesson 13.
+ */
+export const objectComplementNoun = sentence(
+  'fix-vc-noun',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'club')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'made', { lemma: 'make', verbType: 'Vc' }),
+            n('NP', 'directObject', [w('Pron', 'head', 'him')]),
+            n('NP', 'objectComplement', [w('N', 'head', 'treasurer')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVOC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The club appointed him to the post of treasurer.' },
+    ),
+  ],
+  'r1',
+);

@@ -94,3 +94,43 @@ describe('the two corpora agree on how a construction is drawn', () => {
     }
   });
 });
+
+/**
+ * The contract set has to prove everything the course relies on.
+ *
+ * The fixtures are what the audits, the layout test and the reachability suite
+ * run against — they are the engine's proof. The course had quietly outgrown
+ * them: appositives, a number as determiner, a preposition inside a
+ * preposition, a clause in the subject slot and a noun as object complement
+ * were all taught to learners and proved by nothing.
+ *
+ * A shape is `parent > child/function`, which is the level at which the audits
+ * and the licensing rules actually decide things.
+ */
+describe('the contract fixtures prove every shape the course uses', () => {
+  const shapes = (entries: Entry[]) => {
+    const out = new Map<string, string>();
+    for (const entry of entries) {
+      for (const reading of entry.readings) {
+        const cs = reading.constituents;
+        for (const id of Object.keys(cs)) {
+          const c = cs[id]!;
+          const parent = c.parent ? cs[c.parent]!.form : 'ROOT';
+          out.set(`${parent} > ${c.form}/${c.function}`, `${entry.id}/${reading.id}`);
+        }
+      }
+    }
+    return out;
+  };
+
+  it('no course sentence uses a shape no fixture has', () => {
+    const proved = new Set(shapes([...FIXTURES]).keys());
+    const used = shapes(COURSE_LESSONS.flatMap((lesson) => lesson.sentences));
+    const missing = [...used].filter(([shape]) => !proved.has(shape));
+    assert.deepEqual(
+      missing.map(([shape, where]) => `${shape} (${where})`),
+      [],
+      'add a fixture for each, or stop teaching it',
+    );
+  });
+});

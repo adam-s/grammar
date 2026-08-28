@@ -270,3 +270,43 @@ export const subjectRelative = sentence(
   ],
   'r1',
 );
+
+/* ------------- a clause as subject — That the ice held astonished the crowd.
+ *
+ * The *it* test works on it — *It astonished the crowd* — which is the
+ * evidence that a clause is doing a noun's job. The course reaches this at
+ * lesson 30 and again at 36, and nothing in the contract set proved a clause
+ * in the subject slot: every clause here was an object or an adverbial.
+ */
+export const subjectClause = sentence(
+  'fix-subject-clause',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'Cl',
+            'subject',
+            [
+              w('Subord', 'marker', 'That'),
+              n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'ice')]),
+              n('VP', 'predicate', [w('V', 'head', 'held', { lemma: 'hold', verbType: 'Vint' })]),
+            ],
+            { clauseKind: 'nominal', clauseType: 'SV' },
+          ),
+          n('VP', 'predicate', [
+            w('V', 'head', 'astonished', { lemma: 'astonish', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'crowd')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The crowd was astonished that the ice held.' },
+    ),
+  ],
+  'r1',
+);

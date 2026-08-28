@@ -251,3 +251,104 @@ export const fusedRelative = sentence(
   ],
   'r1',
 );
+
+/* ------------------- an appositive — The captain, a Scot, resigned.
+ *
+ * *a Scot* renames *the captain* — the whole phrase, determiner included — so
+ * it sits beside the material it renames rather than under the noun alone.
+ * Either half could be dropped and the sentence would still name somebody,
+ * which is not true of a postmodifier.
+ *
+ * Here because the course teaches this at lesson 22 and nothing in the
+ * contract set proved it: the engine's proof set had grown weaker than the
+ * content running on it.
+ */
+export const appositive = sentence(
+  'fix-appositive',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            w('N', 'head', 'captain'),
+            pt(','),
+            n('NP', 'appositive', [w('Det', 'determiner', 'a'), w('N', 'head', 'Scot')]),
+            pt(','),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'resigned', { lemma: 'resign', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The captain, who was a Scot, left the post.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------------------------ a number as determiner — Four ships anchored.
+ *
+ * *Four* does a determiner's job: it says how many, and it takes the place
+ * *the* would have. Put both in and one has to give way.
+ */
+export const numeral = sentence(
+  'fix-numeral',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Num', 'determiner', 'Four'), w('N', 'head', 'ships')]),
+          n('VP', 'predicate', [w('V', 'head', 'anchored', { lemma: 'anchor', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Four ships dropped anchor.' },
+    ),
+  ],
+  'r1',
+);
+
+/* --------------- a preposition inside a preposition — The fox came out of the wood.
+ *
+ * *of the wood* is what *out* takes, so the whole of *out of the wood* is one
+ * adverbial with a second prepositional phrase inside it. `fix-deep-nesting`
+ * puts a PP inside an NP inside a PP, which is a different shape and does not
+ * prove this one.
+ */
+export const prepInPrep = sentence(
+  'fix-prep-in-prep',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'fox')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'came', { lemma: 'come', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'out'),
+              n('PP', 'complement', [
+                w('P', 'head', 'of'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'wood')]),
+              ]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The fox emerged from inside the wood.' },
+    ),
+  ],
+  'r1',
+);

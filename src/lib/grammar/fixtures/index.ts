@@ -29,7 +29,7 @@ export * from './movement.ts';
 export * from './edges.ts';
 export * from './ellipsis.ts';
 
-import { vint, vtr, vbe, vlink, vg, vc, irregular } from './verb-types.ts';
+import { vint, vtr, vbe, vlink, vg, vc, irregular, objectComplementNoun } from './verb-types.ts';
 import { ambiguous } from './ambiguity.ts';
 import {
   gardenPath,
@@ -37,11 +37,21 @@ import {
   deepNesting,
   adverbialClause,
   subjectRelative,
+  subjectClause,
 } from './clauses.ts';
 import { coordination, coordinatedSubject } from './coordination.ts';
 import { auxiliaryChain, passive } from './auxiliaries.ts';
 import { infinitive, particle, particleShift, hollowClause, twoMarkers } from './non-finite.ts';
-import { nominal, stacked, determinativeAndName, fused, fusedRelative } from './noun-phrases.ts';
+import {
+  nominal,
+  stacked,
+  determinativeAndName,
+  fused,
+  fusedRelative,
+  appositive,
+  numeral,
+  prepInPrep,
+} from './noun-phrases.ts';
 import {
   acrossTheBoard,
   frontedPhrase,
@@ -63,12 +73,14 @@ export const FIXTURES: readonly SentenceEntry[] = [
   vg,
   vc,
   irregular,
+  objectComplementNoun,
   ambiguous,
   gardenPath,
   objectClause,
   deepNesting,
   adverbialClause,
   subjectRelative,
+  subjectClause,
   coordination,
   coordinatedSubject,
   auxiliaryChain,
@@ -83,6 +95,9 @@ export const FIXTURES: readonly SentenceEntry[] = [
   determinativeAndName,
   fused,
   fusedRelative,
+  appositive,
+  numeral,
+  prepInPrep,
   frontedPhrase,
   question,
   acrossTheBoard,
