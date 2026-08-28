@@ -41,7 +41,7 @@ thing blocked because no fixture used it.
 | Coindexation | *__What__ did she repair __?* | `index`, shared by exactly two nodes |
 | Fronted phrases | the same | a `prenucleus` function |
 | Subject-auxiliary inversion | *__Did__ she repair it?* | letting an auxiliary hang off a clause; no discontinuity involved |
-| Extraposition | *__It__ is a good thing that we left* | `displacedSubject` and `extraposed`, audited as a pair |
+| Extraposition | *__It__ is a good thing that we left* | `placeholderSubject` and `extraposed`, audited as a pair |
 | Hollow clauses | *too heavy to lift __* | the gap rule generalised: a gap is indexed only when its own clause holds the filler |
 | Coordinated phrases | *the cat and the dog* | `auditHead` excusing a join, one level below the clause |
 

@@ -46,7 +46,7 @@ export interface Word {
 /* ----------------------------------------------------------------- labels */
 
 /** Phrase-level form — what a constituent IS. Drives the node hue. */
-export type PhraseForm = 'S' | 'NP' | 'Nom' | 'VP' | 'PP' | 'AdjP' | 'AdvP' | 'Cl';
+export type PhraseForm = 'S' | 'NP' | 'Nom' | 'DP' | 'VP' | 'PP' | 'AdjP' | 'AdvP' | 'Cl';
 
 /** Word-level form — the part of speech as the course names it. */
 export type WordForm =
@@ -70,6 +70,7 @@ export const PHRASE_FORMS: readonly PhraseForm[] = [
   'S',
   'NP',
   'Nom',
+  'DP',
   'VP',
   'PP',
   'AdjP',
@@ -93,7 +94,8 @@ export const WORD_FORMS: readonly WordForm[] = [
 ];
 
 /** Subtype for `Cl`, so a relative clause is distinguishable from a nominal one. */
-export type ClauseKind = 'relative' | 'nominal' | 'adverbial' | 'comparative';
+export type ClauseKind =
+  'relative' | 'nominal' | 'interrogative' | 'exclamative' | 'adverbial' | 'comparative';
 
 /**
  * What verb form a clause has — a separate axis from what kind of clause it is.
@@ -161,11 +163,21 @@ export type PhraseInternalFunction =
   /**
    * The placeholder *it* standing in the subject slot while the content sits
    * at the end: *__It__ is a good thing that we left.*
+   *
+   * Named for the placeholder rather than for what moved. CGEL's "displaced
+   * subject" is the other half — the clause at the end — so calling this one
+   * displaced would mean the opposite of what the yardstick means by it.
    */
-  | 'displacedSubject'
+  | 'placeholderSubject'
   /** The clause the placeholder is standing in for, moved to the end. */
   | 'extraposed'
   /** A particle that belongs to its verb: the *up* in *looked up the word*. */
+  /**
+   * A part of a name that has no head worth arguing about: *__New__ York*.
+   * Every piece is `flat`, and none of them is the one the phrase is named
+   * after.
+   */
+  | 'flat'
   | 'particle'
   /**
    * Sentence-edge material that is not integrated into the clause: an
@@ -198,8 +210,9 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'coordinate',
   'coordinator',
   'prenucleus',
-  'displacedSubject',
+  'placeholderSubject',
   'extraposed',
+  'flat',
   'particle',
   'supplement',
   'appositive',
@@ -444,6 +457,7 @@ export function hueSlot(form: Form): number {
   switch (form) {
     case 'NP':
     case 'Nom':
+    case 'DP':
     case 'N':
     case 'Pron':
     case 'Det':

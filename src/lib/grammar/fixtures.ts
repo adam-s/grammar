@@ -1055,7 +1055,7 @@ export const frontedPhrase = sentence(
                   gap('NP', 'directObject', { index: 1 }),
                 ]),
               ],
-              { clauseKind: 'nominal', clauseType: 'SVO' },
+              { clauseKind: 'interrogative', clauseType: 'SVO' },
             ),
           ]),
           pt('.'),
@@ -1178,7 +1178,7 @@ export const extraposition = sentence(
         'S',
         null,
         [
-          n('NP', 'displacedSubject', [w('Pron', 'head', 'It')]),
+          n('NP', 'placeholderSubject', [w('Pron', 'head', 'It')]),
           n('VP', 'predicate', [
             w('V', 'head', 'is', { xpos: 'VBZ', lemma: 'be', verbType: 'Vbe' }),
             n('NP', 'subjectComplement', [
@@ -1208,7 +1208,7 @@ export const extraposition = sentence(
     ),
   ],
   'r1',
-  ['Vbe', 'extraposition', 'displacedSubject', 'nominal-clause', 'two-clause'],
+  ['Vbe', 'extraposition', 'placeholderSubject', 'nominal-clause', 'two-clause'],
 );
 
 /* ----------- a hollow clause — The box was too heavy to lift.
@@ -1301,6 +1301,54 @@ export const coordinatedSubject = sentence(
   ['Vint', 'coordination', 'coordinated-subject'],
 );
 
+/* ---- a determinative phrase and a name — Almost every driver knows New York.
+ *
+ * Two small structures that had nowhere to go.
+ *
+ * *almost* modifies *every*, not *driver*. There is no reading where it is the
+ * driver who is almost, so a diagram that hangs *almost* off the noun phrase is
+ * saying something false. `DP` is where it goes.
+ *
+ * *New York* is one name in two words, and neither is the one the phrase is
+ * named after — *York* is not what *New York* is a kind of. So both pieces are
+ * `flat`, and `auditHead` stops asking which is the head, the same way it stops
+ * asking of a coordination.
+ */
+export const determinativeAndName = sentence(
+  'fix-determinative-and-name',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            n('DP', 'determiner', [w('Adv', 'premodifier', 'Almost'), w('Det', 'head', 'every')]),
+            n('Nom', 'head', [w('N', 'head', 'driver')]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'knows', { lemma: 'know', verbType: 'Vtr' }),
+            n('NP', 'directObject', [
+              w('N', 'flat', 'New', { xpos: 'NNP' }),
+              w('N', 'flat', 'York', { xpos: 'NNP' }),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Nearly all drivers know the city.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'determinative-phrase', 'flat', 'proper-name'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -1330,6 +1378,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   extraposition,
   hollowClause,
   coordinatedSubject,
+  determinativeAndName,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

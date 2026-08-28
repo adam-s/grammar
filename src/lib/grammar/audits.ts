@@ -364,6 +364,22 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
   return f;
 }
 
+/* ------------------------------------------------------------------ 10: names */
+
+/** A name is flat all through, or it is not flat at all. */
+export function auditFlat(ctx: Ctx): string[] {
+  const f: string[] = [];
+  for (const [id, c] of Object.entries(ctx.cs)) {
+    const flat = c.children.filter((k) => ctx.cs[k]?.function === 'flat');
+    if (flat.length === 0 || flat.length === c.children.length) continue;
+    f.push(
+      `"${id}" has ${flat.length} of ${c.children.length} children marked flat; a name ` +
+        'with no head has no head anywhere in it',
+    );
+  }
+  return f;
+}
+
 /* ------------------------------------------------------- 9: gaps and fillers */
 
 /**
@@ -419,7 +435,7 @@ export function auditGaps(ctx: Ctx): string[] {
   // A placeholder and the thing it stands in for are one claim in two places.
   for (const clause of clauseNodes(ctx.cs)) {
     const kids = ctx.cs[clause]!.children;
-    const held = kids.some((k) => ctx.cs[k]?.function === 'displacedSubject');
+    const held = kids.some((k) => ctx.cs[k]?.function === 'placeholderSubject');
     const moved = kids.some((k) => ctx.cs[k]?.function === 'extraposed');
     if (held && !moved) {
       f.push(`"${clause}" has a placeholder subject and nothing at the end for it to hold`);
@@ -520,6 +536,9 @@ export function auditHead(ctx: Ctx): string[] {
     // joined, and neither is the head of the other — the same reason a joined
     // clause is not asked what kind of verb it has.
     if (isCoordination(ctx.cs, id)) continue;
+    // Nor does a name. *New York* has two pieces and neither is the one the
+    // phrase is named after; asking which would be inventing an answer.
+    if (c.children.every((k) => ctx.cs[k]?.function === 'flat') && c.children.length > 0) continue;
     if (!HEAD_BEARING.includes(c.form)) continue;
     const heads = c.children.filter((k) => ctx.cs[k]?.function === 'head');
     if (heads.length === 0) f.push(`"${id}" is a ${c.form} with no head`);
@@ -540,6 +559,7 @@ const AUDITS: readonly [string, (ctx: Ctx) => string[]][] = [
   ['verbType', auditVerbType],
   ['finiteness', auditFiniteness],
   ['gaps', auditGaps],
+  ['flat', auditFlat],
   ['head', auditHead],
 ];
 
@@ -588,7 +608,7 @@ export function label(fn: Func): string {
       return 'supplement';
     case 'prenucleus':
       return 'fronted phrase';
-    case 'displacedSubject':
+    case 'placeholderSubject':
       return 'placeholder subject';
     case 'extraposed':
       return 'extraposed part';

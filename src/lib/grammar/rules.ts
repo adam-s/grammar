@@ -202,8 +202,12 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (p !== 'VP' && !CLAUSAL.includes(p)) return HIDDEN;
       return ALLOWED;
 
+    // A determiner may itself be a phrase. *almost every student* has
+    // *almost* modifying *every*, not modifying *student* — there is no
+    // reading where it is the student who is almost.
     case 'determiner':
-      return p === 'NP' ? ALLOWED : HIDDEN;
+      if (p !== 'NP') return HIDDEN;
+      return childIs('Det', 'DP', 'Num') ? ALLOWED : HIDDEN;
 
     // Modifiers of a noun live in the nominal, not in the noun phrase.
     //
@@ -214,7 +218,12 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // one-substitution agrees — *the old red car and the blue one*, where *one*
     // stands for the nominal and not for the phrase.
     case 'premodifier':
-      return p === 'Nom' || p === 'AdjP' || p === 'AdvP' ? ALLOWED : HIDDEN;
+      return p === 'Nom' || p === 'DP' || p === 'AdjP' || p === 'AdvP' ? ALLOWED : HIDDEN;
+
+    // A name with no internal head. Every piece is flat or none is, which
+    // `auditHead` relies on to know it should not be asking.
+    case 'flat':
+      return p === 'Nom' || p === 'NP' ? ALLOWED : HIDDEN;
 
     case 'postmodifier':
       return p === 'Nom' ? ALLOWED : HIDDEN;
@@ -257,10 +266,10 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
     // short verb, so it puts *it* in the subject slot and the real content at
     // the end. Neither half means anything without the other, and `auditGaps`
     // holds them to that.
-    case 'displacedSubject':
+    case 'placeholderSubject':
       if (!CLAUSAL.includes(p)) return HIDDEN;
       if (!childIs('NP')) return HIDDEN;
-      return has('displacedSubject') ? no('This clause already has a placeholder.') : ALLOWED;
+      return has('placeholderSubject') ? no('This clause already has a placeholder.') : ALLOWED;
 
     case 'extraposed':
       if (!CLAUSAL.includes(p)) return HIDDEN;
@@ -333,7 +342,7 @@ export function hypothesizes(fn: Func, ctx: LicenseContext): Verdict {
 }
 
 /** Phrase forms that must have exactly one head. `S`/`Cl` are not phrases. */
-export const HEAD_BEARING: readonly Form[] = ['NP', 'Nom', 'VP', 'PP', 'AdjP', 'AdvP'];
+export const HEAD_BEARING: readonly Form[] = ['NP', 'Nom', 'DP', 'VP', 'PP', 'AdjP', 'AdvP'];
 
 /**
  * What may head each phrase. A phrase takes its name from its head, so this is
@@ -343,6 +352,7 @@ export const HEAD_BEARING: readonly Form[] = ['NP', 'Nom', 'VP', 'PP', 'AdjP', '
 export const HEAD_FORMS: Record<string, readonly Form[]> = {
   NP: ['N', 'Pron', 'Num', 'Nom', 'NP'],
   Nom: ['N', 'Nom'],
+  DP: ['Det', 'DP'],
   // Not `Aux`. A verb phrase is named after its main verb, and an auxiliary is
   // never that — in *was repaired* the phrase is about *repaired*. Auxiliaries
   // hang off the phrase under the `auxiliary` function instead.
@@ -355,6 +365,7 @@ export const HEAD_FORMS: Record<string, readonly Form[]> = {
 const HEAD_ARTICLE: Record<string, string> = {
   NP: 'a noun phrase',
   Nom: 'a nominal',
+  DP: 'a determinative phrase',
   VP: 'a verb phrase',
   PP: 'a prepositional phrase',
   AdjP: 'an adjective phrase',
@@ -364,6 +375,7 @@ const HEAD_ARTICLE: Record<string, string> = {
 const HEAD_NAMES: Record<string, string> = {
   NP: 'a noun, a pronoun, or a nominal',
   Nom: 'a noun',
+  DP: 'the determiner',
   VP: 'a verb',
   PP: 'the preposition',
   AdjP: 'an adjective',

@@ -13,6 +13,8 @@ import {
 export const CLAUSE_KINDS = [
   'relative',
   'nominal',
+  'interrogative',
+  'exclamative',
   'adverbial',
   'comparative',
 ] as const satisfies readonly ClauseKind[];
@@ -51,8 +53,9 @@ const FUNCTION_FORM: Record<Func, Form> = {
   coordinate: 'Subord',
   coordinator: 'Conj',
   prenucleus: 'NP',
-  displacedSubject: 'NP',
+  placeholderSubject: 'NP',
   extraposed: 'Cl',
+  flat: 'N',
   particle: 'Part',
   supplement: 'AdvP',
   appositive: 'NP',

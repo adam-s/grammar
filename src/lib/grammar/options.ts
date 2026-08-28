@@ -42,6 +42,7 @@ import {
   type BuildState,
   type Span,
 } from './builder.ts';
+import { CLAUSE_KINDS } from './node-variants.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { FORM_TEST, FUNCTION_TEST, formName, label } from './names.ts';
@@ -473,19 +474,16 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     id: 'clause-kind',
     question: 'What kind of clause is it?',
     notes: 'always',
-    options: (
-      [
-        ['relative', 'relative', 'it modifies a noun — “the belt THAT BROKE”'],
-        ['nominal', 'nominal', 'it stands where a noun phrase could — “what he wants”'],
-        ['adverbial', 'adverbial', 'it says how, when, or why — “because the belt broke”'],
-        ['comparative', 'comparative', 'it completes a comparison — “than she expected”'],
-      ] as const
-    ).map(([value, label, note]) => ({
+    // Derived from the enum, not written out. A hardcoded list here silently
+    // stopped offering `interrogative` the moment the enum grew, which is the
+    // exact failure the "inventory is complete" rule at the top exists to
+    // prevent — and it was found by a fixture, not by reading this.
+    options: CLAUSE_KINDS.map((value) => ({
       key: `kind:${value}`,
-      label,
-      note,
+      label: value === 'interrogative' ? 'question' : value,
+      note: CLAUSE_KIND_NOTE[value],
       state: (c.clauseKind === value ? 'chosen' : 'available') as OptionState,
-      clauseKind: value as ClauseKind,
+      clauseKind: value,
     })),
   };
 
@@ -681,6 +679,16 @@ function functionGroup(
 
   return { id: 'function', question: `What does ${subject} do?`, notes: 'always', options };
 }
+
+/** What each clause kind does, in the learner's language. */
+const CLAUSE_KIND_NOTE: Record<ClauseKind, string> = {
+  relative: 'it modifies a noun — “the belt THAT BROKE”',
+  nominal: 'it stands where a noun phrase could — “that he left”',
+  interrogative: 'it asks, or names what was asked — “what she repaired”',
+  exclamative: 'it exclaims — “how tall he is”',
+  adverbial: 'it says how, when, or why — “because the belt broke”',
+  comparative: 'it completes a comparison — “than she expected”',
+};
 
 /**
  * Settle a panel: mark what each group has answered, choose the live one, and
