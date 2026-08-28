@@ -30,11 +30,9 @@
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
   import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
-  import { answer } from '$lib/grammar/session.ts';
-  import {} from '$lib/grammar/grader.ts';
+  import { answer, targetKey } from '$lib/grammar/session.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
-  import {} from '$lib/grammar/names.ts';
 
   import {
     blockRejectedOptions,
@@ -171,14 +169,12 @@
     };
   });
 
-  /** The span a pick applies to, whichever way the selection was made. */
-  const targetSpan = $derived.by<Span | null>(() => {
-    if (selection.kind === 'span') return selection.span;
-    if (selection.kind === 'node') return build.constituents[selection.id]?.span ?? null;
-    if (selection.kind === 'nodes') return selection.span;
-    return null;
-  });
-  const targetKey = $derived(targetSpan ? `${targetSpan[0]}-${targetSpan[1]}` : '');
+  /**
+   * Which question a refusal is remembered against. `session.ts` owns the
+   * definition, because two ideas of "the same question" is how a rejection
+   * ends up blocking a row on a node that never answered it.
+   */
+  const rejectionKey = $derived(targetKey(build, selection));
   /**
    * The lesson this SENTENCE belongs to, which is not always the lesson whose
    * page you are on. Opening a lesson-9 sentence from the lesson-1 page used to
@@ -199,7 +195,7 @@
   /** The part of the answer this lesson actually asks for. */
   const target = $derived(scope ? targetReading(canonicalReading(sentence), scope) : null);
   const choices = $derived(
-    blockRejectedOptions(optionsFor(build, words, selection, scope), rejected[targetKey] ?? {}),
+    blockRejectedOptions(optionsFor(build, words, selection, scope), rejected[rejectionKey] ?? {}),
   );
 
   /**
@@ -400,7 +396,7 @@
    */
   function pick(o: LabelOption) {
     const before = build;
-    const next = answer({ build, selection, verdict, misses, rejected }, sentence, words, o);
+    const next = answer({ build, selection, verdict, misses, rejected }, sentence, words, o, scope);
     build = next.build;
     selection = next.selection;
     verdict = next.verdict;

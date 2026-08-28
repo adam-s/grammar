@@ -718,7 +718,13 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
           options: build(PHRASE_FORMS, false),
         },
         ...(canStackOver(c) ? [stack] : []),
-        ...(c.form === 'Cl' ? [clauseKind] : []),
+        // A coordinated clause has no kind. It is not relative, nominal,
+        // adverbial or comparative — it is an equal partner joined to another
+        // clause, which is what `coordinate` already says. Asking anyway left
+        // the question permanently open with no right answer: every one of
+        // lesson 33's and lesson 39's clauses could be built correctly and
+        // never finish.
+        ...(c.form === 'Cl' && c.function !== 'coordinate' ? [clauseKind] : []),
         ...(c.form === 'S' || c.form === 'Cl' ? [finiteness] : []),
       ];
 

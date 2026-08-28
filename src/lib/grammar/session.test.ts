@@ -52,7 +52,7 @@ describe('the hint ladder', () => {
     const second = pick(on(first, [0, 0]), 'form:Adj');
     // Same question, same words — so this is the second miss even though it is
     // a different wrong answer.
-    assert.equal(second.misses['form:0-0'], 2);
+    assert.equal(second.misses['form:word:0-0'], 2);
     assert.doesNotMatch(second.verdict!.text, /^Not /);
     assert.match(second.verdict!.text, /is not an adjective/);
   });
@@ -60,8 +60,8 @@ describe('the hint ladder', () => {
   it('counts per question, not per sentence', () => {
     let s = pick(on(emptySession(), [0, 0]), 'form:N');
     s = pick(on(s, [1, 1]), 'form:N');
-    assert.equal(s.misses['form:0-0'], 1);
-    assert.equal(s.misses['form:1-1'], 1);
+    assert.equal(s.misses['form:word:0-0'], 1);
+    assert.equal(s.misses['form:word:1-1'], 1);
     assert.match(s.verdict!.text, /^Not /, 'a different question starts gently again');
   });
 
@@ -70,11 +70,11 @@ describe('the hint ladder', () => {
     // grader's reason immediately.
     const s = pick(on(emptySession(), [1, 1]), 'form:V');
     const wrong = pick(s, 'vt:Vint');
-    assert.equal(wrong.misses['vt:1-1'], 1);
+    assert.equal(wrong.misses['vt:#c1'], 1);
     assert.match(wrong.verdict!.test!, /Say the subject and the verb/, 'the test, not the reason');
 
     const twice = pick({ ...wrong, verdict: null }, 'vt:Vbe');
-    assert.equal(twice.misses['vt:1-1'], 2, 'same question, same words');
+    assert.equal(twice.misses['vt:#c1'], 2, 'same question, same node');
     // The first miss says only that it is wrong; the second gives the grader's
     // own reason. For verb type both carry the same test, because there is only
     // one test for verb type — the rung that changes is the wording.
@@ -130,5 +130,39 @@ describe('a refusal outlives the verdict', () => {
     // `blockRejectedOptions` is what turns that record into a blocked row; the
     // session keeps the record, the palette applies it.
     assert.match(s.rejected['0-0']!['form:N']!, /Not a noun/);
+  });
+});
+
+describe('one question, one counter', () => {
+  /**
+   * A span is not an identity. The word, the one-word phrase over it, and a
+   * second layer above that all cover the same letters, so keying a question
+   * by its span merges questions that are not the same question.
+   *
+   * Reproduced before it was fixed: a wrong word class on *She* and the FIRST
+   * wrong phrase form on the same word both landed on `form:0-0`, so the phrase
+   * question opened already holding one miss and gave the answer away on its
+   * first wrong try — defeating the ladder it was supposed to climb.
+   */
+  it('a wrong word class does not spend the phrase question’s first miss', () => {
+    const afterWord = pick(on(emptySession(), [0, 0]), 'form:N');
+    const right = pick(on(afterWord, [0, 0]), 'form:Pron');
+    const node = Object.keys(right.build.constituents)[0]!;
+
+    const onPhrase = { ...right, selection: { kind: 'node' as const, id: node } };
+    const wrongPhrase = pick(onPhrase, 'form:VP');
+
+    assert.equal(wrongPhrase.misses['form:word:0-0'], 1, 'the word question keeps its own miss');
+    assert.equal(
+      wrongPhrase.misses['form:phrase:#' + node],
+      1,
+      'the phrase question starts at one',
+    );
+    assert.match(wrongPhrase.verdict!.text, /^Not /, 'so the first miss is still gentle');
+    assert.doesNotMatch(
+      wrongPhrase.verdict!.text,
+      /noun phrase/,
+      'and the answer is not given away on a first try',
+    );
   });
 });

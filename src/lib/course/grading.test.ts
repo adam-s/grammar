@@ -14,7 +14,7 @@
  */
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { emptyBuild } from '../grammar/builder.ts';
+import { emptyBuild, wrap } from '../grammar/builder.ts';
 import { gradeForm, gradeFunction } from '../grammar/grader.ts';
 import { isPickable, optionsFor } from '../grammar/options.ts';
 import { answer, emptySession } from '../grammar/session.ts';
@@ -175,4 +175,52 @@ describe('every row a lesson withholds explains itself', () => {
       }
     });
   }
+});
+
+/**
+ * The transaction judges "finished?" with the scope it was given.
+ *
+ * It used to call `optionsFor` without one, so in lessons 3 to 7 a verb whose
+ * form and job were settled looked finished to the learner — the verb-type row
+ * belongs to lesson 8 and was withheld — while the session saw an open
+ * verb-type question and held the selection and the verdict open on a node the
+ * learner had finished. A probe found fifty such node states across the five
+ * lessons.
+ *
+ * Asserted as a difference rather than an absolute, because that is what the
+ * bug was: the same decision, the same state, two answers depending on whether
+ * the transaction was told what the lesson teaches.
+ */
+describe('the session closes a question the lesson has finished', () => {
+  const lesson = COURSE_LESSONS.find((l) => l.number === 3)!;
+  const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+  const sentence = lesson.sentences[0]!; // The visitors waited.
+
+  it('clears the verdict under the lesson, and would not without it', () => {
+    // A verb inside its verb phrase, with the word class settled and the job
+    // still to give — the state a lesson-3 learner is in on their last pick.
+    let build = wrap(emptyBuild(), sentence.words, [2, 2], 'V');
+    build = wrap(build, sentence.words, [2, 2], 'VP');
+    const verb = Object.keys(build.constituents).find(
+      (id) => build.constituents[id]!.form === 'V',
+    )!;
+    const selection = { kind: 'node' as const, id: verb };
+
+    const row = optionsFor(build, sentence.words, selection, scope)
+      .groups.flatMap((g) => g.options)
+      .find((o) => o.key === 'func:head')!;
+    assert.ok(isPickable(row), 'the lesson does ask for this');
+
+    const session = { ...emptySession(), build, selection };
+    assert.equal(
+      answer(session, sentence, sentence.words, row, scope).verdict,
+      null,
+      'told what lesson 3 teaches, the question is finished',
+    );
+    assert.notEqual(
+      answer(session, sentence, sentence.words, row).verdict,
+      null,
+      'and without it the session still thinks a verb type is being asked',
+    );
+  });
 });
