@@ -1065,6 +1065,60 @@ export const fusedRelativeSubject = (
     gloss,
   );
 
+/**
+ * *We asked the driver to wait.* — an infinitive clause with its own subject.
+ *
+ * No infinitive clause anywhere in the course had one, so nothing showed that an
+ * infinitive clause is a clause: every example had an invisible subject matching
+ * the main one. Here *the driver* is the object of *asked* and the subject of
+ * *to wait* at once.
+ */
+export const svoClause = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  object: Phrase,
+  inner: Inner,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(s, verb, [object('directObject'), cl(inner)('objectComplement')], 'SVOC'),
+    gloss,
+  );
+
+/** *The box was too heavy to lift.* An infinitive inside an adjective phrase. */
+export const adjWithCl = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  degree: string,
+  adjective: string,
+  inner: Inner,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(
+      s,
+      verb,
+      [
+        (fn: Func) =>
+          n('AdjP', fn, [
+            w('Adv', 'premodifier', degree),
+            w('Adj', 'head', adjective),
+            cl(inner)('complement'),
+          ]),
+      ].map((f) => f('subjectComplement')),
+      'SVC',
+    ),
+    gloss,
+  );
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>

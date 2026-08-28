@@ -13,20 +13,34 @@ like part of the verb phrase.
 
 ## Sentences
 
-| #   | Sentence                                   | The step                                      |
-| --- | ------------------------------------------ | --------------------------------------------- |
-| 1   | The tenant wanted to renew the lease.      | the frame at its clearest                     |
-| 2   | She hoped to finish the survey.            | a shorter subject, same frame                 |
-| 3   | The crew tried to restart the engine.      | a verb that almost always takes one           |
-| 4   | We asked the driver to wait.               | **the clause has its own subject**            |
-| 5   | The guide expected the visitors to arrive. | the same, and the inner verb is intransitive  |
-| 6   | The clerk refused to sign the deed.        | back to the shared-subject case               |
-| 7   | They planned to dredge the harbour.        | a plain frame after two hard ones             |
-| 8   | The box was too heavy to lift.             | **inside an adjective phrase**, not an object |
-| 9   | He offered to clear the path.              | a verb of offering rather than wanting        |
-| 10  | The jury declined to accept the claim.     | close on the shared-subject case              |
+| #   | Sentence                                 | The step                                      |
+| --- | ---------------------------------------- | --------------------------------------------- |
+| 1   | The tenant wanted to renew the lease.    | the frame at its clearest                     |
+| 2   | She hoped to finish the survey.          | a shorter subject, same frame                 |
+| 3   | The crew tried to restart the engine.    | a verb that almost always takes one           |
+| 4   | Our neighbours agreed to share the cost. | **the clause has its own subject**            |
+| 5   | That guide promised to return.           | the same, and the inner verb is intransitive  |
+| 6   | The clerk refused to sign the deed.      | back to the shared-subject case               |
+| 7   | They planned to dredge the harbour.      | a plain frame after two hard ones             |
+| 8   | The box was too heavy to lift.           | **inside an adjective phrase**, not an object |
+| 9   | He offered to clear the path.            | a verb of offering rather than wanting        |
+| 10  | The jury declined to accept the claim.   | close on the shared-subject case              |
 
 ## Notes
+
+**An infinitive clause with its own subject cannot be built.** _We asked the
+driver to wait_ passes every audit — the tree is well formed — but the palette
+will not offer it: `rules.ts` licenses `objectComplement` for `NP` and `AdjP`
+only, so a clause cannot fill the slot and the replay stops. The same restriction
+blocks a nominal clause as subject complement, which is recorded at lesson 30.
+
+That is the third construction the model genuinely cannot draw, after the
+possessive and the comparison anchored to an adverb phrase. It matters here more
+than elsewhere: without an overt subject, nothing shows that an infinitive clause
+is a **clause**, because every remaining example has an invisible subject
+matching the main one.
+
+Items 4 and 5 are ordinary infinitives instead, and the gap is left visible.
 
 Items 4 and 5 are the point of the lesson. In _We asked the driver to wait_, _the
 driver_ is the object of _asked_ **and** the subject of _to wait_, which is only

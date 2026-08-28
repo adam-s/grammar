@@ -543,18 +543,18 @@ Status values are deliberately explicit:
 
 ## Lesson 34 — Infinitive clauses
 
-| #   | Sentence                                   | Natural reading      | Intended parse               | Scope reach         | Model / fixture               |
-| --- | ------------------------------------------ | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
-| 1   | The tenant wanted to renew the lease.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 2   | She hoped to finish the survey.            | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 3   | The crew tried to restart the engine.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 4   | We asked the driver to wait.               | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 5   | The guide expected the visitors to arrive. | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 6   | The clerk refused to sign the deed.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 7   | They planned to dredge the harbour.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 8   | The box was too heavy to lift.             | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 9   | He offered to clear the path.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 10  | The jury declined to accept the claim.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| #   | Sentence                                 | Natural reading      | Intended parse               | Scope reach         | Model / fixture               |
+| --- | ---------------------------------------- | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
+| 1   | The tenant wanted to renew the lease.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 2   | She hoped to finish the survey.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 3   | The crew tried to restart the engine.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 4   | Our neighbours agreed to share the cost. | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 5   | That guide promised to return.           | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 6   | The clerk refused to sign the deed.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 7   | They planned to dredge the harbour.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 8   | The box was too heavy to lift.           | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 9   | He offered to clear the path.            | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 10  | The jury declined to accept the claim.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 
 ## Lesson 35 — Participial clauses
 
