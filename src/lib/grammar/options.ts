@@ -237,19 +237,40 @@ export interface Panel {
 }
 
 /**
- * Which labels a lesson has taught. An absent list means "everything".
+ * Which decisions a lesson has taught: the set of rows a learner may pick.
  *
- * Four axes, because the course introduces them on four different schedules:
- * the six verb types arrive one lesson at a time while the phrase forms are
- * already all in play, and a clause kind is a third thing again. A scope that
- * only knew about forms and functions would show a lesson-8 learner all six
- * verb types on the day they meet their first one.
+ * `undefined` means every row, which is the free workspace.
+ *
+ * This began as one list of forms, then grew a second for functions, and was
+ * about to grow four more for finiteness, voice, particle kind and auxiliary
+ * kind — because the course introduces every one of those at its own lesson.
+ * Six parallel lists is six places to forget. A palette row already knows what
+ * decision it is an answer to, so the scope is a set of those and the gate is
+ * one pass over the finished panel rather than a check at every place a row is
+ * built.
  */
-export interface ChapterScope {
-  forms?: readonly Form[];
-  functions?: readonly Func[];
-  verbTypes?: readonly VerbType[];
-  clauseKinds?: readonly ClauseKind[];
+export type ChapterScope = ReadonlySet<string> | undefined;
+
+/**
+ * The taught decision this row answers, or null if it is not one.
+ *
+ * Read off the row's own typed fields rather than parsed out of its key, so a
+ * key format change cannot silently open the gate. Gaps and anchors are
+ * structural — they say where something is missing or what it points at, not
+ * what anything is called — so no lesson teaches them and no lesson withholds
+ * them.
+ */
+export function decisionOf(o: LabelOption): string | null {
+  if (o.gap || o.anchor !== undefined) return null;
+  if (o.form !== undefined) return `form:${o.form}`;
+  if (o.verbType !== undefined) return `vt:${o.verbType}`;
+  if (o.clauseKind !== undefined) return `kind:${o.clauseKind}`;
+  if (o.finiteness !== undefined) return `fin:${o.finiteness}`;
+  if (o.voice !== undefined) return `voice:${o.voice}`;
+  if (o.partKind !== undefined) return `part:${o.partKind}`;
+  if (o.auxKind !== undefined) return `aux:${o.auxKind}`;
+  if (o.func !== undefined) return `func:${o.func}`;
+  return null;
 }
 
 export type Selection =
@@ -266,15 +287,13 @@ const quote = (words: Word[], span: Span): string =>
     .map((w) => w.text)
     .join(' ')}”`;
 
-const inScope = <T>(x: T, allowed?: readonly T[]): boolean => !allowed || allowed.includes(x);
-
 /* ---------------------------------------------------------------- panels */
 
 export function optionsFor(
   state: BuildState,
   words: Word[],
   sel: Selection,
-  scope: ChapterScope = {},
+  scope?: ChapterScope,
 ): Panel {
   switch (sel.kind) {
     case 'none':
@@ -293,29 +312,28 @@ export function optionsFor(
  * renderers; the contextual palette itself stays closed until there is an anchor.
  */
 function idlePanel(scope: ChapterScope): Panel {
-  return finish({
-    subject: '',
-    singledOut: null,
-    prompt: 'Select a word, or drag across a run of words.',
-    groups: [
-      {
-        id: 'word-class',
-        question: 'What is a word?',
-        notes: 'ondemand',
-        options: WORD_FORMS.map((f) =>
-          formOption(f, inScope(f, scope.forms) ? 'idle' : 'untaught'),
-        ),
-      },
-      {
-        id: 'phrase-form',
-        question: 'What is a run of words?',
-        notes: 'ondemand',
-        options: PHRASE_FORMS.map((f) =>
-          formOption(f, inScope(f, scope.forms) ? 'idle' : 'untaught'),
-        ),
-      },
-    ],
-  });
+  return finish(
+    {
+      subject: '',
+      singledOut: null,
+      prompt: 'Select a word, or drag across a run of words.',
+      groups: [
+        {
+          id: 'word-class',
+          question: 'What is a word?',
+          notes: 'ondemand',
+          options: WORD_FORMS.map((f) => formOption(f, 'idle')),
+        },
+        {
+          id: 'phrase-form',
+          question: 'What is a run of words?',
+          notes: 'ondemand',
+          options: PHRASE_FORMS.map((f) => formOption(f, 'idle')),
+        },
+      ],
+    },
+    scope,
+  );
 }
 
 function formOption(f: Form, state: OptionState, note?: string): LabelOption {
@@ -347,7 +365,6 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
   const build = (forms: readonly Form[]): LabelOption[] =>
     forms.map((f) => {
       const answered = chosenForm !== null && forms.includes(chosenForm);
-      if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
       if (blocked) return formOption(f, 'blocked', blocked);
       if (f === chosenForm) return formOption(f, 'chosen');
       // Evidence helps answer an open question. Once this group already has an
@@ -383,15 +400,18 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
         },
       ];
 
-  return finish({
-    subject: quote(words, span),
-    singledOut: demonstrationFor(state, words, span),
-    // The open group's question already asks; a second line saying the same
-    // thing in other words is chrome, not guidance.
-    prompt: blocked ?? '',
-    groups,
-    ...(blocked ? { blocked } : {}),
-  });
+  return finish(
+    {
+      subject: quote(words, span),
+      singledOut: demonstrationFor(state, words, span),
+      // The open group's question already asks; a second line saying the same
+      // thing in other words is chrome, not guidance.
+      prompt: blocked ?? '',
+      groups,
+      ...(blocked ? { blocked } : {}),
+    },
+    scope,
+  );
 }
 
 /**
@@ -419,7 +439,6 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
   const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
     forms.map((f) => {
       const answered = forms.includes(c.form);
-      if (!inScope(f, scope.forms)) return formOption(f, 'untaught', 'not taught yet');
       if (f === c.form) return formOption(f, 'chosen');
       if (locked && (phrase || !isWord)) return formOption(f, 'blocked', UNGROUP);
       const why = answered ? undefined : evidence.get(f);
@@ -437,12 +456,8 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     options: VERB_TYPE_MENU.map((v) => ({
       key: `vt:${v.type}`,
       label: v.label,
-      note: inScope(v.type, scope.verbTypes) ? v.example : 'not taught yet',
-      state: (c.verbType === v.type
-        ? 'chosen'
-        : inScope(v.type, scope.verbTypes)
-          ? 'available'
-          : 'untaught') as OptionState,
+      note: v.example,
+      state: (c.verbType === v.type ? 'chosen' : 'available') as OptionState,
       verbType: v.type,
     })),
   };
@@ -548,12 +563,8 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     options: CLAUSE_KINDS.map((value) => ({
       key: `kind:${value}`,
       label: value === 'interrogative' ? 'question' : value,
-      note: inScope(value, scope.clauseKinds) ? CLAUSE_KIND_NOTE[value] : 'not taught yet',
-      state: (c.clauseKind === value
-        ? 'chosen'
-        : inScope(value, scope.clauseKinds)
-          ? 'available'
-          : 'untaught') as OptionState,
+      note: CLAUSE_KIND_NOTE[value],
+      state: (c.clauseKind === value ? 'chosen' : 'available') as OptionState,
       clauseKind: value,
     })),
   };
@@ -604,13 +615,6 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     // holding the palette open waiting for one would be nagging.
     optional: true,
     options: PHRASE_FORMS.map((f) => {
-      if (!inScope(f, scope.forms)) {
-        return {
-          ...formOption(f, 'untaught', 'not taught yet'),
-          key: `stack:${f}`,
-          stack: true as const,
-        };
-      }
       const same = f === c.form;
       return {
         ...formOption(
@@ -718,18 +722,21 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
         ...(c.form === 'S' || c.form === 'Cl' ? [finiteness] : []),
       ];
 
-  groups.push(functionGroup(state, id, subject, scope));
+  groups.push(functionGroup(state, id, subject));
   if (anchor.options.length > 0) groups.push(anchor);
   if (gaps.options.length > 0) groups.push(gaps);
 
-  return finish({
-    subject,
-    singledOut: demonstrationFor(state, words, c.span),
-    // The open group's question already asks; a second line saying the same
-    // thing in other words is chrome, not guidance.
-    prompt: c.parent === null && !isWord ? 'Group it with its neighbours to give it a job.' : '',
-    groups,
-  });
+  return finish(
+    {
+      subject,
+      singledOut: demonstrationFor(state, words, c.span),
+      // The open group's question already asks; a second line saying the same
+      // thing in other words is chrome, not guidance.
+      prompt: c.parent === null && !isWord ? 'Group it with its neighbours to give it a job.' : '',
+      groups,
+    },
+    scope,
+  );
 }
 
 /**
@@ -737,18 +744,12 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
  * filtered — see rule 5 in the module note. `hidden` disappears, `disabled`
  * stays and shows why.
  */
-function functionGroup(
-  state: BuildState,
-  id: string,
-  subject: string,
-  scope: ChapterScope,
-): OptionGroup {
+function functionGroup(state: BuildState, id: string, subject: string): OptionGroup {
   const c = state.constituents[id]!;
   const current = c.function;
 
   const options: LabelOption[] = [];
   for (const fn of [...CLAUSE_FUNCTIONS, ...PHRASE_INTERNAL_FUNCTIONS]) {
-    if (!inScope(fn, scope.functions)) continue;
     const verdict = hypothesisFor(state, id, fn);
     if (verdict.state === 'hidden') continue;
     options.push({
@@ -849,8 +850,37 @@ const CLAUSE_KIND_NOTE: Record<ClauseKind, string> = {
  * inside a collapsed group would be a shortcut to something invisible, which is
  * worse than no shortcut at all.
  */
-function finish(draft: Omit<Panel, 'step' | 'suggested'>): Panel {
-  const groups: OptionGroup[] = draft.groups.map((g) => ({
+/**
+ * Mark every row the lesson has not reached.
+ *
+ * Applied to the finished panel and nowhere else, so a group added later is
+ * gated without anyone remembering to gate it. It runs before the open step and
+ * the number keys are decided, or a lesson would hand out a hotkey for a row it
+ * will not accept.
+ *
+ * The whole inventory stays on screen. A learner who never sees a row does not
+ * learn that the choice exists; what changes is that a row from a later lesson
+ * says so instead of being offered.
+ */
+function withhold(groups: OptionGroup[], scope: ChapterScope): OptionGroup[] {
+  if (!scope) return groups;
+  return groups.map((g) => ({
+    ...g,
+    options: g.options.map((o) => {
+      const decision = decisionOf(o);
+      if (decision === null || scope.has(decision)) return o;
+      // A row already applied to the node stays chosen. Every clause is finite
+      // unless someone says otherwise, so the finiteness group arrives with an
+      // answer long before any lesson teaches the question — and a palette that
+      // called that answer untaught would be denying what is on the screen.
+      if (o.state === 'chosen') return o;
+      return { ...o, state: 'untaught' as OptionState, note: 'not taught yet' };
+    }),
+  }));
+}
+
+function finish(draft: Omit<Panel, 'step' | 'suggested'>, scope?: ChapterScope): Panel {
+  const groups: OptionGroup[] = withhold(draft.groups, scope).map((g) => ({
     ...g,
     answered: g.options.find((o) => o.state === 'chosen') ?? null,
   }));

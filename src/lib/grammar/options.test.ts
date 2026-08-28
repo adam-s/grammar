@@ -147,7 +147,12 @@ describe('states carry the message', () => {
   });
 
   it('keeps an untaught label visible but out of reach', () => {
-    const p = optionsFor(emptyBuild(), W, { kind: 'span', span: [1, 1] }, { forms: ['N', 'V'] });
+    const p = optionsFor(
+      emptyBuild(),
+      W,
+      { kind: 'span', span: [1, 1] },
+      new Set(['form:N', 'form:V']),
+    );
     const adj = opt(p, 'form:Adj')!;
     assert.equal(adj.state, 'untaught');
     assert.ok(!isPickable(adj));

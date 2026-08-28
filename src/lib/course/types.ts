@@ -1,16 +1,14 @@
-import type { ChapterScope } from '../grammar/options.ts';
 import type { SentenceEntry } from '../grammar/types.ts';
 
 /**
- * The labels a lesson is the FIRST to teach.
+ * The decisions a lesson is the FIRST to teach, written the way the palette
+ * writes them: `form:NP`, `func:subject`, `vt:Vtr`, `fin:infinitival`.
  *
- * Same shape as the palette's scope, so the two can never drift apart: what a
- * lesson claims to teach is exactly what the palette will let a learner pick.
- * An absent list means "this lesson adds nothing on that axis", which is a
- * different thing from `ChapterScope`'s absent list — there it means
- * "everything". `scopeThrough` is what turns one into the other.
+ * The same strings the learner's clicks produce, so what a lesson claims to
+ * teach and what the palette will accept cannot drift apart. Empty means the
+ * lesson adds a test rather than a term, which is a real kind of lesson.
  */
-export type Teaches = ChapterScope;
+export type Teaches = readonly string[];
 
 export type CourseLesson = {
   id: string;

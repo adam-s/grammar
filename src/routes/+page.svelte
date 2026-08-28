@@ -57,7 +57,6 @@
     lessonDoc,
     scopeThrough,
     targetReading,
-    type FullScope,
   } from '$lib/course';
 
   const ws = new WorkspaceState();
@@ -196,11 +195,9 @@
    * A sentence outside the course carries no scope, so the free workspace and
    * the contract fixtures keep the full palette.
    */
-  const scope = $derived(owner ? scopeThrough(COURSE_LESSONS, owner.number) : {});
+  const scope = $derived(owner ? scopeThrough(COURSE_LESSONS, owner.number) : undefined);
   /** The part of the answer this lesson actually asks for. */
-  const target = $derived(
-    owner ? targetReading(canonicalReading(sentence), scope as FullScope) : null,
-  );
+  const target = $derived(scope ? targetReading(canonicalReading(sentence), scope) : null);
   const choices = $derived(
     blockRejectedOptions(optionsFor(build, words, selection, scope), rejected[targetKey] ?? {}),
   );

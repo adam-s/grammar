@@ -6,6 +6,12 @@
  * Here it is data — each lesson declares what it is the first to teach, and the
  * scope at lesson N is the union of lessons 1..N.
  *
+ * A lesson teaches DECISIONS, written the way the palette writes them:
+ * `form:NP`, `func:subject`, `vt:Vtr`, `kind:relative`, `fin:infinitival`,
+ * `voice:passive`, `part:infinitival`, `aux:perfect`. One list rather than one
+ * per kind, because the course introduces every kind on its own schedule and
+ * six parallel lists would be six places to forget.
+ *
  * Derived, never authored. A hand-written "labels available at lesson 10" list
  * is a second copy of the same truth, and the two copies disagree the first
  * time a lesson moves.
@@ -13,33 +19,19 @@
 import type { ChapterScope } from '../grammar/options.ts';
 import type { Constituent, ConstituentMap, Reading, Word } from '../grammar/types.ts';
 import { isPunctuation } from '../grammar/types.ts';
-import type { CourseLesson, Teaches } from './types.ts';
+import type { CourseLesson } from './types.ts';
 
-/**
- * Every axis, always present.
- *
- * `ChapterScope` reads an absent list as "everything taught" — the right
- * default for the free workspace, and exactly wrong for a lesson. So a derived
- * scope fills in all four, and an empty array honestly means empty.
- */
-export type FullScope = Required<ChapterScope>;
-
-const EMPTY: FullScope = { forms: [], functions: [], verbTypes: [], clauseKinds: [] };
-
-function add(into: FullScope, teaches: Teaches): FullScope {
-  return {
-    forms: [...new Set([...into.forms, ...(teaches.forms ?? [])])],
-    functions: [...new Set([...into.functions, ...(teaches.functions ?? [])])],
-    verbTypes: [...new Set([...into.verbTypes, ...(teaches.verbTypes ?? [])])],
-    clauseKinds: [...new Set([...into.clauseKinds, ...(teaches.clauseKinds ?? [])])],
-  };
-}
+/** A scope that is definitely a set — what a lesson always has. */
+export type FullScope = ReadonlySet<string>;
 
 /** Everything taught by lesson `number` and every lesson before it. */
 export function scopeThrough(lessons: readonly CourseLesson[], number: number): FullScope {
-  return lessons
-    .filter((lesson) => lesson.number <= number)
-    .reduce((scope, lesson) => add(scope, lesson.teaches), EMPTY);
+  const out = new Set<string>();
+  for (const lesson of lessons) {
+    if (lesson.number > number) continue;
+    for (const decision of lesson.teaches) out.add(decision);
+  }
+  return out;
 }
 
 /** The scope a lesson's own sentences are practised under. */
@@ -47,20 +39,12 @@ export function scopeFor(lessons: readonly CourseLesson[], lesson: CourseLesson)
   return scopeThrough(lessons, lesson.number);
 }
 
-/**
- * Where a label is first taught, for reporting a violation in words the course
- * uses. Returns null for a label no lesson teaches.
- */
+/** Where a decision is first taught, or null if no lesson teaches it. */
 export function firstTaughtIn(
   lessons: readonly CourseLesson[],
-  axis: keyof FullScope,
-  label: string,
+  decision: string,
 ): CourseLesson | null {
-  return (
-    lessons.find((lesson) =>
-      (lesson.teaches[axis] as readonly string[] | undefined)?.includes(label),
-    ) ?? null
-  );
+  return lessons.find((lesson) => lesson.teaches.includes(decision)) ?? null;
 }
 
 /**
@@ -82,8 +66,8 @@ export function targetReading(reading: Reading, scope: FullScope): Reading {
 
   const walk = (id: string) => {
     const c = source[id]!;
-    if (!scope.forms.includes(c.form)) return;
-    if (c.function !== null && !scope.functions.includes(c.function)) return;
+    if (!scope.has(`form:${c.form}`)) return;
+    if (c.function !== null && !scope.has(`func:${c.function}`)) return;
     keep.add(id);
     for (const child of c.children) walk(child);
   };
@@ -96,8 +80,12 @@ export function targetReading(reading: Reading, scope: FullScope): Reading {
     // Decisions the learner has not been taught to make are not part of the
     // question, even on a node that is. Lesson 3 names the verb; lesson 8 is
     // the first that may say what kind of verb it is.
-    if (kept.verbType && !scope.verbTypes.includes(kept.verbType)) delete kept.verbType;
-    if (kept.clauseKind && !scope.clauseKinds.includes(kept.clauseKind)) delete kept.clauseKind;
+    if (kept.verbType && !scope.has(`vt:${kept.verbType}`)) delete kept.verbType;
+    if (kept.clauseKind && !scope.has(`kind:${kept.clauseKind}`)) delete kept.clauseKind;
+    if (kept.finiteness && !scope.has(`fin:${kept.finiteness}`)) delete kept.finiteness;
+    if (kept.voice && !scope.has(`voice:${kept.voice}`)) delete kept.voice;
+    if (kept.partKind && !scope.has(`part:${kept.partKind}`)) delete kept.partKind;
+    if (kept.auxKind && !scope.has(`aux:${kept.auxKind}`)) delete kept.auxKind;
     constituents[id] = kept;
   }
   return { ...reading, constituents };
@@ -112,3 +100,6 @@ export function coversSentence(target: Reading, words: readonly Word[]): boolean
   const span = target.constituents[root]!.span;
   return real.length > 0 && span[0] === real[0] && span[1] === real.at(-1);
 }
+
+/** The palette's own type, for callers that hold a scope. */
+export type { ChapterScope };

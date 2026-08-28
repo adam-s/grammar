@@ -55,10 +55,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 1,
         stage: 'Frame',
         title: 'Introduction',
-        teaches: {
-          forms: ['S', 'NP', 'VP'],
-          functions: ['subject', 'predicate'],
-        },
+        teaches: ['form:S', 'form:NP', 'form:VP', 'func:subject', 'func:predicate'],
         sentences: LESSON_01,
       },
       {
@@ -66,7 +63,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 2,
         stage: 'Frame',
         title: 'A sentence has two parts',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_02,
       },
       {
@@ -77,7 +74,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // `head` lands here and not at lesson 5 because the palette makes you
         // give every word a job, and the job of the verb at the centre of a
         // predicate is head. Lesson 5 generalises it to the noun.
-        teaches: { forms: ['V'], functions: ['head'] },
+        teaches: ['form:V', 'func:head'],
         sentences: LESSON_03,
       },
       {
@@ -85,7 +82,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 4,
         stage: 'Frame',
         title: 'Noun phrases',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_04,
       },
       {
@@ -93,7 +90,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 5,
         stage: 'Frame',
         title: 'Find the head',
-        teaches: { forms: ['N'] },
+        teaches: ['form:N'],
         sentences: LESSON_05,
       },
       {
@@ -101,7 +98,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 6,
         stage: 'Frame',
         title: 'Determiners',
-        teaches: { forms: ['Det'], functions: ['determiner'] },
+        teaches: ['form:Det', 'func:determiner'],
         sentences: LESSON_06,
       },
       {
@@ -109,7 +106,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 7,
         stage: 'Frame',
         title: 'Pronouns',
-        teaches: { forms: ['Pron'] },
+        teaches: ['form:Pron'],
         sentences: LESSON_07,
       },
     ],
@@ -123,7 +120,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 8,
         stage: 'Predict',
         title: 'Verbs that stand alone',
-        teaches: { verbTypes: ['Vint'] },
+        teaches: ['vt:Vint'],
         sentences: LESSON_08,
       },
       {
@@ -131,7 +128,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 9,
         stage: 'Predict',
         title: 'Verbs that take an object',
-        teaches: { verbTypes: ['Vtr'], functions: ['directObject'] },
+        teaches: ['func:directObject', 'vt:Vtr'],
         sentences: LESSON_09,
       },
       {
@@ -142,11 +139,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // The natural subject complement is an adjective — *the soup tasted
         // salty*. Holding `AdjP` back to the phrase stage would leave this
         // lesson with nothing but noun complements to work with.
-        teaches: {
-          verbTypes: ['Vlink'],
-          functions: ['subjectComplement'],
-          forms: ['Adj', 'AdjP'],
-        },
+        teaches: ['form:Adj', 'form:AdjP', 'func:subjectComplement', 'vt:Vlink'],
         sentences: LESSON_10,
       },
       {
@@ -154,7 +147,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 11,
         stage: 'Predict',
         title: 'The verb be',
-        teaches: { verbTypes: ['Vbe'] },
+        teaches: ['vt:Vbe'],
         sentences: LESSON_11,
       },
       {
@@ -162,7 +155,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 12,
         stage: 'Predict',
         title: 'Two objects',
-        teaches: { verbTypes: ['Vg'], functions: ['indirectObject'] },
+        teaches: ['func:indirectObject', 'vt:Vg'],
         sentences: LESSON_12,
       },
       {
@@ -170,7 +163,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 13,
         stage: 'Predict',
         title: 'Naming the object',
-        teaches: { verbTypes: ['Vc'], functions: ['objectComplement'] },
+        teaches: ['func:objectComplement', 'vt:Vc'],
         sentences: LESSON_13,
       },
       {
@@ -182,10 +175,14 @@ export const COURSE_STAGES: CourseStage[] = [
         // are a prepositional phrase and an adverb phrase, so both arrive with
         // the function that needs them, along with the `complement` a
         // preposition takes.
-        teaches: {
-          functions: ['adverbial', 'complement'],
-          forms: ['P', 'PP', 'Adv', 'AdvP'],
-        },
+        teaches: [
+          'form:P',
+          'form:PP',
+          'form:Adv',
+          'form:AdvP',
+          'func:adverbial',
+          'func:complement',
+        ],
         sentences: LESSON_14,
       },
       {
@@ -193,7 +190,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 15,
         stage: 'Predict',
         title: 'The six types, one procedure',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_15,
       },
     ],
@@ -211,7 +208,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // needs a layer to share with it. `Nom` is that layer, and it arrives
         // here because this is the first sentence that cannot be drawn without
         // one.
-        teaches: { forms: ['Nom'], functions: ['premodifier'] },
+        teaches: ['form:Nom', 'func:premodifier'],
         sentences: LESSON_16,
       },
       {
@@ -219,7 +216,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 17,
         stage: 'Phrases',
         title: 'Adjective phrases',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_17,
       },
       {
@@ -227,7 +224,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 18,
         stage: 'Phrases',
         title: 'Adverbs and adverb phrases',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_18,
       },
       {
@@ -235,7 +232,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 19,
         stage: 'Phrases',
         title: 'Prepositional phrases',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_19,
       },
       {
@@ -243,7 +240,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 20,
         stage: 'Phrases',
         title: 'Form is not function',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_20,
       },
       {
@@ -251,7 +248,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 21,
         stage: 'Phrases',
         title: 'Modifiers after the head',
-        teaches: { functions: ['postmodifier'] },
+        teaches: ['func:postmodifier'],
         sentences: LESSON_21,
       },
       {
@@ -259,7 +256,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 22,
         stage: 'Phrases',
         title: 'Appositives',
-        teaches: { functions: ['appositive'] },
+        teaches: ['func:appositive'],
         sentences: LESSON_22,
       },
       {
@@ -267,7 +264,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 23,
         stage: 'Phrases',
         title: 'Numbers in noun phrases',
-        teaches: { forms: ['Num'] },
+        teaches: ['form:Num'],
         sentences: LESSON_23,
       },
       {
@@ -275,7 +272,14 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 24,
         stage: 'Phrases',
         title: 'Auxiliary verbs',
-        teaches: { forms: ['Aux'], functions: ['auxiliary'] },
+        teaches: [
+          'form:Aux',
+          'func:auxiliary',
+          'aux:modal',
+          'aux:perfect',
+          'aux:progressive',
+          'aux:do',
+        ],
         sentences: LESSON_24,
       },
       {
@@ -283,7 +287,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 25,
         stage: 'Phrases',
         title: 'Particles',
-        teaches: { forms: ['Part'], functions: ['particle'] },
+        teaches: ['form:Part', 'func:particle', 'part:verbal'],
         sentences: LESSON_25,
       },
       {
@@ -291,7 +295,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 26,
         stage: 'Phrases',
         title: 'Coordination inside phrases',
-        teaches: { forms: ['Conj'], functions: ['coordinate', 'coordinator'] },
+        teaches: ['form:Conj', 'func:coordinate', 'func:coordinator'],
         sentences: LESSON_26,
       },
       {
@@ -299,7 +303,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 27,
         stage: 'Phrases',
         title: 'Attachment changes meaning',
-        teaches: {},
+        teaches: [],
         sentences: LESSON_27,
       },
     ],

@@ -64,7 +64,7 @@ export function optionFor(
   words: SentenceEntry['words'],
   id: string,
   key: string,
-  scope: ChapterScope = {},
+  scope?: ChapterScope,
 ) {
   return optionsFor(state, words, { kind: 'node', id }, scope)
     .groups.flatMap((group) => group.options)
@@ -78,7 +78,7 @@ export function optionFor(
 export function replay(
   sentence: SentenceEntry,
   reading: Reading,
-  { scope = {}, onNode }: ReplayOptions = {},
+  { scope, onNode }: ReplayOptions = {},
 ): BuildState {
   let state = emptyBuild();
   const learnerId = new Map<string, string>();
