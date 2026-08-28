@@ -5,7 +5,7 @@
  * coordinate alongside them would say this subject has three parts where it
  * has two.
  *
- * A joined subject is not a fact about acting either, so some of these link
+ * A joined subject is not a fact about acting either, so two of these link
  * rather than act. Two things can both taste stale, and the coordination is
  * the same shape whichever verb follows it.
  */

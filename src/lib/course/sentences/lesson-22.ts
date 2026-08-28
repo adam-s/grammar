@@ -5,7 +5,7 @@
  * The test is that either half could be dropped and the sentence would still
  * name somebody, which is not true of a postmodifier.
  *
- * Half of these rename an object rather than a subject, because an appositive
+ * Three of these rename an object rather than a subject, because an appositive
  * is not a fact about subjects and ten in the same slot would have taught the
  * slot instead of the rule.
  */

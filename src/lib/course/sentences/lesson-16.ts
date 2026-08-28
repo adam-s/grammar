@@ -5,10 +5,11 @@
  * inside the noun phrase and the determiner stays outside it.
  *
  * The clause patterns vary on purpose. An adjective before a noun is not a
- * fact about subjects — it happens in objects, in complements, and inside a
- * required place phrase — and ten identical frames would teach the position
- * rather than the rule. It also puts lessons 9 to 14 back to work, which is
- * what the progression contract means by cumulative.
+ * fact about subjects: three of these put one in a direct object and one in an
+ * indirect object, and the clause around them runs through S V, S V O, S V C,
+ * S V O O, S V A and S V O C. Ten identical frames would have taught the
+ * position rather than the rule, and would have retired the six verb types
+ * that lessons 9 to 14 exist to build.
  */
 import { adj, adjn, det, pp, sv, svPlus, sva, svc, svo, svoc, svoo, v } from './shape.ts';
 

@@ -5,9 +5,10 @@
  * through is the same first question — find the verb, ask what it needs —
  * asked as many times as there are verbs.
  *
- * The main clause is a different pattern almost every time. A synthesis whose
- * ten sentences all had the same frame would be testing one procedure ten
- * times rather than the six the course spent stage 2 building.
+ * Five different clause patterns across the ten. Not more, because the
+ * synthesis shape itself — a relative clause in the subject, a nominal clause
+ * in the object — is an S V O, so that pattern recurs by construction. Where
+ * the frame is free it varies, which is the most that can be claimed.
  */
 import { adj, adv, det, modifiedBy, pp, svClause, svc, svo, svoa, svoc, svoo, v } from './shape.ts';
 
