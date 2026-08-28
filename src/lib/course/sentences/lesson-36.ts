@@ -39,7 +39,7 @@ export const LESSON_36 = [
     36,
     { ...ing, verb: v('Closing', 'close', 'Vtr'), object: det('the', 'archive') },
     v('angered', 'anger', 'Vtr'),
-    det('the', 'trustees'),
+    det('those', 'trustees'),
     'The closure angered the trustees.',
   ),
   clauseSubject(
@@ -85,7 +85,7 @@ export const LESSON_36 = [
   clauseSubject(
     'c36-j',
     36,
-    { ...ing, verb: v('Rebuilding', 'rebuild', 'Vtr'), object: det('the', 'wall') },
+    { ...ing, verb: v('Rebuilding', 'rebuild', 'Vtr'), object: det('that', 'wall') },
     v('took', 'take', 'Vtr'),
     det('a', 'season'),
     'The rebuilding took a season.',

@@ -26,7 +26,7 @@ export const LESSON_09 = [
   svo(
     'c09-c',
     9,
-    det('The', 'jury'),
+    det('That', 'jury'),
     v('reached', 'reach', 'Vtr'),
     det('a', 'verdict'),
     'The jury came to a decision.',
@@ -74,7 +74,7 @@ export const LESSON_09 = [
   svo(
     'c09-i',
     9,
-    det('The', 'child'),
+    det('That', 'child'),
     v('opened', 'open', 'Vtr'),
     det('the', 'parcel'),
     'The child undid the parcel.',

@@ -19,7 +19,7 @@ export const LESSON_25 = [
   svo(
     'c25-b',
     25,
-    det('The', 'engineer'),
+    det('Another', 'engineer'),
     phrasal(v('shut', 'shut', 'Vtr'), 'off'),
     det('the', 'valve'),
     'The engineer closed the valve.',
@@ -83,7 +83,7 @@ export const LESSON_25 = [
   svo(
     'c25-j',
     25,
-    det('The', 'landlord'),
+    det('Her', 'landlord'),
     phrasal(v('threw', 'throw', 'Vtr'), 'out'),
     det('the', 'furniture'),
     'The landlord got rid of the furniture.',

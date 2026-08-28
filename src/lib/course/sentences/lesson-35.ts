@@ -47,7 +47,7 @@ export const LESSON_35 = [
   sv(
     'c35-c',
     35,
-    modifiedBy('The', 'deeds', {
+    modifiedBy('Those', 'deeds', {
       ...part,
       verb: v('filed', 'file', 'Vtr'),
       adverbial: pp('under', det('the', 'counter')),
@@ -126,7 +126,7 @@ export const LESSON_35 = [
   sv(
     'c35-j',
     35,
-    modifiedBy('The', 'crates', {
+    modifiedBy('Several', 'crates', {
       ...part,
       verb: v('stacked', 'stack', 'Vtr'),
       adverbial: pp('against', det('the', 'wall')),

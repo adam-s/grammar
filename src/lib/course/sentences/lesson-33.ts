@@ -83,7 +83,7 @@ export const LESSON_33 = [
   joined(
     'c33-h',
     33,
-    { subject: det('The', 'lock'), verb: v('rusted', 'rust', 'Vint') },
+    { subject: det('That', 'lock'), verb: v('rusted', 'rust', 'Vint') },
     'and',
     {
       subject: det('the', 'gate'),

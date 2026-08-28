@@ -25,7 +25,7 @@ export const LESSON_27 = [
   ambiguous(
     'c27-b',
     27,
-    det('The', 'guard'),
+    det('That', 'guard'),
     v('stopped', 'stop', 'Vtr'),
     'the',
     'man',
@@ -121,7 +121,7 @@ export const LESSON_27 = [
   ambiguous(
     'c27-j',
     27,
-    det('The', 'porter'),
+    det('Another', 'porter'),
     v('moved', 'move', 'Vtr'),
     'the',
     'crate',

@@ -25,7 +25,7 @@ export const LESSON_37 = [
   sv(
     'c37-b',
     37,
-    det('The', 'deeds'),
+    det('Those', 'deeds'),
     passive(v('filed', 'file', 'Vtr'), 'were'),
     'Somebody filed the deeds, and who does not matter here.',
   ),
@@ -77,7 +77,7 @@ export const LESSON_37 = [
   svPlus(
     'c37-i',
     37,
-    det('The', 'crates'),
+    det('Several', 'crates'),
     passive(v('stacked', 'stack', 'Vtr'), 'were'),
     pp('by', det('the', 'porters')),
     'The porters stacked the crates.',

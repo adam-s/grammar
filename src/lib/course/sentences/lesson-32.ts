@@ -21,7 +21,7 @@ export const LESSON_32 = [
   comparison(
     'c32-b',
     32,
-    det('The', 'queue'),
+    det('That', 'queue'),
     v('was', 'be', 'Vbe'),
     'longer',
     {
@@ -133,7 +133,7 @@ export const LESSON_32 = [
   comparison(
     'c32-j',
     32,
-    det('The', 'noise'),
+    det('That', 'noise'),
     v('was', 'be', 'Vbe'),
     'louder',
     {

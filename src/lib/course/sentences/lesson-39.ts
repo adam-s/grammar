@@ -93,7 +93,11 @@ export const LESSON_39 = [
   joined(
     'c39-f',
     39,
-    { subject: det('The', 'baker'), verb: v('opened', 'open', 'Vtr'), object: det('the', 'shop') },
+    {
+      subject: det('Another', 'baker'),
+      verb: v('opened', 'open', 'Vtr'),
+      object: det('the', 'shop'),
+    },
     'but',
     {
       subject: det('the', 'queue'),

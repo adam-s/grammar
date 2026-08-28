@@ -29,7 +29,7 @@ export const LESSON_20 = [
   svoa(
     'c20-c',
     20,
-    det('The', 'porter'),
+    det('Another', 'porter'),
     v('laid', 'lay', 'Vtr'),
     det('the', 'tray'),
     pp('on', det('the', 'sideboard')),
@@ -89,7 +89,7 @@ export const LESSON_20 = [
   svPlus(
     'c20-j',
     20,
-    det('The', 'rope'),
+    det('That', 'rope'),
     v('swung', 'swing', 'Vint'),
     pp('across', det('the', 'gap')),
     'The rope swung over the gap.',

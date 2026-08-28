@@ -63,7 +63,7 @@ export const LESSON_16 = [
   svoc(
     'c16-g',
     16,
-    det('The', 'jury'),
+    det('That', 'jury'),
     v('found', 'find', 'Vc'),
     adjn('the', 'young', 'driver'),
     adj('careless'),
@@ -87,7 +87,7 @@ export const LESSON_16 = [
   svo(
     'c16-j',
     16,
-    det('The', 'storm'),
+    det('Another', 'storm'),
     v('damaged', 'damage', 'Vtr'),
     adjn('the', 'green', 'shutters'),
     'The storm harmed the green shutters.',

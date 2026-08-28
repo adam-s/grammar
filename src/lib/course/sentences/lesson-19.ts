@@ -22,7 +22,7 @@ export const LESSON_19 = [
   svoPlus(
     'c19-b',
     19,
-    det('The', 'porters'),
+    det('Both', 'porters'),
     v('carried', 'carry', 'Vtr'),
     det('the', 'crates'),
     pp('across', det('the', 'yard')),
@@ -65,7 +65,7 @@ export const LESSON_19 = [
   svPlus(
     'c19-g',
     19,
-    det('The', 'children'),
+    det('Several', 'children'),
     v('scattered', 'scatter', 'Vint'),
     pp('into', det('the', 'orchard')),
     'The children ran off into the orchard.',

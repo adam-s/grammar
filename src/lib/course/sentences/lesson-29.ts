@@ -55,7 +55,7 @@ export const LESSON_29 = [
   svWhy(
     'c29-e',
     29,
-    det('The', 'pipes'),
+    det('Several', 'pipes'),
     v('burst', 'burst', 'Vint'),
     when('because', det('the', 'water'), v('froze', 'freeze', 'Vint')),
     'Frozen water is why the pipes split.',
@@ -97,7 +97,7 @@ export const LESSON_29 = [
   svWhy(
     'c29-j',
     29,
-    det('The', 'shutters'),
+    det('Those', 'shutters'),
     v('rattled', 'rattle', 'Vint'),
     when('whenever', det('the', 'wind'), v('rose', 'rise', 'Vint')),
     'Rising wind always shook the shutters.',

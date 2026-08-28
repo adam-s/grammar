@@ -44,7 +44,7 @@ export const LESSON_30 = [
       kind: 'nominal',
     },
     v('worried', 'worry', 'Vtr'),
-    det('the', 'inspector'),
+    det('that', 'inspector'),
     'The failing wiring worried the inspector.',
   ),
   clauseSubject(
@@ -122,7 +122,7 @@ export const LESSON_30 = [
       kind: 'nominal',
     },
     v('annoyed', 'annoy', 'Vtr'),
-    det('the', 'landlord'),
+    det('her', 'landlord'),
     'The rusted lock annoyed the landlord.',
   ),
   clauseSubject(

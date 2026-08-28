@@ -90,7 +90,7 @@ export const LESSON_34 = [
   svClause(
     'c34-j',
     34,
-    det('The', 'trustees'),
+    det('Several', 'trustees'),
     v('voted', 'vote', 'Vtr'),
     { ...to, verb: v('close', 'close', 'Vtr'), object: det('the', 'archive') },
     'The trustees decided by vote to close it.',

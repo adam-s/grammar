@@ -36,7 +36,7 @@ export const LESSON_31 = [
   sv(
     'c31-c',
     31,
-    modifiedBy('The', 'witness', {
+    modifiedBy('Another', 'witness', {
       marker: 'who',
       subjectGap: true,
       verb: v('hesitated', 'hesitate', 'Vint'),

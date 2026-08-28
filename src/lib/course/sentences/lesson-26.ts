@@ -69,7 +69,7 @@ export const LESSON_26 = [
   sv(
     'c26-i',
     26,
-    both(det('The', 'shutters'), 'and', det('the', 'door')),
+    both(det('Those', 'shutters'), 'and', det('the', 'door')),
     v('rattled', 'rattle', 'Vint'),
     'Both shook in the wind.',
   ),

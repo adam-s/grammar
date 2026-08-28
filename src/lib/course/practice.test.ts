@@ -83,3 +83,52 @@ describe('practice is interleaved wherever it can be', () => {
     });
   }
 });
+
+/**
+ * A course that teaches determiners has to practise more than one.
+ *
+ * `the` was 617 of 678 determiners across the whole corpus — ninety-one per
+ * cent — and twelve lessons used nothing but `the` and `a`. Lesson 6 says a
+ * determiner points a noun out, limits it, or counts it, and then every lesson
+ * after it practised the pointing one. A learner drilled that way learns
+ * `the`, and meets *each*, *both* and *every* as surprises.
+ *
+ * Two lessons are exempt and say why. The bar is deliberately low — one
+ * determiner beyond `the`/`a`/`an` somewhere in the ten — because it is a
+ * floor against the corpus sliding back, not a quota.
+ */
+const ONLY_THE: Record<number, string> = {
+  7: 'every subject is a pronoun; there is no determiner to vary',
+  23: 'the numbers ARE the determiners, which is the lesson',
+};
+
+describe('determiners are practised as a class, not as one word', () => {
+  for (const lesson of COURSE_LESSONS) {
+    if (lesson.number < 6) continue; // determiners are not taught until 6
+    it(`${lesson.id}`, () => {
+      const seen = new Set<string>();
+      for (const sentence of lesson.sentences) {
+        const cs = canonicalReading(sentence).constituents;
+        for (const id of Object.keys(cs)) {
+          const c = cs[id]!;
+          if (c.form !== 'Det' || c.word === undefined) continue;
+          seen.add(sentence.words[c.word]!.text.toLowerCase());
+        }
+      }
+      const beyondArticles = [...seen].filter((d) => !['the', 'a', 'an'].includes(d));
+      const reason = ONLY_THE[lesson.number];
+      if (reason) {
+        assert.equal(
+          beyondArticles.length,
+          0,
+          `${lesson.id} is exempt because ${reason} — it no longer is, so drop the entry`,
+        );
+        return;
+      }
+      assert.ok(
+        beyondArticles.length > 0,
+        `${lesson.id} practises only ${[...seen]}. A determiner points a noun out, limits it, or counts it, and this lesson only ever points`,
+      );
+    });
+  }
+});

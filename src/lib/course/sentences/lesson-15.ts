@@ -21,7 +21,7 @@ export const LESSON_15 = [
   sv(
     'c15-b',
     15,
-    det('The', 'negotiations'),
+    det('Those', 'negotiations'),
     v('collapsed', 'collapse', 'Vint'),
     'The negotiations broke down.',
   ),
@@ -78,7 +78,7 @@ export const LESSON_15 = [
   svc(
     'c15-i',
     15,
-    det('The', 'chairman'),
+    det('That', 'chairman'),
     v('was', 'be', 'Vbe'),
     det('a', 'banker'),
     'The chairman worked as a banker.',

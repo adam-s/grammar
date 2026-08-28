@@ -46,7 +46,7 @@ export const LESSON_18 = [
   svPlus(
     'c18-e',
     18,
-    det('The', 'negotiations'),
+    det('Those', 'negotiations'),
     v('resumed', 'resume', 'Vint'),
     adv('yesterday'),
     'The talks started again yesterday.',
@@ -80,7 +80,7 @@ export const LESSON_18 = [
   svPlus(
     'c18-i',
     18,
-    det('The', 'ice'),
+    det('That', 'ice'),
     v('melted', 'melt', 'Vint'),
     adv('overnight'),
     'The ice turned to water during the night.',
