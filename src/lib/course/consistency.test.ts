@@ -116,6 +116,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
    */
   const TWO_WAYS: Record<string, string> = {
     after: 'a marker before a clause, a preposition before a noun phrase',
+    before: 'the same, one word over',
     are: 'a main verb and an auxiliary',
     clear: 'an adjective and a verb',
     damaged: 'an adjective and a verb',
@@ -131,6 +132,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
     past: 'a preposition and an adverb',
     question: 'a noun and a verb',
     repair: 'a noun and a verb',
+    safe: 'an adjective and a noun',
     rusted: 'an adjective and a verb',
     tired: 'an adjective and a verb — lesson 3 uses both as its competitor',
     that: 'a determiner and a clause marker',

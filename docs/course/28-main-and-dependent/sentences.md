@@ -21,10 +21,10 @@ one — two variables moving together. Lesson 30 is where that is fixed.
 | 4   | He discovered the archive flooded.         | the same, with a longer inner subject            |
 | 5   | The clerk confirmed the deeds existed.     | the outer subject grows                          |
 | 6   | The nurse thought the baby slept.          | both subjects are people, so neither is a clue   |
-| 7   | The inspector noticed the wiring smoked.   | back to a thing as the inner subject             |
-| 8   | The jury believed the witness lied.        | the inner subject could be an object alone       |
+| 7   | An inspector noticed the wiring smoked.    | back to a thing as the inner subject             |
+| 8   | The jury accepted the witness hesitated.   | the inner subject could be an object alone       |
 | 9   | She knew the old belt broke yesterday.     | a premodifier and an adverbial inside the clause |
-| 10  | The guide said the narrow bridge was safe. | a linking frame inside the embedded clause       |
+| 10  | Our guide said the narrow bridge was safe. | a linking frame inside the embedded clause       |
 
 ## Notes
 

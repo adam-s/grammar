@@ -310,3 +310,46 @@ export const subjectClause = sentence(
   ],
   'r1',
 );
+
+/* ------------- a fronted adverbial clause — Before the power failed, the lamp
+ * flickered.
+ *
+ * It attaches at the clause, not inside the verb phrase, exactly as a fronted
+ * adverb phrase does. Every adverbial clause in either corpus came after the
+ * main clause, so the move that proves a clause is an adverbial rather than a
+ * complement had never been drawn — and neither had the comma that follows it,
+ * which is the second punctuation pattern lesson 39 needs.
+ */
+export const frontedAdverbialClause = sentence(
+  'fix-fronted-adverbial-clause',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n(
+            'Cl',
+            'adverbial',
+            [
+              w('Subord', 'marker', 'Before'),
+              n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'power')]),
+              n('VP', 'predicate', [w('V', 'head', 'failed', { lemma: 'fail', verbType: 'Vint' })]),
+            ],
+            { clauseKind: 'adverbial', clauseType: 'SV' },
+          ),
+          pt(','),
+          n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'lamp')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'flickered', { lemma: 'flicker', verbType: 'Vint' }),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The lamp wavered ahead of the power going.' },
+    ),
+  ],
+  'r1',
+);

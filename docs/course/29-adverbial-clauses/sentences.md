@@ -18,7 +18,7 @@ when, once, whenever_ — and it is kept.
 | 3   | She waved when the last bus arrived.               | a time clause                             |
 | 4   | Because the gate was locked, we waited.            | **item 1, fronted** — and a comma appears |
 | 5   | When the last bus arrived, she waved.              | **item 3, fronted**                       |
-| 6   | The room stayed cold until the fire caught.        | a boundary in time rather than a point    |
+| 6   | The room darkened until the fire caught.           | a boundary in time rather than a point    |
 | 7   | The lamp flickered before the power failed.        | the clause names what came after          |
 | 8   | Before the power failed, the lamp flickered.       | **item 7, fronted** — three pairs now     |
 | 9   | The crew cleared the track after the storm passed. | a longer main clause on both sides        |

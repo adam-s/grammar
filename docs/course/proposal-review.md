@@ -461,10 +461,10 @@ Status values are deliberately explicit:
 | 4   | He discovered the archive flooded.         | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | The clerk confirmed the deeds existed.     | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 6   | The nurse thought the baby slept.          | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The inspector noticed the wiring smoked.   | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | The jury believed the witness lied.        | Rewritten after review; human confirmation pending | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | An inspector noticed the wiring smoked.    | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | The jury accepted the witness hesitated.   | Rewritten after review; human confirmation pending | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | She knew the old belt broke yesterday.     | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 10  | The guide said the narrow bridge was safe. | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 10  | Our guide said the narrow bridge was safe. | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 29 — Adverbial clauses
 
@@ -475,7 +475,7 @@ Status values are deliberately explicit:
 | 3   | She waved when the last bus arrived.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 4   | Because the gate was locked, we waited.            | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | When the last bus arrived, she waved.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | The room stayed cold until the fire caught.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | The room darkened until the fire caught.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 7   | The lamp flickered before the power failed.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | Before the power failed, the lamp flickered.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | The crew cleared the track after the storm passed. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |

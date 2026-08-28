@@ -946,6 +946,42 @@ export const svWhy = (
   gloss: string,
 ) => one(id, lesson, clause(s, verb, [cl(inner)('adverbial')], 'SV'), gloss);
 
+/**
+ * *Before the power failed, the lamp flickered.* — the adverbial clause first.
+ *
+ * Every adverbial clause in the built lesson 29 came after the main clause, ten
+ * out of ten, and position is most of what makes one hard to find. Fronting is
+ * also the definitive test that a clause is an adverbial rather than a
+ * complement, and it brings the comma lesson 39 needs.
+ */
+export const whyFirst = (
+  id: string,
+  lesson: number,
+  inner: Inner,
+  s: Phrase,
+  verb: Verb,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        cl(inner)('adverbial'),
+        pt(','),
+        s('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        ]),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
+  );
+
 /** *The lights failed when the storm arrived.* An object, and a clause saying why. */
 export const svoWhy = (
   id: string,
