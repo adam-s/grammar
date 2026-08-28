@@ -82,7 +82,11 @@ export const LESSON_39 = [
       object: det('the', 'evidence'),
     },
     'and',
-    { subject: det('the', 'judge'), verb: v('summed', 'sum', 'Vtr'), object: det('the', 'case') },
+    {
+      subject: det('the', 'judge'),
+      verb: v('reviewed', 'review', 'Vtr'),
+      object: det('the', 'case'),
+    },
     'Both stages happened.',
     true,
   ),

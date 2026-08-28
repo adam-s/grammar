@@ -1,17 +1,23 @@
 /**
  * Lesson 35 — Participial clauses.
  *
- * *repaired yesterday* modifies *engine*, exactly as lesson 21's prepositional
- * phrase and lesson 31's relative clause did. Its verb has no tense, and the
- * slot it leaves empty is the OBJECT: the engine is the thing repaired, not the
- * thing doing the repairing. That is the difference from lesson 31.
+ * *repaired after the flood* modifies *engine*, exactly as lesson 21's
+ * prepositional phrase and lesson 31's relative clause did. Its verb has no
+ * tense, and the slot it leaves empty is the OBJECT: the engine is the thing
+ * repaired, not the thing doing the repairing. That is the difference from
+ * lesson 31, where the empty slot was the subject.
  *
- * The clauses are not marked passive, though they mean one. The model's
- * passive wants a `be` to hang the claim on and a reduced participial has
- * none, so the honest record stops at participial — the same silence
- * `fix-garden-path` keeps.
+ * Each carries a prepositional phrase rather than a bare adverb. *The harbour
+ * dredged once silted* is grammatical and nobody says it; a reduced participial
+ * wants something with weight after the verb, and a sentence a learner would
+ * never meet teaches the pattern badly.
+ *
+ * The clauses are not marked passive, though they mean one. The model's passive
+ * wants a `be` to hang the claim on and a reduced participial has none, so the
+ * honest record stops at participial — the same silence `fix-garden-path`
+ * keeps.
  */
-import { adv, det, modifiedBy, sv, svo, v } from './shape.ts';
+import { det, modifiedBy, pp, sv, svo, v } from './shape.ts';
 
 const part = { finiteness: 'participial' as const, kind: 'relative' as const, objectGap: true };
 
@@ -22,10 +28,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'engine', {
       ...part,
       verb: v('repaired', 'repair', 'Vtr'),
-      adverbial: adv('yesterday'),
+      adverbial: pp('after', det('the', 'flood')),
     }),
     v('failed', 'fail', 'Vint'),
-    'The engine that was repaired yesterday failed.',
+    'The engine that was repaired after the flood failed.',
   ),
   sv(
     'c35-b',
@@ -33,10 +39,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'ledger', {
       ...part,
       verb: v('audited', 'audit', 'Vtr'),
-      adverbial: adv('recently'),
+      adverbial: pp('by', det('the', 'inspector')),
     }),
     v('vanished', 'vanish', 'Vint'),
-    'The recently audited ledger disappeared.',
+    'The ledger the inspector audited disappeared.',
   ),
   sv(
     'c35-c',
@@ -44,10 +50,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'deeds', {
       ...part,
       verb: v('filed', 'file', 'Vtr'),
-      adverbial: adv('yesterday'),
+      adverbial: pp('under', det('the', 'counter')),
     }),
     v('burned', 'burn', 'Vint'),
-    'The deeds filed yesterday were destroyed.',
+    'The deeds kept under the counter were destroyed.',
   ),
   sv(
     'c35-d',
@@ -55,10 +61,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'wall', {
       ...part,
       verb: v('rebuilt', 'rebuild', 'Vtr'),
-      adverbial: adv('twice'),
+      adverbial: pp('after', det('the', 'storm')),
     }),
     v('collapsed', 'collapse', 'Vint'),
-    'The twice-rebuilt wall fell.',
+    'The wall put up again after the storm fell.',
   ),
   sv(
     'c35-e',
@@ -66,10 +72,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'report', {
       ...part,
       verb: v('signed', 'sign', 'Vtr'),
-      adverbial: adv('late'),
+      adverbial: pp('by', det('the', 'surveyor')),
     }),
     v('mattered', 'matter', 'Vint'),
-    'The late-signed report counted.',
+    'The report the surveyor signed counted.',
   ),
   svo(
     'c35-f',
@@ -79,9 +85,9 @@ export const LESSON_35 = [
     modifiedBy('the', 'plan', {
       ...part,
       verb: v('drafted', 'draft', 'Vtr'),
-      adverbial: adv('hastily'),
+      adverbial: pp('by', det('the', 'committee')),
     }),
-    'The board turned down the hastily drafted plan.',
+    'The board turned down the committee’s plan.',
   ),
   sv(
     'c35-g',
@@ -89,10 +95,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'shutters', {
       ...part,
       verb: v('painted', 'paint', 'Vtr'),
-      adverbial: adv('recently'),
+      adverbial: pp('in', det('the', 'spring')),
     }),
     v('warped', 'warp', 'Vint'),
-    'The freshly painted shutters bent.',
+    'The shutters painted in the spring bent.',
   ),
   svo(
     'c35-h',
@@ -102,9 +108,9 @@ export const LESSON_35 = [
     modifiedBy('the', 'letter', {
       ...part,
       verb: v('mislaid', 'mislay', 'Vtr'),
-      adverbial: adv('earlier'),
+      adverbial: pp('in', det('the', 'archive')),
     }),
-    'The clerk found the letter lost earlier.',
+    'The clerk found the letter lost in the archive.',
   ),
   sv(
     'c35-i',
@@ -112,10 +118,10 @@ export const LESSON_35 = [
     modifiedBy('The', 'harbour', {
       ...part,
       verb: v('dredged', 'dredge', 'Vtr'),
-      adverbial: adv('once'),
+      adverbial: pp('before', det('the', 'season')),
     }),
     v('silted', 'silt', 'Vint'),
-    'The once-dredged harbour filled with silt again.',
+    'The harbour dredged before the season filled with silt again.',
   ),
   sv(
     'c35-j',
@@ -123,9 +129,9 @@ export const LESSON_35 = [
     modifiedBy('The', 'crates', {
       ...part,
       verb: v('stacked', 'stack', 'Vtr'),
-      adverbial: adv('badly'),
+      adverbial: pp('against', det('the', 'wall')),
     }),
     v('toppled', 'topple', 'Vint'),
-    'The badly stacked crates fell over.',
+    'The crates piled against the wall fell over.',
   ),
 ];

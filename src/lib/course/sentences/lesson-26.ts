@@ -20,7 +20,7 @@ export const LESSON_26 = [
     26,
     both(det('The', 'kettle'), 'and', det('the', 'lamp')),
     v('failed', 'fail', 'Vint'),
-    'Neither the kettle nor the lamp worked.',
+    'Both the kettle and the lamp stopped working.',
   ),
   sv(
     'c26-c',

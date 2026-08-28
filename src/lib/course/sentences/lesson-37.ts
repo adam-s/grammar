@@ -5,30 +5,37 @@
  * stays what it was — noun phrase, verb phrase, subject — and what changes is
  * the relationship between them, which is why voice is a property and not a
  * shape.
+ *
+ * Half of these name the doer in a *by* phrase and half leave it out, because
+ * both halves are the lesson: the passive lets you say who did it in a place
+ * where it can be dropped, and dropping it is the commonest reason to use one.
+ * Ten agentless passives would have hidden that the participant moved at all.
  */
-import { det, passive, sv, v } from './shape.ts';
+import { det, passive, pp, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_37 = [
-  sv(
+  svPlus(
     'c37-a',
     37,
     det('The', 'harbour'),
     passive(v('dredged', 'dredge', 'Vtr'), 'was'),
-    'Somebody dredged the harbour.',
+    pp('by', det('the', 'contractors')),
+    'The contractors dredged the harbour.',
   ),
   sv(
     'c37-b',
     37,
     det('The', 'deeds'),
     passive(v('filed', 'file', 'Vtr'), 'were'),
-    'Somebody filed the deeds.',
+    'Somebody filed the deeds, and who does not matter here.',
   ),
-  sv(
+  svPlus(
     'c37-c',
     37,
     det('The', 'engine'),
     passive(v('repaired', 'repair', 'Vtr'), 'was'),
-    'Somebody repaired the engine.',
+    pp('by', det('a', 'mechanic')),
+    'A mechanic repaired the engine.',
   ),
   sv(
     'c37-d',
@@ -37,12 +44,13 @@ export const LESSON_37 = [
     passive(v('rebuilt', 'rebuild', 'Vtr'), 'was'),
     'Somebody rebuilt the wall.',
   ),
-  sv(
+  svPlus(
     'c37-e',
     37,
     det('The', 'ledger'),
     passive(v('audited', 'audit', 'Vtr'), 'was'),
-    'Somebody audited the ledger.',
+    pp('by', det('the', 'inspector')),
+    'The inspector audited the ledger.',
   ),
   sv(
     'c37-f',
@@ -51,12 +59,13 @@ export const LESSON_37 = [
     passive(v('painted', 'paint', 'Vtr'), 'were'),
     'Somebody painted the shutters.',
   ),
-  sv(
+  svPlus(
     'c37-g',
     37,
     det('The', 'claim'),
     passive(v('rejected', 'reject', 'Vtr'), 'was'),
-    'Somebody rejected the claim.',
+    pp('by', det('the', 'board')),
+    'The board rejected the claim.',
   ),
   sv(
     'c37-h',
@@ -65,12 +74,13 @@ export const LESSON_37 = [
     passive(v('closed', 'close', 'Vtr'), 'was'),
     'Somebody closed the archive.',
   ),
-  sv(
+  svPlus(
     'c37-i',
     37,
     det('The', 'crates'),
     passive(v('stacked', 'stack', 'Vtr'), 'were'),
-    'Somebody stacked the crates.',
+    pp('by', det('the', 'porters')),
+    'The porters stacked the crates.',
   ),
   sv(
     'c37-j',
