@@ -106,26 +106,32 @@ not have their other nine.
 
 ### Stage 4 — Put clauses inside clauses
 
-| #   | Lesson                       | One new idea                                                      | The turn                                                      |
-| --- | ---------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| 28  | Main and dependent clauses   | a dependent clause cannot stand as the sentence frame by itself   | _because_ announces the job of a clause                       |
-| 29  | Adverbial clauses            | a subordinator can introduce a clause functioning as an adverbial | a clause can fill a noun-shaped slot                          |
-| 30  | Nominal clauses              | a nominal clause can function as subject, object, or complement   | a clause after a noun can identify that noun                  |
-| 31  | Relative clauses             | a relative clause postmodifies a noun phrase                      | _than_ introduces a comparison with missing repeated material |
-| 32  | Comparative clauses          | a comparative clause completes a comparison                       | conjunctions can join whole clauses too                       |
-| 33  | Coordination between clauses | coordinated clauses have equal rank                               | _to leave_ contains a verb but no tense                       |
+| #   | Lesson                       | One new idea                                                                 | The turn                                                      |
+| --- | ---------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 28  | Main and dependent clauses   | a clause can sit inside another clause and take a job there                  | _because_ announces the job of a clause                       |
+| 29  | Adverbial clauses            | a subordinator can introduce a clause functioning as an adverbial            | a clause can fill a noun-shaped slot                          |
+| 30  | Nominal clauses              | the same nominal clause fills the SUBJECT slot, so the _it_ test works on it | a clause after a noun can identify that noun                  |
+| 31  | Relative clauses             | a relative clause postmodifies a noun phrase                                 | _than_ introduces a comparison with missing repeated material |
+| 32  | Comparative clauses          | a comparative clause completes a comparison                                  | conjunctions can join whole clauses too                       |
+| 33  | Coordination between clauses | coordinated clauses have equal rank                                          | _to leave_ contains a verb but no tense                       |
 
 The clause lessons reuse the form/function distinction from lesson 20: all four
 are clauses in form, but their kinds and jobs differ. Relative clauses also
 reuse postmodification from lesson 21; clause coordination reuses phrase
 coordination from lesson 26.
 
+**Lesson 28 teaches `kind:nominal` as well as `Cl`,** because a clause has to
+be some kind of clause and this is the first lesson that draws one. Lesson 30
+keeps its number and teaches where a nominal clause can sit: 28 puts one in the
+object slot, 30 makes one the subject, and the _it_ test from lesson 4 is the
+evidence it is doing a noun's work.
+
 ### Stage 5 — Handle reduced and marked structures
 
 | #   | Lesson                                | One new idea                                                                     | The turn                                                      |
 | --- | ------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | 34  | Infinitive clauses                    | infinitival _to_ marks a verb without tense                                      | an _-ing_ or _-ed_ verb can modify a noun                     |
-| 35  | Participial clauses                   | a participial clause can work as a modifier or adverbial                         | an _-ing_ clause can fill a noun-shaped slot                  |
+| 35  | Participial clauses                   | a participial modifier leaves its OBJECT empty, not its subject                  | an _-ing_ clause can fill a noun-shaped slot                  |
 | 36  | Gerund clauses                        | an _-ing_ clause can function where an NP can                                    | a sentence can change voice without changing its participants |
 | 37  | Passive voice                         | passive voice changes which participant is the subject                           | some sentence-edge words belong to no clause slot             |
 | 38  | Interjections and sentence-edge words | an interjection stands outside the clause frame                                  | punctuation suggests structure but cannot decide it           |
@@ -136,6 +142,23 @@ The last stage is deliberately late. Infinitives and participles depend on the
 learner already separating a verb from tense, and the passive depends on a firm
 grasp of subject, object, and verb type. Punctuation comes last because commas
 are evidence for structure, not a substitute for finding it.
+
+Two things authoring stage 5 settled:
+
+**A reduced participial leaves its object empty, not its subject.** _The engine
+repaired after the flood_ — the engine is the thing repaired. That is the
+contrast with lesson 31, where the empty slot is the subject, and it is what
+lesson 35 actually teaches.
+
+**The model makes no voice claim about a reduced participial.** It means a
+passive and it has no _be_ to hang the claim on, and the audits are right to
+refuse one. `fix-garden-path` keeps the same silence. If that is ever worth
+saying, it needs a passive that does not require an auxiliary, which is a model
+decision and not a content one.
+
+Lesson 39's sentences are lesson 33's with a comma added, on purpose: a comma
+is a reason to try a reading and not the reading itself, and that is only
+visible against the same sentence without one.
 
 ## The progression contract
 
@@ -350,8 +373,8 @@ single-learner app; nothing here needs a server.
 
 ## Content
 
-Lessons 1–15 hold 150 hand-authored sentences: ten each, every one audited,
-scope-checked, and rebuilt through the palette in a browser.
+All forty lessons hold ten hand-authored sentences each: 400, every one
+audited, scope-checked, and rebuilt through the palette in a browser.
 
 They were built as a **vertical slice** — one sentence for every lesson first,
 all the way to 15, before any lesson got its second. That order is the reason
@@ -362,7 +385,15 @@ that lesson 1 no longer owned, which threw on load. Neither was visible from
 reading the code, and one was invisible to every test, because no test loads the
 page.
 
-No parsing pipeline yet. It gets built when lesson volume demands one, and 150
+Then all four hundred were read, because green is not the same as true. That
+pass found four things no test can see: two sentences in lesson 27 whose second
+reading nobody would take, ten participials in lesson 35 that were grammatical
+and unsayable, ten agentless passives in lesson 37 that hid the very
+participant the lesson is about, and a gloss that contradicted its own
+sentence. `provenance.reviewedBy` still says `unreviewed` on all four hundred,
+and it should until a person has read them.
+
+No parsing pipeline yet. It gets built when lesson volume demands one, and 400
 is not that.
 
 ## Legal footing
