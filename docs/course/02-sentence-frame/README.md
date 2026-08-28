@@ -82,14 +82,12 @@ the lesson is ten repetitions of lesson 1.
 ## What this should change
 
 1. **Give lesson 2 a subject with a phrase inside it.** _The shoes on my feet…_,
-   _The key to the cabinet…_. The proposal in
-   [../sentence-ladders.md](../sentence-ladders.md) moves in this direction but
-   still grows the subject with adjectives rather than with post-head material.
+   _The key to the cabinet…_. Proposed in [sentences.md](sentences.md).
 2. **Correct the lesson table in [../README.md](../README.md).** It contradicts
    `course.ts` on which lesson introduces the frame.
 3. **Vary the predicate, not only the subject.** Ten sentences ending in the verb
-   teach the learner to cut before the last word, which is the finding from
-   [../sentence-review.md](../sentence-review.md).
+   teach the learner to cut before the last word, which is lesson 1's shortcut —
+   see [../difficulty.md](../difficulty.md).
 
 ## Bearing on the lesson format
 

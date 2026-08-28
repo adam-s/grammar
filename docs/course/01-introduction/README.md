@@ -154,8 +154,8 @@ Three things follow from the research, and none of them is a lesson page.
    shortcut that breaks at lesson 37. The tag-question test finds the same words
    and stays true: _…, didn't **it**?_
 2. **Lesson 1's ten sentences need predicates longer than one word.** The
-   proposal in [../sentence-ladders.md](../sentence-ladders.md) already does
-   this; the built corpus in `src/lib/course/sentences/` does not.
+   proposal in [sentences.md](sentences.md) does this; the built corpus in
+   `src/lib/course/sentences/` does not.
 3. **The model already carries `placeholderSubject`** and one fixture uses it,
    _There is a problem._ No course sentence does. Whether a placeholder subject
    belongs in Course 1 is an open scope question, not a gap to be quietly filled.

@@ -82,9 +82,10 @@ now split it.
 Three of three. There is no sentence in this lesson where naming the head
 requires a test.
 
-The proposal in [../sentence-ladders.md](../sentence-ladders.md) fixes this: its
-lesson 5 has _A box of tools fell_ and _The key to the cabinet vanished_, both
-of which put the head first and a decoy last. Neither is in the built corpus.
+[sentences.md](sentences.md) fixes this: it has _A box of tools fell_ and _The
+key to the cabinet vanished_, both of which put the head first and a decoy last,
+and five of its ten put the head somewhere other than last. Neither sentence is
+in the built corpus.
 
 ## What this should change
 

@@ -75,4 +75,4 @@ Entirely from the corpus, measured 28 August 2026.
 ## Rejected
 
 - **Making the sentences longer.** Lesson 39 is longer and has one shape. Length
-  is not the measure; see [../sentence-review.md](../sentence-review.md).
+  is not the measure; see [../difficulty.md](../difficulty.md).

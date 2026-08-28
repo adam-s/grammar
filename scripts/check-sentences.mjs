@@ -59,10 +59,11 @@ for (const dir of dirs) {
   // An optional lesson is a demonstration, not a practice set: it needs only
   // enough sentences to show that the trees come out the same, or different.
   const want = optional ? [2, 6] : [10, 10];
-  if (ss.length < want[0] || ss.length > want[1])
+  if (ss.length < want[0] || ss.length > want[1]) {
     problems.push(
       `${dir}: ${ss.length} sentences, expected ${want[0] === want[1] ? want[0] : `${want[0]} to ${want[1]}`}`,
     );
+  }
   ss.forEach((s, i) => {
     if (s.n !== i + 1) problems.push(`${dir}: sentence ${i + 1} is numbered ${s.n}`);
     // A dagger marks a construction needing a model check; the step still has to be named.
@@ -87,10 +88,11 @@ for (const dir of dirs) {
 const withFile = dirs.filter((d) => existsSync(`${DOCS}/${d}/sentences.md`));
 console.log(`sentences.md: ${withFile.length} of ${dirs.length} lesson folders`);
 const missing = [...ids].filter((id) => !existsSync(`${DOCS}/${id}/sentences.md`));
-if (missing.length)
+if (missing.length) {
   console.log(
     `  missing: ${missing.length} — ${missing.slice(0, 5).join(' ')}${missing.length > 5 ? ' …' : ''}`,
   );
+}
 
 if (problems.length) {
   console.error(`\n${problems.length} problems:`);

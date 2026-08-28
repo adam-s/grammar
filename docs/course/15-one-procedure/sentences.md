@@ -36,5 +36,5 @@ offer. It also has to survive the removal test that item 2 does not need, which
 is lesson 14's test arriving one more time.
 
 Nothing here is longer than eight tokens. The hardest sentence in the lesson —
-item 9 — is one of the shortest, which is the whole argument of
-[../sentence-review.md](../sentence-review.md) in one row.
+item 9 — is one of the shortest, which is
+[../difficulty.md](../difficulty.md)'s whole argument in one row.

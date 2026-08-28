@@ -48,5 +48,5 @@ holds one is a question rather than a gap.
 
 The longest sentence here is twelve tokens. Lesson 39's are eleven with one shape
 between them; these are eleven with ten. **Length is not the measure** — that is
-the whole argument of [../sentence-review.md](../sentence-review.md), and this
-lesson is where it should be visible.
+[../difficulty.md](../difficulty.md)'s whole argument, and this lesson is where
+it should be visible.

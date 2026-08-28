@@ -32,8 +32,7 @@ them by where it applies.
 | An appositive begins with _a_                  | _That ferry, Mermaid, sailed_     | **yes**, once              |
 | An appositive follows the noun                 | a fronted one                     | no                         |
 
-The first row is the problem, and it is the same one flagged in
-[../sentence-review.md](../sentence-review.md) for the proposed ladders. A
+The first row is the problem. A
 learner can find every appositive in this lesson by hunting for commas, and
 lesson 39 will later insist that punctuation is evidence rather than definition.
 

@@ -1,59 +1,45 @@
 # What makes one sentence harder than the one before it
 
-Written 28 August 2026, after measuring the four hundred sentences and finding
-no answer to that question in them.
+Written 28 August 2026, after measuring the four hundred built sentences and
+finding no answer to that question in them. Trimmed the same day, once every
+lesson had a dossier and a `sentences.md` of its own and most of the per-lesson
+complaint here had a better home.
 
-This is a plan; the design is not built. Every number below comes from
-`node scripts/measure-course.mjs`, which defines the metrics it uses. An earlier
-draft of this page called its numbers reproducible while the script that made
-them sat in a scratch directory, and two of them did not survive re-derivation:
-the shape counts had silently mixed two vocabularies, and the difficulty numbers
-were each one too high. Run the script rather than trusting the page.
+What remains is the part that is not about any one lesson: **the argument, the
+contract, and the list of things the course has never built.**
+
+Every number comes from `node scripts/measure-course.mjs`, which defines its
+metrics. An earlier draft called its numbers reproducible while the script that
+made them sat in a scratch directory, and two of them did not survive
+re-derivation. Run the script rather than trusting the page.
 
 ## The problem, in numbers
 
 **No lesson gets harder as it goes.** Difficulty is
-`replaySentence(sentence, target).steps.length` — the number of picks a learner
-makes, which is the palette's own count. Only nine of the forty lessons avoid a
-decrease, and all nine are constant rather than rising: lesson 1 is
-`5 5 5 5 5 5 5 5 5 5`. The other thirty-one are unordered. Lesson 40 runs:
+`replaySentence(sentence, target).steps.length` — the picks a learner makes,
+which is the palette's own count. Only nine of the forty lessons avoid a
+decrease, and all nine are constant rather than rising. Lesson 40 runs
+`45 35 41 41 41 29 45 41 35 41`: its hardest sentence is seventh and its easiest
+is sixth. The ten were written in whatever order they were thought of.
 
-```
-45  35  41  41  41  29  45  41  35  41
-```
-
-Its hardest sentence is seventh and its easiest is sixth. The ten were written
-in whatever order they were thought of.
+**Most lessons ask one question ten times.** The sharpest single measure is
+**distinct asked-shapes** — how many different trees a lesson's ten sentences
+require after pruning to that lesson's scope. Nine lessons ask for **one**, twelve
+more ask for two, so **21 of 40 are at two or fewer**. Lesson 15 asks for nine and
+lesson 40 for seven; nothing else is above six.
 
 **Composition is real, but flat and unordered.** "Reach" is the set of earlier
-lessons whose first-taught decisions a sentence draws on. Sizes within a lesson
-vary by one:
+lessons whose first-taught decisions a sentence draws on. A reach of 12 is not
+nothing. What is missing is order and growth: no lesson builds, and the ceiling
+barely moves — lesson 25 reaches 6 of the 24 lessons behind it, lesson 40 reaches
+16 of 39.
 
-```
-lesson 21   7  7  7  8  7  7  8  7  8  7
-lesson 29   7  8  7  8  7  8  7  8  8  7
-lesson 40  12 13 11 13 11 12 12 11 12 11
-```
+**The shapes repeat.** 400 sentences make 88 distinct trees; 48 fixtures make 48.
+One tree occurs 50 times; the five commonest cover 111 of the 400.
 
-Sentences do combine several earlier lessons; a reach of 12 is not nothing. What
-is missing is **order and growth**. No lesson builds, and across the course the
-ceiling barely moves: lesson 25 reaches 6 of the 24 lessons behind it, lesson 39
-reaches 7 of 38, and lesson 40 — the synthesis — reaches 16 of 39.
-
-**One form doing two jobs is common and shallow.** 225 of 400 sentences have a
-phrase form in two roles, but the top of that list is:
-
-```
-96  NP: subject + directObject
-46  NP: subject + complement
- 5  Cl: directObject + postmodifier
-```
-
-A noun phrase as both subject and object is what every transitive sentence looks
-like. The interesting case — the same shape doing genuinely different work —
-happens five times in four hundred sentences.
-
-**The shapes repeat.** 400 sentences make 88 distinct trees; 48 fixtures make 48. One tree occurs 50 times; the five commonest cover 111 of the 400.
+Everything more specific than this now lives in the lesson dossiers. Each one has
+a **shortcut register** naming the wrong rule that passes that lesson and the
+sentence shape that kills it, and a `sentences.md` proposing ten that do.
 
 ## Difficulty is not length
 
@@ -67,40 +53,61 @@ The second is longer and asks the same five questions. At lesson 1 the target is
 scanning, not thinking, and a course that escalates by adding words teaches
 stamina.
 
+Two different loads are being confused. The first is holding a long string in
+your head and panning a wide tree: pure waste, and it scales directly with
+length — on the built corpus a sentence costs about **4.2 picks per word**, so
+four more words is about seventeen more clicks. The second is the decision the
+lesson exists to teach. That is the one you want spent.
+
 **Difficulty is composition and reuse.** A sentence is harder than the one before
-it when it asks the learner to hold more of the course at once:
+it when it asks the learner to hold more of the course at once: it keeps what the
+last one used and adds to it, or puts a familiar shape in an unfamiliar job, or
+nests one taught thing inside another.
 
-- **It keeps what the last one used and adds to it.** Not different earlier
-  material — more of it.
-- **It puts a familiar shape in an unfamiliar job.** The same prepositional
-  phrase as a required adverbial, then as an optional one, then as a
-  postmodifier.
-- **It nests one taught thing inside another.** A relative clause inside the
-  subject of a sentence whose object is a nominal clause.
-
-None of those needs a longer sentence. Lesson 21 teaches the postmodifier and
+None of that needs a longer sentence. Lesson 21 teaches the postmodifier and
 lesson 16 taught the premodifier, and **not one of lesson 21's ten sentences uses
-both**. _The old lock on the shed rusted_ is seven words — shorter than _The
-clerk showed the visitor from the ministry a map_, already in that lesson — and
-asks for more.
+both**. _The old lock on the shed rusted_ is seven words — shorter than _The clerk
+showed the visitor from the ministry a map_, already in that lesson — and asks for
+more.
+
+## What to do instead of adding words
+
+When a lesson needs to be one step harder, take the cheapest move on this list
+that still works. Only the last one costs length.
+
+1. **Move the target off its default position.** Put the verb somewhere other
+   than the end. Put the adverbial at the front.
+2. **Make position lie.** Two sentences, same length, same shape, different
+   answer. _They called her a taxi_ and _They called her a genius_ are five words
+   each and different verb types. This is the single highest-value move in the
+   whole design and the built corpus uses it in a handful of lessons.
+3. **Add a competitor for the label.** A second noun that is not the head. A
+   second verb form that is not the main verb.
+4. **Mix in an earlier type,** so the lesson heading stops being the answer.
+5. **Then, and only then, lengthen** — and only where depth itself is the
+   content, which is really just lesson 19.
+
+Moves 1 to 4 raise the second load while holding the first flat. They make the
+sentence harder without making it longer, and that is the whole trick.
 
 ## The ladder inside a lesson
 
-| Band           | What it does                                                                       | Roughly |
-| -------------- | ---------------------------------------------------------------------------------- | ------- |
-| **Plain**      | the new idea in its simplest frame                                                 | 1–3     |
-| **Varied**     | the new idea in a different clause pattern, or the same form doing a different job | 4–7     |
-| **Cumulative** | the new idea plus constructions from earlier lessons                               | 8–10    |
+Each `sentences.md` is a table whose third column names **what the step is**, and
+that column is the discipline: a step nobody can name is the length ladder
+wearing a difficulty ladder's label. A learner who fails at step 7 should be able
+to say what step 7 has that step 6 did not.
 
-A learner who fails at step 7 should be able to name what step 7 has that step 6
-did not.
+Roughly, sentences 1 to 3 put the new idea in its simplest frame, 4 to 7 give it
+a different clause pattern or a different job, and 8 to 10 combine it with earlier
+lessons. That is a shape, not a rule; several lessons are better off ending on
+their hardest **and shortest** pair.
 
 ## The contract, stated so it can be a test
 
 An earlier draft proposed "reach never falls and grows by at most one". That is
-not a cumulative-practice contract. A sentence drawing on lessons `{1,2,3}` can
-be followed by one drawing on `{4,5,6}`: the size is unchanged, both checks pass,
-and nothing has accumulated. Cardinality cannot see substitution.
+not a cumulative-practice contract. A sentence drawing on `{1,2,3}` can be
+followed by one drawing on `{4,5,6}`: the size is unchanged, both checks pass, and
+nothing has accumulated. Cardinality cannot see substitution.
 
 That is not hypothetical. `measure-course.mjs reach` compares the sets:
 
@@ -109,27 +116,28 @@ lesson 20  sizes 7 6 6 6 6 6 7 6 6 6   steps that keep the one before: 0/9
 lesson 39  sizes 7 7 7 7 7 7 7 7 7 7   steps that keep the one before: 9/9
 ```
 
-Lesson 20's sizes never move by more than one and its sentences share nothing
-from step to step — it would pass a cardinality contract while accumulating
-nothing at all. Lesson 39 accumulates perfectly and teaches nothing new, because
-its ten sentences use the same seven lessons every time. Neither is the ladder,
+Lesson 20 would pass a cardinality contract while accumulating nothing at all.
+Lesson 39 accumulates perfectly and teaches nothing new. Neither is the ladder,
 and only the set comparison tells them apart.
 
-So the contract compares **sets**, and separately allows structure to be the
-step:
+So the contract compares **sets**, and separately allows structure to be the step:
 
-1. **Accumulation.** `reach(n) ⊇ reach(n-1)` at every step in a lesson. What the
-   learner has already used stays in play.
+1. **Accumulation.** `reach(n) ⊇ reach(n-1)` at every step. What the learner has
+   already used stays in play.
 2. **One step.** `|reach(n) \ reach(n-1)| ≤ 1`. At most one new earlier lesson
    enters at a time.
 3. **Structure may be the step instead.** Nesting a taught thing inside another,
    or giving a familiar form a new job, changes no reach set. So a step may
    instead raise the target's node count, or introduce a `(form, function)` pair
-   the lesson has not used yet. Every step must satisfy 1, and then 2 or this.
+   the lesson has not used. Every step must satisfy 1, and then 2 or this.
 4. **Length is not the step.** Within a lesson `max(tokens) − min(tokens) ≤ 4`,
-   counting punctuation as `metrics.tokens` does, and adjacent sentences differ
-   by at most 3. A ceiling, not a target. It is stated as a range rather than a
-   slope so that padding every sentence equally fails it too.
+   counting punctuation as `metrics.tokens` does, and adjacent sentences differ by
+   at most 3. A ceiling, not a target. It is stated as a range rather than a slope
+   so that padding every sentence equally fails it too.
+
+**Rule 4 is enforced today.** `node scripts/check-sentences.mjs` holds all 44
+`sentences.md` files to it, and caught a violation in lesson 39 while they were
+being written. Rules 1 to 3 need a parse and cannot be checked on proposals.
 
 Not checkable, and better said than faked:
 
@@ -143,19 +151,21 @@ Not checkable, and better said than faked:
 
 The units are what `measure-course.mjs` reports: **16 structural shapes**
 (`parent > child/function`, the string `consistency.test.ts` uses) and **5 node
-properties**, which are not shapes and are counted apart. Twenty-one in all,
-every one proved by a fixture and used by no lesson.
+properties**, which are not shapes and are counted apart. Twenty-one in all, every
+one proved by a fixture and used by no lesson.
 
-**Eleven belong in Course 1 and are assigned nowhere.**
+**Eleven belong in Course 1.** Each now has a proposed sentence in the named
+lesson's `sentences.md`, marked with a dagger, and each still needs the model
+decision before it can be built.
 
 | Item                      | Kind     | Construction                          | Home |
 | ------------------------- | -------- | ------------------------------------- | ---- |
-| `NP > Det/head`           | shape    | fusion — _Most were gone_             | 6    |
+| `NP > Det/head`           | shape    | fusion — _Most agreed_                | 6    |
 | `fusion head+determiner`  | property | the same                              | 6    |
 | `NP > DP/determiner`      | shape    | determinative phrase — _almost every_ | 6    |
 | `DP > Det/head`           | shape    | the same                              | 6    |
 | `DP > Adv/premodifier`    | shape    | the same                              | 6    |
-| `Nom > Adj/head`          | shape    | fusion — _The poor complained_        | 16   |
+| `Nom > Adj/head`          | shape    | fusion — _The poor protested_         | 16   |
 | `fusion head+premodifier` | property | the same                              | 16   |
 | `NP > N/flat`             | shape    | a name with no head — _New York_      | 5    |
 | `NP > Num/head`           | shape    | the number becomes the thing          | 23   |
@@ -165,41 +175,52 @@ every one proved by a fixture and used by no lesson.
 **Nine belong to Course 2 and are properly absent**, since lessons 41–50 are
 planned and unwritten: `S > Aux/auxiliary`, `S > NP/prenucleus` and
 `Cl > NP/prenucleus` (questions and inversion, 41); `S > NP/placeholderSubject`
-(dummy _it_ and existential _there_, 45); `S > Cl/extraposed` (extraposition,
-46); `VP > VP/head` with the properties `gap V/head`, `gap VP/head` and
+(dummy _it_ and existential _there_, 45); `S > Cl/extraposed` (extraposition, 46);
+`VP > VP/head` with the properties `gap V/head`, `gap VP/head` and
 `gap VP/predicate` (ellipsis in coordination, 48).
 
-**One is assigned to neither course.** `VP > NP/displaced` — the displaced
-subject of `fix-existential`, _There is a problem_. Lesson 45 covers existential
-_there_, so it probably belongs there, but the README does not say so, and this
-is the note saying it should.
+**One is assigned to neither course.** `VP > NP/displaced` — the displaced subject
+of `fix-existential`, _There is a problem_. Lesson 45 covers existential _there_,
+so it probably belongs there, but the README does not say so, and this is the note
+saying it should.
 
-11 + 9 + 1 = 21.
+### Found later, by probing rather than by counting
 
-**A twelfth Course 1 item is not in that count, because no fixture proves it
-either.** `AdvP > Adv/premodifier` — an adverb phrase with something in front of
-its head, _very quickly_. All 27 adverb phrases across both corpora are a single
-word, while 12 of 76 adjective phrases are not, so lesson 18 teaches a phrase
-layer that has never held anything but its head. The contract set needs the
-fixture before the lesson can have the sentence.
+Six more absences turned up while writing the dossiers. They are not on the list
+above because the list counts shapes a **fixture** proves; these are proved by
+nothing, so each is an open model question rather than a gap with a known answer.
+
+| Absent from both corpora                         | Wanted by                                           |
+| ------------------------------------------------ | --------------------------------------------------- |
+| `Cl/supplement` — the supplementary relative     | 31 and 39, and it is **one gap fixing two lessons** |
+| a participial clause functioning as an adverbial | 35                                                  |
+| a present participle postmodifying a noun        | 35                                                  |
+| any possessive marker at all                     | 2, 6, 36                                            |
+| an appositive without commas                     | 22                                                  |
+| a paired coordinator, _both … and_               | 26                                                  |
+
+Two decisions are also **taught and never used** anywhere in the 400 sentences:
+`aux:do` at lesson 24 and `form:Interj` at lesson 38. Each is a claim the course
+has not earned, and each is fixed by one sentence or by dropping the decision.
 
 ## Where this came from
 
 The original "Materials to author" section of [README.md](README.md) asked for
 _five to eight escalating problems_ and _at least two cumulative problems using
-earlier material_. It was deleted on 28 August as a contract for a content
-compiler that does not exist.
-
-The manifest fields were compiler metadata and deserved deleting. Escalation and
-cumulative practice were not; they were the pedagogy, and they went out with the
-packaging. Both problems measured here are that deletion showing up in the
+earlier material_, and was deleted on 28 August as a contract for a content
+compiler that does not exist. The manifest fields deserved deleting. Escalation
+and cumulative practice did not; they were the pedagogy, and they went out with
+the packaging. Both problems measured here are that deletion showing up in the
 sentences four hundred at a time.
 
 ## Still to decide
 
 - **Course 2, or not.** Nine of the missing items need lessons 41–50, which are
   planned and unwritten. That is another course-sized job.
-- **Whether lessons grow past ten.** Three real bands are tight in ten for a late
-  lesson with thirty-eight things behind it to compose.
+- **Whether lessons grow past ten.** Ten is tight for a late lesson with
+  thirty-eight things behind it to compose.
 - **Where fusion is taught.** Lesson 6 for the determiner case and 16 for the
   premodifier case are the natural homes, but neither is promised to it.
+- **Whether the proposals replace the corpus.** The 44 `sentences.md` files are
+  proposals with no parse. Nothing should replace a built sentence until a person
+  has read the proposal and its reading.
