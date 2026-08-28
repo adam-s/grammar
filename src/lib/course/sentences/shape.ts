@@ -719,6 +719,82 @@ function required(where: Phrase): SpecNode {
  * Both readings are built from one description so they cannot drift apart in
  * the part they share, which is everything except where the phrase attaches.
  */
+/**
+ * *the old men and women* — an ambiguity that is not a prepositional phrase.
+ *
+ * All ten of lesson 27's built sentences were verb, noun phrase, prepositional
+ * phrase: one ambiguity type, ten times, so a learner could pattern-match
+ * through the lesson without ever asking what attaches where.
+ *
+ * Here the question is how far the adjective reaches. Either *old* modifies
+ * *men* alone and *women* joins that phrase, or it modifies the pair.
+ */
+export function ambiguousScope(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  verb: Verb,
+  d: string,
+  adjective: string,
+  first: string,
+  conjunction: string,
+  second: string,
+  narrow: string,
+  wide: string,
+): SentenceEntry {
+  const object = (inner: SpecNode) => n('NP', 'directObject', [w('Det', 'determiner', d), inner]);
+
+  // *old* reaches only the first noun; the second joins the pair beside it.
+  const justTheFirst = n(
+    'S',
+    null,
+    [
+      subject('subject'),
+      n('VP', 'predicate', [
+        w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        object(
+          n('Nom', 'head', [
+            n('Nom', 'coordinate', [w('Adj', 'premodifier', adjective), w('N', 'head', first)]),
+            w('Conj', 'coordinator', conjunction),
+            n('Nom', 'coordinate', [w('N', 'head', second)]),
+          ]),
+        ),
+      ]),
+      pt('.'),
+    ],
+    { clauseType: 'SVO' },
+  );
+
+  // *old* reaches the whole pair.
+  const bothOfThem = n(
+    'S',
+    null,
+    [
+      subject('subject'),
+      n('VP', 'predicate', [
+        w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        object(
+          n('Nom', 'head', [
+            w('Adj', 'premodifier', adjective),
+            n('Nom', 'head', [
+              n('Nom', 'coordinate', [w('N', 'head', first)]),
+              w('Conj', 'coordinator', conjunction),
+              n('Nom', 'coordinate', [w('N', 'head', second)]),
+            ]),
+          ]),
+        ),
+      ]),
+      pt('.'),
+    ],
+    { clauseType: 'SVO' },
+  );
+
+  return constructed(id, lesson, [
+    build(justTheFirst, { id: 'r1', status: 'canonical', gloss: narrow }),
+    build(bothOfThem, { id: 'r2', status: 'alternate', gloss: wide }),
+  ]);
+}
+
 export function ambiguous(
   id: string,
   lesson: number,

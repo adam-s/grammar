@@ -118,6 +118,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
     after: 'a marker before a clause, a preposition before a noun phrase',
     are: 'a main verb and an auxiliary',
     clear: 'an adjective and a verb',
+    damaged: 'an adjective and a verb',
     for: 'a marker and a preposition',
     her: 'a determiner and a pronoun',
     in: 'a preposition and a verb particle',

@@ -25,7 +25,7 @@ shape, so two of these are that instead.
 | 7   | The nurse carried the tray on a trolley.              | an instrument reading against a location one      |
 | 8   | She read the report on the train.                     | lesson 19's sentence, now marked as two-way       |
 | 9   | The inspector photographed the driver beside the bus. | **two ordinary places** — driver or event         |
-| 10  | They packed the books and maps from the shelf.        | coordination scope again, on an object            |
+| 10  | They packed the damaged books and maps.               | coordination scope again, on an object            |
 
 ## Notes
 

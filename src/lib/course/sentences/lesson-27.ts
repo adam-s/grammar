@@ -1,13 +1,20 @@
 /**
- * Lesson 27 — Attachment changes meaning. The first real payoff.
+ * Lesson 27 — Attachment changes meaning. Two kinds of ambiguity, not one.
  *
- * One string of words, two well-formed drawings, and each drawing earns a
- * different paraphrase. Nothing here is new: both readings use only what
- * lessons 1–21 taught. What is new is that the diagram, not the words, is what
- * settles which sentence this is — and that the second reading is meaning, not
- * failure.
+ * This is the only lesson in the course whose sentences carry two readings, and
+ * the model holds both rather than working around them. What the built set did
+ * not do is vary the ambiguity: all ten were verb, noun phrase, prepositional
+ * phrase, so a learner could pattern-match through without asking what attaches
+ * where.
+ *
+ * Items 5 and 10 are coordination scope, available since lesson 26 and a
+ * genuinely different shape. Item 8 is lesson 19's sentence coming back eight
+ * lessons later with more in it.
+ *
+ * There is no test here, and that is the lesson. Both attachments are
+ * grammatical; only what the sentence is about picks one.
  */
-import { ambiguous, det, pron, v } from './shape.ts';
+import { ambiguous, ambiguousScope, det, pron, v } from './shape.ts';
 
 export const LESSON_27 = [
   ambiguous(
@@ -37,29 +44,42 @@ export const LESSON_27 = [
   ambiguous(
     'c27-c',
     27,
-    pron('They'),
-    v('cleared', 'clear', 'Vtr'),
+    det('The', 'reporter'),
+    v('interviewed', 'interview', 'Vtr'),
     'the',
-    'path',
-    'beside',
-    det('the', 'wall'),
-    'They stood beside the wall while clearing it.',
-    'The path that runs beside the wall.',
+    'actor',
+    'in',
+    det('the', 'garden'),
+    'The interview happened in the garden.',
+    'The actor who was in the garden.',
   ),
   ambiguous(
     'c27-d',
     27,
-    det('The', 'auditor'),
-    v('checked', 'check', 'Vtr'),
+    pron('We'),
+    v('found', 'find', 'Vtr'),
     'the',
-    'ledger',
-    'in',
-    det('the', 'office'),
-    'The checking happened in the office.',
-    'The ledger that was kept in the office.',
+    'key',
+    'under',
+    det('the', 'mat'),
+    'We looked under the mat and found it.',
+    'The key that was kept under the mat.',
+  ),
+  ambiguousScope(
+    'c27-e',
+    27,
+    det('The', 'guide'),
+    v('met', 'meet', 'Vtr'),
+    'the',
+    'old',
+    'men',
+    'and',
+    'women',
+    'Only the men were old.',
+    'All of them were old.',
   ),
   ambiguous(
-    'c27-e',
+    'c27-f',
     27,
     pron('He'),
     v('painted', 'paint', 'Vtr'),
@@ -71,7 +91,7 @@ export const LESSON_27 = [
     'The shed that stands behind the house.',
   ),
   ambiguous(
-    'c27-f',
+    'c27-g',
     27,
     det('The', 'nurse'),
     v('carried', 'carry', 'Vtr'),
@@ -79,55 +99,44 @@ export const LESSON_27 = [
     'tray',
     'on',
     det('a', 'trolley'),
-    'She used a trolley to carry it.',
-    'The tray that was on a trolley.',
-  ),
-  ambiguous(
-    'c27-g',
-    27,
-    det('The', 'inspector'),
-    v('photographed', 'photograph', 'Vtr'),
-    'the',
-    'house',
-    'from',
-    det('the', 'road'),
-    'He stood on the road to photograph it.',
-    'The house you reach from the road.',
+    'The nurse used a trolley to carry it.',
+    'The tray that was sitting on a trolley.',
   ),
   ambiguous(
     'c27-h',
     27,
-    pron('We'),
-    v('found', 'find', 'Vtr'),
+    pron('She'),
+    v('read', 'read', 'Vtr'),
     'the',
-    'key',
-    'under',
-    det('the', 'mat'),
-    'We looked under the mat and found it.',
-    'The key that was kept under the mat.',
+    'report',
+    'on',
+    det('the', 'train'),
+    'She read it during the journey.',
+    'The report about the train.',
   ),
   ambiguous(
     'c27-i',
     27,
-    det('The', 'steward'),
-    v('served', 'serve', 'Vtr'),
+    det('The', 'inspector'),
+    v('photographed', 'photograph', 'Vtr'),
     'the',
-    'passengers',
-    'in',
-    det('the', 'lounge'),
-    'The serving happened in the lounge.',
-    'The passengers who were sitting in the lounge.',
+    'driver',
+    'beside',
+    det('the', 'bus'),
+    'The inspector stood beside the bus to take it.',
+    'The driver who was standing beside the bus.',
   ),
-  ambiguous(
+  ambiguousScope(
     'c27-j',
     27,
-    det('Another', 'porter'),
-    v('moved', 'move', 'Vtr'),
+    pron('They'),
+    v('packed', 'pack', 'Vtr'),
     'the',
-    'crate',
-    'near',
-    det('the', 'door'),
-    'He moved it to a place near the door.',
-    'The crate that was near the door.',
+    'damaged',
+    'books',
+    'and',
+    'maps',
+    'Only the books were damaged.',
+    'Both the books and the maps were damaged.',
   ),
 ];

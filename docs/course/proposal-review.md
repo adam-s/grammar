@@ -449,7 +449,7 @@ Status values are deliberately explicit:
 | 7   | The nurse carried the tray on a trolley.              | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | She read the report on the train.                     | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | The inspector photographed the driver beside the bus. | Rewritten after review; human confirmation pending | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 10  | They packed the books and maps from the shelf.        | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 10  | They packed the damaged books and maps.               | Pending human review                               | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 28 — Main and dependent clauses
 

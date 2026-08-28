@@ -180,3 +180,47 @@ export const coordinatedPhrases = sentence(
   ],
   'r1',
 );
+
+/* ------------- a coordination inside the nominal — the old men and women.
+ *
+ * Coordination one layer below the noun phrase, which is what makes the scope
+ * of a premodifier a real question. If *old* sits inside the first coordinate
+ * it reaches only *men*; if it sits above the pair it reaches both.
+ *
+ * Only the second is drawn here. The first needs no new shape — it is an
+ * ordinary premodifier inside an ordinary coordinate — and the two together are
+ * the ambiguity lesson 27 was missing, having had ten sentences of one type.
+ */
+export const coordinatedNominal = sentence(
+  'fix-coordinated-nominal',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'They')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'met', { lemma: 'meet', verbType: 'Vtr' }),
+            n('NP', 'directObject', [
+              w('Det', 'determiner', 'the'),
+              n('Nom', 'head', [
+                w('Adj', 'premodifier', 'old'),
+                n('Nom', 'head', [
+                  n('Nom', 'coordinate', [w('N', 'head', 'men')]),
+                  w('Conj', 'coordinator', 'and'),
+                  n('Nom', 'coordinate', [w('N', 'head', 'women')]),
+                ]),
+              ]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'They met people who were old, both men and women.' },
+    ),
+  ],
+  'r1',
+);

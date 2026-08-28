@@ -44,6 +44,7 @@ import {
   coordinatedSubject,
   coordinatedAdjectives,
   coordinatedPhrases,
+  coordinatedNominal,
 } from './coordination.ts';
 import {
   auxiliaryChain,
@@ -103,6 +104,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   coordinatedSubject,
   coordinatedAdjectives,
   coordinatedPhrases,
+  coordinatedNominal,
   auxiliaryChain,
   passive,
   passiveTwoObject,
