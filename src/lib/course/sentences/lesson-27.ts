@@ -4,60 +4,130 @@
  * One string of words, two well-formed drawings, and each drawing earns a
  * different paraphrase. Nothing here is new: both readings use only what
  * lessons 1–21 taught. What is new is that the diagram, not the words, is what
- * settles which sentence this is.
+ * settles which sentence this is — and that the second reading is meaning, not
+ * failure.
  */
-import { build, n, pt, w } from '../../grammar/build.ts';
-import { constructed } from './constructed.ts';
+import { ambiguous, det, pron, v } from './shape.ts';
 
-const words = () => [w('Pron', 'head', 'She')];
-
-/** *with the binoculars* tells you how she watched. */
-const instrument = build(
-  n(
-    'S',
-    null,
-    [
-      n('NP', 'subject', words()),
-      n('VP', 'predicate', [
-        w('V', 'head', 'watched', { lemma: 'watch', verbType: 'Vtr' }),
-        n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'boy')]),
-        n('PP', 'adverbial', [
-          w('P', 'head', 'with'),
-          n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'binoculars')]),
-        ]),
-      ]),
-      pt('.'),
-    ],
-    { clauseType: 'SVO' },
+export const LESSON_27 = [
+  ambiguous(
+    'c27-a',
+    27,
+    pron('She'),
+    v('watched', 'watch', 'Vtr'),
+    'the',
+    'boy',
+    'with',
+    det('the', 'binoculars'),
+    'She used the binoculars to watch him.',
+    'The boy who had the binoculars.',
   ),
-  { id: 'r1', status: 'canonical', gloss: 'She used the binoculars to watch him.' },
-);
-
-/** *with the binoculars* tells you which boy. */
-const whichBoy = build(
-  n(
-    'S',
-    null,
-    [
-      n('NP', 'subject', words()),
-      n('VP', 'predicate', [
-        w('V', 'head', 'watched', { lemma: 'watch', verbType: 'Vtr' }),
-        n('NP', 'directObject', [
-          w('Det', 'determiner', 'the'),
-          n('Nom', 'head', [
-            w('N', 'head', 'boy'),
-            n('PP', 'postmodifier', [
-              w('P', 'head', 'with'),
-              n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'binoculars')]),
-            ]),
-          ]),
-        ]),
-      ]),
-      pt('.'),
-    ],
-    { clauseType: 'SVO' },
+  ambiguous(
+    'c27-b',
+    27,
+    det('The', 'guard'),
+    v('stopped', 'stop', 'Vtr'),
+    'the',
+    'man',
+    'with',
+    det('the', 'torch'),
+    'The guard used a torch to stop him.',
+    'The man who was carrying the torch.',
   ),
-  { id: 'r2', status: 'alternate', gloss: 'The boy who had the binoculars.' },
-);
-
-export const LESSON_27 = [constructed('c27-a', 27, [instrument, whichBoy], 'r1')];
+  ambiguous(
+    'c27-c',
+    27,
+    pron('They'),
+    v('cleared', 'clear', 'Vtr'),
+    'the',
+    'path',
+    'beside',
+    det('the', 'wall'),
+    'They stood beside the wall while clearing it.',
+    'The path that runs beside the wall.',
+  ),
+  ambiguous(
+    'c27-d',
+    27,
+    det('The', 'auditor'),
+    v('checked', 'check', 'Vtr'),
+    'the',
+    'ledger',
+    'in',
+    det('the', 'office'),
+    'The checking happened in the office.',
+    'The ledger that was kept in the office.',
+  ),
+  ambiguous(
+    'c27-e',
+    27,
+    pron('He'),
+    v('painted', 'paint', 'Vtr'),
+    'the',
+    'shed',
+    'behind',
+    det('the', 'house'),
+    'He stood behind the house to paint it.',
+    'The shed that stands behind the house.',
+  ),
+  ambiguous(
+    'c27-f',
+    27,
+    det('The', 'nurse'),
+    v('carried', 'carry', 'Vtr'),
+    'the',
+    'tray',
+    'on',
+    det('a', 'trolley'),
+    'She used a trolley to carry it.',
+    'The tray that was on a trolley.',
+  ),
+  ambiguous(
+    'c27-g',
+    27,
+    det('The', 'inspector'),
+    v('questioned', 'question', 'Vtr'),
+    'the',
+    'driver',
+    'after',
+    det('the', 'crash'),
+    'The questioning came after the crash.',
+    'The driver involved in the crash.',
+  ),
+  ambiguous(
+    'c27-h',
+    27,
+    pron('We'),
+    v('found', 'find', 'Vtr'),
+    'the',
+    'key',
+    'under',
+    det('the', 'mat'),
+    'We looked under the mat and found it.',
+    'The key that was kept under the mat.',
+  ),
+  ambiguous(
+    'c27-i',
+    27,
+    det('The', 'clerk'),
+    v('filed', 'file', 'Vtr'),
+    'the',
+    'report',
+    'from',
+    det('the', 'surveyor'),
+    'The filing was done at the surveyor’s request.',
+    'The report that the surveyor wrote.',
+  ),
+  ambiguous(
+    'c27-j',
+    27,
+    det('The', 'porter'),
+    v('moved', 'move', 'Vtr'),
+    'the',
+    'crate',
+    'near',
+    det('the', 'door'),
+    'He moved it to a place near the door.',
+    'The crate that was near the door.',
+  ),
+];

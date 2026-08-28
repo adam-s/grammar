@@ -19,7 +19,8 @@
  * has outgrown the stage.
  */
 import { build, n, pt, w, type SpecNode } from '../../grammar/build.ts';
-import type { ClauseType, Func, VerbType } from '../../grammar/types.ts';
+import type { AuxKind, ClauseType, Func, VerbType, Voice } from '../../grammar/types.ts';
+import type { SentenceEntry } from '../../grammar/types.ts';
 import { constructed } from './constructed.ts';
 
 /* ------------------------------------------------------------------ parts */
@@ -109,9 +110,56 @@ export const pp =
   (fn) =>
     n('PP', fn, [w('P', 'head', preposition), object('complement')]);
 
+/**
+ * *the treasurer, a banker,* — a second noun phrase naming the same thing.
+ *
+ * It renames the whole phrase, determiner included, so it sits beside the
+ * material it renames rather than under the noun alone. The commas are
+ * evidence for the reading and not the reason for it, which is why they are
+ * here as punctuation and nowhere in the tree.
+ */
+export const appos =
+  (d: string, noun: string, other: Phrase): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      w('N', 'head', noun),
+      pt(','),
+      other('appositive'),
+      pt(','),
+    ]);
+
+/** *the bread and the cheese* — two of the same rank, and the word that joins them. */
+export const both =
+  (left: Phrase, conjunction: string, right: Phrase): Phrase =>
+  (fn) =>
+    n('NP', fn, [left('coordinate'), w('Conj', 'coordinator', conjunction), right('coordinate')]);
+
 /** The verb, its dictionary form, and what kind of verb it is. */
-export type Verb = { text: string; lemma: string; type: VerbType };
+export type Verb = {
+  text: string;
+  lemma: string;
+  type: VerbType;
+  /** Helping verbs, in the order they are said, before the verb they help. */
+  aux?: readonly { text: string; lemma: string; kind: AuxKind }[];
+  /** A particle belonging to this verb, said after it. */
+  particle?: string;
+  voice?: Voice;
+};
 export const v = (text: string, lemma: string, type: VerbType): Verb => ({ text, lemma, type });
+
+/** *was failing* — a helping verb, which tenses the verb rather than narrowing it. */
+export const helped = (verb: Verb, text: string, lemma: string, kind: AuxKind): Verb => ({
+  ...verb,
+  aux: [...(verb.aux ?? []), { text, lemma, kind }],
+});
+
+/** *wrote down* — a particle, which takes no complement of its own. */
+export const phrasal = (verb: Verb, particle: string): Verb => ({ ...verb, particle });
+
+/** *was dredged* — the same event with a different participant in the subject slot. */
+export const passive = (verb: Verb, was: string): Verb =>
+  helped({ ...verb, voice: 'passive' }, was, 'be', 'passive');
 
 /* --------------------------------------------------------------- patterns */
 
@@ -122,7 +170,15 @@ function clause(subject: Phrase, verb: Verb, rest: SpecNode[], pattern: ClauseTy
     [
       subject('subject'),
       n('VP', 'predicate', [
-        w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        ...(verb.aux ?? []).map((a) =>
+          w('Aux', 'auxiliary', a.text, { lemma: a.lemma, auxKind: a.kind }),
+        ),
+        w('V', 'head', verb.text, {
+          lemma: verb.lemma,
+          verbType: verb.type,
+          ...(verb.voice ? { voice: verb.voice } : {}),
+        }),
+        ...(verb.particle ? [w('Part', 'particle', verb.particle, { partKind: 'verbal' })] : []),
         ...rest,
       ]),
       pt('.'),
@@ -234,4 +290,72 @@ export const svoa = (
 
 function required(where: Phrase): SpecNode {
   return { ...where('adverbial'), obligatory: true };
+}
+
+/**
+ * One string of words with two well-formed drawings.
+ *
+ * *She watched the boy with the binoculars.* The prepositional phrase either
+ * says how she watched — an adverbial under the verb phrase — or says which
+ * boy, a postmodifier inside the object. Nothing in the words settles it; the
+ * diagram does, and each diagram earns a different paraphrase.
+ *
+ * Both readings are built from one description so they cannot drift apart in
+ * the part they share, which is everything except where the phrase attaches.
+ */
+export function ambiguous(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  verb: Verb,
+  objectDet: string,
+  objectNoun: string,
+  preposition: string,
+  object: Phrase,
+  how: string,
+  which: string,
+): SentenceEntry {
+  const tail = (fn: Func) => n('PP', fn, [w('P', 'head', preposition), object('complement')]);
+
+  const attachedToVerb = n(
+    'S',
+    null,
+    [
+      subject('subject'),
+      n('VP', 'predicate', [
+        w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        n('NP', 'directObject', [w('Det', 'determiner', objectDet), w('N', 'head', objectNoun)]),
+        tail('adverbial'),
+      ]),
+      pt('.'),
+    ],
+    { clauseType: 'SVO' },
+  );
+
+  const attachedToNoun = n(
+    'S',
+    null,
+    [
+      subject('subject'),
+      n('VP', 'predicate', [
+        w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        n('NP', 'directObject', [
+          w('Det', 'determiner', objectDet),
+          n('Nom', 'head', [w('N', 'head', objectNoun), tail('postmodifier')]),
+        ]),
+      ]),
+      pt('.'),
+    ],
+    { clauseType: 'SVO' },
+  );
+
+  return constructed(
+    id,
+    lesson,
+    [
+      build(attachedToVerb, { id: 'r1', status: 'canonical', gloss: how }),
+      build(attachedToNoun, { id: 'r2', status: 'alternate', gloss: which }),
+    ],
+    'r1',
+  );
 }
