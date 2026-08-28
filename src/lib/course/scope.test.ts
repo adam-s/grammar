@@ -11,7 +11,6 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { isComplete } from '../grammar/builder.ts';
 import { replay } from '../grammar/replay.ts';
-import { canonicalReading } from '../grammar/types.ts';
 import { COURSE_LESSONS } from './course.ts';
 import { coversSentence, scopeThrough, targetReading } from './scope.ts';
 
@@ -19,39 +18,46 @@ describe('every lesson sentence is buildable with only what that lesson has taug
   for (const lesson of COURSE_LESSONS) {
     const scope = scopeThrough(COURSE_LESSONS, lesson.number);
 
+    // EVERY reading, not just the canonical one. A second reading is meaning
+    // rather than failure — that is lesson 27's whole claim — so a learner has
+    // to be able to build it, and ten of them were audited and never once
+    // driven through the palette.
     for (const sentence of lesson.sentences) {
-      const target = targetReading(canonicalReading(sentence), scope);
+      for (const reading of sentence.readings) {
+        const label = `${sentence.id}/${reading.id}`;
+        const target = targetReading(reading, scope);
 
-      it(`${lesson.id} — ${sentence.id} still covers the sentence`, () => {
-        assert.ok(
-          coversSentence(target, sentence.words),
-          `nothing in scope at lesson ${lesson.number} spans the whole of “${sentence.text}”`,
-        );
-      });
-
-      it(`${lesson.id} — ${sentence.id} has something to find`, () => {
-        // A sentence whose target is one bare node asks the learner nothing.
-        assert.ok(
-          Object.keys(target.constituents).length >= 2,
-          `“${sentence.text}” is a single node at lesson ${lesson.number}`,
-        );
-      });
-
-      it(`${lesson.id} — ${sentence.id} is reachable through the taught palette`, () => {
-        const state = replay(sentence, target, { scope });
-        for (const id of Object.keys(target.constituents)) {
-          const want = target.constituents[id]!;
-          const built = Object.values(state.constituents).find(
-            (c) =>
-              c.form === want.form &&
-              c.span[0] === want.span[0] &&
-              c.span[1] === want.span[1] &&
-              c.function === want.function,
+        it(`${lesson.id} — ${label} still covers the sentence`, () => {
+          assert.ok(
+            coversSentence(target, sentence.words),
+            `nothing in scope at lesson ${lesson.number} spans the whole of “${sentence.text}”`,
           );
-          assert.ok(built, `no ${want.form}/${want.function} over [${want.span}] was built`);
-        }
-        assert.ok(isComplete(state, sentence.words), 'the build never closed');
-      });
+        });
+
+        it(`${lesson.id} — ${label} has something to find`, () => {
+          // A sentence whose target is one bare node asks the learner nothing.
+          assert.ok(
+            Object.keys(target.constituents).length >= 2,
+            `“${sentence.text}” is a single node at lesson ${lesson.number}`,
+          );
+        });
+
+        it(`${lesson.id} — ${label} is reachable through the taught palette`, () => {
+          const state = replay(sentence, target, { scope });
+          for (const id of Object.keys(target.constituents)) {
+            const want = target.constituents[id]!;
+            const built = Object.values(state.constituents).find(
+              (c) =>
+                c.form === want.form &&
+                c.span[0] === want.span[0] &&
+                c.span[1] === want.span[1] &&
+                c.function === want.function,
+            );
+            assert.ok(built, `no ${want.form}/${want.function} over [${want.span}] was built`);
+          }
+          assert.ok(isComplete(state, sentence.words), 'the build never closed');
+        });
+      }
     }
   }
 });
