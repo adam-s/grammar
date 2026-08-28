@@ -1,135 +1,120 @@
-# Closing the gaps: what each one costs
+# What is left
 
-Written 27 August 2026, after moving verb type onto the verb and closing the
-`marker` gap. [model-gaps.md](model-gaps.md) says what is missing; this says
-what it takes to fix, in the order I would do it.
+Written 27 August 2026 after a night of closing gaps, replacing the earlier
+version of this file — which listed nine items, of which seven are now done.
+[model-gaps.md](model-gaps.md) says what the model can and cannot express; this
+says what to do next and roughly what it costs.
 
-Sizes are honest estimates from having just done two of them. **Hour** means one
-sitting: a rule, a fixture, a test. **Day** means it touches the shared model and
-every fixture has to be re-checked. **Unpriced** means I have not probed it and
-would be guessing.
+**Hour** means one sitting: a rule, a fixture, a test. **Day** means it touches
+the shared model and every fixture has to be re-checked. Sizes are honest
+estimates from having just done eight of them.
 
 Every item finishes the same way, because that is what tonight showed is
 necessary: a fixture that audits, then `--action=build-sweep` proving a learner
 can actually build it. Representable and reachable are different properties.
 
-## 1 · An auxiliary function — hour
+## 1 · Split `fixtures.ts` — hour
 
-**Blocked today:** the passive, and every auxiliary chain. Probed: an `Aux` may
-head a `VP`, but the participle after it has nowhere to go — `V` as a complement
-or premodifier of a `VP` is hidden, and so is `VP` inside `VP`. *The engine was
-repaired* gets as far as *was* and stops.
+It is 1,337 lines and 29 exports in one file, and it grew that way tonight:
+twelve fixtures became twenty-seven. It is now the file everything else imports
+and the hardest one to find anything in.
 
-**The decision first.** Morenberg treats *was repaired* as one verb, so the
-answer is probably not a `VP` complement but a function that says "this
-auxiliary belongs to that verb". Stretching `premodifier` to cover tense and
-voice would be the cheap wrong answer.
+**Shape:** a `fixtures/` directory beside it, one file per family, and an
+`index.ts` that re-exports `FIXTURES` and `BY_ID` so nothing else changes.
+Families roughly as the comments already group them — the six verb types,
+ambiguity, clauses and coordination, auxiliaries and voice, particles and
+non-finite clauses, noun-phrase structure, gaps and movement, punctuation.
 
-**Changes:** a function in `types.ts`, a case in `rules.ts`, a mark and a test
-in `names.ts`, a variant in `node-variants.ts`. `verbOfClause` in `clause.ts`
-needs to keep finding the main verb rather than the auxiliary.
+**Why it is worth an hour:** `sentence()`, `clausesOf()` and `depthOf()` are
+shared, so they move to the directory too and stop being invisible helpers at
+the top of a long file. The audit suite runs over `FIXTURES` and the
+reachability suite over every reading, so a mistake in the split fails loudly
+rather than quietly.
 
-**Unlocks:** the passive, which lesson content wants early.
+**Watch for:** the import in `sentence-renderer.ts`, `+page.svelte`, and the
+lesson content all name `FIXTURES` or `BY_ID`; keep both names and the split is
+invisible to them.
 
-## 2 · A coordinator function — hour
+## 2 · Discontinuity — day, and a design question first
 
-**Wrong today rather than blocked.** Coordination builds, but *and* is labelled
-a `coordinate` alongside the clauses it joins, which says it is one of the
-things being joined.
+The last shape the tree cannot take. A node whose pieces are genuinely apart:
+*A man came in **who I knew***, where the noun phrase is split by the verb.
 
-**Changes:** the same four registration points as `marker`. `isCoordination` in
-`clause.ts` already recognises a join; it would key on the coordinator instead
-of on any coordinate child.
+**What it touches:** `auditContiguity` states the opposite rule and would need
+a permission list rather than a blanket one; `layout.ts` draws a node's bracket
+from one left edge to one right edge and would need two; `nodeOver` and the
+selection model assume a node is a run.
 
-**Unlocks:** an honest label on every compound subject and predicate.
+**The decision first,** and it is not obvious: which nodes may be discontinuous?
+"Any" is wrong — it would let a learner build nonsense and call it movement.
+The likely answer is the same shape as the gap rule: a node may be split only
+where something has moved out of it, which means discontinuity is a consequence
+of a filler-gap link rather than a thing you assert on its own.
 
-## 3 · Voice — hour, after 1
+**Do not bundle** inversion, particle shift or heavy-NP shift into this. The
+earlier version of this file did; all three were already buildable, and none of
+them involves a split node.
 
-Once the passive is buildable it needs recording, because *The engine was
-repaired by the mechanic* and *The mechanic repaired the engine* are different
-readings of the same event. A property on the clause node, beside `clauseType`.
+## 3 · Ellipsis — days
 
-## 4 · Punctuation — hour
+Gapping, VP ellipsis, sluicing, stripping. Probed: *I will if you will* has a
+predicate whose head is missing, so there is no verb to classify and no frame to
+read off the clause.
 
-Punctuation tokens have no home among the thirteen word classes. They should
-stay visible and selectable and receive none of them. The likely shape is a word
-that carries no form rather than a fourteenth class, which means `auditCoverage`
-has to stop insisting every word is under a node.
+**Why it is days rather than hours:** it needs a story about where a clause's
+verb type comes from when the verb is not said. Every audit that asks "what kind
+of verb does this clause have" assumes there is one to ask about. The answer is
+probably that an elided head points at the verb it copies, which is
+coindexation again — so this is worth doing AFTER 2, and it may share machinery
+with it.
 
-## 5 · Infinitival *to*, and a supplement — hour each
-
-*to* and a verbal particle both collapse into `Part`; a subtype separates them.
-Sentence-edge material — parentheticals, interjections — needs `supplement`
-before lesson 38 is frozen. Both are recorded commitments in
-[course/README.md](course/README.md), and both are the `marker` shape again.
-
-## 6 · A `Nom` layer inside `NP` — half a day
-
-**Blocked today:** honest noun-phrase structure. In *the old red car* the
-determiner and the modifiers are siblings, so nothing can show what the
-determiner applies to.
-
-**Changes:** a phrase form, `HEAD_FORMS`, and the licensing that currently lets
-a determiner sit directly under `NP`. Every existing fixture with a determiner
-has to be re-authored, which is what makes this half a day rather than an hour.
-
-**Unlocks:** lesson 4 onward, which is most of Stage 1.
-
-## 7 · Same-span stacking — half a day, and a design question first
-
-`stacksOver` currently carves out clause forms so a reduced relative can be
-built, and nothing else. The general case is unsolved: the palette has one
-phrase-form group and two possible meanings for a pick — *rename this* and *wrap
-this in something* — and cannot ask which was meant.
-
-**The decision first,** because it is learner-facing: two groups, or a modifier
-gesture, or make ungrouping the only route to a rename.
-
-## 8 · Gaps and coindexation — days
-
-**The big one, and it unlocks about half of what is left:** *that*-relatives,
-*wh*-questions, hollow clauses, clefts, and all eight kinds of ellipsis.
-
-**Why it is days.** Every `Constituent` carries `span: [number, number]` into
-real word indices, so a node covering no words cannot exist. Changing that
-reaches `auditContiguity` (which states the opposite rule outright — *a
-constituent is a run of words with no gaps*), `layout.ts`, `grader.ts`, the
-option model, and the diagram. Coindexation is a second new idea on top: nothing
-currently links a filler to its gap.
-
-**Do it with discontinuity, not before it.** Extraposition, particle shift, and
-subject-auxiliary inversion need the same edit to what `span` means, so they are
-one piece of work rather than two. Splitting them means paying the migration
-twice.
-
-**Sequence I would use:**
-
-1. Let a constituent hold a gap child with an empty span; keep `auditContiguity`
-   passing by measuring real words only.
-2. Add coindexation between a gap and its filler, audited both ways.
-3. Relax contiguity to permit a discontinuous node, with a rule for which ones.
-4. One fixture per family, each through the build sweep.
-
-## 9 · Fused functions, and a DAG — days, and probably not yet
+## 4 · Fused functions, and a DAG — days, and probably not yet
 
 One node doing two jobs (CGEL's Determiner-Head, in *__most__ were gone*) needs
 `function` to hold more than one value, and a node with two parents makes the
-tree a graph. Everything that walks the tree assumes one parent. Worth recording
-and worth leaving alone until 8 is done.
+tree a graph. Everything that walks the tree assumes one parent.
 
-## Unpriced
+Worth recording and worth leaving alone. Nothing in the course plan needs it,
+and the cost lands on every file.
 
-**Comparatives** and **dislocation**. I have not probed either against
-`licenses()`, so any number I gave would be invented. Half an hour with the
-prober would price them.
+## 5 · The small missing categories — hour each
 
-## The order, and why
+Each is an enum entry plus a rule plus a fixture, and none of them interact:
 
-1, 2, 3, 4, 5 are independent hours that each make the model more honest without
-touching anything shared — worth doing whenever there is an hour.
+- **`DP`, a determinative phrase** — ***almost every*** *student*, where
+  *almost* has nothing to modify but the noun.
+- **Interrogative and exclamative clause kinds** — `ClauseKind` has four and
+  needs six.
+- **`flat` / `compounding`** — *New York*, where no internal head is worth
+  arguing about.
+- **`postnucleus`** — the tail position. `extraposed` currently covers the one
+  case that needed it, which is not the same as having the position.
 
-6 is the one that Stage 1 content is waiting on.
+## 6 · Things the model holds but does not record — hour each
 
-8 is the one that changes what the app can be. It is also the one where doing it
-badly is expensive, so it wants a clear afternoon rather than the end of a
-session.
+These build today and say less than they could:
+
+- **Raising against control** — *seems to leave* against *wants to leave*.
+  Same tree, different source for the understood subject.
+- **Existential *there*** — builds as an ordinary `Vbe` clause, and nothing
+  records that its subject is not what the sentence is about.
+- **Modals** — carry no slots of their own and sit outside the six as `Aux`.
+
+## Documentation debt
+
+`src/lib/grammar/types.ts` and `audits.ts` both cite `docs/taxonomy.md` and
+`docs/content-model.md` as the authority for decisions in them. **Neither file
+exists.** Either write them or stop citing them; a pointer to nothing is worse
+than no pointer, because it reads as though the decision was made somewhere
+careful.
+
+`clauseType` is stored on every clause node and read by nothing — no audit, no
+label, no grader. Either it earns a check or it is metadata pretending to be
+part of the model.
+
+## The order I would take them
+
+1 first, because it is an hour and every later item adds fixtures to the file it
+fixes. Then 5 and 6 whenever there is an hour — each makes the model more honest
+without touching anything shared. Then 2, which wants a clear afternoon and a
+decision made before any code. 3 after 2. 4 probably never.

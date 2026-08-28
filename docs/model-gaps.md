@@ -1,7 +1,8 @@
 # Model gaps
 
-Researched 27 August 2026. What the content model cannot yet represent, measured
-against the constructions a full English syntax annotation has to handle.
+Researched 27 August 2026, rewritten the same night after closing most of it.
+What the content model cannot yet represent, measured against the constructions
+a full English syntax annotation has to handle.
 
 The yardstick is [CGELBank](https://arxiv.org/html/2305.17347v2), the treebank
 built on Huddleston and Pullum's *Cambridge Grammar of the English Language* —
@@ -15,179 +16,108 @@ audited, or diagrammed. Whether a lesson ever mentions it is a separate
 question. The course can decline to teach preposition stranding; the model
 cannot decline to represent it and still accept real sentences.
 
-Status is one of **open**, **in progress**, or **planned** where
-[the course plan](course/README.md) already records the commitment.
+**Nothing on this page is claimed from reading the code.** Every line below was
+checked by building the structure and running the audits, or by driving the app
+with `node scripts/snapshot.mjs`. That rule exists because the first two drafts
+of this document each got something wrong in the same direction — calling a
+thing blocked because no fixture used it.
 
-## 1. What a node can store
+## What closed, and what it took
 
-| Gap | Example that needs it | What blocks it | Status |
-| --- | --- | --- | --- |
-| One verb type per sentence | *The horse raced past the barn fell* — two clauses, two verbs | `Reading.verbType` was a single value; `auditVerbType` checked only the root's predicate | in progress |
-| Finiteness | *raced past the barn* (participial) against *that was raced* (finite) | no axis exists; `ClauseKind` says what kind, never what verb form | planned |
-| Voice | *The engine was repaired by the mechanic* | no property records the changed subject/object relation | planned |
-| Punctuation | any sentence with a comma | punctuation tokens have no home among the thirteen word classes | planned |
-| Infinitival *to* against a verbal particle | *wants **to** leave* against *looked it **up*** | both collapse into `Part` | planned |
-
-## 2. What shape the tree can take
-
-These are the deep ones. Each is a property of the data structure rather than a
-missing label, so none can be closed by adding to an enum.
-
-**No gaps or empty elements.** A relative clause, a *wh*-question, and a passive
-all have a position where something is understood but not written: *the book
-[that] I read __*. Every `Constituent` carries `span: [number, number]` into
-real word indices, so a node with no words cannot exist. Status: open.
-
-**No coindexation.** Nothing links a filler to its gap, or a passive subject to
-the object slot it came from. Even with gap nodes, the tree could not say which
-gap belongs to which filler. Status: open.
-
-**No discontinuity.** `auditContiguity` states the rule outright — *a constituent
-is a run of words with no gaps* — and rejects any node whose leaves are not one
-unbroken run. That forbids extraposition (*A man came in **who I knew***),
-particle shift (*looked the number **up***), and heavy-NP shift. Status: open.
-
-**One function per node.** `Constituent.function` is a single value. CGEL needs
-fused functions where one node does two jobs at once: Determiner-Head (*__most__
-were gone*), Modifier-Head, Head-Prenucleus. Status: open.
-
-**Coordination has no coordinator.** Probed rather than assumed: `coordinate`
-under `S` is allowed for a `Conj`, and `auditHead` does not apply because `S`
-and `Cl` are not head-bearing. The one thing that blocked *The engine stalled
-and the car stopped* was `auditVerbType` demanding a predicate of every clause,
-and a join has coordinates instead. `isCoordination` now excuses a join from
-that question, and the sentence builds. What is still wrong is the label: *and*
-is marked a `coordinate` alongside the clauses it joins, because there is no
-`coordinator` function to give it. Status: buildable, mislabelled.
-
-**Strictly a tree.** `parent` is a single id. Fused functions and supplements
-need a node with two parents, which makes the structure a DAG. Status: open.
-
-**No ellipsis.** Gapping (*The PM arrived at six and the Queen an hour later*),
-VP ellipsis (*I will if you will*), sluicing, and stripping all omit material
-that the reader recovers. Nothing marks an omission. Status: open.
-
-## 2b. What the interface cannot build, even where the model can
-
-Found by driving the app rather than by reading it:
-`node scripts/snapshot.mjs --action=build-sweep`.
-
-**Same-span stacking has no general affordance.** Picking a form while a loose
-phrase is selected replaces that phrase, because the commoner intent by far is
-"I named this wrong". So a learner cannot put a new node above a phrase covering
-the same words. That matters because a subjectless clause is exactly such a
-stack: a `Cl` whose only child is a `VP` over the very same words, which
-`auditLicensing` requires because a clause's predicate must be a `VP`.
-
-`stacksOver` now carves out clause forms, which unblocks the reduced relative
-and nothing else. The general question is still open: the palette has one
-phrase-form group and two possible meanings for it, and it cannot yet ask which
-was meant. Status: narrowed, open in general.
-
-The lesson is worth keeping separately from the fix. The model could store
-*The horse raced past the barn fell* for a full hour before anything could
-build it, and every browser-free test passed throughout. Representable and
-reachable are different properties, and only the sweep tests the second.
-
-## 3. Missing categories
-
-| Missing | Example that needs it | Consequence today |
+| Gap | Example | What it needed |
 | --- | --- | --- |
-| `Nom`, a nominal layer inside `NP` | *the **old red car*** | modifiers and the determiner sit as siblings, so "which words the determiner applies to" cannot be drawn |
-| `DP`, a determinative phrase | ***almost every*** *student* | *almost* has nothing to modify but the noun |
-| Coordination as a form | *the cat **and** the dog* | see the head rule above |
-| `Clause` subtypes beyond four | interrogative, exclamative, hollow | `ClauseKind` has relative, nominal, adverbial, comparative |
-| Preposition stranding | *the book I told you **about*** | a `PP` with no complement fails licensing |
-| Auxiliary chains | *had been being repaired* | a single `Aux` may head a `VP`, so one auxiliary is fine; a chain has no way to say which verb the others belong to |
+| One verb type per sentence | *The horse raced past the barn fell* | verb type onto the verb, and `clause.ts` to answer which verb governs where |
+| The passive | *The engine was repaired* | an `auxiliary` function, and `voice` on the verb |
+| Auxiliary chains | *has been repairing* | the same function, allowed to repeat |
+| Voice | *was repaired by the mechanic* | a per-verb property, and a passive frame table |
+| Finiteness | *what to want* against *what he wants* | a second axis on the clause, independent of its kind |
+| Punctuation | any sentence with a comma | words that belong to no node, and four audits that stopped saying "every word" |
+| Infinitival *to* against a particle | *wants **to** leave* / *looked it **up*** | `partKind`, plus `marker` accepting a `Part` and a new `particle` function |
+| A coordinator | *the engine stalled **and** the car stopped* | its own function; *and* was labelled one of the things it joins |
+| Supplements | *__Unfortunately__, the engine stalled* | a function for material in the sentence that fills no slot in it |
+| A nominal layer | *the **old red** engine* | `Nom`, so a determiner can point at something |
+| Same-span stacking | *Old engines stall* | a second palette group, so the menu asks instead of guessing |
+| Gaps | *the engine __that stalled__* | a node whose span runs backwards, and audits that agree |
+| Coindexation | *__What__ did she repair __?* | `index`, shared by exactly two nodes |
+| Fronted phrases | the same | a `prenucleus` function |
+| Subject-auxiliary inversion | *__Did__ she repair it?* | letting an auxiliary hang off a clause; no discontinuity involved |
+| Extraposition | *__It__ is a good thing that we left* | `displacedSubject` and `extraposed`, audited as a pair |
+| Hollow clauses | *too heavy to lift __* | the gap rule generalised: a gap is indexed only when its own clause holds the filler |
+| Coordinated phrases | *the cat and the dog* | `auditHead` excusing a join, one level below the clause |
 
-## 4. Missing functions
+Each has a fixture, and every fixture is proved buildable through the interface
+by `--action=build-sweep`, not only well-formed on paper.
 
-The seven clause roles and seven phrase-internal roles cover the canonical
-declarative clause and stop there.
+## What was never blocked
 
-- **`coordinator`** — *and*, *but*, *or*. The joined units have `coordinate`;
-  the joining word has nowhere to go. Planned.
-- **`supplement`** — parentheticals, appositive asides, interjections at the
-  sentence edge. Planned.
-- **`marker`** — the subordinator introducing a clause. **Closed.** `Subord`
-  had no home anywhere inside a `Cl`, so no subordinate clause could be written.
-  A marker is licensed only under a clause, only for a `Subord`, and only once,
-  and `fix-adverbial-clause` (*The engine stalled because the belt broke*)
-  builds through the interface. A *that*-relative still needs a gap as well, so
-  it stays blocked on the row below.
-- **`particle`** — `Part` is a word class, but no function says a particle
-  belongs to its verb. Open.
-- **`prenucleus` and `postnucleus`** — fronted and extraposed positions.
-  Depends on discontinuity. Open.
-- **`displacedSubject`** — *__It__ is a good thing that we left*, where *it*
-  fills the subject slot and the clause carries the content. Open.
-- **`flat` and `compounding`** — names and compounds with no internal head
-  worth arguing about, *New York*. Open.
+Listed because earlier drafts said otherwise, and because a wrong "blocked" is
+worse than a missing entry — it sends someone to fix what is not broken.
 
-## 5. What the six verb types cannot say
+- **Particle shift** — *She looked the number **up***. Three siblings in the
+  predicate, in the order they are said. That *up* belongs to *looked* is
+  carried by its function, not by where it sits.
+- **Heavy-NP shift** — *She gave to the mechanic the engine that had stalled*.
+  Same: unusual order, ordinary constituents.
+- **Preposition stranding** — *the book I told you **about***. A `PP` needs a
+  head and does not need a complement.
+- **Existential *there*** — *There is a problem*. Builds as an ordinary `Vbe`
+  clause. Whether that ANALYSIS is right is a separate argument; the model can
+  hold it.
+- **Catenatives** — *seems to work*. An infinitival clause as the object of the
+  first verb, which the infinitive work already made writable.
+
+## What is still open
+
+Four things, and only one of them is close.
+
+**True discontinuity.** `auditContiguity` states the rule outright — *a
+constituent is a run of words with no gaps* — measured over the words a node
+could hold, so a comma inside a run is not a hole. What it still forbids is a
+node whose pieces are genuinely apart: *A man came in **who I knew***, where the
+noun phrase is split by the verb. Earlier drafts filed inversion, particle
+shift and heavy-NP shift under this heading; none of them belong there, and the
+family is one construction rather than five.
+
+**Ellipsis.** Gapping (*The PM arrived at six and the Queen an hour later*), VP
+ellipsis (*I will if you will*), sluicing, stripping. Probed: a `VP` whose head
+is a gap leaves no verb to classify, so the clause cannot say what frame it has.
+This is not a rule away — it needs a story about where a clause's verb type
+comes from when the verb itself is not said.
+
+**Fused functions, and a DAG.** `Constituent.function` is one value and `parent`
+is one id. CGEL needs a node doing two jobs at once — Determiner-Head in *__most__
+were gone* — and a supplement arguably has two parents. Everything that walks the
+tree assumes one of each.
+
+**Missing categories.** Smaller, and each is an enum entry plus a rule:
+
+| Missing | Example |
+| --- | --- |
+| `DP`, a determinative phrase | ***almost every*** *student* |
+| Interrogative and exclamative clause kinds | *whether he left*, *how tall he is* |
+| `flat` / `compounding` | *New York* — no internal head worth arguing about |
+| `postnucleus` | the tail position, which extraposition currently covers by name only |
+
+## What the six verb types still cannot say
 
 Morenberg's six classify a verb by the slots it licenses, which is the right
 spine for the course and is not a full account of an English predicate.
 
-- **Passive** cannot be written at all. Probed: an `Aux` may head a `VP`, but
-  the participle then has nowhere to go — `V` as a complement or premodifier of
-  a `VP` is **hidden**, and so is `VP` inside `VP`. *The engine was repaired*
-  gets as far as *was* and stops.
-- **Existential *there*** — *There is a problem* — has a subject that is not
-  what the sentence is about.
-- **Catenatives** — *seems to be working* — chain a verb onto a non-finite
-  clause, and the six types describe one verb at a time.
 - **Raising against control** — *seems to leave* against *wants to leave* —
-  differ in where the understood subject comes from, and the model has no
-  understood subjects.
-- **Modals** carry no slots of their own and currently sit outside the system as
-  `Aux`.
+  differ in where the understood subject comes from. Both build; the model does
+  not record which is which.
+- **Modals** carry no slots of their own and sit outside the six as `Aux`.
+- **Existential *there*** builds, but nothing records that its subject is not
+  what the sentence is about.
 
-## What is close, and what is not
+## The lesson worth keeping
 
-Probed with `licenses()` rather than guessed, because two of the guesses in an
-earlier draft of this document were wrong.
-
-| Structure | State | What is missing |
-| --- | --- | --- |
-| Coordination | **buildable** | `and` is labelled a coordinate; a `coordinator` function would fix the label, not the structure |
-| An adverbial clause under `VP` or `S` | **buildable** | nothing — `marker` closed this |
-| A relative clause with *that* | blocked | not the subordinator any more; *that* in a subject relative is the clause's subject, and the gap where it came from cannot be written |
-| Passive | blocked | `Aux` can head a `VP`, but the participle after it has no function |
-| An auxiliary chain | blocked | same reason, one layer further |
-
-The `marker` half of that is done. What is left turns on two things: gaps, for
-any relative clause with a *that* in it, and somewhere for a participle to sit
-after an auxiliary, for the passive and the auxiliary chain. The second is a
-design question rather than a missing enum entry — Morenberg treats *was
-repaired* as one verb, so the answer is probably a dedicated auxiliary function
-rather than stretching `premodifier` to cover tense and voice.
-
-## What blocks what
-
-Ordered by how much they unlock rather than by difficulty.
-
-1. **Per-clause verb type** unlocks every sentence with more than one clause,
-   which includes most real prose. Done: verb type and clause type now live on
-   the node, `clause.ts` answers which verb governs where, and
-   `fix-garden-path`, `fix-object-clause`, and `fix-coordination` all build
-   through the interface.
-2. **Gaps and coindexation** unlock relative clauses, *wh*-questions, and
-   passives — three of the most common structures in English, and the reason
-   *The horse raced past the barn fell* is currently unrepresentable.
-3. **Discontinuity** unlocks extraposition and particle shift, and it means
-   relaxing an audit that currently states the opposite rule.
-4. **A `Nom` layer** unlocks honest noun-phrase structure, which lesson 4
-   onward depends on.
-5. **Somewhere for a participle after an auxiliary** unlocks the passive and the
-   auxiliary chain, and is the last common structure that is blocked for a
-   reason other than gaps.
-
-Items 2 and 3 change the meaning of `span` and of `auditContiguity`, so they are
-one piece of work rather than two.
-
-What each of these costs to fix, in the order I would do them, is
-[gap-plan.md](gap-plan.md).
+The model could store *The horse raced past the barn fell* for a full hour
+before anything could build it, and every browser-free test passed throughout.
+Representable and reachable are different properties, and only the sweep tests
+the second. Every entry in the closed table above finishes the same way: a
+fixture that audits, then a build sweep proving a learner can actually get
+there.
 
 ## Sources
 
