@@ -113,30 +113,43 @@ learner will meet everywhere else.
 | The verb is the last word                   | a predicate with anything after the verb                 | **no** — all ten are `The N V.`       |
 | The verb is the action word                 | _Hiking **is** my favorite activity_                     | **no**                                |
 | The verb is the only word that could be one | a sentence with a participle, gerund or infinitive in it | **no** — none exists before lesson 24 |
+| The verb is the word ending in _-ed_        | an irregular past tense                                  | **yes**, thinly — 8 of 70             |
 | The verb is the second thing after _the_    | any longer subject                                       | **no**                                |
 
-Three measurements, all from the built corpus:
+Three measurements, all from the built corpus.
 
 **Lesson 3 is shorter than lesson 2.** Its ten sentences are three words, `The N
 V.`, which is lesson 1's shape exactly. Lesson 2's are four. The course goes
 backwards at the point where it introduces its first real test.
 
-**All seventy sentences in lessons 1 to 7 are simple past.** The tense test asks
-the learner to shift the sentence in time and watch what changes. There is no
-sentence in Stage 1 where doing that is informative, and no sentence where a word
-that looks like a verb turns out not to be one.
-
 **Every lesson-3 sentence has exactly one word that could possibly be the verb.**
-A test that discriminates needs something to discriminate against.
+This is the defect. A test that discriminates needs something to discriminate
+against, and lesson 3 never gives the tense test a wrong answer to reject.
+
+**All seventy Stage 1 sentences are simple past, and 62 of the 70 verbs end in
+_-ed_.** The uniform tense is _not_ the problem, and an earlier draft of this
+dossier was wrong to say it was. The tense test does not need the corpus to vary
+in tense. The learner is the one who shifts the sentence, and shifting _The
+visitors waited_ to _Today the visitors **wait**_ identifies the verb perfectly
+well. Holding one thing still while another moves is the ordinary scaffold, and
+it is what this course does everywhere else.
+
+What the uniform tense does create is a smaller shortcut of its own: **find the
+word ending in _-ed_.** Eight verbs defeat it — _rang, swung, rose, fell, froze,
+spread_ — so the pressure exists, but 62 of 70 is thin. Across the whole course
+it is 358 of 515, or 70%.
 
 ## What this should change
 
 1. **Lesson 3 needs a competitor for the verb.** Without one the tense test is
-   ceremony. The cheapest competitor available inside Stage 1 scope is a second
-   noun or an adjective that reads as an action, not a participle: _The visitors'
-   **shouts** carried_. Whether that is buildable is a scope question.
+   ceremony. The cheapest competitor available inside Stage 1 scope is a noun
+   that reads as an action, not a participle: _The visitors' **shouts**
+   carried_. Whether that is buildable is a scope question. This is the change
+   worth making; the tense of the corpus is not.
 2. **Lesson 3 should be at least as long as lesson 2.** It is currently shorter.
-3. **Record the "verb phrase" clash** somewhere the learner can meet it, because
+3. **A few more irregular verbs in Stage 1** would put pressure on _find the -ed
+   word_, which currently fails only 8 times in 70.
+4. **Record the "verb phrase" clash** somewhere the learner can meet it, because
    it is the one term in Stage 1 that means something else outside this app.
 
 ## Sources
@@ -153,6 +166,12 @@ Search summaries only, not read in full:
 - Grammar Monster and Twinkl on finite verbs, for the standard definition that a
   finite verb shows tense, number and person and that the main verb is always
   finite. Both agree; neither was opened.
+- Scaffolding in grammar instruction, from a search across Thoughtful Learning,
+  Language Arts Classroom and the _Journal of Language Teaching and Research_.
+  The relevant idea is that a structured scaffold gives the learner an example
+  and asks them to change one element in it, a tense or a word class, which is
+  the tense test exactly. It does not require the examples themselves to vary.
+  Krashen's controlled input is the older form of the same argument.
 
 ## Rejected
 
