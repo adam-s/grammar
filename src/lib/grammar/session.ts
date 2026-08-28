@@ -64,7 +64,13 @@ import {
   label,
   partKindName,
 } from './names.ts';
-import { isPanelComplete, optionsFor, type LabelOption, type Selection } from './options.ts';
+import {
+  isPanelComplete,
+  isPickable,
+  optionsFor,
+  type LabelOption,
+  type Selection,
+} from './options.ts';
 import { LONG } from './rules.ts';
 import type { SentenceEntry, Word } from './types.ts';
 
@@ -330,6 +336,15 @@ export function answer(
   words: Word[],
   o: LabelOption,
 ): Session {
+  // A row the palette is refusing is refused here too.
+  //
+  // `isPickable` was checked in `LabelPanel.svelte` and nowhere else, which put
+  // the scope ladder and every blocked rule in the pixels: the button was
+  // disabled, so nobody could press it, and any second caller — another view, a
+  // driver, a replay — would have had to remember the rule on its own. The
+  // module that owns the decision should be the one that makes it.
+  if (!isPickable(o)) return session;
+
   const decision = ask(session, sentence, words, o);
   if (!decision) return session;
 

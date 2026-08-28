@@ -14,7 +14,10 @@
  */
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { emptyBuild } from '../grammar/builder.ts';
 import { gradeForm, gradeFunction } from '../grammar/grader.ts';
+import { isPickable, optionsFor } from '../grammar/options.ts';
+import { answer, emptySession } from '../grammar/session.ts';
 import { isLeaf } from '../grammar/types.ts';
 import { COURSE_LESSONS } from './course.ts';
 import { scopeThrough, targetReading } from './scope.ts';
@@ -84,5 +87,53 @@ describe('the grader can still say no', () => {
   it('calls the wrong job on the right phrase wrong', () => {
     const verdict = gradeFunction(sentence, [0, 1], 'NP', 'directObject');
     assert.equal(verdict.kind, 'wrong');
+  });
+});
+
+/**
+ * The scope ladder has to hold in the transaction, not only in the pixels.
+ *
+ * `isPickable` was checked in `LabelPanel.svelte` and nowhere else. The button
+ * was disabled so nobody could press it, and that is a real defence for the one
+ * view that exists today — and no defence at all for the next caller, which
+ * would have had to remember the rule on its own. A rule enforced by a
+ * disabled button is a rule the module does not know.
+ */
+describe('a lesson refuses an untaught label, in the module and not just the view', () => {
+  const lesson = COURSE_LESSONS[0]!;
+  const sentence = lesson.sentences[0]!;
+  const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+
+  it('offers the word classes as untaught at lesson one, with a reason', () => {
+    const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [1, 1] }, scope);
+    const noun = panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:N')!;
+    assert.equal(noun.state, 'untaught');
+    assert.equal(noun.note, 'not taught yet');
+    assert.ok(!isPickable(noun));
+  });
+
+  /** A session already pointing at the words the decision is about. */
+  const looking = (span: [number, number]) => ({
+    ...emptySession(),
+    selection: { kind: 'span' as const, span },
+  });
+
+  it('leaves the build untouched when one is applied anyway', () => {
+    const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [1, 1] }, scope);
+    const noun = panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:N')!;
+    const before = looking([1, 1]);
+    const after = answer(before, sentence, sentence.words, noun);
+    assert.equal(after, before, 'an untaught label must not enter the structure');
+  });
+
+  // The control. The refusal above would pass just as well if `answer` had
+  // stopped applying anything at all.
+  it('still applies a label the lesson has taught', () => {
+    const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [0, 1] }, scope);
+    const np = panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:NP')!;
+    assert.ok(isPickable(np));
+    const after = answer(looking([0, 1]), sentence, sentence.words, np);
+    assert.equal(Object.keys(after.build.constituents).length, 1);
+    assert.equal(Object.values(after.build.constituents)[0]!.form, 'NP');
   });
 });
