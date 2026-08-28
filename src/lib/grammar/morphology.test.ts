@@ -142,3 +142,18 @@ describe('what an author writes, checked against what they wrote it on', () => {
     assert.deepEqual(broke.forms, { past: 'broke', participle: 'broken' });
   });
 });
+
+describe('be', () => {
+  it('beFor never returns a form the table does not know', () => {
+    // Two places knew the forms of *be* and disagreed: `formsOf` answered that
+    // *are* was not one. Whichever way that is fixed, this is what keeps them
+    // together.
+    const be = formsOf('be')!;
+    const known = [be.lemma, be.s, be.past, be.participle, be.ing, ...(be.also ?? [])];
+    for (const tense of ['present', 'past'] as const) {
+      for (const singular of [true, false]) {
+        assert.ok(known.includes(beFor(tense, singular)), `${beFor(tense, singular)} is unknown`);
+      }
+    }
+  });
+});

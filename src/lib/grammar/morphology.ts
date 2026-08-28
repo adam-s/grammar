@@ -45,6 +45,15 @@ export interface VerbForms {
   participle: string;
   /** Present participle: *breaking*. */
   ing: string;
+  /**
+   * Forms the five slots above cannot hold.
+   *
+   * Only *be* needs this, and it needs it badly: *am*, *are* and *were* are as
+   * much forms of *be* as *is* and *was*, and `formsOf('be')` used to answer
+   * that *are* was not. `beFor` knew better, which meant two places knew the
+   * forms of *be* and one of them was wrong.
+   */
+  also?: readonly string[];
 }
 
 /** A pronoun, in the two cases English still distinguishes. */
@@ -94,7 +103,14 @@ export function regularIng(lemma: string): string {
  * likelier to work than not. Anything missing is reported, never guessed.
  */
 export const IRREGULAR: readonly VerbForms[] = [
-  { lemma: 'be', s: 'is', past: 'was', participle: 'been', ing: 'being' },
+  {
+    lemma: 'be',
+    s: 'is',
+    past: 'was',
+    participle: 'been',
+    ing: 'being',
+    also: ['am', 'are', 'were'],
+  },
   { lemma: 'break', s: 'breaks', past: 'broke', participle: 'broken', ing: 'breaking' },
   { lemma: 'buy', s: 'buys', past: 'bought', participle: 'bought', ing: 'buying' },
   { lemma: 'come', s: 'comes', past: 'came', participle: 'come', ing: 'coming' },
