@@ -43,6 +43,19 @@ import { LESSON_24 } from './sentences/lesson-24.ts';
 import { LESSON_25 } from './sentences/lesson-25.ts';
 import { LESSON_26 } from './sentences/lesson-26.ts';
 import { LESSON_27 } from './sentences/lesson-27.ts';
+import { LESSON_28 } from './sentences/lesson-28.ts';
+import { LESSON_29 } from './sentences/lesson-29.ts';
+import { LESSON_30 } from './sentences/lesson-30.ts';
+import { LESSON_31 } from './sentences/lesson-31.ts';
+import { LESSON_32 } from './sentences/lesson-32.ts';
+import { LESSON_33 } from './sentences/lesson-33.ts';
+import { LESSON_34 } from './sentences/lesson-34.ts';
+import { LESSON_35 } from './sentences/lesson-35.ts';
+import { LESSON_36 } from './sentences/lesson-36.ts';
+import { LESSON_37 } from './sentences/lesson-37.ts';
+import { LESSON_38 } from './sentences/lesson-38.ts';
+import { LESSON_39 } from './sentences/lesson-39.ts';
+import { LESSON_40 } from './sentences/lesson-40.ts';
 import type { CourseStage } from './types.ts';
 
 export const COURSE_STAGES: CourseStage[] = [
@@ -305,6 +318,126 @@ export const COURSE_STAGES: CourseStage[] = [
         title: 'Attachment changes meaning',
         teaches: [],
         sentences: LESSON_27,
+      },
+    ],
+  },
+  {
+    id: 'clauses',
+    title: 'Clauses',
+    lessons: [
+      {
+        id: '28-main-and-dependent',
+        number: 28,
+        stage: 'Clauses',
+        title: 'Main and dependent clauses',
+        // `kind:nominal` lands here and not at lesson 30 because a clause has
+        // to be some kind of clause, and this is the first lesson that draws
+        // one. Lesson 30 teaches the JOBS a nominal clause does — subject,
+        // object, complement — which is where the work actually is.
+        teaches: ['form:Cl', 'kind:nominal'],
+        sentences: LESSON_28,
+      },
+      {
+        id: '29-adverbial-clauses',
+        number: 29,
+        stage: 'Clauses',
+        title: 'Adverbial clauses',
+        teaches: ['form:Subord', 'func:marker', 'kind:adverbial'],
+        sentences: LESSON_29,
+      },
+      {
+        id: '30-nominal-clauses',
+        number: 30,
+        stage: 'Clauses',
+        title: 'Nominal clauses',
+        teaches: [],
+        sentences: LESSON_30,
+      },
+      {
+        id: '31-relative-clauses',
+        number: 31,
+        stage: 'Clauses',
+        title: 'Relative clauses',
+        teaches: ['kind:relative'],
+        sentences: LESSON_31,
+      },
+      {
+        id: '32-comparative-clauses',
+        number: 32,
+        stage: 'Clauses',
+        title: 'Comparative clauses',
+        teaches: ['kind:comparative', 'func:postnucleus'],
+        sentences: LESSON_32,
+      },
+      {
+        id: '33-coordination-between-clauses',
+        number: 33,
+        stage: 'Clauses',
+        title: 'Coordination between clauses',
+        teaches: [],
+        sentences: LESSON_33,
+      },
+    ],
+  },
+  {
+    id: 'reduced',
+    title: 'Reduced and marked',
+    lessons: [
+      {
+        id: '34-infinitive-clauses',
+        number: 34,
+        stage: 'Reduced and marked',
+        title: 'Infinitive clauses',
+        teaches: ['part:infinitival', 'fin:infinitival'],
+        sentences: LESSON_34,
+      },
+      {
+        id: '35-participial-clauses',
+        number: 35,
+        stage: 'Reduced and marked',
+        title: 'Participial clauses',
+        teaches: ['fin:participial'],
+        sentences: LESSON_35,
+      },
+      {
+        id: '36-gerund-clauses',
+        number: 36,
+        stage: 'Reduced and marked',
+        title: 'Gerund clauses',
+        teaches: ['fin:gerund-participial'],
+        sentences: LESSON_36,
+      },
+      {
+        id: '37-passive-voice',
+        number: 37,
+        stage: 'Reduced and marked',
+        title: 'Passive voice',
+        teaches: ['voice:passive', 'aux:passive'],
+        sentences: LESSON_37,
+      },
+      {
+        id: '38-sentence-edge-words',
+        number: 38,
+        stage: 'Reduced and marked',
+        title: 'Interjections and edge words',
+        teaches: ['form:Interj', 'func:supplement'],
+        sentences: LESSON_38,
+      },
+      {
+        id: '39-punctuation-is-evidence',
+        number: 39,
+        stage: 'Reduced and marked',
+        title: 'Punctuation is evidence',
+        teaches: [],
+        sentences: LESSON_39,
+      },
+      {
+        id: '40-final-synthesis',
+        number: 40,
+        stage: 'Reduced and marked',
+        title: 'Final synthesis',
+        teaches: [],
+        sentences: LESSON_40,
       },
     ],
   },
