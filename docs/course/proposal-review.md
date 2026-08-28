@@ -568,7 +568,7 @@ Status values are deliberately explicit:
 | 6   | Damaged by the flood, the bridge closed.              | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
 | 7   | The report signed by the surveyor mattered.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 8   | The board rejected the plan drafted by the committee. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 9   | The shutters painted in the spring warped.            | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 9   | Those shutters painted in the spring warped.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 10  | The map drawn by our guide proved accurate.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 
 ## Lesson 36 — Gerund clauses
@@ -577,8 +577,8 @@ Status values are deliberately explicit:
 | --- | ----------------------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
 | 1   | Renewing the lease took a month.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 2   | Dredging the harbour cost a fortune.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 3   | Reading old maps requires practice.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | She enjoys reading old maps.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 3   | Reading maps requires some practice.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | She enjoys reading maps.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | The children avoided crossing the road.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 6   | She apologised for arriving late.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 7   | The clerk was auditing the ledger.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |

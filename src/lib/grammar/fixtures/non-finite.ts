@@ -242,3 +242,49 @@ export const twoMarkers = sentence(
   ],
   'r1',
 );
+
+/* ------------- a gerund after a preposition — She apologised for arriving late.
+ *
+ * The preposition's complement is usually a noun phrase. Here it is a clause,
+ * which is the clearest evidence that an -ing clause does a noun phrase's job:
+ * it fits the one slot a preposition has.
+ *
+ * Every gerund in either corpus filled the subject slot, so the shape was proved
+ * by nothing and lesson 36 asked for one distinct tree ten times over.
+ */
+export const gerundAfterPreposition = sentence(
+  'fix-gerund-after-preposition',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'apologised', { lemma: 'apologise', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'for'),
+              n(
+                'Cl',
+                'complement',
+                [
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'arriving', { lemma: 'arrive', verbType: 'Vint' }),
+                    n('AdvP', 'adverbial', [w('Adv', 'head', 'late')]),
+                  ]),
+                ],
+                { clauseKind: 'nominal', finiteness: 'gerund-participial', clauseType: 'SV' },
+              ),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She said sorry about turning up behind time.' },
+    ),
+  ],
+  'r1',
+);

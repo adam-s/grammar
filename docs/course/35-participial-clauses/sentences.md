@@ -26,7 +26,7 @@ both cleanly.
 | 6   | Damaged by the flood, the bridge closed.              | **at the front of the sentence**       |
 | 7   | The report signed by the surveyor mattered.           | back to the plain case                 |
 | 8   | The board rejected the plan drafted by the committee. | inside an object, longer both sides    |
-| 9   | The shutters painted in the spring warped.            | a time phrase rather than an agent     |
+| 9   | Those shutters painted in the spring warped.          | a time phrase rather than an agent     |
 | 10  | The map drawn by our guide proved accurate.           | close on the plain case, linking frame |
 
 ## Notes

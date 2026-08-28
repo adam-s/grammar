@@ -53,7 +53,14 @@ import {
   passiveTwoObject,
   passiveObjectComplement,
 } from './auxiliaries.ts';
-import { infinitive, particle, particleShift, hollowClause, twoMarkers } from './non-finite.ts';
+import {
+  infinitive,
+  particle,
+  particleShift,
+  hollowClause,
+  twoMarkers,
+  gerundAfterPreposition,
+} from './non-finite.ts';
 import {
   nominal,
   stacked,
@@ -112,6 +119,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   passiveTwoObject,
   passiveObjectComplement,
   infinitive,
+  gerundAfterPreposition,
   particle,
   particleShift,
   hollowClause,

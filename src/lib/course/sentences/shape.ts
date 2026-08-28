@@ -1119,6 +1119,90 @@ export const adjWithCl = (
     gloss,
   );
 
+/**
+ * *Damaged by the flood, the bridge closed.* — a participial clause at the
+ * front, doing an adverbial's job.
+ *
+ * Every participial clause in either corpus postmodified a noun, so the shape
+ * that actually confuses readers had never been drawn — and neither had the
+ * comma that follows it, which lesson 39 needs.
+ */
+export const participleFirst = (
+  id: string,
+  lesson: number,
+  inner: Inner,
+  s: Phrase,
+  verb: Verb,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        cl({ ...inner, finiteness: 'participial', kind: 'adverbial' })('adverbial'),
+        pt(','),
+        s('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        ]),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
+  );
+
+/** *She enjoys reading old maps.* — an -ing clause in the object slot. */
+export const svGerund = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  inner: Inner,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(
+      s,
+      verb,
+      [cl({ ...inner, finiteness: 'gerund-participial', kind: 'nominal' })('directObject')],
+      'SVO',
+    ),
+    gloss,
+  );
+
+/** *She apologised for arriving late.* — an -ing clause after a preposition. */
+export const svAfterGerund = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  preposition: string,
+  inner: Inner,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(
+      s,
+      verb,
+      [
+        n('PP', 'adverbial', [
+          w('P', 'head', preposition),
+          cl({ ...inner, finiteness: 'gerund-participial', kind: 'nominal' })('complement'),
+        ]),
+      ],
+      'SV',
+    ),
+    gloss,
+  );
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>

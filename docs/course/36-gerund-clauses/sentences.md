@@ -15,8 +15,8 @@ contrast with the progressive, which uses the same suffix.
 | --- | ----------------------------------------- | --------------------------------------------- |
 | 1   | Renewing the lease took a month.          | a gerund clause as subject                    |
 | 2   | Dredging the harbour cost a fortune.      | the same, so the shape is established         |
-| 3   | Reading old maps requires practice.       | a premodifier inside the gerund's object      |
-| 4   | She enjoys reading old maps.              | **the same clause, now an object**            |
+| 3   | Reading maps requires some practice.      | a premodifier inside the gerund's object      |
+| 4   | She enjoys reading maps.                  | **the same clause, now an object**            |
 | 5   | The children avoided crossing the road.   | an object again, longer main subject          |
 | 6   | She apologised for arriving late.         | **after a preposition** — a third slot        |
 | 7   | The clerk was auditing the ledger.        | **not a gerund** — a progressive, same suffix |
