@@ -1,15 +1,33 @@
 /**
- * Lesson 26 — Coordination inside phrases. Equal pieces joined.
+ * Lesson 26 — Coordination inside phrases. More than noun phrases, more than
+ * subjects.
  *
- * *and* does the joining and is not one of the things joined — labelling it a
- * coordinate alongside them would say this subject has three parts where it
- * has two.
+ * Every coordination in the built set was two noun phrases in subject position —
+ * ten out of ten — so the lesson showed one of the many things coordination
+ * joins, in one of the places it can sit.
  *
- * A joined subject is not a fact about acting either, so two of these link
- * rather than act. Two things can both taste stale, and the coordination is
- * the same shape whichever verb follows it.
+ * Item 8 carries the sharpest evidence in the lesson and it is free: *The
+ * surveyor and the clerk **signed*** takes a plural verb where either alone
+ * would take a singular. That is agreement proving the pair is one subject
+ * rather than two, and no built sentence drew attention to it.
  */
-import { adj, both, det, sv, svc, svo, v } from './shape.ts';
+import {
+  adj,
+  adjBoth,
+  adjn,
+  bare,
+  both,
+  bothOf,
+  det,
+  listOf,
+  pp,
+  pron,
+  sv,
+  svc,
+  svo,
+  svPlus,
+  v,
+} from './shape.ts';
 
 export const LESSON_26 = [
   sv(
@@ -17,67 +35,68 @@ export const LESSON_26 = [
     26,
     both(det('The', 'bread'), 'and', det('the', 'cheese')),
     v('vanished', 'vanish', 'Vint'),
-    'Both the bread and the cheese disappeared.',
+    'Both the bread and the cheese went missing.',
   ),
-  svc(
+  svo(
     'c26-b',
     26,
-    both(det('The', 'soup'), 'and', det('the', 'pastry')),
-    v('tasted', 'taste', 'Vlink'),
-    adj('stale'),
-    'Both had gone stale.',
+    pron('We'),
+    v('packed', 'pack', 'Vtr'),
+    both(det('the', 'books'), 'and', det('the', 'maps')),
+    'We boxed up both the books and the maps.',
   ),
   sv(
     'c26-c',
     26,
-    both(det('The', 'mayor'), 'and', det('the', 'clerk')),
-    v('resigned', 'resign', 'Vint'),
-    'Two officials left their posts.',
+    both(det('The', 'gate'), 'or', det('the', 'fence')),
+    v('collapsed', 'collapse', 'Vint'),
+    'Either the gate or the fence fell down.',
   ),
   sv(
     'c26-d',
     26,
-    both(det('The', 'gate'), 'or', det('the', 'fence')),
-    v('collapsed', 'collapse', 'Vint'),
-    'One of the two gave way.',
+    adjBoth('Our', 'calm', 'and', 'patient', 'guide'),
+    v('explained', 'explain', 'Vint'),
+    'Our guide, who is both calm and patient, set it out.',
   ),
-  svo(
+  svPlus(
     'c26-e',
     26,
-    both(det('The', 'surveyor'), 'and', det('the', 'clerk')),
-    v('signed', 'sign', 'Vtr'),
-    det('the', 'deed'),
-    'The surveyor signed the deed and so did the clerk.',
+    pron('We'),
+    v('walked', 'walk', 'Vint'),
+    bothOf('PP', pp('through', det('the', 'gate')), 'and', pp('across', det('the', 'field'))),
+    'We went on foot past the gate and over the field.',
   ),
   svc(
     'c26-f',
     26,
-    both(det('The', 'ferry'), 'and', det('the', 'tug')),
-    v('were', 'be', 'Vbe'),
-    adj('overdue'),
-    'Both boats were late.',
-  ),
-  svo(
-    'c26-g',
-    26,
-    both(det('The', 'rain'), 'and', det('the', 'frost')),
-    v('damaged', 'damage', 'Vtr'),
-    det('the', 'roof'),
-    'Rain and frost both harmed the roof.',
+    det('The', 'flag'),
+    v('was', 'be', 'Vbe'),
+    bothOf('AdjP', adj('red'), 'and', adj('gold')),
+    'The flag was red and gold together.',
   ),
   sv(
-    'c26-h',
+    'c26-g',
     26,
     both(det('Her', 'brother'), 'and', det('her', 'cousin')),
     v('objected', 'object', 'Vint'),
-    'Two relatives objected.',
+    'Both her brother and her cousin raised an objection.',
   ),
-  sv(
+  svo(
+    'c26-h',
+    26,
+    both(det('The', 'surveyor'), 'and', det('the', 'clerk')),
+    v('signed', 'sign', 'Vtr'),
+    det('the', 'deed'),
+    'The surveyor and the clerk both put their names to the deed.',
+  ),
+  svo(
     'c26-i',
     26,
-    both(det('Those', 'shutters'), 'and', det('the', 'door')),
-    v('rattled', 'rattle', 'Vint'),
-    'Both the shutters and the door shook in the wind.',
+    adjn('The', 'small', 'boat'),
+    v('carried', 'carry', 'Vtr'),
+    listOf('NP', bare('food'), bare('water'), 'and', bare('blankets')),
+    'The small boat took food, water and blankets on board.',
   ),
   svo(
     'c26-j',
@@ -85,6 +104,6 @@ export const LESSON_26 = [
     both(det('The', 'jury'), 'and', det('the', 'judge')),
     v('questioned', 'question', 'Vtr'),
     det('the', 'evidence'),
-    'Both doubted the evidence.',
+    'The jury and the judge both challenged the evidence.',
   ),
 ];

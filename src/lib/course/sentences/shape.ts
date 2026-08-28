@@ -20,6 +20,7 @@
  */
 import { build, gap, n, pt, w, type SpecNode } from '../../grammar/build.ts';
 import type {
+  PhraseForm,
   AuxKind,
   ClauseKind,
   ClauseType,
@@ -367,6 +368,54 @@ export const both =
   (left: Phrase, conjunction: string, right: Phrase): Phrase =>
   (fn) =>
     n('NP', fn, [left('coordinate'), w('Conj', 'coordinator', conjunction), right('coordinate')]);
+
+/**
+ * *calm and patient* / *through the gate and across the field* — a coordination
+ * of something that is not a noun phrase.
+ *
+ * `both` hardcodes `NP` because that is all the built course ever joined. Only
+ * like joins to like, so the pair takes the form of its halves, and that is why
+ * coordination doubles as a constituency test.
+ */
+export const bothOf =
+  (form: PhraseForm, left: Phrase, conjunction: string, right: Phrase): Phrase =>
+  (fn) =>
+    n(form, fn, [left('coordinate'), w('Conj', 'coordinator', conjunction), right('coordinate')]);
+
+/**
+ * *our calm and patient guide* — two adjectives sharing one premodifier slot.
+ *
+ * The pair is an adjective phrase doing the job either half would have done
+ * alone, which is what makes coordination a constituency test.
+ * `fix-coordinated-adjectives` proves it.
+ */
+export const adjBoth =
+  (d: string, left: string, conjunction: string, right: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [
+        n('AdjP', 'premodifier', [
+          n('AdjP', 'coordinate', [w('Adj', 'head', left)]),
+          w('Conj', 'coordinator', conjunction),
+          n('AdjP', 'coordinate', [w('Adj', 'head', right)]),
+        ]),
+        w('N', 'head', noun),
+      ]),
+    ]);
+
+/** *food, water, and blankets* — three of the same rank, with the commas that mark them. */
+export const listOf =
+  (form: PhraseForm, first: Phrase, second: Phrase, conjunction: string, third: Phrase): Phrase =>
+  (fn) =>
+    n(form, fn, [
+      first('coordinate'),
+      pt(','),
+      second('coordinate'),
+      pt(','),
+      w('Conj', 'coordinator', conjunction),
+      third('coordinate'),
+    ]);
 
 /** The verb, its dictionary form, and what kind of verb it is. */
 export type Verb = {

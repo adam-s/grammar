@@ -39,7 +39,12 @@ import {
   subjectRelative,
   subjectClause,
 } from './clauses.ts';
-import { coordination, coordinatedSubject } from './coordination.ts';
+import {
+  coordination,
+  coordinatedSubject,
+  coordinatedAdjectives,
+  coordinatedPhrases,
+} from './coordination.ts';
 import {
   auxiliaryChain,
   passive,
@@ -96,6 +101,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   subjectClause,
   coordination,
   coordinatedSubject,
+  coordinatedAdjectives,
+  coordinatedPhrases,
   auxiliaryChain,
   passive,
   passiveTwoObject,

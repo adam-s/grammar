@@ -430,7 +430,7 @@ Status values are deliberately explicit:
 | 3   | The gate or the fence collapsed.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 4   | Our calm and patient guide explained.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | We walked through the gate and across the field.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | The flag was bright red and gold.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | The flag was red and gold.                        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 7   | Her brother and her cousin objected.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | The surveyor and the clerk signed the deed.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | The small boat carried food, water, and blankets. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |

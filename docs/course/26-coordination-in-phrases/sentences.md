@@ -19,7 +19,7 @@ joins to like. That makes this a good place to look backwards.
 | 3   | The gate or the fence collapsed.                  | _or_, which changes what is claimed          |
 | 4   | Our calm and patient guide explained.             | **two adjectives**, not noun phrases         |
 | 5   | We walked through the gate and across the field.  | **two prepositional phrases**                |
-| 6   | The flag was bright red and gold.                 | joined inside a subject complement           |
+| 6   | The flag was red and gold.                        | joined inside a subject complement           |
 | 7   | Her brother and her cousin objected.              | back to noun phrases, possessive determiners |
 | 8   | The surveyor and the clerk signed the deed.       | a plural verb proves it is one subject       |
 | 9   | The small boat carried food, water, and blankets. | **three coordinates, and two commas**        |

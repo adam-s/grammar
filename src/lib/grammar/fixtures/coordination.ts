@@ -91,3 +91,92 @@ export const coordinatedSubject = sentence(
   ],
   'r1',
 );
+
+/* ------------- coordinated adjectives — Our calm and patient guide explained.
+ *
+ * Every coordination in either corpus joined two noun phrases, and all ten of
+ * lesson 26's sat in subject position — so the lesson showed one of the many
+ * things coordination joins, in one of the places it can sit.
+ *
+ * Only like joins to like, which is why coordination is itself a constituency
+ * test. Two adjective phrases join and the result is an adjective phrase, doing
+ * the premodifier's job that either would have done alone.
+ */
+export const coordinatedAdjectives = sentence(
+  'fix-coordinated-adjectives',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'Our'),
+            n('Nom', 'head', [
+              n('AdjP', 'premodifier', [
+                n('AdjP', 'coordinate', [w('Adj', 'head', 'calm')]),
+                w('Conj', 'coordinator', 'and'),
+                n('AdjP', 'coordinate', [w('Adj', 'head', 'patient')]),
+              ]),
+              w('N', 'head', 'guide'),
+            ]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'explained', { lemma: 'explain', verbType: 'Vint' }),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Our guide, who is both calm and patient, set it out.',
+      },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------- coordinated prepositional phrases — We walked through the gate
+ * and across the field.
+ *
+ * The same rule one form over. Two prepositional phrases join and the result is
+ * a prepositional phrase, filling the one adverbial slot that either would have
+ * filled alone — which is the evidence that the pair is a single constituent
+ * rather than two adverbials in a row.
+ */
+export const coordinatedPhrases = sentence(
+  'fix-coordinated-phrases',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'We')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'walked', { lemma: 'walk', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              n('PP', 'coordinate', [
+                w('P', 'head', 'through'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'gate')]),
+              ]),
+              w('Conj', 'coordinator', 'and'),
+              n('PP', 'coordinate', [
+                w('P', 'head', 'across'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'field')]),
+              ]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'We went on foot past the gate and over the field.' },
+    ),
+  ],
+  'r1',
+);
