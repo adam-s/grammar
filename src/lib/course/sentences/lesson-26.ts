@@ -47,7 +47,7 @@ export const LESSON_26 = [
     both(det('The', 'surveyor'), 'and', det('the', 'clerk')),
     v('signed', 'sign', 'Vtr'),
     det('the', 'deed'),
-    'Both of them signed.',
+    'The surveyor signed the deed and so did the clerk.',
   ),
   svc(
     'c26-f',

@@ -70,7 +70,7 @@ export const LESSON_33 = [
     },
     'but',
     { subject: det('the', 'board'), verb: v('proceeded', 'proceed', 'Vint') },
-    'The board went ahead anyway.',
+    'The clerk read the minute out, and the board went ahead anyway.',
   ),
   joined(
     'c33-g',

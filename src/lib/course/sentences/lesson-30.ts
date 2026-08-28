@@ -50,7 +50,7 @@ export const LESSON_30 = [
     },
     v('worried', 'worry', 'Vtr'),
     det('that', 'inspector'),
-    'The failing wiring worried the inspector.',
+    'The failing wiring worried that inspector.',
   ),
   clauseSubject(
     'c30-d',
@@ -128,7 +128,7 @@ export const LESSON_30 = [
     },
     v('annoyed', 'annoy', 'Vtr'),
     det('her', 'landlord'),
-    'The rusted lock annoyed the landlord.',
+    'The rusted lock annoyed her landlord.',
   ),
   clauseSubject(
     'c30-j',

@@ -72,7 +72,7 @@ export const LESSON_32 = [
       verb: v('promised', 'promise', 'Vtr'),
       objectGap: true,
     },
-    'The delay was less than promised.',
+    'The delay was shorter than the guard had promised.',
   ),
   comparison(
     'c32-f',
