@@ -44,6 +44,8 @@ thing blocked because no fixture used it.
 | Extraposition | *__It__ is a good thing that we left* | `placeholderSubject` and `extraposed`, audited as a pair |
 | Hollow clauses | *too heavy to lift __* | the gap rule generalised: a gap is indexed only when its own clause holds the filler |
 | Coordinated phrases | *the cat and the dog* | `auditHead` excusing a join, one level below the clause |
+| VP ellipsis | *and he will __ too* | an elided predicate borrowing its verb, and its slots |
+| Gapping | *and the Queen __ at seven* | the same link, around a single word |
 | A tail position | *A man came in __who I knew__* | `postnucleus`, and an anchor link the learner chooses |
 | Clefts and comparatives | *It was __John__ who broke it* | the same tail position |
 | Two markers on one clause | *__for__ anyone __to__ lift* | one of each kind, rather than one in total |
@@ -100,13 +102,13 @@ the right way to find out.
 
 ## What is still open
 
-Two things, and neither is close.
+One thing, and two families of a second.
 
-**Ellipsis.** Gapping (*The PM arrived at six and the Queen an hour later*), VP
-ellipsis (*I will if you will*), sluicing, stripping. Probed: a `VP` whose head
-is a gap leaves no verb to classify, so the clause cannot say what frame it has.
-This is not a rule away — it needs a story about where a clause's verb type
-comes from when the verb itself is not said.
+**Sluicing and stripping.** The other two ellipsis families. *She repaired
+something, but I don't know what* elides a whole clause after a fronted phrase;
+*and the car too* elides everything but one phrase. Probably the same machinery
+that VP ellipsis and gapping use, and neither has been probed — which is the
+only honest thing to say about them.
 
 **Fused functions, and a DAG.** `Constituent.function` is one value and `parent`
 is one id. CGEL needs a node doing two jobs at once — Determiner-Head in *__most__

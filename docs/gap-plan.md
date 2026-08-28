@@ -37,18 +37,24 @@ come out projective, which is what CGELBank gets and for the same reason.
 because it is. If a construction turns up that genuinely needs a split node, it
 will turn up as a sentence nobody can write.
 
-## 3 · Ellipsis — days
+## 3 · Ellipsis — DONE for VP ellipsis and gapping
 
-Gapping, VP ellipsis, sluicing, stripping. Probed: *I will if you will* has a
-predicate whose head is missing, so there is no verb to classify and no frame to
-read off the clause.
+The story it wanted turned out to be one sentence: an elided predicate borrows
+its verb, and its slots with it. `verbOfClause` follows the link, so *and he
+will __* is a transitive clause with no object in it and the audit stops asking
+for one.
 
-**Why it is days rather than hours:** it needs a story about where a clause's
-verb type comes from when the verb is not said. Every audit that asks "what kind
-of verb does this clause have" assumes there is one to ask about. The answer is
-probably that an elided head points at the verb it copies, which is
-coindexation again — so this is worth doing AFTER 2, and it may share machinery
-with it.
+An elision is a third kind of index link and runs the other way from a
+filler-gap one — nothing moved out, something was left unsaid because it had
+already been said. It always has an index, always points backwards, and points
+at the same kind of thing. A moved gap is always a phrase; an elided one may be
+a word, which is what gapping leaves out.
+
+**Sluicing and stripping are not done.** *She repaired something, but I don't
+know what* elides a whole clause after a fronted phrase, and *and the car too*
+elides everything but one phrase. Both are probably the same machinery — a gap
+with function `head` on a bigger node — and neither has been probed. An hour
+each, if the probe agrees.
 
 ## 4 · Fused functions, and a DAG — days, and probably not yet
 
@@ -98,5 +104,6 @@ part of the model.
 
 ## The order I would take them
 
-3 is the only substantial gap left, and it wants a story before it wants code.
-4 probably never; 6 whenever there is an hour and someone wants to probe first.
+What is left is small: the two ellipsis families nobody has probed, and 6's two
+items. 4 probably never. Every one of them wants half an hour with the prober
+before any code, which is the one habit from this work worth keeping.
