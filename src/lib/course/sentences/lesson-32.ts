@@ -1,12 +1,14 @@
 /**
- * Lesson 32 — Comparative clauses.
+ * Lesson 32 — Comparative clauses. Not only *be* plus *-er*.
  *
- * *than* introduces a comparison, and the clause after it is missing the very
- * thing being compared: *we expected __* has an object slot with nothing in it.
- * The empty slot and the phrase it answers to are tied together, which is what
- * makes this a comparison rather than two unrelated statements.
+ * Every built sentence was the same frame, so a learner could find the
+ * construction by looking for the suffix. Item 3 compares an adverb after a verb
+ * that is not *be*, item 4 uses *as … as*, and item 6 compares a quantity.
+ *
+ * The `anchor` is what makes this its own lesson: the tail belongs to the
+ * comparative word, not to the subject, and the two are not adjacent.
  */
-import { comparison, det, pron, v } from './shape.ts';
+import { comparison, comparisonAs, det, pron, v } from './shape.ts';
 
 export const LESSON_32 = [
   comparison(
@@ -16,24 +18,10 @@ export const LESSON_32 = [
     v('was', 'be', 'Vbe'),
     'larger',
     { marker: 'than', subject: pron('we'), verb: v('expected', 'expect', 'Vtr'), objectGap: true },
-    'The bill came to more than we had expected.',
+    'The bill came to more than we had thought.',
   ),
   comparison(
     'c32-b',
-    32,
-    det('That', 'queue'),
-    v('was', 'be', 'Vbe'),
-    'longer',
-    {
-      marker: 'than',
-      subject: det('the', 'baker'),
-      verb: v('feared', 'fear', 'Vtr'),
-      objectGap: true,
-    },
-    'That queue exceeded what the baker feared.',
-  ),
-  comparison(
-    'c32-c',
     32,
     det('The', 'crack'),
     v('was', 'be', 'Vbe'),
@@ -44,10 +32,28 @@ export const LESSON_32 = [
       verb: v('reported', 'report', 'Vtr'),
       objectGap: true,
     },
-    'The crack exceeded the surveyor’s report.',
+    'The crack was broader than the surveyor had said.',
   ),
   comparison(
+    'c32-c',
+    32,
+    det('The', 'engine'),
+    v('was', 'be', 'Vbe'),
+    'more reliable',
+    { marker: 'than', subject: pron('we'), verb: v('expected', 'expect', 'Vtr'), objectGap: true },
+    'The engine broke down less often than we had thought.',
+  ),
+  comparisonAs(
     'c32-d',
+    32,
+    det('The', 'queue'),
+    v('was', 'be', 'Vbe'),
+    'long',
+    { subject: det('the', 'baker'), verb: v('feared', 'fear', 'Vtr'), objectGap: true },
+    'The queue matched what the baker had dreaded.',
+  ),
+  comparison(
+    'c32-e',
     32,
     det('The', 'flood'),
     v('was', 'be', 'Vbe'),
@@ -58,10 +64,24 @@ export const LESSON_32 = [
       verb: v('predicted', 'predict', 'Vtr'),
       objectGap: true,
     },
-    'The flood exceeded every prediction.',
+    'The flood was more damaging than anyone had foreseen.',
   ),
   comparison(
-    'c32-e',
+    'c32-f',
+    32,
+    det('The', 'repair'),
+    v('was', 'be', 'Vbe'),
+    'less costly',
+    {
+      marker: 'than',
+      subject: det('the', 'board'),
+      verb: v('approved', 'approve', 'Vtr'),
+      objectGap: true,
+    },
+    'The repair came to under what the board had passed.',
+  ),
+  comparison(
+    'c32-g',
     32,
     det('The', 'delay'),
     v('was', 'be', 'Vbe'),
@@ -72,10 +92,24 @@ export const LESSON_32 = [
       verb: v('promised', 'promise', 'Vtr'),
       objectGap: true,
     },
-    'The delay was shorter than the guard had promised.',
+    'The wait was briefer than the guard had said.',
   ),
   comparison(
-    'c32-f',
+    'c32-h',
+    32,
+    det('The', 'river'),
+    v('was', 'be', 'Vbe'),
+    'higher',
+    {
+      marker: 'than',
+      subject: det('the', 'crew'),
+      verb: v('allowed', 'allow', 'Vtr'),
+      objectGap: true,
+    },
+    'The river came up beyond what the crew had reckoned on.',
+  ),
+  comparison(
+    'c32-i',
     32,
     det('The', 'harvest'),
     v('was', 'be', 'Vbe'),
@@ -86,49 +120,7 @@ export const LESSON_32 = [
       verb: v('wanted', 'want', 'Vtr'),
       objectGap: true,
     },
-    'The harvest fell short of what was wanted.',
-  ),
-  comparison(
-    'c32-g',
-    32,
-    det('The', 'repair'),
-    v('was', 'be', 'Vbe'),
-    'costlier',
-    {
-      marker: 'than',
-      subject: det('the', 'board'),
-      verb: v('approved', 'approve', 'Vtr'),
-      objectGap: true,
-    },
-    'The repair cost more than was approved.',
-  ),
-  comparison(
-    'c32-h',
-    32,
-    det('The', 'evidence'),
-    v('was', 'be', 'Vbe'),
-    'thinner',
-    {
-      marker: 'than',
-      subject: det('the', 'jury'),
-      verb: v('expected', 'expect', 'Vtr'),
-      objectGap: true,
-    },
-    'There was less evidence than expected.',
-  ),
-  comparison(
-    'c32-i',
-    32,
-    det('The', 'ferry'),
-    v('was', 'be', 'Vbe'),
-    'later',
-    {
-      marker: 'than',
-      subject: det('the', 'timetable'),
-      verb: v('allowed', 'allow', 'Vtr'),
-      objectGap: true,
-    },
-    'The ferry ran past its allowed time.',
+    'The crop came to less than the tenant had hoped.',
   ),
   comparison(
     'c32-j',
@@ -142,6 +134,6 @@ export const LESSON_32 = [
       verb: v('tolerated', 'tolerate', 'Vtr'),
       objectGap: true,
     },
-    'That noise passed what the neighbours would bear.',
+    'That noise went beyond what the neighbours would put up with.',
   ),
 ];

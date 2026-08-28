@@ -1081,6 +1081,55 @@ export const modifiedBy =
  * the verb phrase, because what it completes is the adjective phrase, not the
  * verb — and it is tied to that phrase by an index rather than by position.
  */
+/*
+ * A comparison anchored to an ADVERB phrase — *ran more quietly than we
+ * expected* — is not buildable. The `anchor` decision only ever points at an
+ * `AdjP`, so the palette refuses `anchor:AdvP` and the replay stops there.
+ *
+ * That is a model limit and not an authoring one: every comparison in the course
+ * therefore compares an adjective, and lesson 32 varies the comparative word
+ * instead — *more reliable*, *less costly*, *as long as* — rather than the thing
+ * compared.
+ */
+
+/** *The queue was as long as the baker feared.* The same shape, a different marker. */
+export function comparisonAs(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  verb: Verb,
+  adjective: string,
+  inner: Inner,
+  gloss: string,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        subject('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+          n(
+            'AdjP',
+            'subjectComplement',
+            [w('Adv', 'premodifier', 'as'), w('Adj', 'head', adjective)],
+            {
+              index: 1,
+            },
+          ),
+        ]),
+        cl({ ...inner, marker: 'as', kind: 'comparative', index: 1 })('postnucleus'),
+        pt('.'),
+      ],
+      { clauseType: 'SVC' },
+    ),
+    gloss,
+  );
+}
+
 export function comparison(
   id: string,
   lesson: number,

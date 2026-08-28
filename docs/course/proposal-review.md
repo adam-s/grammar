@@ -517,12 +517,12 @@ Status values are deliberately explicit:
 | --- | ---------------------------------------------------- | -------------------- | ---------------------------- | ------------------- | ----------------------------- |
 | 1   | The bill was larger than we expected.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 2   | The crack was wider than the surveyor reported.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 3   | The engine ran more quietly than we expected.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 3   | The engine was more reliable than we expected.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 4   | The queue was as long as the baker feared.           | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
 | 5   | The flood was worse than anyone predicted.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 6   | The repair cost less than the board approved.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 6   | The repair was less costly than the board approved.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 7   | The delay was shorter than the guard promised.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 8   | The river rose faster than the crew could move.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 8   | The river was higher than the crew allowed.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 9   | The harvest was smaller than the tenant wanted.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 10  | That noise was louder than the neighbours tolerated. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 
@@ -532,13 +532,13 @@ Status values are deliberately explicit:
 | --- | ---------------------------------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
 | 1   | The kettle boiled and the lights dimmed.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 2   | The tide turned but the ferry waited.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 3   | We can wait or we can leave.                         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | The rain eased and the streets were passable.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 3   | We waited or they left.                              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | The rain eased and the streets dried.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | The engine stalled and the driver called a mechanic. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 6   | The clerk read the minute but the board proceeded.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 7   | The talks resumed and the strike ended.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | The snow melted and the river rose.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 9   | That lock rusted and the gate was immovable.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 9   | That lock rusted and the gate jammed.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 10  | The quartet rehearsed but the audience left.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 34 — Infinitive clauses

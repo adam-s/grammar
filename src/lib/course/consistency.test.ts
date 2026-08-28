@@ -116,6 +116,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
    */
   const TWO_WAYS: Record<string, string> = {
     after: 'a marker before a clause, a preposition before a noun phrase',
+    as: 'a degree adverb and a clause marker — as long as needs both at once',
     before: 'the same, one word over',
     are: 'a main verb and an auxiliary',
     clear: 'an adjective and a verb',
@@ -124,6 +125,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
     her: 'a determiner and a pronoun',
     in: 'a preposition and a verb particle',
     is: 'a main verb and an auxiliary',
+    more: 'a degree adverb and a determiner of quantity',
     new: 'an adjective and part of a name',
     out: 'a preposition and a verb particle',
     on: 'a preposition and a verb particle',

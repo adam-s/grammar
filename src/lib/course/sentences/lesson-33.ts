@@ -1,15 +1,15 @@
 /**
- * Lesson 33 — Coordination between clauses.
+ * Lesson 33 — Coordination between clauses. All three coordinators.
  *
- * The same joining lesson 26 did inside a noun phrase, done to whole clauses.
- * The outer sentence joins rather than predicates: it has no verb of its own,
- * and each clause inside answers for itself.
+ * The built set had seven *and* and three *but* and no *or*, and no comma
+ * anywhere — the last deliberately, because lesson 39 is built on the same
+ * shapes WITH commas and the two lessons are a controlled pair. That pairing is
+ * the only punctuation contrast in the course and is kept exactly.
  *
- * Which is exactly why the joined clauses do not all have the same shape here.
- * If each of them answers for itself then one can be S V and the next S V O,
- * and ten pairs of matching intransitives would have hidden that.
+ * Both halves stand alone, which is what separates coordination from
+ * subordination: lesson 29's *because the gate was locked* cannot.
  */
-import { adj, det, joined, v } from './shape.ts';
+import { det, joined, pron, v } from './shape.ts';
 
 export const LESSON_33 = [
   joined(
@@ -18,10 +18,34 @@ export const LESSON_33 = [
     { subject: det('The', 'kettle'), verb: v('boiled', 'boil', 'Vint') },
     'and',
     { subject: det('the', 'lights'), verb: v('dimmed', 'dim', 'Vint') },
-    'The kettle came to the boil, and the lights went dim.',
+    'The kettle came to the boil and the lights went down.',
   ),
   joined(
     'c33-b',
+    33,
+    { subject: det('The', 'tide'), verb: v('turned', 'turn', 'Vint') },
+    'but',
+    { subject: det('the', 'ferry'), verb: v('waited', 'wait', 'Vint') },
+    'The tide changed, and even so the ferry stayed put.',
+  ),
+  joined(
+    'c33-c',
+    33,
+    { subject: pron('We'), verb: v('waited', 'wait', 'Vint') },
+    'or',
+    { subject: pron('they'), verb: v('left', 'leave', 'Vint') },
+    'Either we stayed put or they went.',
+  ),
+  joined(
+    'c33-d',
+    33,
+    { subject: det('The', 'rain'), verb: v('eased', 'ease', 'Vint') },
+    'and',
+    { subject: det('the', 'streets'), verb: v('dried', 'dry', 'Vint') },
+    'The rain let up and the streets lost their water.',
+  ),
+  joined(
+    'c33-e',
     33,
     { subject: det('The', 'engine'), verb: v('stalled', 'stall', 'Vint') },
     'and',
@@ -30,47 +54,15 @@ export const LESSON_33 = [
       verb: v('called', 'call', 'Vtr'),
       object: det('a', 'mechanic'),
     },
-    'The engine stopped, so the driver sent for a mechanic.',
-  ),
-  joined(
-    'c33-c',
-    33,
-    { subject: det('The', 'tide'), verb: v('turned', 'turn', 'Vint') },
-    'but',
-    { subject: det('the', 'ferry'), verb: v('waited', 'wait', 'Vint') },
-    'The tide changed, but the ferry stayed where it was.',
-  ),
-  joined(
-    'c33-d',
-    33,
-    { subject: det('The', 'rain'), verb: v('eased', 'ease', 'Vint') },
-    'and',
-    {
-      subject: det('the', 'streets'),
-      verb: v('were', 'be', 'Vbe'),
-      complement: adj('passable'),
-    },
-    'The rain let up, and the streets could be used again.',
-  ),
-  joined(
-    'c33-e',
-    33,
-    { subject: det('The', 'pipe'), verb: v('froze', 'freeze', 'Vint') },
-    'and',
-    { subject: det('the', 'ceiling'), verb: v('cracked', 'crack', 'Vint') },
-    'The pipe froze, and a crack opened in the ceiling.',
+    'The engine cut out and the driver rang for help.',
   ),
   joined(
     'c33-f',
     33,
-    {
-      subject: det('The', 'clerk'),
-      verb: v('read', 'read', 'Vtr'),
-      object: det('the', 'minute'),
-    },
+    { subject: det('The', 'clerk'), verb: v('read', 'read', 'Vtr'), object: det('the', 'minute') },
     'but',
     { subject: det('the', 'board'), verb: v('proceeded', 'proceed', 'Vint') },
-    'The clerk read the minute out, and the board went ahead anyway.',
+    'The clerk went through the minute, and even so the board carried on.',
   ),
   joined(
     'c33-g',
@@ -78,34 +70,30 @@ export const LESSON_33 = [
     { subject: det('The', 'talks'), verb: v('resumed', 'resume', 'Vint') },
     'and',
     { subject: det('the', 'strike'), verb: v('ended', 'end', 'Vint') },
-    'Talks restarting ended the strike.',
+    'The talks started again and the strike finished.',
   ),
   joined(
     'c33-h',
     33,
-    { subject: det('That', 'lock'), verb: v('rusted', 'rust', 'Vint') },
+    { subject: det('The', 'snow'), verb: v('melted', 'melt', 'Vint') },
     'and',
-    {
-      subject: det('the', 'gate'),
-      verb: v('was', 'be', 'Vbe'),
-      complement: adj('immovable'),
-    },
-    'A rusted lock jammed the gate.',
+    { subject: det('the', 'river'), verb: v('rose', 'rise', 'Vint') },
+    'The snow thawed and the river came up.',
   ),
   joined(
     'c33-i',
     33,
-    { subject: det('The', 'quartet'), verb: v('rehearsed', 'rehearse', 'Vint') },
-    'but',
-    { subject: det('the', 'audience'), verb: v('left', 'leave', 'Vint') },
-    'The audience left despite the rehearsal.',
+    { subject: det('That', 'lock'), verb: v('rusted', 'rust', 'Vint') },
+    'and',
+    { subject: det('the', 'gate'), verb: v('jammed', 'jam', 'Vint') },
+    'That lock corroded and the gate stuck fast.',
   ),
   joined(
     'c33-j',
     33,
-    { subject: det('The', 'snow'), verb: v('melted', 'melt', 'Vint') },
-    'and',
-    { subject: det('the', 'river'), verb: v('rose', 'rise', 'Vint') },
-    'Melting snow raised the river.',
+    { subject: det('The', 'quartet'), verb: v('rehearsed', 'rehearse', 'Vint') },
+    'but',
+    { subject: det('the', 'audience'), verb: v('left', 'leave', 'Vint') },
+    'The quartet practised, and even so the listeners went.',
   ),
 ];
