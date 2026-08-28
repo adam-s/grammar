@@ -12,18 +12,18 @@ salty_ holds; _The farmer grew potatoes_ → _\*The farmer was potatoes_ does no
 
 ## Sentences
 
-| #   | Sentence                  | The step                                         |
-| --- | ------------------------- | ------------------------------------------------ |
-| 1   | The soup tasted salty.    | the complement describes the subject             |
-| 2   | The room seemed empty.    | a verb that is only ever linking                 |
-| 3   | The sky grew dark.        | _grow_ as a linking verb                         |
-| 4   | The milk turned sour.     | _turn_ as a linking verb                         |
-| 5   | She felt the rough cloth. | **_feel_ with an object** — the _be_ test fails  |
-| 6   | The water felt cold.      | **the same verb, linking again**                 |
-| 7   | The farmer grew potatoes. | _grow_ transitive, against item 3                |
-| 8   | The children grew.        | _grow_ intransitive — three frames, one verb     |
-| 9   | The crowd remained calm.  | back to plain linking after three contrasts      |
-| 10  | That bread smelled fresh. | a sense verb, which is where the confusion lives |
+| #   | Sentence                     | The step                                         |
+| --- | ---------------------------- | ------------------------------------------------ |
+| 1   | The soup tasted salty.       | the complement describes the subject             |
+| 2   | That room seemed empty.      | a verb that is only ever linking                 |
+| 3   | The sky grew dark.           | _grow_ as a linking verb                         |
+| 4   | Our milk turned sour.        | _turn_ as a linking verb                         |
+| 5   | She felt the rough cloth.    | **_feel_ with an object** — the _be_ test fails  |
+| 6   | The water felt cold.         | **the same verb, linking again**                 |
+| 7   | A farmer grew some potatoes. | _grow_ transitive, against item 3                |
+| 8   | Those children grew.         | _grow_ intransitive — three frames, one verb     |
+| 9   | The crowd remained calm.     | back to plain linking after three contrasts      |
+| 10  | That bread smelled fresh.    | a sense verb, which is where the confusion lives |
 
 ## Notes
 

@@ -166,18 +166,18 @@ Status values are deliberately explicit:
 
 ## Lesson 10 — Linking verbs
 
-| #   | Sentence                  | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
-| --- | ------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
-| 1   | The soup tasted salty.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 2   | The room seemed empty.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 3   | The sky grew dark.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | The milk turned sour.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 5   | She felt the rough cloth. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | The water felt cold.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The farmer grew potatoes. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | The children grew.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 9   | The crowd remained calm.  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 10  | That bread smelled fresh. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| #   | Sentence                     | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
+| --- | ---------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
+| 1   | The soup tasted salty.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 2   | That room seemed empty.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 3   | The sky grew dark.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | Our milk turned sour.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 5   | She felt the rough cloth.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | The water felt cold.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | A farmer grew some potatoes. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | Those children grew.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 9   | The crowd remained calm.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 10  | That bread smelled fresh.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 11 — The verb _be_
 
@@ -188,8 +188,8 @@ Status values are deliberately explicit:
 | 3   | These apples are ripe.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 4   | The winner was a stranger. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 5   | She is the treasurer.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | The soup tasted salty.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The soup was salty.        | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | The bread tasted stale.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | The bread was stale.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 8   | The evidence was thin.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 9   | That building is a museum. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 | 10  | The streets were deserted. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |

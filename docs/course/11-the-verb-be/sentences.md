@@ -16,8 +16,8 @@ form-function doctrine in a single lesson. That is kept.
 | 3   | These apples are ripe.     | back to an adjective, plural agreement                      |
 | 4   | The winner was a stranger. | a noun phrase again, so the pattern is not chance           |
 | 5   | She is the treasurer.      | a definite complement — it identifies rather than describes |
-| 6   | The soup tasted salty.     | **a linking verb that is not _be_**                         |
-| 7   | The soup was salty.        | **the same words, with _be_**                               |
+| 6   | The bread tasted stale.    | **a linking verb that is not _be_**                         |
+| 7   | The bread was stale.       | **the same words, with _be_**                               |
 | 8   | The evidence was thin.     | after the pair, a plain case again                          |
 | 9   | That building is a museum. | noun phrase, present tense                                  |
 | 10  | The streets were deserted. | an adjective that looks like a past participle              |

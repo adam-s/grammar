@@ -32,7 +32,6 @@ const UNIFORM: Record<number, string> = {
   6: 'nothing but S V is in scope until lesson 9',
   7: 'nothing but S V is in scope until lesson 9',
   8: 'nothing but S V is in scope until lesson 9',
-  10: 'the pattern is the lesson',
   11: 'the pattern is the lesson',
   12: 'the pattern is the lesson',
   13: 'the pattern is the lesson',

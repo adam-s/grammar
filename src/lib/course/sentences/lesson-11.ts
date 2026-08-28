@@ -1,22 +1,27 @@
 /**
- * Lesson 11 — The verb be. It links a subject to a complement, and still gets
- * a type of its own.
+ * Lesson 11 — The verb _be_. Separated from the other linking verbs, at last.
  *
- * Because it behaves like nothing else: no other verb takes a noun phrase
- * complement as readily, and none of them has eight forms.
+ * The built set contained no linking verb but _be_, so the lesson only asked the
+ * learner to notice which lesson they were in. Items 6 and 7 are identical apart
+ * from the verb, and `Vlink` and `Vbe` have to be told apart.
+ *
+ * What the built set did right is kept: adjective and noun-phrase complements
+ * alternate under one function, which is the whole doctrine of the app in a
+ * single lesson — `AdjP` and `NP` are different answers to *what form*, and the
+ * same answer to *what job*.
  */
 import { adj, det, pron, svc, v } from './shape.ts';
 
 export const LESSON_11 = [
-  svc('c11-a', 11, pron('He'), v('is', 'be', 'Vbe'), det('a', 'doctor'), 'He works as a doctor.'),
   svc(
-    'c11-b',
+    'c11-a',
     11,
     det('The', 'answer'),
     v('was', 'be', 'Vbe'),
     adj('obvious'),
     'The answer was easy to see.',
   ),
+  svc('c11-b', 11, pron('He'), v('is', 'be', 'Vbe'), det('a', 'doctor'), 'He works in medicine.'),
   svc(
     'c11-c',
     11,
@@ -31,7 +36,7 @@ export const LESSON_11 = [
     det('The', 'winner'),
     v('was', 'be', 'Vbe'),
     det('a', 'stranger'),
-    'A stranger won.',
+    'Nobody knew who had won.',
   ),
   svc(
     'c11-e',
@@ -39,23 +44,23 @@ export const LESSON_11 = [
     pron('She'),
     v('is', 'be', 'Vbe'),
     det('the', 'treasurer'),
-    'She holds the post of treasurer.',
+    'She holds the money post.',
   ),
   svc(
     'c11-f',
     11,
-    det('The', 'streets'),
-    v('were', 'be', 'Vbe'),
-    adj('deserted'),
-    'Nobody was in the streets.',
+    det('The', 'bread'),
+    v('tasted', 'taste', 'Vlink'),
+    adj('stale'),
+    'The bread had gone dry.',
   ),
   svc(
     'c11-g',
     11,
-    det('That', 'building'),
-    v('is', 'be', 'Vbe'),
-    det('a', 'museum'),
-    'That building serves as a museum.',
+    det('The', 'bread'),
+    v('was', 'be', 'Vbe'),
+    adj('stale'),
+    'The bread had gone dry and hard.',
   ),
   svc(
     'c11-h',
@@ -63,22 +68,22 @@ export const LESSON_11 = [
     det('The', 'evidence'),
     v('was', 'be', 'Vbe'),
     adj('thin'),
-    'There was not much evidence.',
+    'There was little to go on.',
   ),
   svc(
     'c11-i',
     11,
-    pron('They'),
-    v('are', 'be', 'Vbe'),
-    adj('ready'),
-    'They have finished preparing.',
+    det('That', 'building'),
+    v('is', 'be', 'Vbe'),
+    det('a', 'museum'),
+    'That building holds a collection.',
   ),
   svc(
     'c11-j',
     11,
-    det('The', 'result'),
-    v('was', 'be', 'Vbe'),
-    det('a', 'surprise'),
-    'The result surprised people.',
+    det('The', 'streets'),
+    v('were', 'be', 'Vbe'),
+    adj('deserted'),
+    'Nobody was out on the streets.',
   ),
 ];
