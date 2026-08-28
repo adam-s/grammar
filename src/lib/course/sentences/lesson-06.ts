@@ -10,7 +10,7 @@
  * slot EMPTY. Nothing in Stage 1 showed one, so nothing said the slot was
  * optional.
  */
-import { adv, bare, det, dp, fused, phrasal, pp, sv, svPlus, v } from './shape.ts';
+import { adv, bare, det, dp, fused, phrasal, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_06 = [
   sv('c06-a', 6, det('The', 'bell'), v('rang', 'ring', 'Vint'), 'The bell sounded.'),
@@ -33,13 +33,12 @@ export const LESSON_06 = [
     phrasal(v('boiled', 'boil', 'Vint'), 'over'),
     'Water reached the boil and spilled.',
   ),
-  svPlus(
+  sv(
     'c06-h',
     6,
     det('Several', 'boats'),
     v('returned', 'return', 'Vint'),
-    pp('to', det('the', 'harbour')),
-    'A few vessels came back to port.',
+    'A few vessels came back.',
   ),
   sv('c06-i', 6, fused('Most'), v('agreed', 'agree', 'Vint'), 'Nearly all of them said yes.'),
   sv(
