@@ -31,12 +31,12 @@ strong. The subject-complement and anchor restrictions are omissions. The
 
 ## The four constructions
 
-|     | Construction | Gap at discovery | Review decision |
-| --- | --- | --- | --- |
-| **A** | `Cl` as subject complement — _The trouble was that the gate failed_ | `subjectComplement` accepts `NP` and `AdjP`, not `Cl` | widen and test |
-| **B** | object-controlled infinitive — _We asked the driver to wait_ | no agreed representation | design first |
-| **C** | comparison attached to an `AdvP` inside the predicate — _ran more quietly than we expected_ | the inner anchor search omits `AdvP` | widen and test |
-| **D** | possessive — _Mara's phone buzzed_ | no agreed representation for the possessor and `'s` | design first |
+|       | Construction                                                                                | Gap at discovery                                      | Review decision |
+| ----- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------- |
+| **A** | `Cl` as subject complement — _The trouble was that the gate failed_                         | `subjectComplement` accepts `NP` and `AdjP`, not `Cl` | widen and test  |
+| **B** | object-controlled infinitive — _We asked the driver to wait_                                | no agreed representation                              | design first    |
+| **C** | comparison attached to an `AdvP` inside the predicate — _ran more quietly than we expected_ | the inner anchor search omits `AdvP`                  | widen and test  |
+| **D** | possessive — _Mara's phone buzzed_                                                          | no agreed representation for the possessor and `'s`   | design first    |
 
 ## A — clause as subject complement
 
