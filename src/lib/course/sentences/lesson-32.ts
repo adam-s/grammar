@@ -8,7 +8,7 @@
  * The `anchor` is what makes this its own lesson: the tail belongs to the
  * comparative word, not to the subject, and the two are not adjacent.
  */
-import { comparison, comparisonAs, det, pron, v } from './shape.ts';
+import { comparison, comparisonAdv, comparisonAs, det, pron, v } from './shape.ts';
 
 export const LESSON_32 = [
   comparison(
@@ -34,14 +34,15 @@ export const LESSON_32 = [
     },
     'The crack was broader than the surveyor had said.',
   ),
-  comparison(
+  comparisonAdv(
     'c32-c',
     32,
     det('The', 'engine'),
-    v('was', 'be', 'Vbe'),
-    'more reliable',
+    v('ran', 'run', 'Vint'),
+    'more',
+    'quietly',
     { marker: 'than', subject: pron('we'), verb: v('expected', 'expect', 'Vtr'), objectGap: true },
-    'The engine broke down less often than we had thought.',
+    'The engine made less noise than we had thought.',
   ),
   comparisonAs(
     'c32-d',
@@ -94,19 +95,20 @@ export const LESSON_32 = [
     },
     'The wait was briefer than the guard had said.',
   ),
-  comparison(
+  comparisonAdv(
     'c32-h',
     32,
     det('The', 'river'),
-    v('was', 'be', 'Vbe'),
-    'higher',
+    v('rose', 'rise', 'Vint'),
+    'much',
+    'faster',
     {
       marker: 'than',
       subject: det('the', 'crew'),
-      verb: v('allowed', 'allow', 'Vtr'),
+      verb: v('managed', 'manage', 'Vtr'),
       objectGap: true,
     },
-    'The river came up beyond what the crew had reckoned on.',
+    'The river came up more quickly than the crew could keep pace with.',
   ),
   comparison(
     'c32-i',

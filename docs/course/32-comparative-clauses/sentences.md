@@ -13,12 +13,12 @@ find the construction by looking for the suffix.
 | --- | ---------------------------------------------------- | ----------------------------------------- |
 | 1   | The bill was larger than we expected.                | the frame at its clearest                 |
 | 2   | The crack was wider than the surveyor reported.      | a fuller second clause                    |
-| 3   | The engine was more reliable than we expected.       | **_more_ instead of _-er_**, and not _be_ |
+| 3   | The engine ran more quietly than we expected.        | **_more_ instead of _-er_**, and not _be_ |
 | 4   | The queue was as long as the baker feared.           | **_as … as_**, a different marker         |
 | 5   | The flood was worse than anyone predicted.           | an irregular comparative                  |
 | 6   | The repair was less costly than the board approved.  | **_less_**, and a transitive main verb    |
 | 7   | The delay was shorter than the guard promised.       | back to the plain frame                   |
-| 8   | The river was higher than the crew allowed.          | an **adverb** compared, not an adjective  |
+| 8   | The river rose much faster than the crew managed.    | an **adverb** compared, not an adjective  |
 | 9   | The harvest was smaller than the tenant wanted.      | plain frame, longer inner clause          |
 | 10  | That noise was louder than the neighbours tolerated. | close on the frame                        |
 

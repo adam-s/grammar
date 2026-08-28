@@ -12,6 +12,7 @@
  */
 import {
   adj,
+  adj2n,
   adjn,
   adv,
   det,
@@ -59,7 +60,13 @@ export const LESSON_16 = [
     v('rattled', 'rattle', 'Vint'),
     'The window in the kitchen shook.',
   ),
-  sv('c16-e', 16, adjn('The', 'red', 'kite'), v('fell', 'fall', 'Vint'), 'The red kite dropped.'),
+  sv(
+    'c16-e',
+    16,
+    adj2n('The', 'bright', 'red', 'kite'),
+    v('fell', 'fall', 'Vint'),
+    'The red kite dropped.',
+  ),
   sva(
     'c16-f',
     16,

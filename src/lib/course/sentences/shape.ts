@@ -178,6 +178,19 @@ export const numpostmod =
       n('Nom', 'head', [w('N', 'head', noun), after('postmodifier')]),
     ]);
 
+/** *the bright red kite* — two adjectives sharing one nominal, which raises a real `Nom` question. */
+export const adj2n =
+  (d: string, first: string, second: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [
+        w('Adj', 'premodifier', first),
+        w('Adj', 'premodifier', second),
+        w('N', 'head', noun),
+      ]),
+    ]);
+
 /** *water* — a noun phrase that is just its noun. */
 export const bare =
   (noun: string): Phrase =>
@@ -795,6 +808,56 @@ export function ambiguousScope(
   ]);
 }
 
+/**
+ * *The gates were closed.* — a state and an event, in one string.
+ *
+ * `be` plus a past participle is two constructions that look alike: a subject
+ * complement describing how the gates are, and a passive saying what was done to
+ * them. The form test cannot separate them, which is exactly what lesson 37 is
+ * for — and storing only one tree would mark the other correct answer wrong.
+ */
+export function stateOrPassive(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  was: string,
+  participle: string,
+  lemma: string,
+  state: string,
+  event: string,
+): SentenceEntry {
+  const asState = n(
+    'S',
+    null,
+    [
+      subject('subject'),
+      n('VP', 'predicate', [
+        w('V', 'head', was, { lemma: 'be', verbType: 'Vbe' }),
+        n('AdjP', 'subjectComplement', [w('Adj', 'head', participle)]),
+      ]),
+      pt('.'),
+    ],
+    { clauseType: 'SVC' },
+  );
+  const asEvent = n(
+    'S',
+    null,
+    [
+      subject('subject'),
+      n('VP', 'predicate', [
+        w('Aux', 'auxiliary', was, { lemma: 'be', auxKind: 'passive' }),
+        w('V', 'head', participle, { lemma, verbType: 'Vtr', voice: 'passive' }),
+      ]),
+      pt('.'),
+    ],
+    { clauseType: 'SV' },
+  );
+  return constructed(id, lesson, [
+    build(asState, { id: 'r1', status: 'canonical', gloss: state }),
+    build(asEvent, { id: 'r2', status: 'alternate', gloss: event }),
+  ]);
+}
+
 export function ambiguous(
   id: string,
   lesson: number,
@@ -1353,6 +1416,22 @@ export function joinedThree(
   );
 }
 
+/**
+ * *The trouble was that the gate was locked.* — a clause as subject complement.
+ *
+ * The nominal clause's third slot. `subjectComplement` refused a clause until
+ * one entry was added to a form list, so this had no representation and lesson
+ * 30 could only show the clause as a subject or an object.
+ */
+export const isClause = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  inner: Inner,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [cl(inner)('subjectComplement')], 'SVC'), gloss);
+
 /** *the driver that complained* — a clause modifying a noun. */
 export const modifiedBy =
   (d: string, noun: string, inner: Inner): Phrase =>
@@ -1369,16 +1448,52 @@ export const modifiedBy =
  * the verb phrase, because what it completes is the adjective phrase, not the
  * verb — and it is tied to that phrase by an index rather than by position.
  */
-/*
- * A comparison anchored to an ADVERB phrase — *ran more quietly than we
- * expected* — is not buildable. The `anchor` decision only ever points at an
- * `AdjP`, so the palette refuses `anchor:AdvP` and the replay stops there.
+/**
+ * *The engine ran more quietly than we expected.* — an ADVERB compared, after a
+ * verb that is not `be`.
  *
- * That is a model limit and not an authoring one: every comparison in the course
- * therefore compares an adjective, and lesson 32 varies the comparative word
- * instead — *more reliable*, *less costly*, *as long as* — rather than the thing
- * compared.
+ * Every comparison in the built lesson 32 was `be` plus an inflected *-er*
+ * adjective, so a learner could find the construction by looking for the suffix.
+ * The anchor is the adverb phrase here, which is what makes the tail's
+ * attachment a real question: it belongs to *more quietly*, not to *the engine*,
+ * and the two are not adjacent.
+ *
+ * This was unbuildable until `anchorsFor` was fixed — the loop inside the
+ * predicate took `NP` and `AdjP` where the clause-level loop already took
+ * `AdvP` too.
  */
+export function comparisonAdv(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  verb: Verb,
+  degree: string,
+  adverb: string,
+  inner: Inner,
+  gloss: string,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        subject('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+          n('AdvP', 'adverbial', [w('Adv', 'premodifier', degree), w('Adv', 'head', adverb)], {
+            index: 1,
+          }),
+        ]),
+        cl({ ...inner, kind: 'comparative', index: 1 })('postnucleus'),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
+  );
+}
 
 /** *The queue was as long as the baker feared.* The same shape, a different marker. */
 export function comparisonAs(

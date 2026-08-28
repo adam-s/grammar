@@ -23,7 +23,7 @@ checking whether the last thing is an adjective.
 | 7   | The archive is below the stairs.            | required adverbial — all seven frames now seen |
 | 8   | They called her a taxi.                     | **counting stops working**                     |
 | 9   | They called her a genius.                   | **the same words, a different type**           |
-| 10  | She kept the milk in the fridge.            | an object and a required place together        |
+| 10  | She put the letter on the desk.             | an object and a required place together        |
 
 ## Notes
 

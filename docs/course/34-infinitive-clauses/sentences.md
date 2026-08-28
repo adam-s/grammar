@@ -13,18 +13,18 @@ like part of the verb phrase.
 
 ## Sentences
 
-| #   | Sentence                                 | The step                                      |
-| --- | ---------------------------------------- | --------------------------------------------- |
-| 1   | The tenant wanted to renew the lease.    | the frame at its clearest                     |
-| 2   | She hoped to finish the survey.          | a shorter subject, same frame                 |
-| 3   | The crew tried to restart the engine.    | a verb that almost always takes one           |
-| 4   | Our neighbours agreed to share the cost. | **the clause has its own subject**            |
-| 5   | That guide promised to return.           | the same, and the inner verb is intransitive  |
-| 6   | The clerk refused to sign the deed.      | back to the shared-subject case               |
-| 7   | They planned to dredge the harbour.      | a plain frame after two hard ones             |
-| 8   | The box was too heavy to lift.           | **inside an adjective phrase**, not an object |
-| 9   | He offered to clear the path.            | a verb of offering rather than wanting        |
-| 10  | The jury declined to accept the claim.   | close on the shared-subject case              |
+| #   | Sentence                                   | The step                                      |
+| --- | ------------------------------------------ | --------------------------------------------- |
+| 1   | The tenant wanted to renew the lease.      | the frame at its clearest                     |
+| 2   | She hoped to finish the survey.            | a shorter subject, same frame                 |
+| 3   | Our crew tried to restart the engine.      | a verb that almost always takes one           |
+| 4   | We asked the driver to wait.               | **the clause has its own subject**            |
+| 5   | The guide expected the visitors to arrive. | the same, and the inner verb is intransitive  |
+| 6   | The clerk refused to sign the deed.        | back to the shared-subject case               |
+| 7   | They planned to dredge that harbour.       | a plain frame after two hard ones             |
+| 8   | The box was too heavy to lift.             | **inside an adjective phrase**, not an object |
+| 9   | He offered to clear the path.              | a verb of offering rather than wanting        |
+| 10  | That jury declined to accept the claim.    | close on the shared-subject case              |
 
 ## Notes
 

@@ -10,7 +10,7 @@
  * and that is only visible once the clause has a subject. Item 8 puts the
  * infinitive inside an adjective phrase, which difficulty.md assigns here.
  */
-import { adjWithCl, det, pron, svClause, v } from './shape.ts';
+import { adjWithCl, det, pron, svClause, svoClause, v } from './shape.ts';
 
 export const LESSON_34 = [
   svClause(
@@ -46,7 +46,7 @@ export const LESSON_34 = [
   svClause(
     'c34-c',
     34,
-    det('The', 'crew'),
+    det('Our', 'crew'),
     v('tried', 'try', 'Vtr'),
     {
       marker: 'to',
@@ -58,34 +58,35 @@ export const LESSON_34 = [
     },
     'The crew made an attempt at getting the engine going.',
   ),
-  svClause(
+  svoClause(
     'c34-d',
     34,
-    det('Our', 'neighbours'),
-    v('agreed', 'agree', 'Vtr'),
+    pron('We'),
+    v('asked', 'ask', 'Vc'),
+    det('the', 'driver'),
     {
       marker: 'to',
       infinitival: true,
-      verb: v('share', 'share', 'Vtr'),
-      object: det('the', 'cost'),
+      verb: v('wait', 'wait', 'Vint'),
       kind: 'nominal',
       finiteness: 'infinitival',
     },
-    'Our neighbours said they would take a part of the cost.',
+    'We put it to the driver that he should stay put.',
   ),
-  svClause(
+  svoClause(
     'c34-e',
     34,
-    det('That', 'guide'),
-    v('promised', 'promise', 'Vtr'),
+    det('The', 'guide'),
+    v('expected', 'expect', 'Vc'),
+    det('the', 'visitors'),
     {
       marker: 'to',
       infinitival: true,
-      verb: v('return', 'return', 'Vint'),
+      verb: v('arrive', 'arrive', 'Vint'),
       kind: 'nominal',
       finiteness: 'infinitival',
     },
-    'That guide gave a word that she would come back.',
+    'The guide reckoned the visitors would turn up.',
   ),
   svClause(
     'c34-f',
@@ -111,7 +112,7 @@ export const LESSON_34 = [
       marker: 'to',
       infinitival: true,
       verb: v('dredge', 'dredge', 'Vtr'),
-      object: det('the', 'harbour'),
+      object: det('that', 'harbour'),
       kind: 'nominal',
       finiteness: 'infinitival',
     },
@@ -152,7 +153,7 @@ export const LESSON_34 = [
   svClause(
     'c34-j',
     34,
-    det('The', 'jury'),
+    det('That', 'jury'),
     v('declined', 'decline', 'Vtr'),
     {
       marker: 'to',

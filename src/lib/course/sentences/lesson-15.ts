@@ -87,13 +87,17 @@ export const LESSON_15 = [
     det('a', 'genius'),
     'They said she was brilliant.',
   ),
+  // `keep` was wrong here for the same reason `file` was wrong at lesson 20:
+  // *She kept the milk* is a complete ordinary sentence, so the place phrase was
+  // not required and the removal test would have rejected a correct learner.
+  // `put` demands a location in the plain sense of the word.
   svoa(
     'c15-j',
     15,
     pron('She'),
-    v('kept', 'keep', 'Vtr'),
-    det('the', 'milk'),
-    pp('in', det('the', 'fridge')),
-    'She stored the milk in the cold.',
+    v('put', 'put', 'Vtr'),
+    det('the', 'letter'),
+    pp('on', det('the', 'desk')),
+    'She set the letter down on the desk.',
   ),
 ];

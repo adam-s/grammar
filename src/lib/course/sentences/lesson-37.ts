@@ -21,7 +21,7 @@ import {
   passiveKeepingObject,
   pp,
   svPlus,
-  svc,
+  stateOrPassive,
   svo,
   v,
 } from './shape.ts';
@@ -74,13 +74,15 @@ export const LESSON_37 = [
     pp('by', det('the', 'inspector')),
     'The inspector went through the ledger.',
   ),
-  svc(
+  stateOrPassive(
     'c37-g',
     37,
     det('The', 'gates'),
-    v('were', 'be', 'Vbe'),
-    adj('closed'),
+    'were',
+    'closed',
+    'close',
     'The gates stood shut.',
+    'Somebody shut the gates.',
   ),
   svPlus(
     'c37-h',

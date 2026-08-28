@@ -35,7 +35,6 @@ const UNIFORM: Record<number, string> = {
   11: 'the pattern is the lesson',
   27: 'the attachment ambiguity needs an object for the phrase to attach to',
   28: 'the lesson is a clause in the object slot',
-  32: 'the anchor only ever points at an adjective phrase, and only a linking verb licenses one, so SVC is forced',
   33: 'the root of a coordination has no verb; its pattern is a formality',
 };
 

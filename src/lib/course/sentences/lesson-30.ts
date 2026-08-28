@@ -11,7 +11,17 @@
  * 31, and the course never put two of those side by side. Item 5 puts a nominal
  * clause in a subject-complement slot, which appears nowhere in the course.
  */
-import { adj, clauseSubject, clauseSubjectIs, det, pron, svClause, svo, v } from './shape.ts';
+import {
+  adj,
+  clauseSubject,
+  clauseSubjectIs,
+  det,
+  isClause,
+  pron,
+  svClause,
+  svo,
+  v,
+} from './shape.ts';
 
 export const LESSON_30 = [
   svClause(
@@ -67,13 +77,18 @@ export const LESSON_30 = [
     adj('obvious'),
     'The ferry going down was plain to see.',
   ),
-  svClause(
+  isClause(
     'c30-e',
     30,
-    pron('We'),
-    v('believed', 'believe', 'Vtr'),
-    { subject: det('the', 'bridge'), verb: v('held', 'hold', 'Vint'), kind: 'nominal' },
-    'We took the bridge to be standing.',
+    det('The', 'trouble'),
+    v('was', 'be', 'Vbe'),
+    {
+      marker: 'that',
+      subject: det('the', 'gate'),
+      verb: v('failed', 'fail', 'Vint'),
+      kind: 'nominal',
+    },
+    'A failed gate was the difficulty.',
   ),
   clauseSubject(
     'c30-f',
