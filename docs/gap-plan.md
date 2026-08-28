@@ -14,27 +14,17 @@ Every item finishes the same way, because that is what tonight showed is
 necessary: a fixture that audits, then `--action=build-sweep` proving a learner
 can actually build it. Representable and reachable are different properties.
 
-## 1 · Split `fixtures.ts` — hour
+## 1 · Split `fixtures.ts` — DONE
 
-It is 1,337 lines and 29 exports in one file, and it grew that way tonight:
-twelve fixtures became twenty-seven. It is now the file everything else imports
-and the hardest one to find anything in.
+One file per family under `fixtures/`, with `fixtures.ts` kept as a one-line
+re-export so nothing outside the directory changed. `sentence()` and the metric
+helpers moved to `fixtures/sentence.ts` and stopped being invisible helpers at
+the top of a long file.
 
-**Shape:** a `fixtures/` directory beside it, one file per family, and an
-`index.ts` that re-exports `FIXTURES` and `BY_ID` so nothing else changes.
-Families roughly as the comments already group them — the six verb types,
-ambiguity, clauses and coordination, auxiliaries and voice, particles and
-non-finite clauses, noun-phrase structure, gaps and movement, punctuation.
-
-**Why it is worth an hour:** `sentence()`, `clausesOf()` and `depthOf()` are
-shared, so they move to the directory too and stop being invisible helpers at
-the top of a long file. The audit suite runs over `FIXTURES` and the
-reachability suite over every reading, so a mistake in the split fails loudly
-rather than quietly.
-
-**Watch for:** the import in `sentence-renderer.ts`, `+page.svelte`, and the
-lesson content all name `FIXTURES` or `BY_ID`; keep both names and the split is
-invisible to them.
+`fixtures/index.ts` carries the note on adding one: the family file, the
+`FIXTURES` list, `npm test`, then a build sweep. The reachability suite rebuilds
+every fixture through the palette, so one that is well-formed on paper and
+unbuildable fails loudly rather than sitting there.
 
 ## 2 · Discontinuity — DONE, by not doing it
 
@@ -108,7 +98,5 @@ part of the model.
 
 ## The order I would take them
 
-1 first, because it is an hour and every later item adds fixtures to the file it
-fixes — it is now 34 fixtures in one file. Then 3, which is the only substantial
-gap left and wants a story before it wants code. 4 probably never; 6 whenever
-there is an hour and someone wants to probe first.
+3 is the only substantial gap left, and it wants a story before it wants code.
+4 probably never; 6 whenever there is an hour and someone wants to probe first.
