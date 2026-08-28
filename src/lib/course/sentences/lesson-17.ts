@@ -4,8 +4,12 @@
  * *unusually calm* is still one complement doing one job; the adverb is inside
  * it, modifying the adjective, not the verb. Take the adverb away and the
  * sentence stands, which is how you know where it belongs.
+ *
+ * Some of these describe the subject and some describe the OBJECT, because an
+ * adjective phrase is not a fact about subject complements — and telling the
+ * two apart is lesson 13, put back to work.
  */
-import { advadj, det, pron, svc, v } from './shape.ts';
+import { advadj, det, pron, svc, svoc, v } from './shape.ts';
 
 export const LESSON_17 = [
   svc(
@@ -16,13 +20,14 @@ export const LESSON_17 = [
     advadj('unusually', 'calm'),
     'The candidate appeared calmer than expected.',
   ),
-  svc(
+  svoc(
     'c17-b',
     17,
-    det('The', 'water'),
-    v('felt', 'feel', 'Vlink'),
-    advadj('bitterly', 'cold'),
-    'The water was very cold.',
+    det('The', 'jury'),
+    v('found', 'find', 'Vc'),
+    det('the', 'driver'),
+    advadj('entirely', 'blameless'),
+    'The jury decided the driver was not at fault at all.',
   ),
   svc(
     'c17-c',
@@ -40,13 +45,14 @@ export const LESSON_17 = [
     advadj('steadily', 'steeper'),
     'The road became steeper as it went.',
   ),
-  svc(
+  svoc(
     'c17-e',
     17,
-    pron('He'),
-    v('looked', 'look', 'Vlink'),
-    advadj('thoroughly', 'lost'),
-    'He appeared completely lost.',
+    det('The', 'inspector'),
+    v('judged', 'judge', 'Vc'),
+    det('the', 'wiring'),
+    advadj('barely', 'adequate'),
+    'The inspector thought the wiring only just passed.',
   ),
   svc(
     'c17-f',
@@ -64,13 +70,14 @@ export const LESSON_17 = [
     advadj('faintly', 'absurd'),
     'The proposal seemed slightly ridiculous.',
   ),
-  svc(
+  svoc(
     'c17-h',
     17,
-    det('The', 'streets'),
-    v('were', 'be', 'Vbe'),
-    advadj('completely', 'empty'),
-    'Nobody at all was in the streets.',
+    det('The', 'court'),
+    v('declared', 'declare', 'Vc'),
+    det('the', 'contract'),
+    advadj('wholly', 'void'),
+    'The court ruled the contract void throughout.',
   ),
   svc(
     'c17-i',
@@ -83,9 +90,9 @@ export const LESSON_17 = [
   svc(
     'c17-j',
     17,
-    det('The', 'evidence'),
-    v('was', 'be', 'Vbe'),
-    advadj('hardly', 'conclusive'),
-    'The evidence proved very little.',
+    pron('He'),
+    v('looked', 'look', 'Vlink'),
+    advadj('thoroughly', 'lost'),
+    'He appeared completely lost.',
   ),
 ];

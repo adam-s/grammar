@@ -233,6 +233,34 @@ export const svo = (
   gloss: string,
 ) => one(id, lesson, clause(s, verb, [object('directObject')], 'SVO'), gloss);
 
+/** *The auditor checked the ledger twice.* An object, plus an adverbial nothing requires. */
+export const svoPlus = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  object: Phrase,
+  where: Phrase,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [object('directObject'), where('adverbial')], 'SVO'), gloss);
+
+/** *The room grew quiet again.* A complement, plus an adverbial nothing requires. */
+export const svcPlus = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  complement: Phrase,
+  where: Phrase,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(s, verb, [complement('subjectComplement'), where('adverbial')], 'SVC'),
+    gloss,
+  );
+
 /** *The soup tasted salty.* */
 export const svc = (
   id: string,
@@ -467,6 +495,35 @@ export const svWhy = (
   gloss: string,
 ) => one(id, lesson, clause(s, verb, [cl(inner)('adverbial')], 'SV'), gloss);
 
+/** *The lights failed when the storm arrived.* An object, and a clause saying why. */
+export const svoWhy = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  object: Phrase,
+  inner: Inner,
+  gloss: string,
+) =>
+  one(id, lesson, clause(s, verb, [object('directObject'), cl(inner)('adverbial')], 'SVO'), gloss);
+
+/** *The room stayed cold until the fire caught.* A complement, and a clause saying when. */
+export const svcWhy = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  complement: Phrase,
+  inner: Inner,
+  gloss: string,
+) =>
+  one(
+    id,
+    lesson,
+    clause(s, verb, [complement('subjectComplement'), cl(inner)('adverbial')], 'SVC'),
+    gloss,
+  );
+
 /** *That the belt broke surprised the driver.* A clause where the subject would be. */
 export const clauseSubject = (
   id: string,
@@ -572,7 +629,13 @@ export function remark(
   subject: Phrase,
   verb: Verb,
   gloss: string,
+  /** Whatever the verb needs after it, if anything. */
+  rest?: { object?: Phrase; complement?: Phrase },
 ) {
+  const after: SpecNode[] = [];
+  if (rest?.object) after.push(rest.object('directObject'));
+  if (rest?.complement) after.push(rest.complement('subjectComplement'));
+  const pattern: ClauseType = rest?.object ? 'SVO' : rest?.complement ? 'SVC' : 'SV';
   return one(
     id,
     lesson,
@@ -585,10 +648,11 @@ export function remark(
         subject('subject'),
         n('VP', 'predicate', [
           w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+          ...after,
         ]),
         pt('.'),
       ],
-      { clauseType: 'SV' },
+      { clauseType: pattern },
     ),
     gloss,
   );

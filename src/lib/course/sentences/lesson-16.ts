@@ -2,11 +2,15 @@
  * Lesson 16 — Adjectives before nouns.
  *
  * The adjective describes the noun, not the phrase, so the two share a layer
- * inside the noun phrase and the determiner stays outside it. Ten different
- * determiners and ten different adjectives, so neither reads as part of the
- * rule.
+ * inside the noun phrase and the determiner stays outside it.
+ *
+ * The clause patterns vary on purpose. An adjective before a noun is not a
+ * fact about subjects — it happens in objects, in complements, and inside a
+ * required place phrase — and ten identical frames would teach the position
+ * rather than the rule. It also puts lessons 9 to 14 back to work, which is
+ * what the progression contract means by cumulative.
  */
-import { adjn, sv, v } from './shape.ts';
+import { adj, adjn, det, pp, sv, svPlus, sva, svc, svo, svoc, svoo, v } from './shape.ts';
 
 export const LESSON_16 = [
   sv(
@@ -16,19 +20,21 @@ export const LESSON_16 = [
     v('jammed', 'jam', 'Vint'),
     'The narrow gate stuck.',
   ),
-  sv(
+  svo(
     'c16-b',
     16,
-    adjn('That', 'broken', 'window'),
-    v('whistled', 'whistle', 'Vint'),
-    'Wind came through the broken window.',
+    det('The', 'clerk'),
+    v('filed', 'file', 'Vtr'),
+    adjn('the', 'urgent', 'report'),
+    'The clerk filed a report marked urgent.',
   ),
-  sv(
+  svc(
     'c16-c',
     16,
-    adjn('The', 'green', 'shutters'),
-    v('faded', 'fade', 'Vint'),
-    'The green shutters lost their colour.',
+    adjn('The', 'new', 'tenant'),
+    v('seemed', 'seem', 'Vlink'),
+    adj('nervous'),
+    'The tenant who had just arrived seemed nervous.',
   ),
   sv(
     'c16-d',
@@ -37,46 +43,53 @@ export const LESSON_16 = [
     v('splintered', 'splinter', 'Vint'),
     'His wooden chair broke apart.',
   ),
-  sv(
+  svoo(
     'c16-e',
     16,
-    adjn('The', 'frozen', 'pipe'),
-    v('burst', 'burst', 'Vint'),
-    'The frozen pipe split open.',
+    det('The', 'porter'),
+    v('handed', 'hand', 'Vg'),
+    adjn('the', 'tired', 'guest'),
+    det('a', 'key'),
+    'The porter gave the tired guest a key.',
   ),
-  sv(
+  sva(
     'c16-f',
     16,
-    adjn('Some', 'ripe', 'plums'),
-    v('dropped', 'drop', 'Vint'),
-    'A few ripe plums fell.',
+    adjn('The', 'heavy', 'crate'),
+    v('is', 'be', 'Vbe'),
+    pp('on', det('the', 'ramp')),
+    'The heavy crate sits on the ramp.',
   ),
-  sv(
+  svoc(
     'c16-g',
     16,
-    adjn('The', 'weary', 'marchers'),
-    v('halted', 'halt', 'Vint'),
-    'The tired marchers stopped.',
+    det('The', 'jury'),
+    v('found', 'find', 'Vc'),
+    adjn('the', 'young', 'driver'),
+    adj('careless'),
+    'The jury decided the young driver had been careless.',
   ),
   sv(
     'c16-h',
-    16,
-    adjn('Her', 'silver', 'bracelet'),
-    v('glinted', 'glint', 'Vint'),
-    'Her silver bracelet caught the light.',
-  ),
-  sv(
-    'c16-i',
     16,
     adjn('Those', 'rusted', 'hinges'),
     v('squealed', 'squeal', 'Vint'),
     'The rusted hinges made a noise.',
   ),
-  sv(
+  svPlus(
+    'c16-i',
+    16,
+    adjn('The', 'weary', 'marchers'),
+    v('halted', 'halt', 'Vint'),
+    pp('at', det('the', 'bridge')),
+    'The tired marchers stopped at the bridge.',
+  ),
+  svo(
     'c16-j',
     16,
-    adjn('Every', 'wet', 'branch'),
-    v('sagged', 'sag', 'Vint'),
-    'All the wet branches drooped.',
+    det('The', 'storm'),
+    v('damaged', 'damage', 'Vtr'),
+    adjn('the', 'green', 'shutters'),
+    'The storm harmed the green shutters.',
   ),
 ];

@@ -1,10 +1,12 @@
 /**
  * Lesson 18 — Adverbs and adverb phrases. An adverbial the verb does not need.
  *
- * Take *late* away and *The train arrived* is still a sentence, which is what
- * separates this from lesson 14. Nothing here is required by any verb.
+ * Take it away and the sentence stands, which is what separates this from
+ * lesson 14. The clause patterns vary because an optional adverbial can hang
+ * off any of them, and ten sentences that were all S V would have taught that
+ * adverbials belong to intransitive verbs.
  */
-import { adv, det, pron, svPlus, v } from './shape.ts';
+import { adj, adv, det, pron, svPlus, svcPlus, svoPlus, v } from './shape.ts';
 
 export const LESSON_18 = [
   svPlus(
@@ -15,13 +17,14 @@ export const LESSON_18 = [
     adv('late'),
     'The train came in behind time.',
   ),
-  svPlus(
+  svoPlus(
     'c18-b',
     18,
-    det('The', 'crowd'),
-    v('dispersed', 'disperse', 'Vint'),
-    adv('quickly'),
-    'The crowd broke up fast.',
+    det('The', 'auditor'),
+    v('checked', 'check', 'Vtr'),
+    det('the', 'ledger'),
+    adv('twice'),
+    'The auditor went through the ledger two times.',
   ),
   svPlus(
     'c18-c',
@@ -31,13 +34,14 @@ export const LESSON_18 = [
     adv('immediately'),
     'She replied at once.',
   ),
-  svPlus(
+  svcPlus(
     'c18-d',
     18,
-    det('The', 'lamp'),
-    v('flickered', 'flicker', 'Vint'),
-    adv('briefly'),
-    'The lamp wavered for a moment.',
+    det('The', 'room'),
+    v('grew', 'grow', 'Vlink'),
+    adj('quiet'),
+    adv('again'),
+    'The room went quiet once more.',
   ),
   svPlus(
     'c18-e',
@@ -47,13 +51,14 @@ export const LESSON_18 = [
     adv('yesterday'),
     'The talks started again yesterday.',
   ),
-  svPlus(
+  svoPlus(
     'c18-f',
     18,
-    det('The', 'dog'),
-    v('barked', 'bark', 'Vint'),
-    adv('furiously'),
-    'The dog barked with great anger.',
+    det('The', 'crew'),
+    v('cleared', 'clear', 'Vtr'),
+    det('the', 'track'),
+    adv('quickly'),
+    'The crew made the track passable fast.',
   ),
   svPlus(
     'c18-g',
@@ -63,13 +68,14 @@ export const LESSON_18 = [
     adv('patiently'),
     'The audience waited without complaint.',
   ),
-  svPlus(
+  svcPlus(
     'c18-h',
     18,
-    pron('They'),
-    v('agreed', 'agree', 'Vint'),
-    adv('reluctantly'),
-    'They agreed but did not want to.',
+    det('The', 'evidence'),
+    v('seemed', 'seem', 'Vlink'),
+    adj('thin'),
+    adv('afterwards'),
+    'Later on the evidence looked thin.',
   ),
   svPlus(
     'c18-i',
@@ -79,12 +85,13 @@ export const LESSON_18 = [
     adv('overnight'),
     'The ice turned to water during the night.',
   ),
-  svPlus(
+  svoPlus(
     'c18-j',
     18,
-    det('The', 'engine'),
-    v('restarted', 'restart', 'Vint'),
-    adv('twice'),
-    'The engine started again on two occasions.',
+    det('The', 'landlord'),
+    v('raised', 'raise', 'Vtr'),
+    det('the', 'rent'),
+    adv('again'),
+    'The landlord put the rent up once more.',
   ),
 ];

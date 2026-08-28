@@ -1,12 +1,15 @@
 /**
  * Lesson 40 — Final synthesis.
  *
- * No new idea. Each of these needs most of the course at once — a relative
- * clause postmodifying the subject and a nominal clause in the object slot —
- * so the only way through is the same first question, asked as many times as
- * there are verbs.
+ * No new idea. Each of these needs most of the course at once, so the only way
+ * through is the same first question — find the verb, ask what it needs —
+ * asked as many times as there are verbs.
+ *
+ * The main clause is a different pattern almost every time. A synthesis whose
+ * ten sentences all had the same frame would be testing one procedure ten
+ * times rather than the six the course spent stage 2 building.
  */
-import { adv, det, modifiedBy, svClause, v } from './shape.ts';
+import { adj, adv, det, modifiedBy, pp, svClause, svc, svo, svoa, svoc, svoo, v } from './shape.ts';
 
 const who = (noun: string, verb: ReturnType<typeof v>, late?: string) =>
   modifiedBy('The', noun, {
@@ -33,13 +36,14 @@ export const LESSON_40 = [
     that(det('the', 'wiring'), v('smoked', 'smoke', 'Vint')),
     'The late-arriving inspector said the wiring smoked.',
   ),
-  svClause(
+  svoc(
     'c40-b',
     40,
     who('surveyor', v('objected', 'object', 'Vint')),
-    v('insisted', 'insist', 'Vtr'),
-    that(det('the', 'boundary'), v('shifted', 'shift', 'Vint')),
-    'The objecting surveyor insisted the boundary had moved.',
+    v('called', 'call', 'Vc'),
+    det('the', 'boundary'),
+    adj('wrong'),
+    'The objecting surveyor said the boundary was wrong.',
   ),
   svClause(
     'c40-c',
@@ -49,13 +53,14 @@ export const LESSON_40 = [
     that(det('the', 'deeds'), v('vanished', 'vanish', 'Vint')),
     'The clerk who left said the deeds had gone.',
   ),
-  svClause(
+  svoo(
     'c40-d',
     40,
     who('tenant', v('complained', 'complain', 'Vint'), 'twice'),
-    v('argued', 'argue', 'Vtr'),
-    that(det('the', 'roof'), v('leaked', 'leak', 'Vint')),
-    'The twice-complaining tenant argued the roof leaked.',
+    v('sent', 'send', 'Vg'),
+    det('the', 'landlord'),
+    det('a', 'notice'),
+    'The twice-complaining tenant sent the landlord a notice.',
   ),
   svClause(
     'c40-e',
@@ -65,21 +70,22 @@ export const LESSON_40 = [
     that(det('the', 'driver'), v('braked', 'brake', 'Vint')),
     'The hesitant witness admitted the driver braked.',
   ),
-  svClause(
+  svc(
     'c40-f',
     40,
     who('auditor', v('returned', 'return', 'Vint')),
-    v('confirmed', 'confirm', 'Vtr'),
-    that(det('the', 'ledger'), v('balanced', 'balance', 'Vint')),
-    'The auditor who came back confirmed it balanced.',
+    v('was', 'be', 'Vbe'),
+    adj('satisfied'),
+    'The auditor who came back was content.',
   ),
-  svClause(
+  svoa(
     'c40-g',
     40,
     who('guard', v('waited', 'wait', 'Vint'), 'outside'),
-    v('denied', 'deny', 'Vtr'),
-    that(det('the', 'gate'), v('opened', 'open', 'Vint')),
-    'The waiting guard denied the gate had opened.',
+    v('put', 'put', 'Vtr'),
+    det('the', 'ledger'),
+    pp('in', det('the', 'safe')),
+    'The waiting guard placed the ledger in the safe.',
   ),
   svClause(
     'c40-h',
@@ -89,13 +95,13 @@ export const LESSON_40 = [
     that(det('the', 'valve'), v('failed', 'fail', 'Vint')),
     'The engineer who gave evidence showed the valve failed.',
   ),
-  svClause(
+  svo(
     'c40-i',
     40,
     who('baker', v('protested', 'protest', 'Vint'), 'loudly'),
-    v('proved', 'prove', 'Vtr'),
-    that(det('the', 'queue'), v('lengthened', 'lengthen', 'Vint')),
-    'The loudly protesting baker proved the queue grew.',
+    v('closed', 'close', 'Vtr'),
+    det('the', 'shop'),
+    'The loudly protesting baker shut the shop.',
   ),
   svClause(
     'c40-j',

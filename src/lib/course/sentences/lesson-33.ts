@@ -4,8 +4,12 @@
  * The same joining lesson 26 did inside a noun phrase, done to whole clauses.
  * The outer sentence joins rather than predicates: it has no verb of its own,
  * and each clause inside answers for itself.
+ *
+ * Which is exactly why the joined clauses do not all have the same shape here.
+ * If each of them answers for itself then one can be S V and the next S V O,
+ * and ten pairs of matching intransitives would have hidden that.
  */
-import { det, joined, v } from './shape.ts';
+import { adj, det, joined, v } from './shape.ts';
 
 export const LESSON_33 = [
   joined(
@@ -21,7 +25,11 @@ export const LESSON_33 = [
     33,
     { subject: det('The', 'engine'), verb: v('stalled', 'stall', 'Vint') },
     'and',
-    { subject: det('the', 'car'), verb: v('stopped', 'stop', 'Vint') },
+    {
+      subject: det('the', 'driver'),
+      verb: v('called', 'call', 'Vtr'),
+      object: det('a', 'mechanic'),
+    },
     'One followed the other.',
   ),
   joined(
@@ -37,7 +45,11 @@ export const LESSON_33 = [
     33,
     { subject: det('The', 'rain'), verb: v('eased', 'ease', 'Vint') },
     'and',
-    { subject: det('the', 'crowd'), verb: v('returned', 'return', 'Vint') },
+    {
+      subject: det('the', 'streets'),
+      verb: v('were', 'be', 'Vbe'),
+      complement: adj('passable'),
+    },
     'The crowd came back once the rain let up.',
   ),
   joined(
@@ -51,7 +63,11 @@ export const LESSON_33 = [
   joined(
     'c33-f',
     33,
-    { subject: det('The', 'clerk'), verb: v('objected', 'object', 'Vint') },
+    {
+      subject: det('The', 'clerk'),
+      verb: v('read', 'read', 'Vtr'),
+      object: det('the', 'minute'),
+    },
     'but',
     { subject: det('the', 'board'), verb: v('proceeded', 'proceed', 'Vint') },
     'The board went ahead anyway.',
@@ -69,7 +85,11 @@ export const LESSON_33 = [
     33,
     { subject: det('The', 'lock'), verb: v('rusted', 'rust', 'Vint') },
     'and',
-    { subject: det('the', 'gate'), verb: v('jammed', 'jam', 'Vint') },
+    {
+      subject: det('the', 'gate'),
+      verb: v('was', 'be', 'Vbe'),
+      complement: adj('immovable'),
+    },
     'A rusted lock jammed the gate.',
   ),
   joined(

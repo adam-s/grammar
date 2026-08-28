@@ -3,8 +3,19 @@
  *
  * The subordinator announces the job before the clause arrives: it marks the
  * clause and is not one of the parts the clause is built from.
+ *
+ * The MAIN clause varies. An adverbial clause can hang off any of the verb
+ * types, and ten sentences whose main clause was always S V would have taught
+ * that it cannot — while quietly retiring lessons 9 to 13.
  */
-import { det, pron, svWhy, v } from './shape.ts';
+import { adj, det, pron, svWhy, svcWhy, svoWhy, v } from './shape.ts';
+
+const when = (marker: string, subject: ReturnType<typeof det>, verb: ReturnType<typeof v>) => ({
+  marker,
+  subject,
+  verb,
+  kind: 'adverbial' as const,
+});
 
 export const LESSON_29 = [
   svWhy(
@@ -12,116 +23,75 @@ export const LESSON_29 = [
     29,
     det('The', 'ferry'),
     v('waited', 'wait', 'Vint'),
-    {
-      marker: 'because',
-      subject: det('the', 'tide'),
-      verb: v('turned', 'turn', 'Vint'),
-      kind: 'adverbial',
-    },
+    when('because', det('the', 'tide'), v('turned', 'turn', 'Vint')),
     'A turning tide is why the ferry waited.',
   ),
-  svWhy(
+  svoWhy(
     'c29-b',
     29,
-    det('The', 'lights'),
-    v('failed', 'fail', 'Vint'),
-    {
-      marker: 'when',
-      subject: det('the', 'storm'),
-      verb: v('arrived', 'arrive', 'Vint'),
-      kind: 'adverbial',
-    },
-    'The lights went out at the storm.',
+    det('The', 'crew'),
+    v('cleared', 'clear', 'Vtr'),
+    det('the', 'track'),
+    when('after', det('the', 'storm'), v('passed', 'pass', 'Vint')),
+    'Once the storm was over the crew cleared the track.',
   ),
   svWhy(
     'c29-c',
     29,
     det('The', 'crowd'),
     v('dispersed', 'disperse', 'Vint'),
-    {
-      marker: 'after',
-      subject: det('the', 'speaker'),
-      verb: v('left', 'leave', 'Vint'),
-      kind: 'adverbial',
-    },
+    when('after', det('the', 'speaker'), v('left', 'leave', 'Vint')),
     'The crowd broke up once the speaker had gone.',
   ),
-  svWhy(
+  svcWhy(
     'c29-d',
     29,
-    pron('She'),
-    v('waited', 'wait', 'Vint'),
-    {
-      marker: 'until',
-      subject: det('the', 'rain'),
-      verb: v('stopped', 'stop', 'Vint'),
-      kind: 'adverbial',
-    },
-    'She stayed put until the rain ended.',
+    det('The', 'room'),
+    v('stayed', 'stay', 'Vlink'),
+    adj('cold'),
+    when('until', det('the', 'fire'), v('caught', 'catch', 'Vint')),
+    'The room was cold until the fire took.',
   ),
   svWhy(
     'c29-e',
     29,
     det('The', 'pipes'),
     v('burst', 'burst', 'Vint'),
-    {
-      marker: 'because',
-      subject: det('the', 'water'),
-      verb: v('froze', 'freeze', 'Vint'),
-      kind: 'adverbial',
-    },
+    when('because', det('the', 'water'), v('froze', 'freeze', 'Vint')),
     'Frozen water is why the pipes split.',
   ),
-  svWhy(
+  svoWhy(
     'c29-f',
     29,
-    det('The', 'talks'),
-    v('collapsed', 'collapse', 'Vint'),
-    {
-      marker: 'before',
-      subject: det('the', 'deadline'),
-      verb: v('passed', 'pass', 'Vint'),
-      kind: 'adverbial',
-    },
-    'The talks broke down ahead of the deadline.',
+    det('The', 'board'),
+    v('approved', 'approve', 'Vtr'),
+    det('the', 'plan'),
+    when('when', det('the', 'auditor'), v('reported', 'report', 'Vint')),
+    'The auditor reported and then the board approved.',
   ),
   svWhy(
     'c29-g',
     29,
     det('The', 'engine'),
     v('restarted', 'restart', 'Vint'),
-    {
-      marker: 'once',
-      subject: det('the', 'belt'),
-      verb: v('cooled', 'cool', 'Vint'),
-      kind: 'adverbial',
-    },
+    when('once', det('the', 'belt'), v('cooled', 'cool', 'Vint')),
     'A cooled belt let the engine start again.',
   ),
-  svWhy(
+  svcWhy(
     'c29-h',
     29,
-    det('The', 'audience'),
-    v('applauded', 'applaud', 'Vint'),
-    {
-      marker: 'when',
-      subject: det('the', 'quartet'),
-      verb: v('finished', 'finish', 'Vint'),
-      kind: 'adverbial',
-    },
-    'The audience clapped at the end.',
+    det('The', 'evidence'),
+    v('seemed', 'seem', 'Vlink'),
+    adj('thin'),
+    when('after', det('the', 'witness'), v('hesitated', 'hesitate', 'Vint')),
+    'The pause made the evidence look thin.',
   ),
   svWhy(
     'c29-i',
     29,
     pron('They'),
     v('objected', 'object', 'Vint'),
-    {
-      marker: 'because',
-      subject: det('the', 'boundary'),
-      verb: v('shifted', 'shift', 'Vint'),
-      kind: 'adverbial',
-    },
+    when('because', det('the', 'boundary'), v('shifted', 'shift', 'Vint')),
     'A moved boundary is why they objected.',
   ),
   svWhy(
@@ -129,12 +99,7 @@ export const LESSON_29 = [
     29,
     det('The', 'shutters'),
     v('rattled', 'rattle', 'Vint'),
-    {
-      marker: 'whenever',
-      subject: det('the', 'wind'),
-      verb: v('rose', 'rise', 'Vint'),
-      kind: 'adverbial',
-    },
+    when('whenever', det('the', 'wind'), v('rose', 'rise', 'Vint')),
     'Rising wind always shook the shutters.',
   ),
 ];

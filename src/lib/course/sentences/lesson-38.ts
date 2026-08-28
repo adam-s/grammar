@@ -4,8 +4,12 @@
  * *Unfortunately* is not the subject, the predicate, or anything inside them.
  * It comments on the whole sentence from outside the frame, which is a real
  * job and needs a name that is honestly not a clause role.
+ *
+ * The sentence it comments on varies, because a supplement sits outside the
+ * frame whatever the frame is — and ten intransitive frames would have made
+ * that look like a coincidence rather than the rule.
  */
-import { det, pron, remark, v } from './shape.ts';
+import { adj, det, pron, remark, v } from './shape.ts';
 
 export const LESSON_38 = [
   remark(
@@ -29,8 +33,9 @@ export const LESSON_38 = [
     38,
     'Naturally',
     det('the', 'tenants'),
-    v('objected', 'object', 'Vint'),
-    'The tenants objected, as anyone would.',
+    v('refused', 'refuse', 'Vtr'),
+    'The tenants would not pay it, as anyone would expect.',
+    { object: det('the', 'increase') },
   ),
   remark(
     'c38-d',
@@ -45,8 +50,9 @@ export const LESSON_38 = [
     38,
     'Predictably',
     det('the', 'queue'),
-    v('lengthened', 'lengthen', 'Vint'),
-    'The queue grew, as expected.',
+    v('grew', 'grow', 'Vlink'),
+    'The queue became restless, as expected.',
+    { complement: adj('restless') },
   ),
   remark(
     'c38-f',
@@ -68,9 +74,10 @@ export const LESSON_38 = [
     'c38-h',
     38,
     'Happily',
-    det('the', 'flood'),
-    v('receded', 'recede', 'Vint'),
-    'The flood went down, to the speaker’s relief.',
+    det('the', 'crew'),
+    v('saved', 'save', 'Vtr'),
+    'The crew rescued the archive, to the speaker’s relief.',
+    { object: det('the', 'archive') },
   ),
   remark(
     'c38-i',
@@ -84,8 +91,9 @@ export const LESSON_38 = [
     'c38-j',
     38,
     'Sadly',
-    det('the', 'archive'),
-    v('closed', 'close', 'Vint'),
-    'The archive closed, and the speaker regrets it.',
+    det('the', 'building'),
+    v('was', 'be', 'Vbe'),
+    'The building could not be saved, and the speaker regrets it.',
+    { complement: adj('unsafe') },
   ),
 ];

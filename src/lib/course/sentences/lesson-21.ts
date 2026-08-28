@@ -4,8 +4,13 @@
  * *beyond the gate* tells you which path, so it belongs with *path* rather
  * than with the verb — the same phrase in the same shape doing a different job
  * from lesson 18's and lesson 19's.
+ *
+ * A postmodifier is not a fact about subjects, so half of these put one in an
+ * object or a complement instead. That is also where the contrast with lesson
+ * 19 bites hardest: the same phrase, one word further left, changes what it
+ * belongs to.
  */
-import { det, postmod, pp, sv, v } from './shape.ts';
+import { adj, det, postmod, pp, pron, sv, svc, svo, svoo, v } from './shape.ts';
 
 export const LESSON_21 = [
   sv(
@@ -15,12 +20,13 @@ export const LESSON_21 = [
     v('narrowed', 'narrow', 'Vint'),
     'The path past the gate became narrow.',
   ),
-  sv(
+  svo(
     'c21-b',
     21,
-    postmod('The', 'cottage', pp('by', det('the', 'weir'))),
-    v('flooded', 'flood', 'Vint'),
-    'The cottage next to the weir filled with water.',
+    det('The', 'surveyor'),
+    v('measured', 'measure', 'Vtr'),
+    postmod('the', 'field', pp('behind', det('the', 'mill'))),
+    'The surveyor measured the field that lies behind the mill.',
   ),
   sv(
     'c21-c',
@@ -29,19 +35,21 @@ export const LESSON_21 = [
     v('cracked', 'crack', 'Vint'),
     'The chimney over the kitchen split.',
   ),
-  sv(
+  svc(
     'c21-d',
     21,
-    postmod('The', 'rumour', pp('about', det('the', 'merger'))),
-    v('spread', 'spread', 'Vint'),
-    'The merger rumour got about.',
+    postmod('The', 'lock', pp('on', det('the', 'shed'))),
+    v('was', 'be', 'Vbe'),
+    adj('rusty'),
+    'The shed lock had gone rusty.',
   ),
-  sv(
+  svo(
     'c21-e',
     21,
-    postmod('The', 'lock', pp('on', det('the', 'shed'))),
-    v('rusted', 'rust', 'Vint'),
-    'The shed lock went rusty.',
+    det('The', 'committee'),
+    v('rejected', 'reject', 'Vtr'),
+    postmod('the', 'plan', pp('for', det('the', 'harbour'))),
+    'The committee turned down the harbour plan.',
   ),
   sv(
     'c21-f',
@@ -50,12 +58,14 @@ export const LESSON_21 = [
     v('continued', 'continue', 'Vint'),
     'The boundary argument went on.',
   ),
-  sv(
+  svoo(
     'c21-g',
     21,
-    postmod('The', 'queue', pp('outside', det('the', 'bakery'))),
-    v('lengthened', 'lengthen', 'Vint'),
-    'The queue at the bakery grew longer.',
+    det('The', 'clerk'),
+    v('showed', 'show', 'Vg'),
+    postmod('the', 'visitor', pp('from', det('the', 'ministry'))),
+    det('a', 'map'),
+    'The clerk showed the ministry visitor a map.',
   ),
   sv(
     'c21-h',
@@ -64,18 +74,19 @@ export const LESSON_21 = [
     v('thinned', 'thin', 'Vint'),
     'The ice beneath the bridge grew thin.',
   ),
-  sv(
+  svo(
     'c21-i',
     21,
-    postmod('The', 'shouting', pp('from', det('the', 'yard'))),
-    v('stopped', 'stop', 'Vint'),
-    'The yard went quiet.',
+    pron('They'),
+    v('repaired', 'repair', 'Vtr'),
+    postmod('the', 'crack', pp('across', det('the', 'ceiling'))),
+    'They mended the crack that runs across the ceiling.',
   ),
   sv(
     'c21-j',
     21,
-    postmod('The', 'crack', pp('across', det('the', 'ceiling'))),
-    v('widened', 'widen', 'Vint'),
-    'The ceiling crack grew wider.',
+    postmod('The', 'queue', pp('outside', det('the', 'bakery'))),
+    v('lengthened', 'lengthen', 'Vint'),
+    'The queue at the bakery grew longer.',
   ),
 ];

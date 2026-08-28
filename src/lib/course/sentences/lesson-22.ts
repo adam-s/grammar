@@ -4,8 +4,12 @@
  * *a banker* renames *the treasurer* — the whole phrase, determiner included.
  * The test is that either half could be dropped and the sentence would still
  * name somebody, which is not true of a postmodifier.
+ *
+ * Half of these rename an object rather than a subject, because an appositive
+ * is not a fact about subjects and ten in the same slot would have taught the
+ * slot instead of the rule.
  */
-import { appos, bare, det, sv, v } from './shape.ts';
+import { adj, appos, bare, det, svc, sv, svo, v } from './shape.ts';
 
 export const LESSON_22 = [
   sv(
@@ -15,12 +19,13 @@ export const LESSON_22 = [
     v('resigned', 'resign', 'Vint'),
     'The treasurer, who was a banker, left the post.',
   ),
-  sv(
+  svo(
     'c22-b',
     22,
-    appos('The', 'surgeon', det('a', 'stranger')),
-    v('operated', 'operate', 'Vint'),
-    'The surgeon, who nobody knew, operated.',
+    det('The', 'court'),
+    v('questioned', 'question', 'Vtr'),
+    appos('the', 'surgeon', det('a', 'stranger')),
+    'The court questioned the surgeon, who was a stranger.',
   ),
   sv(
     'c22-c',
@@ -36,12 +41,13 @@ export const LESSON_22 = [
     v('hesitated', 'hesitate', 'Vint'),
     'The witness, who lived next door, paused.',
   ),
-  sv(
+  svc(
     'c22-e',
     22,
     appos('The', 'chairman', det('a', 'lawyer')),
-    v('objected', 'object', 'Vint'),
-    'The chairman, who was a lawyer, objected.',
+    v('was', 'be', 'Vbe'),
+    adj('unmoved'),
+    'The chairman, a lawyer, was not persuaded.',
   ),
   sv(
     'c22-f',
@@ -50,12 +56,13 @@ export const LESSON_22 = [
     v('collapsed', 'collapse', 'Vint'),
     'That building, a warehouse, fell down.',
   ),
-  sv(
+  svo(
     'c22-g',
     22,
-    appos('The', 'inspector', det('a', 'newcomer')),
-    v('insisted', 'insist', 'Vint'),
-    'The inspector, new to the job, insisted.',
+    det('The', 'board'),
+    v('appointed', 'appoint', 'Vtr'),
+    appos('the', 'engineer', det('a', 'newcomer')),
+    'The board gave the post to the engineer, who was new.',
   ),
   sv(
     'c22-h',
@@ -64,12 +71,13 @@ export const LESSON_22 = [
     v('failed', 'fail', 'Vint'),
     'The engine, which was a diesel, broke down.',
   ),
-  sv(
+  svo(
     'c22-i',
     22,
-    appos('Her', 'brother', det('a', 'teacher')),
-    v('laughed', 'laugh', 'Vint'),
-    'Her brother, who taught, laughed.',
+    det('The', 'inspector'),
+    v('interviewed', 'interview', 'Vtr'),
+    appos('her', 'brother', det('a', 'teacher')),
+    'The inspector spoke to her brother, who taught.',
   ),
   sv(
     'c22-j',
