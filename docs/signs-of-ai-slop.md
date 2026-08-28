@@ -108,7 +108,7 @@ significance instead of handing over the next action.
 Headings are the highest-risk line in a lesson. They are written last, read
 first, and rarely read aloud, which is how a heading that parses two ways ships.
 
-The copy budgets in `grammar-course-visual-technique.md` are enforced by tests
+The copy budgets are enforced by tests
 in `src/lib/course/lesson-content.test.ts`. Slop is verbose, so a tight budget
 kills most of it before an editor sees it.
 

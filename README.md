@@ -194,9 +194,9 @@ hour while being impossible to build, because picking a form over a loose phrase
 replaced that phrase instead of stacking over it. **Representable and reachable
 are different properties, and only the sweep tests the second.**
 
-What the menus must do is [docs/menu-states.md](docs/menu-states.md); what the
-model still cannot say is [docs/model-gaps.md](docs/model-gaps.md), and what
-each of those costs to fix is [docs/gap-plan.md](docs/gap-plan.md).
+What the menus must do is `src/lib/grammar/options.ts` and the thirty-nine
+tests beside it. What the model still cannot say is
+[docs/model-gaps.md](docs/model-gaps.md).
 
 ## Influences
 

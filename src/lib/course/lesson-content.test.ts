@@ -6,7 +6,7 @@ import { COURSE_LESSONS } from './course.ts';
 import { countWords } from './inline.ts';
 import { LESSON_DOCS, citedSentenceIds, lessonDoc, requiredWords } from './lesson-content.ts';
 
-/* The budgets in docs/grammar-course-visual-technique.md. A lesson that runs
+/* The copy budgets. A lesson that runs
    long fails here rather than being noticed later, if ever. */
 const REQUIRED_PROSE = 350;
 const LEDE_WORDS = 18;

@@ -4,8 +4,7 @@ Drafted 27 August 2026. This is a plan, not a record. The labelling interaction
 it sits on top of is documented in `src/lib/grammar/options.ts`, whose tests are
 its specification.
 The lesson presentation and data architecture are specified in
-`../grammar-course-visual-technique.md` and
-`../grammar-course-data-architecture.md`.
+the code.
 
 ## What a lesson is
 

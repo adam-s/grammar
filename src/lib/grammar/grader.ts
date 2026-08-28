@@ -2,7 +2,7 @@
  * Grading (S05).
  *
  * A sentence has READINGS, so grading is not a boolean. Three outcomes, and the
- * middle one is the reason this project exists (docs/content-model.md):
+ * middle one is the reason this project exists:
  *
  *   correct    — matches the canonical reading
  *   alternate  — matches another reading: well-formed, and it MEANS something

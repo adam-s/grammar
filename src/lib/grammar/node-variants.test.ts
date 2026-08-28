@@ -69,7 +69,8 @@ test('a helping verb does not repeat itself', () => {
 /* The mark test above compares label strings, so a variant whose host form went
    missing still passes it while rendering a node with no form at all. Adding a
    function without giving it a host is caught by the type system; this catches
-   it in the suite too, which is where docs/node-variants.md says it is caught. */
+   it in the suite too. This suite is the contract: a form, function, verb
+   subtype or clause subtype added without a variant fails here. */
 test('every variant carries a real form to hang its qualifier on', () => {
   for (const variant of NODE_VARIANTS) {
     assert.ok(variant.form, `variant "${variant.id}" has no form`);

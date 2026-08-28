@@ -3,7 +3,9 @@
  * the Python pipeline emits them, the audits check them, the layout consumes
  * them, the grader compares against them.
  *
- * Authority: docs/content-model.md and docs/taxonomy.md. Change those first.
+ * This file IS the authority. It used to point at two documents for that, and
+ * neither was ever written — a pointer to nothing reads as though the decision
+ * was made somewhere careful.
  *
  * Browser-free by construction — no DOM import may ever appear in this file
  * or its neighbours in core/, because `node --test` is the first gate.
@@ -140,7 +142,8 @@ export const AUX_KINDS: readonly AuxKind[] = ['modal', 'perfect', 'progressive',
 /**
  * Function — what a constituent DOES. Orthogonal to form: a PP may be an
  * adverbial, a postmodifier, or a complement. Keeping these two axes separate
- * is the whole point (docs/taxonomy.md §3).
+ * is the whole point: it is what lets *the engine* be a noun phrase whatever
+ * job it happens to be doing.
  */
 export type ClauseFunction =
   | 'subject'
@@ -357,7 +360,7 @@ export interface Constituent {
   /** For a clause node (`S` or `Cl`): the slot pattern its verb produced. */
   clauseType?: ClauseType;
   /**
-   * S V O A / obligatory-adverbial decision (docs/taxonomy.md §2). An
+   * The S V O A decision. An
    * obligatory adverbial is one the verb REQUIRES — drop it and the sentence
    * breaks: *The keys are on the table*, *She put the book on the shelf*.
    * Encoded as a property of the adverbial rather than a seventh verb type,
@@ -374,7 +377,7 @@ export type ReadingStatus = 'canonical' | 'alternate' | 'blocked';
 
 /**
  * One analysis of a sentence. A sentence has readings, not a parse — ambiguity
- * is a reading, not an error (docs/content-model.md).
+ * is a reading, not an error.
  */
 export interface Reading {
   id: string;

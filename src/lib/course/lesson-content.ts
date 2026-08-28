@@ -1,14 +1,14 @@
 /**
  * A lesson's learner-facing prose, as data.
  *
- * `docs/grammar-course-data-architecture.md` plans for Markdown compiled into
+ * A compiler from Markdown into
  * modules like this one. The compiler does not exist yet, so lessons are
  * authored here in the shape it will emit: a lesson NAMES a sentence and lets
  * the diagram come from the one sentence record, and it never restates the
  * structure in prose. That is what keeps a lesson from drifting away from the
  * parse the grader trusts.
  *
- * The copy budgets in `docs/grammar-course-visual-technique.md` are enforced by
+ * The copy budgets are enforced by
  * `lesson-content.test.ts`. A lesson that runs long is a failing test, not a
  * later editing task.
  */
