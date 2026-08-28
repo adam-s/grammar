@@ -1,98 +1,97 @@
 /**
- * Lesson 19 — Prepositional phrases. A preposition takes a complement.
+ * Lesson 19 — Prepositional phrases. Depth, which is the one place length is
+ * the right answer.
  *
- * And the complement can be another prepositional phrase: *out of the barn* is
- * one adverbial with a second PP inside it. The question "the complement of
- * WHICH preposition?" is the whole lesson.
+ * This lesson teaches no label; its content is nesting. Item 7 is the deepest
+ * sentence in the lesson and the safest, because *of* binds tightly and only one
+ * attachment is available. Item 5 is deep and NOT safe — *beside the river* can
+ * attach to the path or to the walking — and item 8 is left genuinely two-ways
+ * open so lesson 27 has something to come back to.
  *
- * Mixed clause patterns, because a prepositional phrase is not a fact about
- * intransitive verbs.
+ * Nesting inside a noun phrase is unambiguous; stacking after a verb is not, and
+ * that contrast is worth an author knowing.
  */
-import { adj, det, pp, pron, svPlus, svcPlus, svoPlus, v } from './shape.ts';
+import { bare, det, postmod, pp, pron, sv, svo, svoPlus, svPlus, v } from './shape.ts';
 
 export const LESSON_19 = [
   svPlus(
     'c19-a',
     19,
     det('The', 'cat'),
-    v('bolted', 'bolt', 'Vint'),
-    pp('out', pp('of', det('the', 'barn'))),
-    'The cat ran out from inside the barn.',
-  ),
-  svoPlus(
-    'c19-b',
-    19,
-    det('Both', 'porters'),
-    v('carried', 'carry', 'Vtr'),
-    det('the', 'crates'),
-    pp('across', det('the', 'yard')),
-    'Both porters took the crates over the yard.',
+    v('slept', 'sleep', 'Vint'),
+    pp('under', det('that', 'table')),
+    'The cat was asleep beneath the table.',
   ),
   svPlus(
-    'c19-c',
+    'c19-b',
     19,
-    det('The', 'letter'),
+    det('A', 'letter'),
     v('came', 'come', 'Vint'),
     pp('from', det('the', 'bank')),
     'The bank sent the letter.',
   ),
-  svcPlus(
+  svPlus(
+    'c19-c',
+    19,
+    det('The', 'cat'),
+    v('bolted', 'bolt', 'Vint'),
+    pp('out', pp('of', det('the', 'barn'))),
+    'The cat rushed from inside the barn.',
+  ),
+  svPlus(
     'c19-d',
     19,
-    det('The', 'water'),
-    v('felt', 'feel', 'Vlink'),
-    adj('warm'),
-    pp('near', det('the', 'outlet')),
-    'The water was warm close to the outlet.',
+    det('The', 'smoke'),
+    v('drifted', 'drift', 'Vint'),
+    pp('up', pp('through', det('some', 'floorboards'))),
+    'Smoke rose from between the boards.',
   ),
   svPlus(
     'c19-e',
     19,
-    det('The', 'smoke'),
-    v('drifted', 'drift', 'Vint'),
-    pp('up', pp('through', det('the', 'floorboards'))),
-    'The smoke rose through the floor.',
+    pron('We'),
+    v('walked', 'walk', 'Vint'),
+    pp('along', postmod('the', 'path', pp('beside', det('the', 'river')))),
+    'We went along the riverside path on foot.',
+  ),
+  sv(
+    'c19-f',
+    19,
+    postmod('The', 'key', pp('to', det('the', 'door'))),
+    v('vanished', 'vanish', 'Vint'),
+    'The door key went missing.',
+  ),
+  sv(
+    'c19-g',
+    19,
+    postmod('The', 'lid', pp('of', postmod('the', 'box', pp('of', bare('tools'))))),
+    v('cracked', 'crack', 'Vint'),
+    'The top of the toolbox split.',
   ),
   svoPlus(
-    'c19-f',
+    'c19-h',
     19,
     pron('She'),
     v('read', 'read', 'Vtr'),
-    det('the', 'report'),
+    det('her', 'report'),
     pp('on', det('the', 'train')),
-    'She read the report while travelling.',
-  ),
-  svPlus(
-    'c19-g',
-    19,
-    det('Several', 'children'),
-    v('scattered', 'scatter', 'Vint'),
-    pp('into', det('the', 'orchard')),
-    'Several children ran off into the orchard.',
-  ),
-  svPlus(
-    'c19-h',
-    19,
-    det('The', 'mist'),
-    v('lifted', 'lift', 'Vint'),
-    pp('before', det('the', 'dawn')),
-    'The mist cleared ahead of dawn.',
+    'She went through the report during the journey.',
   ),
   svoPlus(
     'c19-i',
     19,
-    det('The', 'steward'),
-    v('served', 'serve', 'Vtr'),
-    det('the', 'guests'),
-    pp('under', det('an', 'awning')),
-    'The steward served the guests beneath an awning.',
+    det('Our', 'guide'),
+    v('led', 'lead', 'Vtr'),
+    pron('us'),
+    pp('through', det('the', 'tunnel')),
+    'The guide took us along the tunnel.',
   ),
   svPlus(
     'c19-j',
     19,
-    det('The', 'rider'),
-    v('vanished', 'vanish', 'Vint'),
-    pp('behind', det('the', 'ridge')),
-    'The rider went out of sight past the ridge.',
+    det('The', 'mist'),
+    v('lifted', 'lift', 'Vint'),
+    pp('before', det('the', 'dawn')),
+    'The mist cleared while it was still dark.',
   ),
 ];

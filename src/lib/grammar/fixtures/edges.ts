@@ -140,3 +140,35 @@ export const existential = sentence(
   ],
   'r1',
 );
+
+/* ------------- a fronted adverbial — Yesterday the children played.
+ *
+ * It attaches at the clause and not inside the verb phrase, because it is
+ * scoping over the whole thing. That is what separates it from an ordinary
+ * clause-final adverbial, and it is why a comma so often follows it.
+ *
+ * Neither corpus had one: every adverbial anywhere sat after the verb, so
+ * position — which is most of what makes an adverbial hard to find — was the
+ * one thing the course held constant.
+ */
+export const frontedAdverbial = sentence(
+  'fix-fronted-adverbial',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('AdvP', 'adverbial', [w('Adv', 'head', 'Yesterday')]),
+          n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'children')]),
+          n('VP', 'predicate', [w('V', 'head', 'played', { lemma: 'play', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The children amused themselves the day before.' },
+    ),
+  ],
+  'r1',
+);

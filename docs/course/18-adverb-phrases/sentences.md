@@ -18,7 +18,7 @@ position is most of what makes adverbials hard to find.
 | 1   | The baby slept peacefully.                  | one adverb, at the end, optional          |
 | 2   | The train arrived late.                     | an adverb that does not end in _-ly_      |
 | 3   | Our guests arrived unusually early.         | **two words in the adverb phrase**        |
-| 4   | Yesterday the children played outside.      | **an adverb at the front**                |
+| 4   | Yesterday the children played.              | **an adverb at the front**                |
 | 5   | The children quietly left.                  | **an adverb between subject and verb**    |
 | 6   | The auditor checked the ledger twice.       | after an object, and _twice_ is not _-ly_ |
 | 7   | The old clock ticked remarkably loudly.     | a second expanded phrase                  |

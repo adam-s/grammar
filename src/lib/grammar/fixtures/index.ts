@@ -57,6 +57,8 @@ import {
   numeral,
   prepInPrep,
   nounPremodifier,
+  adjectiveComplement,
+  adverbPhrase,
 } from './noun-phrases.ts';
 import {
   acrossTheBoard,
@@ -67,7 +69,7 @@ import {
   cleft,
   comparative,
 } from './movement.ts';
-import { punctuation, supplement, existential } from './edges.ts';
+import { punctuation, supplement, existential, frontedAdverbial } from './edges.ts';
 import { vpEllipsis, gapping, sluicing, stripping } from './ellipsis.ts';
 
 /** Every good fixture. All must pass every audit. */
@@ -81,6 +83,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   irregular,
   objectComplementNoun,
   nounPremodifier,
+  adjectiveComplement,
+  adverbPhrase,
   ambiguous,
   gardenPath,
   objectClause,
@@ -116,6 +120,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   comparative,
   punctuation,
   supplement,
+  frontedAdverbial,
   existential,
   vpEllipsis,
   gapping,

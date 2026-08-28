@@ -125,6 +125,21 @@ export const fused =
     n('NP', fn, [w('Det', 'head', word, { fusedWith: 'determiner' })]);
 
 /**
+ * *the poor* — an adjective standing in for the noun it would have modified.
+ *
+ * The other half of lesson 6's fusion, one layer down: there a determiner did
+ * the noun phrase's job, here an adjective does the nominal's. `fix-fused`
+ * proves it.
+ */
+export const fusedAdj =
+  (d: string, adjective: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [w('Adj', 'head', adjective, { fusedWith: 'premodifier' })]),
+    ]);
+
+/**
  * *almost every seat* — a phrase filling the determiner slot.
  *
  * *almost* does not modify *seat*; it modifies *every*. So the two of them are
@@ -183,6 +198,32 @@ export const adj =
   (word: string): Phrase =>
   (fn) =>
     n('AdjP', fn, [w('Adj', 'head', word)]);
+
+/**
+ * *very slowly* — an adverb phrase with something in front of its head.
+ *
+ * The shape lesson 18's title promises and neither corpus had: every `AdvP`
+ * anywhere was exactly one word wide. Lesson 17 spends all ten of its sentences
+ * on a degree word in front of an adjective; this is the same structure one
+ * class over.
+ */
+export const advadv =
+  (degree: string, adverb: string): Phrase =>
+  (fn) =>
+    n('AdvP', fn, [w('Adv', 'premodifier', degree), w('Adv', 'head', adverb)]);
+
+/**
+ * *proud of her garden* — an adjective phrase with a complement after its head.
+ *
+ * Absent from both corpora until now, which meant half of what an adjective
+ * phrase can hold was proved by nothing. It is not the same as a phrase that
+ * merely follows the adjective: *proud of her garden* cannot lose *of her
+ * garden* and keep its meaning, while *narrow near the bridge* can.
+ */
+export const adjWith =
+  (adjective: string, complement: Phrase): Phrase =>
+  (fn) =>
+    n('AdjP', fn, [w('Adj', 'head', adjective), complement('complement')]);
 
 /** *quickly* — an adverb phrase. */
 export const adv =

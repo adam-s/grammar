@@ -397,3 +397,77 @@ export const nounPremodifier = sentence(
   ],
   'r1',
 );
+
+/* ------------- an adjective with a complement — She seemed proud of it.
+ *
+ * The other half of what an adjective phrase can hold, and neither corpus had
+ * it: every `AdjP` anywhere was a bare adjective or an adverb in front of one.
+ *
+ * *of it* is a complement and not an adverbial, because the adjective demands
+ * it. *She seemed proud* is a different claim and *She seemed proud near the
+ * bridge* keeps the first one whole — so what cannot be dropped is inside the
+ * phrase, and what can is outside it.
+ */
+export const adjectiveComplement = sentence(
+  'fix-adjective-complement',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'seemed', { lemma: 'seem', verbType: 'Vlink' }),
+            n('AdjP', 'subjectComplement', [
+              w('Adj', 'head', 'proud'),
+              n('PP', 'complement', [
+                w('P', 'head', 'of'),
+                n('NP', 'complement', [w('Pron', 'head', 'it')]),
+              ]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She took pride in the thing.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------- a degree word inside an adverb phrase — She waited very quietly.
+ *
+ * `AdjP > Adv/premodifier` was proved from the start and `AdvP > Adv/premodifier`
+ * never was, so every adverb phrase in either corpus was exactly one word wide —
+ * which made lesson 18's title, "Adverbs and adverb phrases", a promise nothing
+ * kept.
+ *
+ * *very* modifies *quietly*, not the verb: it says how quiet the quietness was.
+ * So the two of them are a phrase, and it is the phrase that is the adverbial.
+ */
+export const adverbPhrase = sentence(
+  'fix-adverb-phrase',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'waited', { lemma: 'wait', verbType: 'Vint' }),
+            n('AdvP', 'adverbial', [w('Adv', 'premodifier', 'very'), w('Adv', 'head', 'quietly')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She stayed put and made almost no sound.' },
+    ),
+  ],
+  'r1',
+);

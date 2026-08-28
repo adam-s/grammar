@@ -18,9 +18,9 @@ what is missing is a fixture and a course example, not model capability.
 | 2   | The candidate seemed unusually calm.          | the same, after a different linking verb         |
 | 3   | The lake water felt cold.                     | **a one-word adjective phrase** — the floor case |
 | 4   | The box seemed too heavy.                     | a degree word that points forward                |
-| 5   | The children were eager to help.              | **a complement after the adjective**             |
+| 5   | Those visitors were quite anxious.            | **a complement after the adjective**             |
 | 6   | My neighbour seemed proud of her garden.      | a complement of a different shape                |
-| 7   | The road became narrow near the bridge.       | an adverbial after the phrase, not inside it     |
+| 7   | The road became dangerously narrow.           | an adverbial after the phrase, not inside it     |
 | 8   | That road grew steadily steeper.              | back to a degree word, comparative adjective     |
 | 9   | The jury found the driver entirely blameless. | the phrase as an object complement               |
 | 10  | The milk tasted slightly sour.                | close on the plain case                          |

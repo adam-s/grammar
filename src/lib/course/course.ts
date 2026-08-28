@@ -230,7 +230,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // needs a layer to share with it. `Nom` is that layer, and it arrives
         // here because this is the first sentence that cannot be drawn without
         // one.
-        teaches: ['func:premodifier'],
+        teaches: ['func:premodifier', 'fuse:premodifier'],
         sentences: LESSON_16,
       },
       {

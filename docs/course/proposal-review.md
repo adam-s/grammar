@@ -261,8 +261,8 @@ Status values are deliberately explicit:
 | 1   | The narrow gate jammed.                    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 2   | The clerk filed the urgent report.         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 3   | The new tenant seemed nervous.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 4   | The kitchen clock stopped.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 5   | The bright red kite fell.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 4   | The kitchen window rattled.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 5   | The red kite fell.                         | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 6   | The heavy crate is on the ramp.            | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 7   | That jury found the young driver careless. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 8   | The porter handed the tired guest a key.   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
@@ -277,9 +277,9 @@ Status values are deliberately explicit:
 | 2   | The candidate seemed unusually calm.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 3   | The lake water felt cold.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 4   | The box seemed too heavy.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
-| 5   | The children were eager to help.              | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
+| 5   | Those visitors were quite anxious.            | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
 | 6   | My neighbour seemed proud of her garden.      | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 7   | The road became narrow near the bridge.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 7   | The road became dangerously narrow.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 8   | That road grew steadily steeper.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 9   | The jury found the driver entirely blameless. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 10  | The milk tasted slightly sour.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
@@ -291,7 +291,7 @@ Status values are deliberately explicit:
 | 1   | The baby slept peacefully.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 2   | The train arrived late.                     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 3   | Our guests arrived unusually early.         | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
-| 4   | Yesterday the children played outside.      | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
+| 4   | Yesterday the children played.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 5   | The children quietly left.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 6   | The auditor checked the ledger twice.       | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse        |
 | 7   | The old clock ticked remarkably loudly.     | Pending human review | Step recorded; parse pending | Pending reach audit | Probe passes; fixture pending |
@@ -310,18 +310,18 @@ Status values are deliberately explicit:
 
 ## Lesson 19 — Prepositional phrases
 
-| #   | Sentence                                      | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
-| --- | --------------------------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
-| 1   | The cat slept under the table.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 2   | The letter came from the bank.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 3   | The cat bolted out of the barn.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 4   | The smoke drifted up through the floorboards. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 5   | We walked along the path beside the river.    | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 6   | The key to the door vanished.                 | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 7   | The lid of the box of tools cracked.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 8   | She read the report on the train.             | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 9   | The guide led us through the tunnel.          | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
-| 10  | The mist lifted before the dawn.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| #   | Sentence                                       | Natural reading      | Intended parse               | Scope reach         | Model / fixture        |
+| --- | ---------------------------------------------- | -------------------- | ---------------------------- | ------------------- | ---------------------- |
+| 1   | The cat slept under that table.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 2   | A letter came from the bank.                   | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 3   | The cat bolted out of the barn.                | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 4   | The smoke drifted up through some floorboards. | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 5   | We walked along the path beside the river.     | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 6   | The key to the door vanished.                  | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 7   | The lid of the box of tools cracked.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 8   | She read her report on the train.              | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 9   | Our guide led us through the tunnel.           | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
+| 10  | The mist lifted before the dawn.               | Pending human review | Step recorded; parse pending | Pending reach audit | Pending proposal parse |
 
 ## Lesson 20 — Form is not function
 
