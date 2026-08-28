@@ -79,25 +79,44 @@ export function nodeLabelOffsets(form: Form): { functionX: number; subtypeX: num
  * Qualifiers are deliberately limited to the form they refine: verb type is
  * meaningful only on V, and clause kind only on Cl.
  */
+/**
+ * Word classes named after the job they do.
+ *
+ * A determiner is what `Det` is short for. Writing `D` above `Det` is the same
+ * claim twice, and on a short word the two marks plus a subtype do not fit at
+ * all — *has been* put `Perf` hard against `Help` before this existed.
+ *
+ * The line is drawn at word classes, not at everything predictable. A `VP`
+ * under a clause can only be the predicate, and `Pred` still shows: "verb
+ * phrase" and "predicate" are two different ideas that happen to coincide, and
+ * the coincidence is most of lesson 2. `Det` and "determiner" are one idea said
+ * twice.
+ *
+ * Each entry is checked both ways in `names.test.ts`: the mark goes when the
+ * function matches, and comes back the moment it does not — a `Det` heading a
+ * determinative phrase still says `H`, because there it is doing the other job.
+ */
+export const NAMED_FOR_ITS_JOB: Partial<Record<Form, Func>> = {
+  Det: 'determiner',
+  Aux: 'auxiliary',
+  Conj: 'coordinator',
+  Subord: 'marker',
+};
+
 export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
-  // A helping verb's function adds nothing its form has not already said, and
-  // over a short word the two marks plus the subtype do not fit — *has been*
-  // put "Perf" hard against "Help". Dropping the redundant half is better than
-  // abbreviating an informative one.
   const redundant =
-    (value.form === 'Aux' && value.function === 'auxiliary') ||
+    (value.function !== null &&
+      value.function !== undefined &&
+      NAMED_FOR_ITS_JOB[value.form] === value.function) ||
+    // A particle carries its kind on the other side, and the two say the same
+    // thing — `auditFiniteness` requires them to agree. The kind is the more
+    // specific of the two, so it is the one that stays.
+    (value.form === 'Part' && value.partKind != null) ||
     // An elided HEAD is always the head of what it sits in — that is what
     // being elided means there — so the mark says nothing and costs room the
     // node does not have. An elided predicate keeps its mark, because a clause
     // holds other things and which one is missing is the point.
     (value.gap === true && value.function === 'head');
-  // A particle's kind and its function say the same thing — `auditFiniteness`
-  // enforces exactly that — and over a short word the pair collided with the
-  // next label. Only one of two identical claims is worth the pixels.
-  const entailed =
-    value.form === 'Part' &&
-    ((value.function === 'particle' && value.partKind === 'verbal') ||
-      (value.function === 'marker' && value.partKind === 'infinitival'));
   const fnMark =
     value.function && !redundant ? functionMark(value.function, value.obligatory === true) : null;
   const fnName = value.function ? functionName(value.function, value.obligatory === true) : null;
@@ -108,7 +127,7 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
       ? verbTypeMark(value.verbType, voice)
       : value.form === 'Cl' && (value.clauseKind || finiteness !== 'finite')
         ? clauseKindMark(value.clauseKind ?? null, finiteness)
-        : value.form === 'Part' && value.partKind && !entailed
+        : value.form === 'Part' && value.partKind
           ? partKindMark(value.partKind)
           : value.form === 'Aux' && value.auxKind
             ? auxKindMark(value.auxKind)

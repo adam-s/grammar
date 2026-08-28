@@ -6,9 +6,11 @@ import {
   PHRASE_INTERNAL_FUNCTIONS,
   VERB_TYPES,
   WORD_FORMS,
+  type Form,
 } from './types.ts';
 import { CLAUSE_KINDS, NODE_VARIANTS } from './node-variants.ts';
 import {
+  NAMED_FOR_ITS_JOB,
   NODE_QUALIFIER_GAP,
   nodeLabelOffsets,
   nodeLabelParts,
@@ -39,9 +41,14 @@ test('the inventory covers every function mark and obligatory adverbial', () => 
     ),
   );
   expected.add('A!');
-  // An auxiliary shows no function mark on an `Aux`, so the catalogue cannot
-  // show one either — see the test below, which is where that lives now.
-  expected.delete(nodeLabelParts({ form: 'NP', function: 'auxiliary' }).functionMark);
+  // A word class named after the job it does shows no function mark, so the
+  // catalogue cannot show one either — see the tests below, which are where
+  // that invariant lives.
+  for (const fn of Object.values(NAMED_FOR_ITS_JOB)) {
+    expected.delete(nodeLabelParts({ form: 'NP', function: fn }).functionMark);
+  }
+  // `Prt` is NOT deleted: a particle that has not said which kind it is still
+  // shows its function, and that half-answered state is real.
   covered.delete(null);
   assert.deepEqual(covered, expected);
 });
@@ -119,15 +126,41 @@ test('the measured node width grows to contain every visible qualifier', () => {
 
 test('a particle does not say the same thing twice', () => {
   // The function and the kind carry the same claim, and `auditFiniteness`
-  // requires them to agree — so showing both is showing one of them twice.
-  assert.equal(
-    nodeLabelParts({ form: 'Part', function: 'particle', partKind: 'verbal' }).subtypeMark,
-    null,
-  );
-  assert.equal(
-    nodeLabelParts({ form: 'Part', function: 'marker', partKind: 'infinitival' }).subtypeMark,
-    null,
-  );
-  // Until the function is answered, the kind is all there is to show.
-  assert.equal(nodeLabelParts({ form: 'Part', partKind: 'infinitival' }).subtypeMark, 'Inf');
+  // requires them to agree — so one of them is showing it twice. The kind is
+  // the more specific of the two, so the kind is the one that stays.
+  const particle = nodeLabelParts({ form: 'Part', function: 'particle', partKind: 'verbal' });
+  assert.equal(particle.subtypeMark, 'Prt');
+  assert.equal(particle.functionMark, null);
+
+  const to = nodeLabelParts({ form: 'Part', function: 'marker', partKind: 'infinitival' });
+  assert.equal(to.subtypeMark, 'Inf');
+  assert.equal(to.functionMark, null);
+
+  // Until the kind is answered, the function is all there is to show.
+  assert.equal(nodeLabelParts({ form: 'Part', function: 'marker' }).functionMark, 'Mk');
+});
+
+test('a word class named for its job does not repeat itself', () => {
+  for (const [form, fn] of Object.entries(NAMED_FOR_ITS_JOB)) {
+    assert.equal(
+      nodeLabelParts({ form: form as Form, function: fn }).functionMark,
+      null,
+      `${form} should not also say ${fn}`,
+    );
+    // And the mark comes back the moment the node is doing something else: a
+    // `Det` heading a determinative phrase is not being a determiner there.
+    assert.ok(
+      nodeLabelParts({ form: form as Form, function: 'head' }).functionMark,
+      `${form} doing another job should say which`,
+    );
+  }
+});
+
+test('a phrase keeps its function mark even when nothing else is possible', () => {
+  // A `VP` under a clause can only be the predicate, and the mark stays.
+  // "Verb phrase" and "predicate" are two ideas that coincide here, and the
+  // coincidence is most of lesson 2 — unlike `Det` and "determiner", which are
+  // one idea said twice.
+  assert.equal(nodeLabelParts({ form: 'VP', function: 'predicate' }).functionMark, 'Pred');
+  assert.equal(nodeLabelParts({ form: 'V', function: 'head' }).functionMark, 'H');
 });
