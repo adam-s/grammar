@@ -12,6 +12,11 @@ The labelling interaction this sits on is documented in
 lesson gets harder as it goes, and the composition that exists is unordered and
 thin. Read it before writing more of them.
 
+[optional-lessons.md](optional-lessons.md) proposes a second kind of lesson,
+numbered `03a` and `18a`, for the things settled by meaning rather than by a
+test. They teach no label, are never graded, and can be skipped without
+consequence. None exists in the data yet.
+
 ## How the order is enforced
 
 The order is a dependency graph, and it used to be a graph written in prose.

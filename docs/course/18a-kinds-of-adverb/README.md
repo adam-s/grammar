@@ -1,0 +1,148 @@
+# Lesson 18a — Kinds of adverb
+
+**Optional.** This one is about what sentences mean, not about what a test
+returns. The answers here are arguable and nothing depends on it. See
+[../optional-lessons.md](../optional-lessons.md).
+
+Researched 28 August 2026. An author's dossier, not a page for a learner.
+
+## What the lesson decides
+
+**Nothing.** `teaches` is empty and must stay empty.
+
+This lesson is unusual: it exists to explain a label the app deliberately does
+**not** have. Everything the learner clicks is `adverbial`, the same as lesson
+14 and lesson 18. What they take away is why that one label covers four things
+most books separate.
+
+## Why this lesson exists
+
+The refusal is already written down, in `src/lib/grammar/types.ts` on the
+`adverbial` function. It is a good argument and no learner will ever see it:
+
+> The other four — manner, time, place, frequency — are deliberately not
+> separated, because nothing in the syntax separates them. _He ran quickly_ and
+> _He ran yesterday_ are the same tree. No substitution, movement or omission
+> test tells them apart; only knowing what the word means does, and a label a
+> learner can only reach by meaning is the one thing this model has refused
+> everywhere else.
+
+A learner who has met adverbs anywhere else will arrive expecting the four-way
+split and will assume the app is missing it. It is not missing. It is refused,
+and the difference is worth ten minutes.
+
+## The split everyone else teaches
+
+Six kinds, agreed on across teaching sources with only small variation:
+
+| Kind        | Answers         | Examples                          |
+| ----------- | --------------- | --------------------------------- |
+| manner      | how?            | _angrily, loudly, fluently_       |
+| time        | when?           | _yesterday, soon, tonight_        |
+| place       | where?          | _outside, here, ahead_            |
+| frequency   | how often?      | _often, seldom, never_            |
+| degree      | how much?       | _very, extremely, quite_          |
+| conjunctive | joins two ideas | _however, moreover, nevertheless_ |
+
+Manner is described as the most common kind in English, and is usually the one
+taught first because _-ly_ makes it easy to spot.
+
+## Which of these the app already distinguishes, and how
+
+Two of the six are structural here, and the learner has met both without being
+told they were on this list:
+
+- **degree** is `Adv` with function `premodifier`, sitting inside the `AdjP` or
+  `DP` it intensifies. Lesson 17 and lesson 18 already ask for it. It is
+  distinguished by **where it sits**, not by what it means.
+- **evaluative** — _fortunately_, _frankly_ — is `AdvP` with function
+  `supplement`, outside the clause frame. That is lesson 38.
+
+So the app does separate some of the traditional list. It separates exactly the
+ones a test can reach.
+
+## The four it will not separate, and the demonstration
+
+Four sentences, one from each kind, all already in the corpora:
+
+|           | Sentence                                                    | Adverb        |
+| --------- | ----------------------------------------------------------- | ------------- |
+| manner    | _She answered immediately._                                 | _immediately_ |
+| time      | _The train arrived late._                                   | _late_        |
+| place     | _The guard who waited outside put that ledger in the safe._ | _outside_     |
+| frequency | _The auditor checked the ledger twice._                     | _twice_       |
+
+Four kinds by meaning. Every one of them is drawn `VP > AdvP/adverbial` — one
+attachment path across all four, checked against both corpora rather than
+assumed. The learner builds them and gets **the same answer four times**.
+
+Then the tests are run in front of them, and all of them come back the same:
+
+- **Substitution.** All four go to _then_, _there_, _thus_ — pro-forms that do
+  not respect the boundary.
+- **Movement.** All four front: _Quickly he ran. Yesterday he ran. Outside he
+  ran. Often he ran._
+- **Omission.** All four drop and leave a whole sentence.
+
+Nothing in the grammar sees the difference. That is not a limitation of this
+app; it is a fact about English, and it is the most useful thing in the lesson.
+
+## The one with no home at all
+
+**Conjunctive adverbs.** _however_, _therefore_, _meanwhile_. The code note is
+blunt about them:
+
+> not `Conj` — that is _and_, _but_, _or_, which join inside one sentence — and
+> calling them `supplement` records that they sit outside the frame while losing
+> the thing that makes them what they are, which is that they point back at the
+> sentence before. Neither corpus contains one.
+
+So this is not a lesson about them. They are named, said to be real, and said to
+be outside what this app can currently draw. That is an honest thing to tell a
+learner and it costs nothing.
+
+## What to say to the learner
+
+> Books split adverbs four ways by meaning: how, when, where, how often. English
+> grammar does not. All four sat in the same place, moved the same way, and
+> dropped out the same way. This app only labels what a test can find, so all
+> four get one label. The split is real and it is about meaning, not structure.
+
+## What this should change
+
+1. **Nothing in the model.** The refusal is correct and this lesson supports it
+   rather than arguing with it.
+2. **The conjunctive-adverb decision is still open** and is a model question,
+   not a lesson question. Recorded in `types.ts` and unresolved.
+3. **The corpus is thin on place and frequency adverbs**, which
+   [../difficulty.md](../difficulty.md) already notes. Counting across both
+   corpora: manner has 4 distinct adverbs, time 4, **place 1** (_outside_) and
+   **frequency 1** (_twice_). The lesson can be built today, but its place and
+   frequency examples have no alternates, and the place one is buried in a
+   fourteen-word sentence with a relative clause in it. Two short sentences
+   would fix both.
+
+## Sources
+
+Search summaries only, on 28 August 2026. The six-way taxonomy is consistent
+across all of them, which is why it is reportable; no single one was opened, and
+the wording above is a synthesis rather than a quotation from any of them:
+
+- LanGeek, BYJU'S, Promova, Linguistics Girl and ALL ESL on types of adverbs.
+  These agree on manner, time, place, frequency and degree; the sixth
+  (conjunctive) appears in some lists and not others.
+
+Read in full: `src/lib/grammar/types.ts`, the note on the `adverbial` function,
+which is the source for everything this app does and does not distinguish.
+
+## Rejected
+
+- **Adding manner, time, place and frequency to the model.** The reason is in
+  `types.ts` and this dossier agrees with it.
+- **The five-type and thirteen-type lists.** Sources vary between five and
+  thirteen kinds. The variation is itself evidence that the categories are
+  semantic rather than structural, and picking a number would suggest a
+  precision nobody has.
+- **Teaching the _-ly_ rule as a way to spot adverbs.** It finds manner adverbs
+  and misses the other three kinds entirely, and it produces false hits on
+  _friendly_ and _lovely_, which are adjectives.
