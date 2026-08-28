@@ -48,7 +48,7 @@ export const LESSON_31 = [
       kind: 'relative',
     }),
     v('returned', 'return', 'Vint'),
-    'The witness who had paused came back.',
+    'Another witness who had paused came back.',
   ),
   svo(
     'c31-d',

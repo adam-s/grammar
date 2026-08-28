@@ -33,7 +33,7 @@ export const LESSON_21 = [
     21,
     postmod('That', 'chimney', pp('above', det('the', 'kitchen'))),
     v('cracked', 'crack', 'Vint'),
-    'The chimney over the kitchen split.',
+    'That chimney over the kitchen split.',
   ),
   svc(
     'c21-d',
@@ -87,6 +87,6 @@ export const LESSON_21 = [
     21,
     postmod('That', 'queue', pp('outside', det('the', 'bakery'))),
     v('lengthened', 'lengthen', 'Vint'),
-    'The queue at the bakery grew longer.',
+    'That queue at the bakery grew longer.',
   ),
 ];

@@ -22,7 +22,7 @@ export const LESSON_25 = [
     det('Another', 'engineer'),
     phrasal(v('shut', 'shut', 'Vtr'), 'off'),
     det('the', 'valve'),
-    'The engineer closed the valve.',
+    'Another engineer closed the valve.',
   ),
   svo(
     'c25-c',
@@ -86,6 +86,6 @@ export const LESSON_25 = [
     det('Her', 'landlord'),
     phrasal(v('threw', 'throw', 'Vtr'), 'out'),
     det('the', 'furniture'),
-    'The landlord got rid of the furniture.',
+    'Her landlord got rid of the furniture.',
   ),
 ];

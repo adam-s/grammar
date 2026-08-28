@@ -33,7 +33,7 @@ export const LESSON_20 = [
     v('laid', 'lay', 'Vtr'),
     det('the', 'tray'),
     pp('on', det('the', 'sideboard')),
-    'The porter set the tray down on the sideboard.',
+    'Another porter set the tray down on the sideboard.',
   ),
   svPlus(
     'c20-d',
@@ -92,6 +92,6 @@ export const LESSON_20 = [
     det('That', 'rope'),
     v('swung', 'swing', 'Vint'),
     pp('across', det('the', 'gap')),
-    'The rope swung over the gap.',
+    'That rope swung over the gap.',
   ),
 ];

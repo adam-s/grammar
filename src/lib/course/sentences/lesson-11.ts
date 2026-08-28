@@ -8,14 +8,7 @@
 import { adj, det, pron, svc, v } from './shape.ts';
 
 export const LESSON_11 = [
-  svc(
-    'c11-a',
-    11,
-    pron('He'),
-    v('is', 'be', 'Vbe'),
-    det('a', 'doctor'),
-    'His job is being a doctor.',
-  ),
+  svc('c11-a', 11, pron('He'), v('is', 'be', 'Vbe'), det('a', 'doctor'), 'He works as a doctor.'),
   svc(
     'c11-b',
     11,

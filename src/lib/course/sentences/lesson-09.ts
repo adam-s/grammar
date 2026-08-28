@@ -29,7 +29,7 @@ export const LESSON_09 = [
     det('That', 'jury'),
     v('reached', 'reach', 'Vtr'),
     det('a', 'verdict'),
-    'The jury came to a decision.',
+    'That jury came to a decision.',
   ),
   svo(
     'c09-d',
@@ -77,7 +77,7 @@ export const LESSON_09 = [
     det('That', 'child'),
     v('opened', 'open', 'Vtr'),
     det('the', 'parcel'),
-    'The child undid the parcel.',
+    'That child undid the parcel.',
   ),
   svo(
     'c09-j',

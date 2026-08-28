@@ -26,7 +26,7 @@ export const LESSON_19 = [
     v('carried', 'carry', 'Vtr'),
     det('the', 'crates'),
     pp('across', det('the', 'yard')),
-    'The porters took the crates over the yard.',
+    'Both porters took the crates over the yard.',
   ),
   svPlus(
     'c19-c',
@@ -68,7 +68,7 @@ export const LESSON_19 = [
     det('Several', 'children'),
     v('scattered', 'scatter', 'Vint'),
     pp('into', det('the', 'orchard')),
-    'The children ran off into the orchard.',
+    'Several children ran off into the orchard.',
   ),
   svPlus(
     'c19-h',

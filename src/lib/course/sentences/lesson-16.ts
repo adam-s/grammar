@@ -67,14 +67,14 @@ export const LESSON_16 = [
     v('found', 'find', 'Vc'),
     adjn('the', 'young', 'driver'),
     adj('careless'),
-    'The jury decided the young driver had been careless.',
+    'That jury decided the young driver had been careless.',
   ),
   sv(
     'c16-h',
     16,
     adjn('Those', 'rusted', 'hinges'),
     v('squealed', 'squeal', 'Vint'),
-    'The rusted hinges made a noise.',
+    'Those rusted hinges made a noise.',
   ),
   svPlus(
     'c16-i',
@@ -90,6 +90,6 @@ export const LESSON_16 = [
     det('Another', 'storm'),
     v('damaged', 'damage', 'Vtr'),
     adjn('the', 'green', 'shutters'),
-    'The storm harmed the green shutters.',
+    'Another storm harmed the green shutters.',
   ),
 ];

@@ -53,7 +53,7 @@ export const LESSON_35 = [
       adverbial: pp('under', det('the', 'counter')),
     }),
     v('burned', 'burn', 'Vint'),
-    'The deeds kept under the counter were destroyed.',
+    'Those deeds kept under the counter were destroyed.',
   ),
   sv(
     'c35-d',
@@ -132,6 +132,6 @@ export const LESSON_35 = [
       adverbial: pp('against', det('the', 'wall')),
     }),
     v('toppled', 'topple', 'Vint'),
-    'The crates piled against the wall fell over.',
+    'Several crates piled against the wall fell over.',
   ),
 ];

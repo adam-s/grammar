@@ -30,7 +30,7 @@ export const LESSON_32 = [
       verb: v('feared', 'fear', 'Vtr'),
       objectGap: true,
     },
-    'The queue exceeded what the baker feared.',
+    'That queue exceeded what the baker feared.',
   ),
   comparison(
     'c32-c',
@@ -142,6 +142,6 @@ export const LESSON_32 = [
       verb: v('tolerated', 'tolerate', 'Vtr'),
       objectGap: true,
     },
-    'The noise passed what the neighbours would bear.',
+    'That noise passed what the neighbours would bear.',
   ),
 ];

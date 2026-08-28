@@ -32,7 +32,7 @@ export const LESSON_22 = [
     22,
     appos('That', 'ferry', bare('Mermaid')),
     v('sailed', 'sail', 'Vint'),
-    'The ferry, called Mermaid, sailed.',
+    'That ferry, called Mermaid, sailed.',
   ),
   sv(
     'c22-d',
@@ -84,6 +84,6 @@ export const LESSON_22 = [
     22,
     appos('That', 'archive', det('a', 'cellar')),
     v('flooded', 'flood', 'Vint'),
-    'The archive, which was a cellar, filled with water.',
+    'That archive, which was a cellar, filled with water.',
   ),
 ];

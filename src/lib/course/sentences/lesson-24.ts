@@ -28,14 +28,14 @@ export const LESSON_24 = [
     24,
     det('Those', 'talks'),
     helped(v('resume', 'resume', 'Vint'), 'will', 'will', 'modal'),
-    'The talks are going to start again.',
+    'Those talks are going to start again.',
   ),
   sv(
     'c24-d',
     24,
     det('Several', 'lights'),
     helped(v('flickering', 'flicker', 'Vint'), 'are', 'be', 'progressive'),
-    'The lights keep wavering.',
+    'Several lights keep wavering.',
   ),
   svo(
     'c24-e',

@@ -30,7 +30,7 @@ export const LESSON_28 = [
     det('Another', 'surveyor'),
     v('reported', 'report', 'Vtr'),
     { subject: det('the', 'wall'), verb: v('leaned', 'lean', 'Vint'), kind: 'nominal' },
-    'The surveyor reported a leaning wall.',
+    'Another surveyor reported a leaning wall.',
   ),
   svClause(
     'c28-d',
@@ -86,6 +86,6 @@ export const LESSON_28 = [
     det('Her', 'landlord'),
     v('denied', 'deny', 'Vtr'),
     { subject: det('the', 'roof'), verb: v('leaked', 'leak', 'Vint'), kind: 'nominal' },
-    'The landlord said the roof did not leak.',
+    'Her landlord said the roof did not leak.',
   ),
 ];

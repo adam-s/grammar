@@ -63,7 +63,7 @@ export const LESSON_10 = [
     det('Those', 'streets'),
     v('stayed', 'stay', 'Vlink'),
     adj('quiet'),
-    'The streets remained quiet.',
+    'Those streets remained quiet.',
   ),
   svc(
     'c10-i',
@@ -71,7 +71,7 @@ export const LESSON_10 = [
     det('That', 'bread'),
     v('smelled', 'smell', 'Vlink'),
     adj('fresh'),
-    'The bread had a fresh smell.',
+    'That bread had a fresh smell.',
   ),
   svc(
     'c10-j',

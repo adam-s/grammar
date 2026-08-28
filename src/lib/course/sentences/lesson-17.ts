@@ -43,7 +43,7 @@ export const LESSON_17 = [
     det('That', 'road'),
     v('grew', 'grow', 'Vlink'),
     advadj('steadily', 'steeper'),
-    'The road became steeper as it went.',
+    'That road became steeper as it went.',
   ),
   svoc(
     'c17-e',
@@ -60,7 +60,7 @@ export const LESSON_17 = [
     det('That', 'chairman'),
     v('remained', 'remain', 'Vlink'),
     advadj('oddly', 'silent'),
-    'The chairman went on saying nothing.',
+    'That chairman went on saying nothing.',
   ),
   svc(
     'c17-g',

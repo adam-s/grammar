@@ -23,7 +23,7 @@ export const LESSON_15 = [
     15,
     det('Those', 'negotiations'),
     v('collapsed', 'collapse', 'Vint'),
-    'The negotiations broke down.',
+    'Those negotiations broke down.',
   ),
   svo(
     'c15-c',
@@ -81,7 +81,7 @@ export const LESSON_15 = [
     det('That', 'chairman'),
     v('was', 'be', 'Vbe'),
     det('a', 'banker'),
-    'The chairman worked as a banker.',
+    'That chairman worked as a banker.',
   ),
   svoa(
     'c15-j',

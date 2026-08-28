@@ -93,6 +93,6 @@ export const LESSON_34 = [
     det('Several', 'trustees'),
     v('voted', 'vote', 'Vtr'),
     { ...to, verb: v('close', 'close', 'Vtr'), object: det('the', 'archive') },
-    'The trustees decided by vote to close it.',
+    'Several trustees decided by vote to close it.',
   ),
 ];

@@ -49,7 +49,7 @@ export const LESSON_18 = [
     det('Those', 'negotiations'),
     v('resumed', 'resume', 'Vint'),
     adv('yesterday'),
-    'The talks started again yesterday.',
+    'Those talks started again yesterday.',
   ),
   svoPlus(
     'c18-f',
@@ -83,7 +83,7 @@ export const LESSON_18 = [
     det('That', 'ice'),
     v('melted', 'melt', 'Vint'),
     adv('overnight'),
-    'The ice turned to water during the night.',
+    'That ice turned to water during the night.',
   ),
   svoPlus(
     'c18-j',

@@ -30,7 +30,7 @@ export const LESSON_14 = [
     det('Those', 'children'),
     v('were', 'be', 'Vbe'),
     pp('in', det('the', 'garden')),
-    'The children were out in the garden.',
+    'Those children were out in the garden.',
   ),
   sva(
     'c14-d',
@@ -46,7 +46,7 @@ export const LESSON_14 = [
     det('Several', 'letters'),
     v('are', 'be', 'Vbe'),
     pp('under', det('the', 'mat')),
-    'The letters lie under the mat.',
+    'Several letters lie under the mat.',
   ),
   sva(
     'c14-f',
