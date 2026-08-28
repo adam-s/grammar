@@ -41,6 +41,10 @@ export interface SpecNode {
   finiteness?: Finiteness;
   /** On a `Part` leaf. */
   partKind?: PartKind;
+  /** This node covers no words. Its position comes from where it is written. */
+  gap?: true;
+  /** Ties a gap to its filler. Shared by exactly two nodes. */
+  index?: number;
   obligatory?: boolean;
   /** On a `V` leaf. */
   verbType?: VerbType;
@@ -79,6 +83,17 @@ export function w(form: WordForm, fn: Func, text: string, extra: Partial<SpecNod
  */
 export function pt(text: string): SpecNode {
   return { form: null, function: null, children: [], text, punct: true };
+}
+
+/**
+ * A gap: a slot with no words in it.
+ *
+ * Written where it belongs in the sentence, which is how `build` knows the
+ * position — the words before it have already been counted, so the gap sits
+ * before whatever comes next.
+ */
+export function gap(form: Form, fn: Func, extra: Partial<SpecNode> = {}): SpecNode {
+  return { form, function: fn, children: [], gap: true, ...extra };
 }
 
 const UPOS_OF: Record<WordForm, Upos> = {
@@ -155,6 +170,14 @@ export function build(
     };
     cs[id] = self;
 
+    if (node.gap) {
+      // No words, so the span runs backwards from where the gap sits.
+      self.span = [words.length, words.length - 1];
+      if (node.index !== undefined) self.index = node.index;
+      self.gap = true;
+      return { id, lo: Infinity, hi: -Infinity };
+    }
+
     if (node.children.length === 0) {
       const wf = node.form as WordForm;
       const i = words.length;
@@ -186,7 +209,10 @@ export function build(
       lo = Math.min(lo, r.lo);
       hi = Math.max(hi, r.hi);
     }
-    self.span = [lo, hi];
+    // A node whose only children are gaps is itself empty, and says so the same
+    // way a gap does.
+    self.span = lo <= hi ? [lo, hi] : [words.length, words.length - 1];
+    if (node.index !== undefined) self.index = node.index;
     if (node.obligatory) self.obligatory = true;
     if (node.clauseKind) self.clauseKind = node.clauseKind;
     if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;

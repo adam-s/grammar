@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { auditReading } from './audits.ts';
 import {
+  addGap,
   canStackOver,
   emptyBuild,
   hypothesisFor,
@@ -106,14 +107,19 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
 
   const visit = (sourceId: string): string => {
     const source = reading.constituents[sourceId]!;
-    for (const child of source.children) visit(child);
+    // A gap has no words, so it cannot be built before the node that holds it
+    // — there is nothing to select. It is added from the parent, below.
+    for (const child of source.children) {
+      if (!reading.constituents[child]!.gap) visit(child);
+    }
 
     // Clause roles may be assigned on the frontier before VP/S is drawn. Set
     // every authored role that is currently legal, respecting dependencies
     // such as direct object before indirect/object complement.
     const prospective = source.children.filter((child) => {
       const fn = reading.constituents[child]!.function;
-      const id = learnerId.get(child)!;
+      const id = learnerId.get(child);
+      if (!id) return false; // a gap, which does not exist until its parent does
       return (
         fn !== null &&
         CLAUSE_FUNCTIONS.includes(fn as (typeof CLAUSE_FUNCTIONS)[number]) &&
@@ -227,6 +233,7 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
     // Some functions depend on siblings (indirect object follows direct object,
     // for example), so settle children in passes instead of assuming word order.
     const pending = source.children.filter((child) => {
+      if (reading.constituents[child]!.gap) return false; // built with its function already on it
       const fn = reading.constituents[child]!.function;
       const id = learnerId.get(child)!;
       return fn !== null && state.constituents[id]!.function !== fn;
@@ -254,6 +261,22 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
       assert.ok(option && isPickable(option), `${sentence.id}/${reading.id}: cannot choose ${fn}`);
       state = setFunction(state, id, fn, reading.constituents[child]!.obligatory === true);
       assert.equal(state.constituents[id]!.function, fn);
+    }
+
+    // The empty slots, after the functions: where a gap sits among its
+    // siblings follows from what those siblings are doing.
+    for (const child of source.children) {
+      const c = reading.constituents[child]!;
+      if (!c.gap) continue;
+      const option = optionFor(state, sentence.words, created, `gap:${c.function}`);
+      assert.ok(
+        option && isPickable(option),
+        `${sentence.id}/${reading.id}: cannot add a ${c.function} gap`,
+      );
+      state = addGap(state, created, c.function!);
+      const made = state.constituents[created]!.children.find((k) => state.constituents[k]!.gap);
+      assert.ok(made, `${sentence.id}/${reading.id}: the ${c.function} gap was not created`);
+      learnerId.set(child, made);
     }
 
     assertMenuMatchesBuilder(state, sentence, `${sentence.id}/${reading.id}/${source.form}`);

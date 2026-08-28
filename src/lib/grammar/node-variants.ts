@@ -50,6 +50,7 @@ const FUNCTION_FORM: Record<Func, Form> = {
   complement: 'NP',
   coordinate: 'Subord',
   coordinator: 'Conj',
+  prenucleus: 'NP',
   particle: 'Part',
   supplement: 'AdvP',
   appositive: 'NP',

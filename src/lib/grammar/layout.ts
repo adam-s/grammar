@@ -20,6 +20,7 @@
  * Browser-free: widths come in as a function so the caller may measure text if
  * it wants, and tests get a deterministic estimate for free.
  */
+import { gapPosition } from './types.ts';
 import type { ConstituentMap, Word } from './types.ts';
 
 export interface LayoutOpts {
@@ -143,10 +144,39 @@ export function layout(cs: ConstituentMap, words: Word[], opts: LayoutOpts = {})
     return 1 + Math.max(...c.children.map((k) => heightOf(k, guard + 1)));
   };
 
+  // A gap gets exactly the space between two words and no more. Widening it to
+  // fit its label would push a word sideways, and the word row must not move
+  // because the tree above it changed.
+  const wordGap = opts.gap ?? DEFAULTS.gap;
+
   const place = (id: string, depth: number): NodeBox | null => {
     const c = cs[id];
     if (!c || depth > 200) return null;
     maxDepth = Math.max(maxDepth, depth);
+
+    // A gap has no word slot, because it has no word. It gets a narrow box on
+    // the boundary it sits at — after the word before it, or at the very start
+    // — so it is drawn where the missing piece would have gone. The word row is
+    // untouched: no word moves because a gap appeared.
+    if (c.gap) {
+      const at = gapPosition(c);
+      const before = slots[at - 1];
+      const after = slots[at];
+      const centre = before ? before.right + wordGap / 2 : after ? after.left - wordGap / 2 : 0;
+      const box: NodeBox = {
+        id,
+        x: centre,
+        y: depth * rowHeight,
+        depth,
+        left: centre - wordGap / 2,
+        right: centre + wordGap / 2,
+        width: wordGap,
+        isLeaf: true,
+      };
+      nodes[id] = box;
+      leaves.push(id);
+      return box;
+    }
 
     if (c.word !== undefined) {
       const slot = slots[c.word];

@@ -4,6 +4,7 @@
  */
 import { verbs } from '../grammar/clause.ts';
 import {
+  addGap,
   canStackOver,
   emptyBuild,
   nodeOver,
@@ -31,7 +32,15 @@ import {
 } from '../grammar/types.ts';
 
 export type RenderStep = {
-  kind: 'form' | 'function' | 'verb-type' | 'voice' | 'part-kind' | 'finiteness' | 'clause-kind';
+  kind:
+    | 'form'
+    | 'function'
+    | 'verb-type'
+    | 'voice'
+    | 'part-kind'
+    | 'finiteness'
+    | 'clause-kind'
+    | 'gap';
   canonicalId: string | null;
   state: BuildState;
   /** The words the decision is about — what a learner would have selected. */
@@ -50,6 +59,8 @@ export type RenderStep = {
     clauseKind?: ClauseKind;
     /** The form goes OVER what is already there rather than replacing it. */
     stack?: true;
+    /** This step builds an empty slot rather than labelling words. */
+    gap?: true;
   };
 };
 
@@ -61,10 +72,17 @@ function roots(reading: ReturnType<typeof canonicalReading>): string[] {
     .sort((a, b) => reading.constituents[a]!.span[0] - reading.constituents[b]!.span[0]);
 }
 
-/** Children first is the builder's natural order: words, then their phrases. */
+/**
+ * Children first is the builder's natural order: words, then their phrases.
+ *
+ * Gaps are left out. They have no words to select, so they cannot be built
+ * before the node that holds them — they are added from the parent instead,
+ * once it exists.
+ */
 function postorder(reading: ReturnType<typeof canonicalReading>, id: string, out: string[]): void {
   const constituent = reading.constituents[id];
   if (!constituent) throw new Error(`Unknown constituent ${id}.`);
+  if (constituent.gap) return;
   for (const child of constituent.children) postorder(reading, child, out);
   out.push(id);
 }
@@ -190,7 +208,9 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
   // A function can depend on a sibling already being established. Repeated
   // passes let the builder's licensing rules decide the order without a second
   // grammar model hidden in this renderer.
-  let pending = order.filter((id) => reading.constituents[id]!.function !== null);
+  let pending = order.filter(
+    (id) => reading.constituents[id]!.function !== null && !reading.constituents[id]!.gap,
+  );
   while (pending.length > 0) {
     const nextPending: string[] = [];
     let progressed = false;
@@ -219,6 +239,26 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
       throw new Error(`Could not assign sentence functions: ${blocked}.`);
     }
     pending = nextPending;
+  }
+
+  // The empty slots, last: where a gap sits among its siblings follows from
+  // what those siblings are doing, so the functions have to be settled first.
+  for (const canonicalId of order) {
+    const constituent = reading.constituents[canonicalId]!;
+    const nodeId = generated.get(canonicalId)!;
+    for (const child of constituent.children) {
+      const c = reading.constituents[child]!;
+      if (!c.gap || c.function === null) continue;
+      state = addGap(state, nodeId, c.function);
+      steps.push({
+        kind: 'gap',
+        canonicalId: child,
+        state,
+        span: constituent.span,
+        nodeId,
+        choice: { func: c.function, gap: true },
+      });
+    }
   }
 
   return { steps, final: state };

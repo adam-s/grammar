@@ -235,6 +235,15 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       if (!childIs('Part')) return HIDDEN;
       return has('particle') ? no('This verb already has a particle.') : ALLOWED;
 
+    // The fronted position at the head of a clause. Unlike a supplement it is
+    // not outside the grammar — it fills a slot, just not where the slot is.
+    // Which is why it is only honest alongside a gap, and `auditGaps` requires
+    // the two to be tied together.
+    case 'prenucleus':
+      if (!CLAUSAL.includes(p)) return HIDDEN;
+      if (!childIs('NP', 'PP', 'AdvP', 'AdjP', 'Cl')) return HIDDEN;
+      return has('prenucleus') ? no('This clause already has a fronted phrase.') : ALLOWED;
+
     // Sentence-edge material: in the sentence without filling a slot in it.
     // Licensed on a clause or a noun phrase, which is where asides attach.
     case 'supplement':

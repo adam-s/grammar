@@ -29,6 +29,7 @@
   } from '$lib/grammar/Diagram.svelte';
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
   import {
+    addGap,
     emptyBuild,
     nodeOver,
     setFunction,
@@ -44,6 +45,7 @@
   import {
     CLAUSE_KIND_TEST,
     FINITENESS_TEST,
+    GAP_TEST,
     PART_KIND_TEST,
     PLAIN,
     VERB_TYPE_TEST,
@@ -52,6 +54,7 @@
     gradeFiniteness,
     gradeForm,
     gradeFunction,
+    gradeGap,
     gradePartKind,
     gradeVerbType,
     gradeVoice,
@@ -264,23 +267,25 @@
           span: step.span,
           nodeId: step.nodeId,
           key:
-            step.choice.form !== undefined
-              ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
-              : step.choice.func !== undefined
-                ? // The required S V A adverbial is a distinct row, because it is
-                  // a distinct claim about the verb.
-                  step.choice.func === 'adverbial' && step.choice.obligatory
-                  ? 'func:obligatoryAdverbial'
-                  : `func:${step.choice.func}`
-                : step.choice.voice !== undefined
-                  ? `voice:${step.choice.voice}`
-                  : step.choice.partKind !== undefined
-                    ? `part:${step.choice.partKind}`
-                    : step.choice.finiteness !== undefined
-                      ? `fin:${step.choice.finiteness}`
-                      : step.choice.clauseKind !== undefined
-                        ? `kind:${step.choice.clauseKind}`
-                        : `vt:${step.choice.verbType}`,
+            step.choice.gap && step.choice.func !== undefined
+              ? `gap:${step.choice.func}`
+              : step.choice.form !== undefined
+                ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
+                : step.choice.func !== undefined
+                  ? // The required S V A adverbial is a distinct row, because it is
+                    // a distinct claim about the verb.
+                    step.choice.func === 'adverbial' && step.choice.obligatory
+                    ? 'func:obligatoryAdverbial'
+                    : `func:${step.choice.func}`
+                  : step.choice.voice !== undefined
+                    ? `voice:${step.choice.voice}`
+                    : step.choice.partKind !== undefined
+                      ? `part:${step.choice.partKind}`
+                      : step.choice.finiteness !== undefined
+                        ? `fin:${step.choice.finiteness}`
+                        : step.choice.clauseKind !== undefined
+                          ? `kind:${step.choice.clauseKind}`
+                          : `vt:${step.choice.verbType}`,
         })),
       reset,
     };
@@ -446,6 +451,28 @@
       const id = nodeOver(build, span);
       if (id) selection = { kind: 'node', id };
       closeIfComplete();
+      return;
+    }
+
+    if (o.gap && o.func && selection.kind === 'node') {
+      // A gap is graded against the answer's own gaps rather than against a
+      // span, because there is no span: what is being claimed is that a slot
+      // this node holds is filled by nothing.
+      const c = build.constituents[selection.id]!;
+      const outcome = gradeGap(sentence, c.span, o.func);
+      verdict = toVerdict(
+        outcome,
+        `nothing fills the ${label(o.func)} here`,
+        `a missing ${label(o.func)}`,
+        GAP_TEST,
+        `gap:${c.span[0]}-${c.span[1]}:${o.func}`,
+      );
+      if (outcome.kind !== 'wrong') {
+        build = addGap(build, selection.id, o.func);
+        closeIfComplete();
+      } else {
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
       return;
     }
 

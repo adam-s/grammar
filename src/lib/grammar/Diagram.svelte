@@ -284,6 +284,8 @@
         clauseKind: c.clauseKind,
         finiteness: c.finiteness,
         partKind: c.partKind,
+        gap: c.gap,
+        index: c.index,
       })}
       {@const labelWidth = nodeLabelWidth({
         form: c.form,
@@ -294,6 +296,8 @@
         clauseKind: c.clauseKind,
         finiteness: c.finiteness,
         partKind: c.partKind,
+        gap: c.gap,
+        index: c.index,
       })}
       {@const on =
         (selection.kind === 'node' && selection.id === id) ||
@@ -356,6 +360,8 @@
           clauseKind={c.clauseKind}
           finiteness={c.finiteness}
           partKind={c.partKind}
+          gap={c.gap}
+          index={c.index}
         />
       </g>
     {/each}

@@ -153,6 +153,11 @@ export type PhraseInternalFunction =
   | 'coordinate'
   /** The word that joins the coordinates: *and*, *but*, *or*. Not one of them. */
   | 'coordinator'
+  /**
+   * Fronted material at the head of a clause, answering to a gap further in:
+   * *__What__ did she repair __?*
+   */
+  | 'prenucleus'
   /** A particle that belongs to its verb: the *up* in *looked up the word*. */
   | 'particle'
   /**
@@ -185,6 +190,7 @@ export const PHRASE_INTERNAL_FUNCTIONS: readonly PhraseInternalFunction[] = [
   'complement',
   'coordinate',
   'coordinator',
+  'prenucleus',
   'particle',
   'supplement',
   'appositive',
@@ -244,6 +250,28 @@ export interface Constituent {
   finiteness?: Finiteness;
   /** For `form: 'Part'` — infinitival *to*, or a particle belonging to a verb. */
   partKind?: PartKind;
+  /**
+   * This node covers no words: a slot the sentence leaves empty.
+   *
+   * *The engine that stalled* has a subject inside the relative clause and no
+   * word for it. *What did she repair?* has an object after *repair* and no
+   * word for it. The slot is real — the verb requires it, and the sentence is
+   * understood as though it were filled — so the diagram has to be able to draw
+   * something that is there and empty.
+   *
+   * A gap's `span` runs BACKWARDS: `[at, at - 1]`, where `at` is the word it
+   * sits before. That is the one encoding that says "no words" in a field whose
+   * whole job is to name words, and `auditStructure` checks it.
+   */
+  gap?: true;
+  /**
+   * Ties a gap to the phrase that says what is missing.
+   *
+   * In *What did she repair?* the gap after *repair* and the word *What* are
+   * the same thing said once: `index` is how the diagram says they are one.
+   * A number, shared by exactly two nodes, meaning nothing on its own.
+   */
+  index?: number;
   /**
    * For `form: 'V'` — which of Morenberg's six this verb is.
    *
@@ -366,6 +394,21 @@ export type Glossary = Record<string, GlossaryEntry>;
  */
 export function isPunctuation(word: Word): boolean {
   return word.upos === 'PUNCT';
+}
+
+/** Does this node cover no words? A gap, and nothing else, is empty. */
+export function isEmpty(c: Constituent): boolean {
+  return c.span[1] < c.span[0];
+}
+
+/** The word a gap sits before. One past the end of the sentence is legal. */
+export function gapPosition(c: Constituent): number {
+  return c.span[0];
+}
+
+/** The span of a gap sitting before word `at`. */
+export function gapSpan(at: number): Span {
+  return [at, at - 1];
 }
 
 /** A word leaf is a constituent that wraps exactly one word. */

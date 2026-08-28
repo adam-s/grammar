@@ -299,6 +299,43 @@ export function gradePartKind(sentence: SentenceEntry, wordIndex: number, kind: 
   return { kind: 'wrong', reason: 'Not that kind of particle here.', test: PART_KIND_TEST };
 }
 
+/** The test for a gap: say the clause on its own and see what is missing. */
+export const GAP_TEST =
+  'Say the clause by itself. If the verb needs something the words never give ' +
+  'you, and you supply it from elsewhere in the sentence, that slot is a gap.';
+
+/**
+ * Does the answer put an empty slot with this function inside the node covering
+ * `span`?
+ *
+ * Keyed on the holder rather than on the gap, because a gap has no words to be
+ * found by. What is being claimed is about the node that holds it.
+ */
+export function gradeGap(sentence: SentenceEntry, span: Span, fn: Func): Outcome {
+  for (const r of ordered(sentence)) {
+    const holder = Object.keys(r.constituents).find((id) => {
+      const c = r.constituents[id]!;
+      return !c.gap && c.span[0] === span[0] && c.span[1] === span[1];
+    });
+    const has =
+      holder !== undefined &&
+      r.constituents[holder]!.children.some(
+        (k) => r.constituents[k]!.gap && r.constituents[k]!.function === fn,
+      );
+    if (has) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'Nothing is missing here.', test: GAP_TEST };
+}
+
 /** The test for clause kind: what could stand in its place? */
 export const CLAUSE_KIND_TEST =
   'Take the clause out and put something simpler in its place. A noun phrase fits a ' +

@@ -24,6 +24,10 @@ export interface NodeLabelValue {
   finiteness?: Finiteness | null;
   /** Only meaningful on a `Part`. */
   partKind?: PartKind | null;
+  /** This node covers no words. */
+  gap?: boolean;
+  /** Ties this node to the gap or filler it is one half of. */
+  index?: number | null;
 }
 
 export interface NodeLabelParts {
@@ -84,13 +88,31 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
           ? partKindName(value.partKind)
           : null;
   const primaryName = formName(value.form);
+  // The link between a filler and its gap is the whole claim being made, and a
+  // reader who cannot see it sees two unrelated phrases. The number is the
+  // notation, and it means only that these two are one thing.
+  const tie = value.index === undefined || value.index === null ? '' : String(value.index);
+  if (value.gap) {
+    // The mark has to say the slot is empty, or a reader sees a phrase that has
+    // simply lost its words.
+    return {
+      form: value.form,
+      formName: primaryName,
+      functionMark: fnMark,
+      functionName: fnName,
+      subtypeMark: tie ? `gap ${tie}` : 'gap',
+      subtypeName: tie ? `gap, filled by phrase ${tie}` : 'gap',
+      accessibleName: [primaryName, 'gap', fnName].filter(Boolean).join(', '),
+    };
+  }
+  const withTie = tie ? [subtypeMark, tie].filter(Boolean).join(' ') : subtypeMark;
   return {
     form: value.form,
     formName: primaryName,
     functionMark: fnMark,
     functionName: fnName,
-    subtypeMark,
-    subtypeName,
+    subtypeMark: withTie,
+    subtypeName: tie ? [subtypeName, `fills gap ${tie}`].filter(Boolean).join(', ') : subtypeName,
     accessibleName: [primaryName, subtypeName, fnName].filter(Boolean).join(', '),
   };
 }

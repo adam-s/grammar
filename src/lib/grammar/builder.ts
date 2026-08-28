@@ -20,7 +20,14 @@
  * verb-frame correctness is left to the grader so construction order never
  * reveals or hides an answer.
  */
-import { governingVerb, governingVerbType, governingVoice, verbs } from './clause.ts';
+import {
+  clauseOf,
+  governingVerb,
+  governingVerbType,
+  governingVoice,
+  isClauseNode,
+  verbs,
+} from './clause.ts';
 import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm, isPunctuation } from './types.ts';
 import type {
@@ -289,7 +296,9 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
     return { constituents: cs, seq };
   }
 
-  const kids = roots({ ...state, constituents: cs }).filter((id) => inSpan(span, cs[id]!.span[0]));
+  const kids = roots({ ...state, constituents: cs }).filter(
+    (id) => !cs[id]!.gap && inSpan(span, cs[id]!.span[0]),
+  );
   if (kids.length === 0) return state;
   // The node's extent is what it actually holds, not what the pointer swept.
   // A selection that runs over the closing period should produce a sentence
@@ -299,7 +308,8 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   const id = `c${++seq}`;
   cs[id] = { form, function: null, parent: null, children: kids, span: [lo, hi] };
   for (const k of kids) cs[k]!.parent = id;
-  return { constituents: cs, seq };
+  // Grouping is what puts a fronted phrase and a gap into the same clause.
+  return linkFillers({ constituents: cs, seq });
 }
 
 /** Assign a function already accepted by the grader as a compatible hypothesis. */
@@ -315,7 +325,9 @@ export function setFunction(
   cs[id]!.function = fn;
   if (fn === 'adverbial' && obligatory) cs[id]!.obligatory = true;
   else delete cs[id]!.obligatory;
-  return { ...state, constituents: cs };
+  // Naming a phrase as fronted is what makes it the answer to a gap already in
+  // its clause, so the link is checked for here rather than only at creation.
+  return linkFillers({ ...state, constituents: cs });
 }
 
 /**
@@ -345,6 +357,131 @@ export function setVoice(state: BuildState, id: string, voice: Voice): BuildStat
   if (voice === 'active') delete cs[id]!.voice;
   else cs[id]!.voice = voice;
   return { ...state, constituents: cs };
+}
+
+/**
+ * Put an empty slot into a node: a piece the sentence requires and never says.
+ *
+ * The one structure the learner cannot reach by selecting words, because it has
+ * no words to select. So it is asked of the node that would hold it — "is
+ * something missing here?" — and the answer builds it.
+ *
+ * A subject goes in front of what is already there; anything else goes after,
+ * which is where English puts them. The index, when there is one, is not a
+ * second decision: a clause holds at most one fronted phrase, so if there is
+ * one, that is what fills the gap and nothing else could.
+ */
+export function addGap(state: BuildState, parentId: string, fn: Func): BuildState {
+  const parent = state.constituents[parentId];
+  if (!parent || parent.word !== undefined || parent.gap) return state;
+  if (parent.children.some((k) => state.constituents[k]?.function === fn)) return state;
+
+  const cs = cloneMap(state.constituents);
+  const seq = state.seq + 1;
+  const id = `c${seq}`;
+
+  // Where the gap goes is not a decision either: English puts a subject after
+  // whatever introduces the clause and before the predicate, and an object
+  // after the verb. So the gap slots in among the children by the same order,
+  // and takes the word position of whatever it now sits in front of.
+  const rank = (f: Func | null): number =>
+    f === null ? SLOT_ORDER.length : SLOT_ORDER.indexOf(f) + 1 || SLOT_ORDER.length;
+  const after = parent.children.filter((k) => rank(cs[k]!.function) > rank(fn));
+  const at = after.length > 0 ? cs[after[0]!]!.span[0] : parent.span[1] + 1;
+
+  cs[id] = {
+    form: 'NP',
+    function: fn,
+    parent: parentId,
+    children: [],
+    span: [at, at - 1],
+    gap: true,
+  };
+
+  const cut = parent.children.length - after.length;
+  cs[parentId]!.children = [...parent.children.slice(0, cut), id, ...parent.children.slice(cut)];
+  return linkFillers({ constituents: cs, seq });
+}
+
+/**
+ * Surface order of the slots inside a clause and a verb phrase.
+ *
+ * Only used to place a gap, which has no words to place it by. Everything with
+ * words is placed by its words.
+ */
+const SLOT_ORDER: readonly Func[] = [
+  'prenucleus',
+  'marker',
+  'subject',
+  'predicate',
+  'head',
+  'auxiliary',
+  'particle',
+  'indirectObject',
+  'directObject',
+  'objectComplement',
+  'subjectComplement',
+  'adverbial',
+];
+
+/**
+ * Tie each gap to the fronted phrase that fills it.
+ *
+ * Not a decision the learner makes, because there is never more than one answer
+ * to it: a clause holds at most one fronted phrase, so if a clause has one and
+ * a gap, they are the same thing. Asking would be a question with one option.
+ *
+ * Run after every edit that could bring the two into the same clause. Neither
+ * exists at the moment the other is built — a learner makes the gap inside a
+ * bare verb phrase, and the clause that joins them comes later — so the link
+ * cannot be made when either one is created.
+ */
+export function linkFillers(state: BuildState): BuildState {
+  const cs = state.constituents;
+  const pending: [string, string][] = [];
+  for (const id of Object.keys(cs)) {
+    if (!isClauseNode(cs, id)) continue;
+    const filler = cs[id]!.children.find((k) => cs[k]?.function === 'prenucleus');
+    if (!filler || cs[filler]!.index !== undefined) continue;
+    const gapId = Object.keys(cs).find(
+      (k) => cs[k]!.gap && cs[k]!.index === undefined && clauseOf(cs, k) === id,
+    );
+    if (gapId) pending.push([filler, gapId]);
+  }
+  if (pending.length === 0) return state;
+
+  const next = cloneMap(cs);
+  let index = Math.max(0, ...Object.values(next).map((c) => c.index ?? 0));
+  for (const [filler, gapId] of pending) {
+    index += 1;
+    next[filler]!.index = index;
+    next[gapId]!.index = index;
+  }
+  return { ...state, constituents: next };
+}
+
+/** The slots a node could hold as a gap: licensed here, and not yet filled. */
+export function gappableSlots(state: BuildState, id: string): Func[] {
+  const c = state.constituents[id];
+  if (!c || c.word !== undefined || c.gap) return [];
+  const candidates: Func[] =
+    c.form === 'VP'
+      ? ['directObject', 'indirectObject', 'subjectComplement', 'objectComplement']
+      : c.form === 'S' || c.form === 'Cl'
+        ? ['subject']
+        : [];
+  const siblings = c.children
+    .map((k) => state.constituents[k]?.function)
+    .filter((x): x is Func => x != null);
+  // `hypothesizes`, not `licenses`, for the reason the rest of the palette uses
+  // it: whether this verb takes an object is the question being asked, and a
+  // row that disappeared until the verb was classified would answer it.
+  return candidates.filter(
+    (fn) =>
+      !siblings.includes(fn) &&
+      hypothesizes(fn, { parentForm: c.form, verbType: null, siblings, childForm: 'NP' }).state ===
+        'allowed',
+  );
 }
 
 /** Say which kind of `Part` a word is: infinitival *to*, or a verbal particle. */

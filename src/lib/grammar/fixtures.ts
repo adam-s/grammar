@@ -7,7 +7,7 @@
  * the engine can be finished and proved while the pipeline is still being
  * built (see docs/slices/README.md, the de-risking note).
  */
-import { build, n, pt, textOf, w, type BuiltReading } from './build.ts';
+import { build, gap, n, pt, textOf, w, type BuiltReading } from './build.ts';
 import type { SentenceEntry } from './types.ts';
 
 function sentence(
@@ -952,6 +952,127 @@ export const stacked = sentence(
   ['Vint', 'nominal', 'same-span-stack', 'premodifier'],
 );
 
+/* ----- a subject relative — The engine that stalled was repaired.
+ *
+ * The sentence the model could not write. *that stalled* is a clause, and a
+ * clause has a subject — but there is no word for it, because *the engine* is
+ * already doing that job outside. The slot is real: *stalled* requires
+ * something to have stalled, and a reader supplies it without being told.
+ *
+ * So the subject is a gap. It covers no words, it has a function, and it is
+ * tied to nothing inside the clause, because what fills it is the nominal the
+ * clause is modifying — which is not in the clause at all.
+ *
+ * *that* is the marker, the same as *because*. It is not the subject: put a
+ * subject back and the sentence is *the engine that IT stalled*, which is not
+ * English.
+ */
+export const subjectRelative = sentence(
+  'fix-subject-relative',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'engine'),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  w('Subord', 'marker', 'that'),
+                  gap('NP', 'subject'),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'stalled', { lemma: 'stall', verbType: 'Vint' }),
+                  ]),
+                ],
+                { clauseKind: 'relative', clauseType: 'SV' },
+              ),
+            ]),
+          ]),
+          n('VP', 'predicate', [
+            w('Aux', 'auxiliary', 'was', { xpos: 'VBD', lemma: 'be' }),
+            w('V', 'head', 'repaired', {
+              xpos: 'VBN',
+              lemma: 'repair',
+              verbType: 'Vtr',
+              voice: 'passive',
+            }),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Somebody repaired the engine that had stalled.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vint', 'Vtr', 'relative-clause', 'gap', 'passive', 'two-clause'],
+);
+
+/* ------- a fronted phrase and its gap — He knew what she repaired.
+ *
+ * The other way a gap is filled. *repaired* is transitive and there is no noun
+ * phrase after it; the thing repaired is named at the front of its clause
+ * instead. Here the filler IS in the sentence, so the gap and the phrase are
+ * tied by an index — one thing, said once, in a place the grammar does not
+ * usually put it.
+ *
+ * An embedded question rather than a direct one, and deliberately. *What did
+ * she repair?* also moves the auxiliary out of the verb phrase and in front of
+ * the subject, and a node whose pieces are not next to each other is a
+ * different problem (docs/model-gaps.md). This fixture tests the filler and the
+ * gap, and nothing else.
+ */
+export const frontedPhrase = sentence(
+  'fix-fronted-phrase',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'He')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'knew', { lemma: 'know', verbType: 'Vtr' }),
+            n(
+              'Cl',
+              'directObject',
+              [
+                n('NP', 'prenucleus', [w('Pron', 'head', 'what', { xpos: 'WP' })], { index: 1 }),
+                n('NP', 'subject', [w('Pron', 'head', 'she')]),
+                n('VP', 'predicate', [
+                  w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr' }),
+                  gap('NP', 'directObject', { index: 1 }),
+                ]),
+              ],
+              { clauseKind: 'nominal', clauseType: 'SVO' },
+            ),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'He knew which thing she had repaired.',
+      },
+    ),
+  ],
+  'r1',
+  ['Vtr', 'gap', 'coindexation', 'prenucleus', 'nominal-clause', 'two-clause'],
+);
+
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
   vint,
@@ -974,6 +1095,8 @@ export const FIXTURES: readonly SentenceEntry[] = [
   supplement,
   nominal,
   stacked,
+  subjectRelative,
+  frontedPhrase,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

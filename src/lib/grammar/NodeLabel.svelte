@@ -21,6 +21,8 @@
     clauseKind = null,
     finiteness = null,
     partKind = null,
+    gap = false,
+    index = null,
   }: Props = $props();
 
   const parts = $derived(
@@ -33,6 +35,8 @@
       clauseKind,
       finiteness,
       partKind,
+      gap,
+      index,
     }),
   );
   const offsets = $derived(nodeLabelOffsets(form));

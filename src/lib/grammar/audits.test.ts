@@ -7,10 +7,12 @@ import {
   adverbialClause,
   auxiliaryChain,
   coordination,
+  frontedPhrase,
   infinitive,
   particle,
   passive,
   punctuation,
+  subjectRelative,
   vbe,
   vint,
   vtr,
@@ -330,5 +332,57 @@ describe('the two axes of a clause, and the two kinds of Part', () => {
     // doing a job the four kinds name.
     const co = auditReading(coordination.readings[0]!, coordination.words);
     assert.equal(co.ok, true, co.all.join(' | '));
+  });
+});
+
+describe('gaps and the phrases that fill them', () => {
+  it('a relative clause has a subject with no words, and needs no index', () => {
+    const report = auditReading(subjectRelative.readings[0]!, subjectRelative.words);
+    assert.equal(report.ok, true, report.all.join(' | '));
+    const r = subjectRelative.readings[0]!;
+    const g = idOf(r, (c) => c.gap === true);
+    assert.equal(r.constituents[g]!.function, 'subject');
+    assert.equal(r.constituents[g]!.index, undefined);
+    assert.ok(r.constituents[g]!.span[1] < r.constituents[g]!.span[0], 'a gap covers no words');
+  });
+
+  it('a fronted phrase and its gap carry the same number, and only those two', () => {
+    const r = frontedPhrase.readings[0]!;
+    const tied = Object.values(r.constituents).filter((c) => c.index !== undefined);
+    assert.equal(tied.length, 2);
+    assert.equal(tied[0]!.index, tied[1]!.index);
+    assert.equal(tied.filter((c) => c.gap).length, 1);
+  });
+
+  it('an index on one node alone is a link to nothing', () => {
+    const { r, s } = broken(frontedPhrase, (r) => {
+      delete r.constituents[idOf(r, (c) => c.gap === true)]!.index;
+    });
+    const all = auditReading(r, s.words).all.join(' | ');
+    assert.match(all, /is on 1 nodes/);
+    assert.match(all, /not tied to anything/);
+  });
+
+  it('a gap in a relative clause must not claim a filler inside it', () => {
+    const { r, s } = broken(subjectRelative, (r) => {
+      r.constituents[idOf(r, (c) => c.gap === true)]!.index = 9;
+      r.constituents[idOf(r, (c) => c.form === 'Subord')]!.index = 9;
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /there is nothing inside to tie it to/);
+  });
+
+  it('a node that covers no words and is not a gap is a broken node', () => {
+    const { r, s } = broken(vtr, (r) => {
+      const np = idOf(r, (c) => c.function === 'directObject');
+      r.constituents[np]!.span = [3, 2];
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /covers no words but is not a gap/);
+  });
+
+  it('a gap whose span claims words is a gap in name only', () => {
+    const { r, s } = broken(subjectRelative, (r) => {
+      r.constituents[idOf(r, (c) => c.gap === true)]!.span = [2, 3];
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /is a gap but its span/);
   });
 });

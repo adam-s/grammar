@@ -35,6 +35,7 @@
 import {
   canStackOver,
   canWrap,
+  gappableSlots,
   hypothesisFor,
   nodeOver,
   roots,
@@ -138,6 +139,8 @@ export interface LabelOption {
    * row has to carry which one it is.
    */
   stack?: true;
+  /** This row builds an empty slot rather than labelling something on screen. */
+  gap?: true;
   /** Match quality under the current filter, 0 = best. Set by `filterPanel`. */
   rank?: number;
 }
@@ -552,6 +555,33 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
     }),
   };
 
+  /**
+   * Slots the sentence leaves empty.
+   *
+   * Everything else in the palette labels something the learner can point at.
+   * A gap has nothing to point at — that is what makes it a gap — so it is
+   * asked of the node that would hold it instead, and only for slots the verb
+   * licenses and nothing has filled.
+   *
+   * Optional, like stacking: most clauses have no gap, and holding the palette
+   * open until someone says so would be nagging.
+   */
+  const slots = gappableSlots(state, id);
+  const gaps: OptionGroup = {
+    id: 'gap',
+    question: 'Is a piece of it missing?',
+    notes: 'always',
+    optional: true,
+    options: slots.map((fn) => ({
+      key: `gap:${fn}`,
+      label: `${label(fn)}, with no words`,
+      note: 'The verb requires it and the sentence never says it — a reader supplies it.',
+      state: 'available' as OptionState,
+      func: fn,
+      gap: true as const,
+    })),
+  };
+
   const groups: OptionGroup[] = isWord
     ? [
         {
@@ -585,6 +615,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       ];
 
   groups.push(functionGroup(state, id, subject, scope));
+  if (gaps.options.length > 0) groups.push(gaps);
 
   return finish({
     subject,

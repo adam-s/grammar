@@ -18,7 +18,10 @@ describe('layout', () => {
     it(`${s.id} — leaf order is word order`, () => {
       const r = canonicalReading(s);
       const res = layout(r.constituents, s.words);
-      const wordIdx = res.leaves.map((id) => r.constituents[id]!.word);
+      // Gaps are leaves of the tree and not words, so they are not in the row.
+      const wordIdx = res.leaves
+        .filter((id) => !r.constituents[id]!.gap)
+        .map((id) => r.constituents[id]!.word);
       // Every word but the punctuation, which is drawn in the word row and has
       // no leaf above it — it marks the sentence rather than being part of it.
       assert.deepEqual(

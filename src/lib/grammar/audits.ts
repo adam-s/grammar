@@ -11,6 +11,7 @@
  */
 import {
   clauseNodes,
+  clauseOf,
   governingVerbType,
   governingVoice,
   isCoordination,
@@ -20,6 +21,8 @@ import {
 import { licenses, hasPassive, requiredFor, slotsFor, HEAD_BEARING, LONG } from './rules.ts';
 import {
   CLAUSE_FUNCTIONS,
+  gapPosition,
+  isEmpty,
   isPhraseForm,
   isPunctuation,
   isWordForm,
@@ -62,6 +65,28 @@ export function auditStructure(ctx: Ctx): string[] {
 
   for (const id of ids) {
     const c = cs[id]!;
+    if (c.gap) {
+      // A gap is empty by definition, and its span is the only place that can
+      // say so: `[at, at - 1]`. Anything else is a node claiming words it does
+      // not have.
+      if (!isEmpty(c)) {
+        f.push(`"${id}" is a gap but its span [${c.span.join(', ')}] covers words`);
+      }
+      if (c.word !== undefined) f.push(`"${id}" is a gap but also wraps a word`);
+      if (c.children.length > 0) f.push(`"${id}" is a gap but has children`);
+      if (!isPhraseForm(c.form)) {
+        f.push(`"${id}" is a gap of form "${c.form}"; a gap stands where a phrase would`);
+      }
+      const at = gapPosition(c);
+      if (at < 0 || at > ctx.words.length) {
+        f.push(`"${id}" is a gap at ${at}, which is outside the sentence`);
+      }
+      continue;
+    }
+    if (isEmpty(c)) {
+      f.push(`"${id}" covers no words but is not a gap`);
+      continue;
+    }
     const leaf = c.word !== undefined;
     if (leaf) {
       if (c.children.length > 0) f.push(`"${id}" wraps a word but also has children`);
@@ -339,6 +364,62 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
   return f;
 }
 
+/* ------------------------------------------------------- 9: gaps and fillers */
+
+/**
+ * Every gap is tied to something, and nothing is tied to two things.
+ *
+ * A gap is a claim that a slot is filled by material said elsewhere. Two
+ * elsewheres exist, and they are different relations:
+ *
+ *   - **A filler in the same sentence.** *__What__ did she repair __?* — the
+ *     gap and the word are one thing said once. `index` links them, and both
+ *     ends carry it.
+ *   - **An antecedent outside the clause.** *the engine __that stalled__* — the
+ *     relative clause's subject gap answers to the nominal it modifies, which
+ *     is not inside the clause and cannot be indexed from within it. So a gap
+ *     in a relative clause needs no index, and having one would be a claim the
+ *     structure cannot support.
+ */
+export function auditGaps(ctx: Ctx): string[] {
+  const f: string[] = [];
+  const byIndex = new Map<number, string[]>();
+  for (const [id, c] of Object.entries(ctx.cs)) {
+    if (c.index === undefined) continue;
+    byIndex.set(c.index, [...(byIndex.get(c.index) ?? []), id]);
+  }
+
+  for (const [index, ids] of byIndex) {
+    if (ids.length !== 2) {
+      f.push(`index ${index} is on ${ids.length} nodes (${ids.join(', ')}); a link joins two`);
+      continue;
+    }
+    const gaps = ids.filter((id) => ctx.cs[id]!.gap);
+    if (gaps.length !== 1) {
+      f.push(`index ${index} joins ${gaps.length} gaps; a link joins one gap to one filler`);
+    }
+  }
+
+  for (const [id, c] of Object.entries(ctx.cs)) {
+    if (!c.gap) continue;
+    const clause = clauseOf(ctx.cs, id);
+    const inRelative = clause !== null && ctx.cs[clause]!.clauseKind === 'relative';
+    if (c.index === undefined && !inRelative) {
+      f.push(`the gap "${id}" is not tied to anything — say which phrase fills it`);
+    }
+    if (c.index !== undefined && inRelative) {
+      f.push(
+        `the gap "${id}" is in a relative clause, so what fills it is the noun outside — ` +
+          'there is nothing inside to tie it to',
+      );
+    }
+    if (c.function === null) {
+      f.push(`the gap "${id}" has no function — a gap is a slot, and a slot has a job`);
+    }
+  }
+  return f;
+}
+
 /* ------------------------------------------------------------- 8: finiteness */
 
 /**
@@ -396,6 +477,10 @@ export function auditHead(ctx: Ctx): string[] {
   const f: string[] = [];
   for (const [id, c] of Object.entries(ctx.cs)) {
     if (c.word !== undefined) continue;
+    // A gap has no head because it has no words. It stands where a phrase would
+    // be, and asking what the missing phrase is headed by is asking about
+    // something the sentence never said.
+    if (c.gap) continue;
     if (!HEAD_BEARING.includes(c.form)) continue;
     const heads = c.children.filter((k) => ctx.cs[k]?.function === 'head');
     if (heads.length === 0) f.push(`"${id}" is a ${c.form} with no head`);
@@ -415,6 +500,7 @@ const AUDITS: readonly [string, (ctx: Ctx) => string[]][] = [
   ['licensing', auditLicensing],
   ['verbType', auditVerbType],
   ['finiteness', auditFiniteness],
+  ['gaps', auditGaps],
   ['head', auditHead],
 ];
 
@@ -461,6 +547,8 @@ export function label(fn: Func): string {
       return 'helping verb';
     case 'supplement':
       return 'supplement';
+    case 'prenucleus':
+      return 'fronted phrase';
     default:
       return fn;
   }
