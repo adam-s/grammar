@@ -37,24 +37,21 @@ come out projective, which is what CGELBank gets and for the same reason.
 because it is. If a construction turns up that genuinely needs a split node, it
 will turn up as a sentence nobody can write.
 
-## 3 · Ellipsis — DONE for VP ellipsis and gapping
+## 3 · Ellipsis — DONE
 
-The story it wanted turned out to be one sentence: an elided predicate borrows
-its verb, and its slots with it. `verbOfClause` follows the link, so *and he
-will __* is a transitive clause with no object in it and the audit stops asking
-for one.
+All four families. An elided predicate borrows its verb, and its slots with it,
+which is the whole story: `verbOfClause` follows the link, so *and he will __*
+is a transitive clause with no object in it and the audit stops asking for one.
+
+  VP ellipsis   *and he will __ too*        the head of a verb phrase
+  gapping       *and the Queen __ at seven* a single word
+  sluicing      *but I forgot what __*      the whole predicate
+  stripping     *and the car too*           the verb, in a clause with no subject
 
 An elision is a third kind of index link and runs the other way from a
 filler-gap one — nothing moved out, something was left unsaid because it had
 already been said. It always has an index, always points backwards, and points
-at the same kind of thing. A moved gap is always a phrase; an elided one may be
-a word, which is what gapping leaves out.
-
-**Sluicing and stripping are not done.** *She repaired something, but I don't
-know what* elides a whole clause after a fronted phrase, and *and the car too*
-elides everything but one phrase. Both are probably the same machinery — a gap
-with function `head` on a bigger node — and neither has been probed. An hour
-each, if the probe agrees.
+at the same kind of thing.
 
 ## 4 · Fused functions, and a DAG — days, and probably not yet
 
@@ -70,25 +67,18 @@ and the cost lands on every file.
 `DP`, `flat`, `postnucleus`, and the interrogative and exclamative clause kinds
 are all in, each with a fixture.
 
-## 6 · Things the model holds but does not record
+## 6 · Things the model holds but does not record — mostly DONE
 
-**Modals: done.** `auxKind` records which of five jobs a helping verb is doing
-— modal, perfect, progressive, passive, do-support — because *was repairing*
-and *was repaired* differ in nothing else. It also let `auditVerbType` get
-stricter: a passive clause needs the passive *be* specifically, not any helper.
+Modals, and the other four jobs an auxiliary does, are recorded by `auxKind`.
+Existential *there* is a placeholder subject with a displaced one behind the
+verb, which is what it always was and what the diagram could not say.
 
-Still open, and both need more than a property:
-
-- **Raising against control** — *seems to leave* against *wants to leave*. Same
-  tree; the difference is where the understood subject comes from, and the
-  understood subject of a control clause is outside it. That is the same
-  "antecedent we cannot point at" the gap rule already runs into, so it is
-  probably one piece of work with a general antecedent link rather than a flag.
-- **Existential *there*** — builds as an ordinary `Vbe` clause, and nothing
-  records that its subject is not what the sentence is about. The pair shape
-  used for extraposition (`placeholderSubject` + `extraposed`) may be the right
-  answer here too, with the real subject inside the predicate; worth an hour of
-  probing before writing anything.
+**Raising against control is left alone, deliberately.** *It seems to work* and
+*She wants to leave* build the same tree, and the difference is which of them
+gives its subject a role — a fact about the verb, not about the sentence in
+front of you. A flag would be a lexical fact wearing a syntactic hat, and
+nothing in the tree could check it. Worth recording as a limit rather than
+papering over.
 
 ## Documentation debt
 
@@ -104,6 +94,7 @@ part of the model.
 
 ## The order I would take them
 
-What is left is small: the two ellipsis families nobody has probed, and 6's two
-items. 4 probably never. Every one of them wants half an hour with the prober
-before any code, which is the one habit from this work worth keeping.
+4 is what is left, and probably never. Everything else on this page closed, and
+four separate times a thing on the blocked list turned out to be working
+already or one rule away — so the habit worth keeping is the prober, not the
+plan. Half an hour with it before any code.

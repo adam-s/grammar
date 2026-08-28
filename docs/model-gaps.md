@@ -46,6 +46,9 @@ thing blocked because no fixture used it.
 | Coordinated phrases | *the cat and the dog* | `auditHead` excusing a join, one level below the clause |
 | VP ellipsis | *and he will __ too* | an elided predicate borrowing its verb, and its slots |
 | Gapping | *and the Queen __ at seven* | the same link, around a single word |
+| Sluicing | *but I forgot what __* | the predicate itself elided, not just its head |
+| Stripping | *and the car too* | a clause with no subject, licensed by a verb that is not there |
+| Existential *there* | *__There__ is a problem* | a placeholder subject and a displaced one |
 | A tail position | *A man came in __who I knew__* | `postnucleus`, and an anchor link the learner chooses |
 | Clefts and comparatives | *It was __John__ who broke it* | the same tail position |
 | Two markers on one clause | *__for__ anyone __to__ lift* | one of each kind, rather than one in total |
@@ -102,13 +105,7 @@ the right way to find out.
 
 ## What is still open
 
-One thing, and two families of a second.
-
-**Sluicing and stripping.** The other two ellipsis families. *She repaired
-something, but I don't know what* elides a whole clause after a fronted phrase;
-*and the car too* elides everything but one phrase. Probably the same machinery
-that VP ellipsis and gapping use, and neither has been probed — which is the
-only honest thing to say about them.
+One thing.
 
 **Fused functions, and a DAG.** `Constituent.function` is one value and `parent`
 is one id. CGEL needs a node doing two jobs at once — Determiner-Head in *__most__
@@ -127,11 +124,33 @@ Morenberg's six classify a verb by the slots it licenses, which is the right
 spine for the course and is not a full account of an English predicate.
 
 - **Raising against control** — *seems to leave* against *wants to leave* —
-  differ in where the understood subject comes from. Both build; the model does
-  not record which is which.
-- **Modals** carry no slots of their own and sit outside the six as `Aux`.
-- **Existential *there*** builds, but nothing records that its subject is not
-  what the sentence is about.
+  differ in which verb gives its subject a role. Both build the same tree, and
+  the difference is a fact about the verb rather than about the sentence in
+  front of you. Left alone on purpose: a flag would be a lexical fact wearing a
+  syntactic hat, and nothing in the tree could check it.
+- **Modals** carry no slots of their own and sit outside the six — but `auxKind`
+  now says which of five jobs an auxiliary is doing, so *will* is a modal on the
+  page rather than an unexplained `Aux`.
+- **Existential *there*** is a placeholder subject with a displaced one behind
+  the verb. It used to build as an ordinary *be* clause with *a problem* as a
+  subject complement, which says the sentence describes *there*, and it does
+  not.
+
+## What the diagram says that the tree cannot
+
+Three relations join two places that can be far apart: a gap and the phrase
+moved out of it, a tail phrase and what it was moved off, an elision and the
+material it repeats. The model stores all three as a shared index.
+
+They are drawn as arcs under the word row — solid for movement, dashed for
+repetition, running from the empty or displaced position to the words that
+answer for it. Before that they were matching numbers on two nodes, which is
+honest and unreadable.
+
+The numbers are gone from the labels. So are the function marks on word classes
+named after the job they do: `Det` no longer says `D` above it. Phrase forms
+keep theirs, because "verb phrase" and "predicate" are two ideas that coincide
+rather than one idea said twice.
 
 ## The lesson worth keeping
 
