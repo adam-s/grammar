@@ -21,17 +21,17 @@ carries real weight and none is here.
 | 4   | Before the last bus arrived, our guests gathered.           | **a fronted clause** — lesson 29              |
 | 5   | Surprisingly, the old bridge remained open.                 | **a supplement** — lesson 38                  |
 | 6   | The visitors who had missed their train waited.             | **no commas** — only some of them waited      |
-| 7   | The visitors, who had missed their train, waited. †         | **commas** — all of them waited               |
+| 7   | The visitors, who had missed their train, waited.           | **commas** — all of them waited               |
 | 8   | The mechanic checked the brakes, but the driver waited.     | back to the clause comma, with _but_          |
 | 9   | The boat carried food, water, and blankets.                 | **a list** — where the last comma is arguable |
 | 10  | The rain stopped, the clouds lifted, and children ran.      | three clauses, two commas                     |
 
 ## Notes
 
-**Items 6 and 7 are the reason this lesson exists.** Six words, one pair of
-commas, and the meaning changes from _some of the visitors_ to _all of them_.
-That is the highest-value punctuation contrast in English and it is in neither
-corpus.
+**Item 7 builds today, and it is the same construction as lesson 31's item 7.**
+Both were daggered because no `Cl/supplement` exists in either corpus.
+`node scripts/probe-constructions.mjs` builds it clean. One sentence, written once,
+serves both lessons.
 
 **Item 7 is daggered and it is the same gap as lesson 31's item 7.** Checked: no
 `Cl/supplement` exists anywhere in the fixtures or the course. Closing that one

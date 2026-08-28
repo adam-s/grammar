@@ -20,9 +20,9 @@ Both are model gaps, not sentence gaps.
 | 1   | The window broken by the storm rattled.               | a reduced relative with an agent       |
 | 2   | The letter written in haste confused us.              | no agent, so the gap is the only clue  |
 | 3   | The ledger audited by the inspector vanished.         | a longer inner phrase                  |
-| 4   | The child standing by the gate waved. †               | **a present participle**               |
+| 4   | The child standing by the gate waved.                 | **a present participle**               |
 | 5   | We crossed the bridge damaged by the flood.           | the participial sits inside an object  |
-| 6   | Damaged by the flood, the bridge closed. †            | **at the front of the sentence**       |
+| 6   | Damaged by the flood, the bridge closed.              | **at the front of the sentence**       |
 | 7   | The report signed by the surveyor mattered.           | back to the plain case                 |
 | 8   | The board rejected the plan drafted by the committee. | inside an object, longer both sides    |
 | 9   | The shutters painted in the spring warped.            | a time phrase rather than an agent     |

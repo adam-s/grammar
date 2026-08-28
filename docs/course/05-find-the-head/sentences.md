@@ -21,7 +21,7 @@ the head so the last noun is the wrong one.
 | 6   | A box of tools fell.               | a tighter phrase, and _tools_ is the decoy      |
 | 7   | The key to the cabinet vanished.   | the decoy is more concrete than the head        |
 | 8   | The branch above the path snapped. | item 5 and item 4 combined                      |
-| 9   | New York glittered. †              | a name, where no noun is the head               |
+| 9   | New York glittered.                | a name, where no noun is the head               |
 | 10  | The lid of the box cracked.        | two nouns, both plausible, agreement settles it |
 
 ## Notes
@@ -36,5 +36,6 @@ lids of the box cracked_ — makes it visible. That test is the one that survive
 into real writing, where the nearest noun pulls the verb wrongly, and it appears
 nowhere in the app.
 
-**Item 9 is daggered.** `NP > N/flat` is a shape [../difficulty.md](../difficulty.md)
-lists as proved by a fixture and used by no lesson.
+**Item 9 builds today.** `NP > N/flat` is on
+[../difficulty.md](../difficulty.md)'s list of shapes proved by a fixture and
+used by no lesson, and `node scripts/probe-constructions.mjs` confirms it.

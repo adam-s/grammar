@@ -184,24 +184,39 @@ of `fix-existential`, _There is a problem_. Lesson 45 covers existential _there_
 so it probably belongs there, but the README does not say so, and this is the note
 saying it should.
 
-### Found later, by probing rather than by counting
+### Checked against the model, not against the corpus
 
-Six more absences turned up while writing the dossiers. They are not on the list
-above because the list counts shapes a **fixture** proves; these are proved by
-nothing, so each is an open model question rather than a gap with a known answer.
+An earlier version of this section listed six constructions as absences and let
+them read as gaps. That was wrong, and the error is worth naming because it is
+easy to repeat: **absence from a corpus is not inability.** Those six were found
+by asking whether a shape appears in the fixtures or the course, which is a
+different question from whether the model can draw it.
 
-| Absent from both corpora                         | Wanted by                                           |
-| ------------------------------------------------ | --------------------------------------------------- |
-| `Cl/supplement` — the supplementary relative     | 31 and 39, and it is **one gap fixing two lessons** |
-| a participial clause functioning as an adverbial | 35                                                  |
-| a present participle postmodifying a noun        | 35                                                  |
-| any possessive marker at all                     | 2, 6, 36                                            |
-| an appositive without commas                     | 22                                                  |
-| a paired coordinator, _both … and_               | 26                                                  |
+`node scripts/probe-constructions.mjs` asks the model directly. It hand-builds
+the smallest tree holding each construction and runs every audit over it.
+**Nineteen of the twenty build clean with no change to the model.** Every one of
+the eleven Course 1 shapes above builds, and so do the supplementary relative,
+the participial adverbial, the present-participle postmodifier, the close
+appositive, the paired coordinator, the adjective-phrase complement, the
+infinitive with its own subject, the auxiliary chain, _do_-support, _whose_,
+_as … as_, and the interjection.
 
-Two decisions are also **taught and never used** anywhere in the 400 sentences:
-`aux:do` at lesson 24 and `form:Interj` at lesson 38. Each is a claim the course
-has not earned, and each is fixed by one sentence or by dropping the decision.
+So they are authoring gaps. The sentences have never been written; nothing
+stands in the way of writing them.
+
+**One is genuinely blocked.** An English possessive has no representation: a `NP`
+cannot fill a determiner slot, a `DP`'s head must be a `Det`, and a `DP` has no
+complement. So _Mara's phone_ cannot be drawn at all, and lessons 2, 6 and 36
+each have a sentence waiting on that decision.
+
+Three of the twenty were reported BLOCKED on a first attempt and built on a
+second, because the spec was wrong rather than the model. A failing probe is a
+prompt to try another shape before it is a finding, and the script says so.
+
+Separately, two decisions are **taught and never used** anywhere in the 400
+sentences: `aux:do` at lesson 24 and `form:Interj` at lesson 38. Both build.
+Each is a claim the course has not earned, and each is fixed by one sentence or
+by dropping the decision from `teaches`.
 
 ## Where this came from
 

@@ -14,8 +14,8 @@ clearest evidence of what a supplement is, and the lesson never shows it.
 
 | #   | Sentence                               | The step                                        |
 | --- | -------------------------------------- | ----------------------------------------------- |
-| 1   | Oh, the gate is open. †                | **an interjection**, which the course never has |
-| 2   | Well, we can wait outside. †           | a second one, so item 1 is not a one-off        |
+| 1   | Oh, the gate is open.                  | **an interjection**, which the course never has |
+| 2   | Well, we can wait outside.             | a second one, so item 1 is not a one-off        |
 | 3   | Unfortunately, that ferry sank.        | an adverb doing the same job                    |
 | 4   | Surprisingly, the engine restarted.    | the plainest case, at the front                 |
 | 5   | The engine, surprisingly, restarted.   | **the same word, in the middle**                |
@@ -31,12 +31,12 @@ Items 4, 5 and 6 move one word through three positions with nothing else
 changing. A supplement can go almost anywhere; an adverbial cannot, and that
 freedom is the test.
 
-**Items 7 and 8 are the pair this lesson most needs.** Both start with a word and
-a comma before a clause, and one is an adverbial while the other is a supplement.
-The removal test does **not** separate them — both drop and leave a sentence. The
-question test does: _When did the children play? Yesterday._ works, and _\*How did
-the children play? Sadly._ does not, because _sadly_ is the writer's view rather
-than the manner. Nothing in lessons 18 or 38 currently puts the two side by side.
+**Items 1 and 2 build today.** They were daggered because no `Interj` exists
+anywhere in the course. `node scripts/probe-constructions.mjs` builds one clean as a
+direct supplement of the clause — not as the head of an `AdvP`, which is what
+the first attempt tried and which fails because the head of an adverb phrase
+must be an adverb. The decision is unchanged: either use one, or stop teaching
+`form:Interj`.
 
 **Items 1 and 2 are daggered** only because no `Interj` exists anywhere. The
 decision they force is simple: either use one, or stop teaching `form:Interj`. A

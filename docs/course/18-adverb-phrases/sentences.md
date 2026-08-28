@@ -17,11 +17,11 @@ position is most of what makes adverbials hard to find.
 | --- | ------------------------------------------- | ----------------------------------------- |
 | 1   | The baby slept peacefully.                  | one adverb, at the end, optional          |
 | 2   | The train arrived late.                     | an adverb that does not end in _-ly_      |
-| 3   | Our guests arrived unusually early. †       | **two words in the adverb phrase**        |
+| 3   | Our guests arrived unusually early.         | **two words in the adverb phrase**        |
 | 4   | Yesterday the children played outside.      | **an adverb at the front**                |
 | 5   | The children quietly left.                  | **an adverb between subject and verb**    |
 | 6   | The auditor checked the ledger twice.       | after an object, and _twice_ is not _-ly_ |
-| 7   | The old clock ticked remarkably loudly. †   | a second expanded phrase                  |
+| 7   | The old clock ticked remarkably loudly.     | a second expanded phrase                  |
 | 8   | She answered the difficult question calmly. | the adverb survives a longer object       |
 | 9   | The road was surprisingly narrow.           | an adverb **inside an adjective phrase**  |
 | 10  | That ice melted overnight.                  | close on the plain case                   |
@@ -36,9 +36,10 @@ Item 9 is the composition with lesson 17: _surprisingly_ modifies _narrow_, not
 the verb, so the same word class is doing a different job one level down. It is
 the cheapest way to show that `Adv` and `adverbial` are separate questions.
 
-**Items 3 and 7 are daggered.** `AdvP > Adv/premodifier` has no fixture and no
-course sentence. Two are enough to prove the shape; the built lesson's three
-attempts at one construction were the original complaint.
+**Items 3 and 7 build today.** `AdvP > Adv/premodifier` has no fixture and no
+course sentence, and it was daggered on that basis — but `node scripts/probe-constructions.mjs`
+builds it clean. Nothing has to change in the model; the shape simply has never
+been written.
 
 Seven of ten adverbs still sit at the end, which is where most adverbs go. The
 point is that it is no longer ten of ten.

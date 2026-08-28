@@ -14,7 +14,7 @@ find the construction by looking for the suffix.
 | 1   | The bill was larger than we expected.                | the frame at its clearest                 |
 | 2   | The crack was wider than the surveyor reported.      | a fuller second clause                    |
 | 3   | The engine ran more quietly than we expected.        | **_more_ instead of _-er_**, and not _be_ |
-| 4   | The queue was as long as the baker feared. †         | **_as … as_**, a different marker         |
+| 4   | The queue was as long as the baker feared.           | **_as … as_**, a different marker         |
 | 5   | The flood was worse than anyone predicted.           | an irregular comparative                  |
 | 6   | The repair cost less than the board approved.        | **_less_**, and a transitive main verb    |
 | 7   | The delay was shorter than the guard promised.       | back to the plain frame                   |
@@ -28,10 +28,11 @@ Items 3, 6 and 8 break the _be_ + _-er_ pattern three ways: a periphrastic
 comparative, a quantity comparison with a transitive verb, and an adverb rather
 than an adjective. After them the suffix tells the learner nothing.
 
-**Item 4 is daggered.** _as … as_ is a different construction from _than_ and
-nothing in either corpus uses it, so whether `kind:comparative` covers it is an
-open question. If the answer is no, the item drops and the lesson is still better
-than the built one.
+**Item 4 builds today.** _as … as_ is a different construction from _than_ and
+nothing in either corpus uses it, so it was daggered. `node scripts/probe-constructions.mjs`
+builds it clean once the tail clause is attached at the sentence rather than
+inside the verb phrase and carries an index tying it to the adjective phrase —
+which is exactly how lesson 32's `than` clauses are already built.
 
 **The `anchor` is what makes this lesson its own thing.** In item 3 the
 _than_-clause belongs to _more quietly_, not to _the engine_, and they are not

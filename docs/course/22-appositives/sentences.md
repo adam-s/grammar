@@ -15,7 +15,7 @@ both name the same thing. That is what separates an appositive from a modifier.
 | #   | Sentence                                          | The step                                    |
 | --- | ------------------------------------------------- | ------------------------------------------- |
 | 1   | The treasurer, a banker, resigned.                | the plainest case, commas and all           |
-| 2   | Our guide Arun waved twice. †                     | **no commas** — the relation is still there |
+| 2   | Our guide Arun waved twice.                       | **no commas** — the relation is still there |
 | 3   | Our guide, Arun, waved twice.                     | **the same words, commas added**            |
 | 4   | The witness, a neighbour, hesitated.              | back to the plain case after the pair       |
 | 5   | The court questioned the surgeon, a stranger.     | an appositive on an object                  |
@@ -32,10 +32,11 @@ Arun_ tells you the guide's name and assumes there is one. Same five words, and
 the commas change what is claimed — which is exactly what lesson 39 is for, seen
 seventeen lessons early.
 
-**Item 2 is daggered.** Nothing in either corpus has an appositive without
-commas, so it needs a model check: does a close appositive get `func:appositive`,
-or is it a premodifier, or something else? The answer decides whether the pair
-can exist at all.
+**Item 2 builds today.** Nothing in either corpus has an appositive without
+commas, which is why it was daggered — but `node scripts/probe-constructions.mjs`
+builds one clean. The question it raises is editorial, not structural: whether a
+close appositive should be `func:appositive` or a premodifier is a decision
+somebody has to make, and the model will draw either.
 
 The `be` test links the two parts — _The treasurer **is** a banker_ — which is the
 same test lesson 13 uses on an object and its complement. Two lessons, one test,

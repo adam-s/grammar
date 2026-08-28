@@ -23,7 +23,7 @@ identical and behaves differently.
 | 7   | That jury found the young driver careless. | object complement frame                          |
 | 8   | The porter handed the tired guest a key.   | two-object frame                                 |
 | 9   | Another storm damaged the green shutters.  | a determiner that is not an article              |
-| 10  | The poor protested loudly. †               | the adjective with no noun under it              |
+| 10  | The poor protested loudly.                 | the adjective with no noun under it              |
 
 ## Notes
 
@@ -36,9 +36,9 @@ Item 5 raises a real `Nom` question the built lesson never asks: whether stacked
 adjectives are siblings or nested. It is worth asking even if the answer is
 settled by the model.
 
-**Item 10 is daggered.** `Nom > Adj/head` with the fusion property is on
-[../difficulty.md](../difficulty.md)'s list, assigned to lesson 16 and built
-nowhere.
+**Item 10 builds today.** `Nom > Adj/head` with the fusion property is on
+[../difficulty.md](../difficulty.md)'s list, and `node scripts/probe-constructions.mjs`
+builds it clean.
 
 Items 3, 6, 7 and 8 reuse four Stage 2 frames. That is the composition the rest
 of Stage 3 keeps failing to do, and it costs nothing.

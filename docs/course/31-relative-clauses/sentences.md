@@ -20,8 +20,8 @@ hardest to see — which is exactly what `gap` exists to teach.
 | 4   | The book that I needed vanished.                     | **an object gap** — the hole moves              |
 | 5   | The book I needed vanished.                          | **the same sentence with the relativizer gone** |
 | 6   | She repaired the gate that the storm damaged.        | an object gap with a fuller inner clause        |
-| 7   | The engine, which stalled, was old. †                | **item 1 with commas** — and _which_            |
-| 8   | The child whose flag fell smiled. †                  | a relative word that is itself a determiner     |
+| 7   | The engine, which stalled, was old.                  | **item 1 with commas** — and _which_            |
+| 8   | The child whose flag fell smiled.                    | a relative word that is itself a determiner     |
 | 9   | The pipe that froze burst.                           | back to a subject gap, shortest frame           |
 | 10  | The jury believed the surveyor who testified.        | the relative inside an object again             |
 
@@ -37,9 +37,11 @@ stalled was old_ picks out which engine; _The engine, which stalled, was old_
 tells you something extra about the only engine. **This is the same pair lesson
 39 needs**, and closing the gap fixes both lessons.
 
-**Items 7 and 8 are daggered and item 7 is a model gap, not a sentence gap.**
-Checked against both corpora: no `Cl/supplement` exists anywhere. _whose_ is
-absent too and is a smaller question.
+**Items 7 and 8 build today.** Both were daggered on the strength of a corpus
+probe: no `Cl/supplement` and no _whose_ anywhere. `node scripts/probe-constructions.mjs`
+builds both clean, provided the supplementary relative attaches to the `NP`
+rather than to the `Nom` — a `Nom` has no supplement, and that restriction is
+what the first attempt hit.
 
 Three of the ten now have object gaps, against none built. The model already
 supports them — there are 20 subject gaps and 20 object gaps course-wide — so

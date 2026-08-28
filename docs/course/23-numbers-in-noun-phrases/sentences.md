@@ -23,7 +23,7 @@ lessons 21 and 22.
 | 7   | Those two windows rattled.                  | a determiner **and** a number together         |
 | 8   | The last four volunteers packed every book. | an ordinal-like word plus a cardinal           |
 | 9   | Three boats near the pier returned.         | a number with a postmodifier after the head    |
-| 10  | Those final three remained outside. †       | **the number becomes the head**                |
+| 10  | Those final three remained outside.         | **the number becomes the head**                |
 
 ## Notes
 
@@ -35,9 +35,9 @@ lesson in five words and it is absent from the built corpus.
 Item 7 does the same job more cheaply — _Those two windows_ has a determiner
 before the number, so the number is not filling that slot.
 
-**Item 10 is daggered.** `NP > Num/head` is on
-[../difficulty.md](../difficulty.md)'s list, assigned to lesson 23 and built
-nowhere.
+**Item 10 builds today.** `NP > Num/head` is on
+[../difficulty.md](../difficulty.md)'s list, and `node scripts/probe-constructions.mjs`
+confirms the model draws it.
 
 If ordinals turn out not to be worth their own lesson, the fold into lesson 6 or
 16 that [README.md](README.md) raises is still the better answer. That is a
