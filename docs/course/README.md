@@ -9,8 +9,8 @@ The labelling interaction this sits on is documented in
 `src/lib/grammar/options.ts`, whose tests are its specification.
 
 [difficulty.md](difficulty.md) measures what the sentences do NOT yet do: no
-lesson gets harder as it goes, and nothing composes what came before. Read it
-before writing more of them.
+lesson gets harder as it goes, and the composition that exists is unordered and
+thin. Read it before writing more of them.
 
 ## How the order is enforced
 
@@ -25,8 +25,8 @@ follow from that one field:
 - No label may be claimed by two lessons, because then it has no first one.
 
 **The rule is about what the learner is asked to produce, not what the sentence
-contains.** Every English sentence holds a determiner, and determiners are
-lesson 6; _The engine stalled_ carries `Det`, `V` and `Vint` on the day lesson
+contains.** A sentence may hold labels its lesson has not reached, and most do:
+_The engine stalled_ carries `Det`, `V` and `Vint` on the day lesson
 1 asks only where the sentence splits. So a lesson sentence is a whole sentence
 with a restricted question asked of it, and the words below the question stay
 visible and unlabelled.
@@ -105,8 +105,8 @@ was reread — a unit built around a label and practised in a block is precisely
 what measures badly, and interleaved practice is what measures well. A lesson
 that adds a test rather than a term is the shape the evidence supports.
 
-All twelve lessons here have one sentence and are proved by the ladder. They do
-not have their other nine.
+All twelve have their ten, and [difficulty.md](difficulty.md) measures what
+those ten do not yet do: they neither escalate nor accumulate.
 
 ### Stage 4 — Put clauses inside clauses
 
@@ -243,8 +243,15 @@ the learner must use the labels together on a new sentence.
 
 “Complete” needs a boundary. This course is a course in **English syntax**: how
 words form phrases, how phrases fill clause slots, and how structure changes
-meaning. Within that boundary, the sequence above covers every form, function,
-verb type, clause kind, and reading state exposed by the app.
+meaning. Within that boundary the sequence above covers every verb type, every
+clause kind, every clause pattern, and both reading states.
+
+It does **not** cover every form and function the app exposes, and saying it did
+was wrong. Fusion — a determiner or an adjective heading a noun phrase — is
+assigned to no lesson in either course, and neither are determinative phrases or
+flat names, though `rules.ts` licenses all three and fixtures prove them.
+[difficulty.md](difficulty.md) has the full inventory of what is missing and
+where it should go.
 
 The first course does not teach spelling, capitalization rules, punctuation
 mechanics, vocabulary, style advice, historical grammar, or a complete account
