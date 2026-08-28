@@ -7,37 +7,35 @@ Four sentences, not ten. The demonstration is that **all four come out as the
 same tree** — checked against both corpora, every one of these is drawn
 `VP > AdvP/adverbial`, a single attachment path across all four kinds.
 
-Every sentence here is already in the corpus.
+Three of the four are in the built corpus. _The guard waited outside_ is not:
+the corpus has _outside_ only inside _The guard who waited outside put that
+ledger in the safe_, which is fourteen words with a relative clause in it. The
+short version has to be written.
 
 ## Sentences
 
 | #   | Sentence                              | The step                    |
 | --- | ------------------------------------- | --------------------------- |
-| 1   | She answered immediately.             | manner — _how_ she answered |
+| 1   | The crew cleared the track quickly.   | manner — _how_ they cleared |
 | 2   | The train arrived late.               | time — _when_ it arrived    |
 | 3   | The guard waited outside.             | place — _where_ he waited   |
 | 4   | The auditor checked the ledger twice. | frequency — _how often_     |
 
 ## Notes
 
-The learner builds all four and gets the same answer four times. Then the tests
-are run in front of them and all of them come back the same:
-
-- **Substitution.** All four go to _then_, _there_, _thus_ — pro-forms that do not
-  respect the boundary.
-- **Movement.** All four front: _Immediately she answered. Late the train
-  arrived._
-- **Omission.** All four drop and leave a whole sentence.
-
-Nothing in the grammar sees the difference. That is not a limitation of this app;
-it is a fact about English, and it is the most useful thing in the lesson.
+The learner builds all four and gets the same structural answer four times.
+Omission supports their shared adverbial function: each drops and leaves a whole
+sentence. Position is less uniform—fronting is ordinary for some words and
+marked for others—but it does not divide them into four stable syntax classes.
+Meaning-specific substitutes such as _thus_, _then_, and _there_ expose a
+difference only after the reader understands the meaning.
 
 Then:
 
 > Books split adverbs four ways by meaning: how, when, where, how often. English
-> grammar does not. All four sat in the same place, moved the same way, and
-> dropped out the same way. This app only labels what a test can find, so all four
-> get one label.
+> grammar does not give those meanings four different trees. All four do the
+> same adverbial job here. This app does not turn a meaning-only distinction into
+> a graded syntax label, so all four get one label.
 
 **A note on the corpus.** Manner has 4 distinct adverbs across both corpora and
 time has 4, but **place has one** — _outside_ — and **frequency has one** —

@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 **Nothing new.** `teaches` is empty.
@@ -27,12 +29,12 @@ changes nothing structural.
 Meanwhile the course has built four constructions where punctuation carries real
 weight and none of them is here:
 
-| Construction             | Where it is | What the comma decides                             |
-| ------------------------ | ----------- | -------------------------------------------------- |
-| appositive               | lesson 22   | nothing yet, because all ten already have commas   |
-| fronted adverbial clause | lesson 29   | nothing, because none is fronted                   |
-| supplement               | lesson 38   | nothing, because all ten are initial               |
-| relative clause          | lesson 31   | restrictive versus supplementary — **the big one** |
+| Construction             | Where it is | What the comma helps a reader test                       |
+| ------------------------ | ----------- | -------------------------------------------------------- |
+| appositive               | lesson 22   | nothing yet, because all ten already have commas         |
+| fronted adverbial clause | lesson 29   | nothing, because none is fronted                         |
+| supplement               | lesson 38   | nothing, because all ten are initial                     |
+| relative clause          | lesson 31   | integrated versus supplementary status — **the big one** |
 
 The pairing with lesson 33 is the one thing the lesson does right. Lesson 33 has
 the same shape without commas; lesson 39 has it with. That is a controlled pair
@@ -42,15 +44,21 @@ and it is deliberate.
 
 **The same words, twice, with the comma as the only difference.**
 
-> _The visitors who had missed their train waited._ — only some of them.
-> _The visitors, who had missed their train, waited._ — all of them.
+> _The visitors who had missed their train waited._ — the clause helps identify
+> which visitors are meant.
+> _The visitors, who had missed their train, waited._ — the visitors are already
+> identified, and the clause adds information about them.
 
-Six words, one pair of commas, and the meaning changes from some to all. This is
-the highest-value punctuation contrast in English and it is in neither corpus.
+Six words and one pair of commas distinguish an integrated modifier from
+supplementary information. The bare first sentence does not entail that only
+some visitors missed the train, and the commas do not create an “all” reading by
+themselves. Context supplies the group; punctuation is evidence for how the
+clause contributes to it.
 
-It needs the supplementary relative, which is a model gap: checked, and no
-`Cl/supplement` exists in either the fixtures or the course. Lesson 31 has the
-same gap. **They are the same gap**, and closing it fixes both lessons.
+It needs the supplementary relative. No `Cl/supplement` exists in the fixtures
+or built course, but `node scripts/probe-constructions.mjs` now proves that the
+current model can build it. Lesson 31 needs the same construction; one fixture
+would secure both proposals.
 
 ## Shortcut register
 
@@ -62,8 +70,8 @@ same gap. **They are the same gap**, and closing it fixes both lessons.
 
 ## What this should change
 
-1. **Close the `Cl/supplement` gap**, then build the restrictive pair. It is the
-   single highest-value addition available to the course.
+1. **Add a `Cl/supplement` fixture**, then build the integrated/supplementary
+   pair. The probe shows the model already accepts it.
 2. **Bring in the commas the course already has.** Appositives, fronted clauses
    and supplements are all built and none appears here.
 3. **This lesson has the least variety and the most words** — 11.0, the longest

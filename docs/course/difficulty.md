@@ -147,6 +147,16 @@ Not checkable, and better said than faked:
   rule tells it from a gloss that says nothing.
 - Whether the step from 6 to 7 is the step a learner would find natural.
 
+Those judgments are recorded in
+[`proposal-review.md`](proposal-review.md). A proposal is not accepted merely
+because it passes the length checker or a construction probe.
+
+Lessons 1–7 need a different account of progression because their asked trees
+often stay constant by design. Their steps are perceptual contrasts: move the
+subject boundary, add a competing noun, or break a position shortcut. Do not
+claim structural depth where the learner is deliberately seeing the same frame
+more clearly.
+
 ## What the course never touches
 
 The units are what `measure-course.mjs` reports: **16 structural shapes**
@@ -155,8 +165,10 @@ properties**, which are not shapes and are counted apart. Twenty-one in all, eve
 one proved by a fixture and used by no lesson.
 
 **Eleven belong in Course 1.** Each now has a proposed sentence in the named
-lesson's `sentences.md`, marked with a dagger, and each still needs the model
-decision before it can be built.
+lesson's `sentences.md`. Model evidence already supports every one: the
+construction probe builds ten, and the fixture corpus proves the fused relative.
+They need proposal parsing and, where noted, fixture coverage rather than a model
+change.
 
 | Item                      | Kind     | Construction                          | Home |
 | ------------------------- | -------- | ------------------------------------- | ---- |

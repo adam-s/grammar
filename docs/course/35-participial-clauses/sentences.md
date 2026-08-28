@@ -11,7 +11,8 @@ are missing and both were checked against **both** corpora:
   participial is the shape that actually confuses readers, and the one lesson 39
   would most want.
 
-Both are model gaps, not sentence gaps.
+Both are corpus-evidence gaps, not model gaps. The construction probe builds
+both cleanly.
 
 ## Sentences
 
@@ -42,6 +43,6 @@ survives, the participial is a reduced relative. It costs nothing and appears
 nowhere in the app.
 
 Item 6 is the one worth pushing on. A fronted participial takes a comma and is
-outside the noun phrase entirely, so it is both a new function and the punctuation
-lesson 39 needs. Until `Cl` as an adverbial with `fin:participial` is decided, it
-cannot be built.
+outside the noun phrase entirely, so it is both a new function and the
+punctuation Lesson 39 needs. The construction probe builds `Cl/adverbial` with
+`fin:participial`; a fixture and accepted parse remain.

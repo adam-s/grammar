@@ -3,17 +3,12 @@
 Researched 28 August 2026. An author's dossier, not a page for a learner. See
 [../01-introduction/README.md](../01-introduction/README.md) for why.
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 **Nothing new.** `teaches` is empty in `src/lib/course/course.ts`. Every label
 this lesson asks for was already introduced in lesson 1.
-
-That is worth stating plainly, because [../README.md](../README.md) says the
-opposite. Its table gives lesson 1 as "none — build one diagram with guidance"
-and lesson 2 as "subject and predicate make the sentence frame." The code has it
-the other way round, and the code is what the palette obeys: lesson 1 is first
-to teach `form:S`, `form:NP`, `form:VP`, `func:subject` and `func:predicate`.
-The table is out of date and should be corrected.
 
 So the honest description of this lesson is: **it re-asks lesson 1's cut on a
 longer subject.** That can be a good lesson. It is not currently one.
@@ -83,9 +78,7 @@ the lesson is ten repetitions of lesson 1.
 
 1. **Give lesson 2 a subject with a phrase inside it.** _The shoes on my feet…_,
    _The key to the cabinet…_. Proposed in [sentences.md](sentences.md).
-2. **Correct the lesson table in [../README.md](../README.md).** It contradicts
-   `course.ts` on which lesson introduces the frame.
-3. **Vary the predicate, not only the subject.** Ten sentences ending in the verb
+2. **Vary the predicate, not only the subject.** Ten sentences ending in the verb
    teach the learner to cut before the last word, which is lesson 1's shortcut —
    see [../difficulty.md](../difficulty.md).
 

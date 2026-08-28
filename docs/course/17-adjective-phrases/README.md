@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 **Nothing new.** `teaches` is empty. `AdjP` arrived at lesson 10 and
@@ -44,9 +46,9 @@ can drop is the premodifier.
 
 ## What this should change
 
-1. **The adjective complement is a model gap, not a lesson gap.** Before writing
-   sentences for it, check that `AdjP > complement` is representable. Nothing
-   in either corpus proves it.
+1. **Add fixture coverage for adjective complements.** The construction probe
+   proves that both `AdjP > PP/complement` and `AdjP > Cl/complement` are
+   representable; neither corpus proves them yet.
 2. **Lesson 17 teaches no label and shows one construction.** As with lesson 2,
    that leaves the sentences carrying the whole justification.
 

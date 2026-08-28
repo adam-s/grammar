@@ -9,17 +9,18 @@ and every one is already in lesson 1's corpus.
 
 ## Sentences
 
-| #   | Sentence              | The step                                      |
-| --- | --------------------- | --------------------------------------------- |
-| 1   | The audience clapped. | the subject chose to do it                    |
-| 2   | The bridge collapsed. | the subject did not choose; it was done to it |
-| 3   | The rain eased.       | there is nobody there to choose               |
+| #   | Sentence              | The step                                    |
+| --- | --------------------- | ------------------------------------------- |
+| 1   | The audience clapped. | the subject chose to do it                  |
+| 2   | The bridge collapsed. | the subject changed without choosing to act |
+| 3   | The rain eased.       | there is nobody there to choose             |
 
 ## Notes
 
-The learner builds all three with the ordinary palette and the ordinary grading.
-Nothing semantic is asked for. The trees match — `S > NP/subject + VP/predicate`,
-`NP > Det/determiner + N/head`, `VP > V/head` — and that is the whole lesson.
+The learner builds all three with the ordinary palette and immediate structural
+feedback. No result affects course credit, and nothing semantic is graded. The
+trees match — `S > NP/subject + VP/predicate`, `NP > Det/determiner + N/head`,
+`VP > V/head` — and that is the whole lesson.
 
 Then, at the end and not the start:
 

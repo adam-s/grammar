@@ -5,10 +5,10 @@ Drafted 28 August 2026. See [README.md](README.md).
 **The shortcut:** all ten built sentences are a degree adverb in front of an
 adjective. One construction, ten times, in a lesson that teaches no label.
 
-**And a model gap.** Checked against both corpora: **no adjective phrase anywhere
-has a complement.** _eager to help_, _proud of her garden_, _too heavy to lift_ —
-none exists. So half of what an adjective phrase can be is missing from the
-model's evidence, not just from this lesson.
+**And an evidence gap.** Checked against both corpora: **no adjective phrase
+anywhere has a complement.** _eager to help_, _proud of her garden_, _too heavy
+to lift_ — none exists. The construction probe builds both complement shapes, so
+what is missing is a fixture and a course example, not model capability.
 
 ## Sentences
 

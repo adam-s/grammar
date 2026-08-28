@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision        | In plain words                    |
@@ -59,8 +61,9 @@ which engine is meant.
    that I needed disappeared_ is a one-word minimal pair on the hardest thing the
    lesson teaches.
 2. **Add an object gap.** The model supports it; the lesson does not use it.
-3. **The supplementary relative is a model gap.** Checked: no `Cl/supplement`
-   exists in either corpus. It is also what lesson 39 most needs.
+3. **Add a supplementary-relative fixture.** No `Cl/supplement` exists in either
+   corpus, but the construction probe builds it cleanly. Lesson 39 needs the same
+   fixture.
 
 ## Sources
 
@@ -68,5 +71,5 @@ Entirely from the corpus, measured 28 August 2026.
 
 ## Rejected
 
-- **Restrictive versus supplementary as a topic here.** It needs the model gap
-  above closed first, and it is really lesson 39's material.
+- **Restrictive versus supplementary as a topic here.** The construction is
+  buildable, but the contrast is really Lesson 39's material.

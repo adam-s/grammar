@@ -24,9 +24,11 @@ scope through lesson 3 is identical whether or not 3a was taken, so no later
 lesson can require anything it introduced. This is what "skippable" has to mean
 in a course whose whole order is a dependency graph.
 
-**It is never graded.** No score, no readiness gate, no correct answer recorded
-against the learner. The moment a judgment call counts toward a result, the
-problem `readiness.ts` exists to prevent comes back through the side door.
+**It never affects course credit.** The ordinary builder still says whether a
+structural label is right, but the result records no score, satisfies no
+readiness gate, and cannot change later access. The moment a semantic judgment
+counts toward progress, the problem `readiness.ts` exists to prevent comes back
+through the side door.
 
 **It says at the top what it is.** The learner is told, before they start, that
 this one is about meaning, that the answers are arguable, and that skipping it
@@ -40,8 +42,8 @@ to click is a page you read before you are allowed to try, which is the exact
 shape [../lesson/README.md](../lesson/README.md) argues against.
 
 The way out is that **an optional lesson is built out of ordinary builds.** The
-learner labels two or three sentences the normal way, with the normal palette
-and the normal grading. What makes the lesson semantic is not the task. It is
+learner labels two to four sentences the normal way, with the normal palette
+and immediate structural feedback. What makes the lesson semantic is not the task. It is
 what the sentences are chosen to show:
 
 > **Sentences that mean very different things and get the same tree.**

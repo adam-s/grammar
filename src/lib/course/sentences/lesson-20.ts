@@ -47,10 +47,13 @@ export const LESSON_20 = [
     'c20-e',
     20,
     det('The', 'clerk'),
-    v('filed', 'file', 'Vtr'),
+    // `file` was wrong here: *The clerk filed the deeds* is a complete sentence
+    // in the same sense, so the place phrase was optional and this pair did not
+    // demonstrate the lesson's contrast. `place` demands a location.
+    v('placed', 'place', 'Vtr'),
     det('the', 'deeds'),
     pp('under', det('the', 'counter')),
-    'The clerk stored the deeds under the counter.',
+    'The clerk put the deeds beneath the counter.',
   ),
   svPlus(
     'c20-f',

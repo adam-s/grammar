@@ -7,7 +7,9 @@ Three sentences. This is the **inverse** of [lesson 3a](../03a-doer-and-subject/
 there, sentences that mean different things came out as the same tree. Here,
 sentences that mean the same thing come out as different trees.
 
-All three are already in lesson 37.
+Items 2 and 3 are in lesson 37. Item 1 is not: the corpus has the passive and
+never its active counterpart, which is the pair this lesson needs and the reason
+it has to be written.
 
 ## Sentences
 
@@ -42,6 +44,7 @@ thirty-four lessons later.
 **It must not become style advice.** "Avoid the passive" is common, wrong often
 enough to be harmful, and rejected in
 [../37-passive-voice/README.md](../37-passive-voice/README.md). The lesson
-describes a choice; it does not recommend one. And it must not be graded: which
-voice is better for a given sentence is exactly the judgment
-`src/lib/course/readiness.ts` exists to keep out of grading.
+describes a choice; it does not recommend one. The structural builds may receive
+immediate feedback, but the voice choice must not affect course credit. That is
+exactly the judgment `src/lib/course/readiness.ts` exists to keep out of course
+progress.

@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision       | In plain words                           |
@@ -10,8 +12,8 @@ Researched 28 August 2026. An author's dossier. See
 | `form:Cl`      | this run is a clause inside a bigger one |
 | `kind:nominal` | it is doing a noun's job                 |
 
-The stage turn. Up to here every sentence had one verb; from here a sentence can
-contain a sentence.
+The stage turn. Up to here each target sentence had one clause; from here one
+clause can sit inside another.
 
 ## The finding
 

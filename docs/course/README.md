@@ -191,10 +191,11 @@ The order above is a dependency graph, not just a table of contents.
   first lesson, available afterward, and never enabled early merely because the
   answer key contains it.
 
-### Coverage audit
+### Course 1 coverage map
 
-This table is the completeness check for the current app taxonomy. Adding a
-public label to the app requires assigning it a first lesson here.
+This table records which part of the app taxonomy Course 1 teaches. It is not a
+complete inventory of the app: later-course and deliberately unassigned labels
+remain visible here so absence is not mistaken for coverage.
 
 For lessons 1–15 this table is no longer the authority — `teaches` in
 `src/lib/course/course.ts` is, and a test refuses to let one label have two
@@ -218,6 +219,8 @@ first lessons. This is the readable copy.
 | Phrase function: coordinate                             | 26                                 |
 | Verb types: Vint, Vtr, Vlink, Vbe, Vg, Vc               | 8–13                               |
 | Clause kinds: nominal, adverbial, relative, comparative | 28, 29, 31, 32                     |
+| Clause kind: interrogative                              | Course 2, lesson 41                |
+| Clause kind: exclamative                                | outside both current course plans  |
 | Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA    | 8–15                               |
 | Ambiguity and alternate readings                        | 1, demonstrated fully in 27 and 40 |
 
@@ -248,8 +251,10 @@ the learner must use the labels together on a new sentence.
 
 “Complete” needs a boundary. This course is a course in **English syntax**: how
 words form phrases, how phrases fill clause slots, and how structure changes
-meaning. Within that boundary the sequence above covers every verb type, every
-clause kind, every clause pattern, and both reading states.
+meaning. Within that boundary the sequence above covers every verb type and
+simple-clause pattern assigned to Course 1, four clause kinds, and both reading
+states. Interrogatives are reserved for Course 2; exclamatives are supported by
+the app but remain outside both current course plans.
 
 It does **not** cover every form and function the app exposes, and saying it did
 was wrong. Fusion — a determiner or an adjective heading a noun phrase — is
@@ -292,8 +297,13 @@ The sentences come first and the page comes last. A lesson's sentences are the
 part that can be checked without a reader; its prose is the part that cannot,
 so writing prose against sentences that have not been proved is writing twice.
 
-Each lesson holds **ten sentences**, and a sentence is only its parse. Nothing
-else is stored:
+[`proposal-review.md`](proposal-review.md) is the adoption gate for the 413
+required and optional proposals. It records natural-reading review, intended
+parse, scope reach, and model or fixture status sentence by sentence.
+
+Each required lesson holds **ten sentences**, and a sentence is only its parse.
+Optional companions use a shorter demonstration and live outside the required
+course data. Nothing else is stored for a required sentence:
 
 - Which lesson it belongs to is the file it is in.
 - What the lesson asks for is derived by pruning the parse to the lesson's

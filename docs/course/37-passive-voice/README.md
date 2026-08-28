@@ -6,6 +6,8 @@ Researched 28 August 2026. An author's dossier. See
 An optional companion exists: [../37a-same-event/](../37a-same-event/) covers
 why a writer would choose one voice over the other, which is a judgment call.
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision        | In plain words                    |
@@ -62,8 +64,9 @@ That contrast with lesson 11 is available and unused.
 
 ## What this should change
 
-1. **One adjectival near-miss.** _The window was broken_ has two readings, one an
-   event and one a state. It may not be representable; worth checking.
+1. **Review the two readings of the proposed near-miss.** _The streets were
+   deserted_ can name a state or a passive event. Keep it only if both readings
+   are representable.
 2. **Put an active beside its passive.** The corpus already has near-pairs across
    lessons 35 and 37 — _The ledger audited by the inspector vanished_ and _The
    ledger was audited by the inspector_ — and they are two lessons apart.

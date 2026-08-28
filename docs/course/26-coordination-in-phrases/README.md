@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision           | In plain words             |
@@ -64,6 +66,6 @@ test is not always reliable.
 
 ## Rejected
 
-- **Correlatives** — _both … and_, _either … or_. Real and worth one sentence,
-  but they need a model decision about the first half, which pairs with a
-  coordinator without being one.
+- **Correlatives** — _both … and_, _either … or_. Real and worth one sentence.
+  The construction probe builds _both … and_; it still needs a fixture and an
+  authoring decision about whether it belongs in Course 1.

@@ -186,11 +186,11 @@ export type ClauseFunction =
    * - everything else is this.
    *
    * The other four — manner, time, place, frequency — are deliberately not
-   * separated, because nothing in the syntax separates them. *He ran quickly*
-   * and *He ran yesterday* are the same tree. No substitution, movement or
-   * omission test tells them apart; only knowing what the word means does, and
-   * a label a learner can only reach by meaning is the one thing this model
-   * has refused everywhere else.
+   * separated, because their semantic difference is not stored in the tree.
+   * *He ran quickly* and *He ran yesterday* have the same structure. A
+   * meaning-specific substitute can expose the difference only after a reader
+   * understands the meaning, and this model refuses labels that can be reached
+   * only that way.
    *
    * **Conjunctive adverbs have no home.** *however*, *therefore*, *meanwhile*
    * are not `Conj` — that is *and*, *but*, *or*, which join inside one

@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier, not a page for a learner. See
 [../01-introduction/README.md](../01-introduction/README.md) for why.
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision    | In plain words         |

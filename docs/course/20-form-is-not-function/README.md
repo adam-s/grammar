@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 **Nothing new** — and it is the most important lesson in the course anyway,
@@ -17,7 +19,7 @@ identical and changes what it is doing:
 | ---------------------------------------------------- | --------------------------------------------- |
 | _They put the piano **in the hall**._                | _The quartet rehearsed **in the hall**._      |
 | _Another porter laid the tray **on the sideboard**._ | _The cat slept **on the sideboard**._         |
-| _The clerk filed the deeds **under the counter**._   | _The draught whistled **under the counter**._ |
+| _The clerk placed the deeds **under the counter**._  | _The draught whistled **under the counter**._ |
 | _She placed the lamp **beside the bed**._            | _The nurse waited **beside the bed**._        |
 | _The carpenter set the beam **across the gap**._     | _That rope swung **across the gap**._         |
 

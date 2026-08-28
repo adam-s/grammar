@@ -37,8 +37,3 @@ direct supplement of the clause — not as the head of an `AdvP`, which is what
 the first attempt tried and which fails because the head of an adverb phrase
 must be an adverb. The decision is unchanged: either use one, or stop teaching
 `form:Interj`.
-
-**Items 1 and 2 are daggered** only because no `Interj` exists anywhere. The
-decision they force is simple: either use one, or stop teaching `form:Interj`. A
-decision the palette will accept and no sentence exercises is a claim the course
-has not earned.

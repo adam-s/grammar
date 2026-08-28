@@ -7,6 +7,8 @@ argues against, and this repo deleted its lesson container because of it. What
 follows feeds the sentences, the palette hints, and the scope ladder. Nothing
 here is meant to be read before someone is allowed to build.
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 Five decisions, taken from `teaches` in `src/lib/course/course.ts`:

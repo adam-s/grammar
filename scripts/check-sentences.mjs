@@ -15,7 +15,11 @@
  *   `metrics.tokens` counts punctuation, so this does too;
  * - every sentence says what its step is, because a step nobody can name is the
  *   length ladder wearing a difficulty ladder's label;
- * - the directory names a real lesson, or is an optional `NNx-` companion.
+ * - the directory names a real lesson, or is an optional `NNx-` companion;
+ * - `proposal-review.md`, the authoring ledger, holds exactly the same sentences
+ *   in exactly the same order. The ledger is a second copy of all 413 proposals,
+ *   so nothing but a check keeps the two in step, and a ledger that has drifted
+ *   records approval against a sentence that no longer exists.
  *
  * Exit 1 on any failure. Usage: node scripts/check-sentences.mjs
  */
@@ -81,6 +85,74 @@ for (const dir of dirs) {
           `${dir}: sentences ${i} and ${i + 1} differ by ${Math.abs(t[i] - t[i - 1])} tokens`,
         );
       }
+    }
+  }
+}
+
+// ── the ledger ──────────────────────────────────────────────────────────────
+const LEDGER = `${DOCS}/proposal-review.md`;
+if (existsSync(LEDGER)) {
+  const text = readFileSync(LEDGER, 'utf8');
+  /** Ledger rows, grouped by the `## Lesson N — Title` heading above them. */
+  const ledger = new Map();
+  let heading = null;
+  for (const line of text.split('\n')) {
+    const h = line.match(/^##\s+Lesson\s+(\S+?)\s*(?:—|-|$)/);
+    if (h) {
+      heading = h[1];
+      ledger.set(heading, []);
+      continue;
+    }
+    const row = line.match(/^\|\s*(\d+)\s*\|([^|]+)\|/);
+    if (row && heading) ledger.get(heading).push({ n: Number(row[1]), text: row[2].trim() });
+  }
+
+  // A ledger heading says "Lesson 7" or "Lesson 18a"; a directory is "07-pronouns".
+  const dirFor = (h) => {
+    const m = h.match(/^(\d+)([a-z]?)$/);
+    if (!m) return null;
+    const want = m[1].padStart(2, '0') + m[2];
+    return dirs.find((d) => d.startsWith(want + '-')) ?? null;
+  };
+
+  const seen = new Set();
+  for (const [h, rows] of ledger) {
+    const dir = dirFor(h);
+    if (!dir) {
+      problems.push(`ledger: "Lesson ${h}" matches no lesson folder`);
+      continue;
+    }
+    seen.add(dir);
+    const source = readSentences(`${DOCS}/${dir}/sentences.md`);
+    if (rows.length !== source.length) {
+      problems.push(
+        `ledger: lesson ${h} has ${rows.length} rows, ${dir}/sentences.md has ${source.length}`,
+      );
+    }
+    const bare = (t) =>
+      t
+        .replace(/[*_`†]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    for (let i = 0; i < Math.max(rows.length, source.length); i++) {
+      const a = rows[i];
+      const b = source[i];
+      if (!a) problems.push(`ledger: lesson ${h} is missing row ${b.n} — "${bare(b.text)}"`);
+      else if (!b) problems.push(`ledger: lesson ${h} has an extra row ${a.n} — "${bare(a.text)}"`);
+      else if (a.n !== b.n) {
+        problems.push(
+          `ledger: lesson ${h} row ${i + 1} is numbered ${a.n}, sentences.md says ${b.n}`,
+        );
+      } else if (bare(a.text) !== bare(b.text)) {
+        problems.push(
+          `ledger: lesson ${h} row ${a.n} says "${bare(a.text)}", sentences.md says "${bare(b.text)}"`,
+        );
+      }
+    }
+  }
+  for (const dir of dirs) {
+    if (existsSync(`${DOCS}/${dir}/sentences.md`) && !seen.has(dir)) {
+      problems.push(`ledger: no section for ${dir}, which has proposals`);
     }
   }
 }

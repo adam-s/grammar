@@ -20,22 +20,23 @@ carries real weight and none is here.
 | 3   | Mara, our new team captain, waved.                          | **appositive commas** — lesson 22             |
 | 4   | Before the last bus arrived, our guests gathered.           | **a fronted clause** — lesson 29              |
 | 5   | Surprisingly, the old bridge remained open.                 | **a supplement** — lesson 38                  |
-| 6   | The visitors who had missed their train waited.             | **no commas** — only some of them waited      |
-| 7   | The visitors, who had missed their train, waited.           | **commas** — all of them waited               |
+| 6   | The visitors who had missed their train waited.             | **integrated** — helps identify the visitors  |
+| 7   | The visitors, who had missed their train, waited.           | **supplementary** — adds information          |
 | 8   | The mechanic checked the brakes, but the driver waited.     | back to the clause comma, with _but_          |
 | 9   | The boat carried food, water, and blankets.                 | **a list** — where the last comma is arguable |
 | 10  | The rain stopped, the clouds lifted, and children ran.      | three clauses, two commas                     |
 
 ## Notes
 
-**Item 7 builds today, and it is the same construction as lesson 31's item 7.**
-Both were daggered because no `Cl/supplement` exists in either corpus.
-`node scripts/probe-constructions.mjs` builds it clean. One sentence, written once,
-serves both lessons.
+**Items 6 and 7 isolate one punctuation choice, but they do not mean “some” and
+“all.”** The first relative helps identify the visitors; the second adds a
+comment about an already identified group. A context could make that group all
+the visitors in either sentence.
 
-**Item 7 is daggered and it is the same gap as lesson 31's item 7.** Checked: no
-`Cl/supplement` exists anywhere in the fixtures or the course. Closing that one
-model gap fixes both lessons, which is the strongest argument for closing it.
+Item 7 builds today, and it is the same construction as Lesson 31's item 7. No
+`Cl/supplement` exists in the fixtures or built course, but
+`node scripts/probe-constructions.mjs` builds it clean. One fixture can secure
+both proposals.
 
 Items 3, 4 and 5 bring in commas the course has already built and never
 collected: an appositive from lesson 22, a fronted adverbial clause from lesson

@@ -28,9 +28,9 @@ time the learner meets the replacement itself.
 
 ## Notes
 
-Items 6 and 7 are the lesson. Both sentences are already in the corpus — item 6
-is lesson 4's material and item 7 is lesson 7's — and putting them next to each
-other costs nothing and makes the point in one line.
+Items 6 and 7 are the lesson. Neither is in the built corpus; item 6 is the
+shape lesson 4 uses and item 7 the shape lesson 7 uses, and putting the two next
+to each other makes the point in one line.
 
 Item 9 does the opposite work: _Nobody in the back row_ shows that a pronoun can
 take a postmodifier, which means it is filling the noun-phrase slot rather than

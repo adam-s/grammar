@@ -6,6 +6,8 @@ returns. The answers here are arguable and nothing depends on it. See
 
 Researched 28 August 2026. An author's dossier.
 
+**Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
+
 ## What the lesson decides
 
 **Nothing.** `teaches` is empty and must stay empty.
@@ -70,7 +72,9 @@ And lesson 37's own agentless sentences — _Those deeds were filed_, _The
 shutters were painted_, _The path was cleared_ — are three ready-made cases where
 the agent is simply gone.
 
-Nothing needs writing.
+One sentence does need writing. The corpus holds the passive and never its
+active counterpart, so _The contractors dredged the harbour_ has to be added
+before the pair can be shown.
 
 ## What it must not do
 
@@ -79,8 +83,10 @@ enough to be harmful, and is rejected in
 [../37-passive-voice/README.md](../37-passive-voice/README.md). The lesson
 describes a choice; it does not recommend one.
 
-**It must not be graded.** Which voice is better for a given sentence is exactly
-the kind of judgment `src/lib/course/readiness.ts` exists to keep out of grading.
+**The structural builds may receive immediate feedback; the choice of voice must
+not affect course credit.** Which voice is better for a given sentence is exactly
+the kind of judgment `src/lib/course/readiness.ts` exists to keep out of course
+progress.
 
 ## Sources
 

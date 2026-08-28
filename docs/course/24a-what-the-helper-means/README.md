@@ -6,6 +6,8 @@ returns. The answers here are arguable and nothing depends on it. See
 
 Researched 28 August 2026. An author's dossier.
 
+**Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
+
 ## What the lesson decides
 
 **Nothing.** `teaches` is empty and must stay empty. The learner builds three

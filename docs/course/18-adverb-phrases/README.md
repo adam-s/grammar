@@ -6,6 +6,8 @@ Researched 28 August 2026. An author's dossier. See
 An optional companion exists: [../18a-kinds-of-adverb/](../18a-kinds-of-adverb/)
 covers the meaning-based split this lesson deliberately does not label.
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 **Nothing new.** `Adv` and `AdvP` both arrived at lesson 14.

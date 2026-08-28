@@ -2,6 +2,11 @@
 
 Reviewed 28 August 2026.
 
+**Implementation status:** The documentation and proposal corrections in this
+review were applied on 28 August 2026. The findings below remain as the audit
+record; [`proposal-review.md`](proposal-review.md) now holds the unresolved
+sentence-by-sentence human, parse, reach, and fixture checks.
+
 ## Scope and verdict
 
 This review covers the 91 Markdown files that existed in `docs/course/` before

@@ -6,6 +6,8 @@ returns. The answers here are arguable and nothing depends on it. See
 
 Researched 28 August 2026. An author's dossier, not a page for a learner.
 
+**Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
+
 ## What the lesson decides
 
 **Nothing.** `teaches` is empty and must stay empty.
@@ -21,11 +23,10 @@ The refusal is already written down, in `src/lib/grammar/types.ts` on the
 `adverbial` function. It is a good argument and no learner will ever see it:
 
 > The other four — manner, time, place, frequency — are deliberately not
-> separated, because nothing in the syntax separates them. _He ran quickly_ and
-> _He ran yesterday_ are the same tree. No substitution, movement or omission
-> test tells them apart; only knowing what the word means does, and a label a
-> learner can only reach by meaning is the one thing this model has refused
-> everywhere else.
+> separated, because the tree does not record the semantic difference. _He ran
+> quickly_ and _He ran yesterday_ have the same structure. A meaning-specific
+> substitute can expose the difference only after a reader understands the
+> meaning, and this model refuses labels that can be reached only that way.
 
 A learner who has met adverbs anywhere else will arrive expecting the four-way
 split and will assume the app is missing it. It is not missing. It is refused,
@@ -65,27 +66,30 @@ ones a test can reach.
 
 Four sentences, one from each kind, all already in the corpora:
 
-|           | Sentence                                                    | Adverb        |
-| --------- | ----------------------------------------------------------- | ------------- |
-| manner    | _She answered immediately._                                 | _immediately_ |
-| time      | _The train arrived late._                                   | _late_        |
-| place     | _The guard who waited outside put that ledger in the safe._ | _outside_     |
-| frequency | _The auditor checked the ledger twice._                     | _twice_       |
+|           | Sentence                                                    | Adverb    |
+| --------- | ----------------------------------------------------------- | --------- |
+| manner    | _The crew cleared the track quickly._                       | _quickly_ |
+| time      | _The train arrived late._                                   | _late_    |
+| place     | _The guard who waited outside put that ledger in the safe._ | _outside_ |
+| frequency | _The auditor checked the ledger twice._                     | _twice_   |
 
 Four kinds by meaning. Every one of them is drawn `VP > AdvP/adverbial` — one
 attachment path across all four, checked against both corpora rather than
 assumed. The learner builds them and gets **the same answer four times**.
 
-Then the tests are run in front of them, and all of them come back the same:
+Then the evidence is run in front of them:
 
-- **Substitution.** All four go to _then_, _there_, _thus_ — pro-forms that do
-  not respect the boundary.
-- **Movement.** All four front: _Quickly he ran. Yesterday he ran. Outside he
-  ran. Often he ran._
-- **Omission.** All four drop and leave a whole sentence.
+- **Omission.** All four drop and leave a whole sentence, which supports their
+  shared adverbial function.
+- **Position.** Their freedom varies by word and context. Fronting is ordinary
+  for some and marked for others, but it does not divide the words into four
+  stable syntactic classes.
+- **Substitution.** _Thus_, _then_, and _there_ preserve different meanings.
+  Choosing among them already requires the semantic distinction the proposed
+  label would claim to discover.
 
-Nothing in the grammar sees the difference. That is not a limitation of this
-app; it is a fact about English, and it is the most useful thing in the lesson.
+The tree records their shared structure, not their different meanings. That is
+the model boundary this lesson exists to make visible.
 
 ## The one with no home at all
 

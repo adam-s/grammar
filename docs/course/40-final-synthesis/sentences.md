@@ -13,18 +13,18 @@ seven things Stage 5 taught are absent from the lesson meant to gather everythin
 
 ## Sentences
 
-| #   | Sentence                                                               | The step                               |
-| --- | ---------------------------------------------------------------------- | -------------------------------------- |
-| 1   | The inspector who arrived late reported that the wiring smoked.        | relative inside a nominal frame        |
-| 2   | Reading the warning prevented a serious mistake.                       | **a gerund** opens the sentence        |
-| 3   | The driver was given a map before the road closed.                     | **a passive** with an adverbial clause |
-| 4   | Fortunately, the visitors who missed their train found a room.         | **a supplement** opens it              |
-| 5   | The station was restored by volunteers, and the town rejoiced.         | **passive and coordination**           |
-| 6   | The clerk who resigned claimed that the deeds vanished.                | relative and nominal again             |
-| 7   | The plan drafted by the committee was rejected.                        | **a participial** and a passive        |
-| 8   | The guide asked the visitors to wait outside.                          | **an infinitive with its own subject** |
-| 9   | The tenant who complained twice sent her landlord a notice.            | relative with two objects              |
-| 10  | The inspector discussed the report about the bridge with the engineer. | **two readings**                       |
+| #   | Sentence                                                            | The step                               |
+| --- | ------------------------------------------------------------------- | -------------------------------------- |
+| 1   | The inspector who arrived late reported that the wiring smoked.     | relative inside a nominal frame        |
+| 2   | Reading the warning prevented a serious mistake.                    | **a gerund** opens the sentence        |
+| 3   | The driver was given a map before the road closed.                  | **a passive** with an adverbial clause |
+| 4   | Fortunately, the visitors who missed their train found a room.      | **a supplement** opens it              |
+| 5   | The station was restored by volunteers, and the town rejoiced.      | **passive and coordination**           |
+| 6   | The clerk who resigned claimed that the deeds vanished.             | relative and nominal again             |
+| 7   | The plan drafted by the committee was rejected.                     | **a participial** and a passive        |
+| 8   | The guide asked the visitors to wait outside.                       | **an infinitive with its own subject** |
+| 9   | The tenant who complained twice sent her landlord a notice.         | relative with two objects              |
+| 10  | The inspector discussed the report with the engineer in the office. | **two readings**                       |
 
 ## Notes
 
@@ -41,9 +41,10 @@ does not combine easily with the rest at this length.
 infinitive clause in the course has an overt subject, but
 `node scripts/probe-constructions.mjs` builds one clean.
 
-**Item 8 is daggered** for the same reason as lesson 34's items 4 and 5: no
-infinitive clause in the course has its own overt subject, and whether the model
-holds one is a question rather than a gap.
+**Item 10 carries two ordinary readings.** On the event reading, the discussion
+happened in the office. On the noun-phrase reading, the engineer was the one in
+the office. Lesson 27 is currently the only built lesson with any ambiguous
+sentence, and a final synthesis is the natural second place for one.
 
 The longest sentence here is twelve tokens. Lesson 39's are eleven with one shape
 between them; these are eleven with ten. **Length is not the measure** — that is

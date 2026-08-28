@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision          | In plain words                                       |
@@ -28,8 +30,8 @@ gate waved._ A postmodifying clause in this project is only ever
 the bridge closed._ The fronted participial is the shape that actually confuses
 readers, and it is the one lesson 39 would most want.
 
-Both are model gaps rather than sentence gaps, and both need a decision before
-sentences can be written.
+Both are corpus gaps rather than model gaps. The construction probe builds both
+cleanly; they still need fixtures and accepted sentence parses.
 
 ## The tests
 
@@ -59,14 +61,14 @@ that the first reading is meant to fail; they are simply asked to build.
 | Shortcut                                  | What defeats it         | In the course?                   |
 | ----------------------------------------- | ----------------------- | -------------------------------- |
 | The participle is the main verb           | this whole lesson       | **yes** — that is the difficulty |
-| A participial clause is a past participle | a present participle    | **no** — model gap               |
-| A participial clause modifies a noun      | a fronted adverbial one | **no** — model gap               |
+| A participial clause is a past participle | a present participle    | **no** — corpus gap              |
+| A participial clause modifies a noun      | a fronted adverbial one | **no** — corpus gap              |
 
 ## What this should change
 
-1. **Decide whether the model holds a present participle postmodifier and a
-   fronted participial adverbial.** Both are absent from both corpora, so both
-   are open questions rather than missing sentences.
+1. **Add fixtures for a present-participle postmodifier and a fronted
+   participial adverbial.** The construction probe proves that the model holds
+   both; the corpora do not.
 2. **Name the expansion test.** _that was_ put back is the cleanest evidence in
    the lesson.
 

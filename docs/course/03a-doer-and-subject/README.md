@@ -6,6 +6,8 @@ returns. The answers here are arguable and nothing depends on it. See
 
 Researched 28 August 2026. An author's dossier, not a page for a learner.
 
+**Status:** This dossier proposes an optional lesson that is not in course data. [sentences.md](sentences.md) is authoring material, not accepted course data.
+
 ## What the lesson decides
 
 **Nothing.** `teaches` is empty, and must stay empty. The learner labels three
@@ -30,7 +32,7 @@ All three are already in lesson 1's corpus. None needs new grammar.
 | Sentence                | Did the subject choose this? | Role    |
 | ----------------------- | ---------------------------- | ------- |
 | _The audience clapped._ | yes                          | agent   |
-| _The bridge collapsed._ | no — it was done to it       | patient |
+| _The bridge collapsed._ | no — it underwent a change   | theme   |
 | _The rain eased._       | there is nobody to choose    | neither |
 
 The learner builds all three. **The trees are identical.** `S` over `NP`
@@ -49,7 +51,7 @@ the noun phrase sits**:
 - **Patient** — the one the action happens to.
 - **Experiencer** — animate and aware, but not choosing. _John_ in _John loves
   Mary_.
-- **Theme** — the thing moved or located by the verb.
+- **Theme** — the thing moved, located, or changed by the verb.
 
 Two facts do the work:
 

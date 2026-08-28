@@ -3,6 +3,8 @@
 Researched 28 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
+**Status:** This dossier measures the built corpus. [sentences.md](sentences.md) proposes replacements that are not yet parsed or accepted as course data.
+
 ## What the lesson decides
 
 | Decision          | In plain words                     |
@@ -55,11 +57,12 @@ Two distinct asked-shapes.
 
 This is the most clearly broken lesson in Stage 2, and the fix is matched pairs.
 
-1. **Add optional adverbials, adjacent to the required ones.** _She placed the
-   box under the bench_ / _She opened the box under the bench_. Same words,
-   different answer, and the only way through is the removal test.
-2. **Add a verb that is not _be_.** _The path leads through the woods._ _She put
-   the milk in the fridge._
+1. **Review the proposed matched pairs.** _She placed the box under the bench_ /
+   _She opened the box under the bench_ holds the words still and makes the
+   removal test do real work.
+2. **Keep the non-_be_ frames in the proposal.** _She put the milk in the
+   fridge_ and _She placed the files on the desk_ avoid the disputed claim that
+   _lead_ always requires a place phrase.
 3. **Consider splitting the lesson.** Six decisions is a lot, and four of them —
    `P`, `PP`, `Adv`, `AdvP` — are word classes rather than the lesson's actual
    idea. Lessons 18 and 19 later teach nothing new precisely because it all

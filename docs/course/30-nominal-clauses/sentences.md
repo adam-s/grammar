@@ -12,18 +12,18 @@ Now that lesson 29 has taught the marker, this lesson can hold one variable stil
 
 ## Sentences
 
-| #   | Sentence                                       | The step                                   |
-| --- | ---------------------------------------------- | ------------------------------------------ |
-| 1   | She knew that the belt broke.                  | **lesson 28's sentence, with the marker**  |
-| 2   | That the belt broke surprised the driver.      | **the same clause, now the subject**       |
-| 3   | We believed that the bridge was safe.          | object again, so item 1 was not a one-off  |
-| 4   | That the ferry sank was obvious.               | subject, with a linking main verb          |
-| 5   | The trouble was that the gate was locked.      | **a subject complement** — a third slot    |
-| 6   | That the wiring failed worried the inspector.  | subject, transitive main verb              |
-| 7   | That storm surprised the driver.               | **_that_ is a determiner here**            |
-| 8   | That the storm arrived surprised the driver.   | **_that_ is a marker here** — same opening |
-| 9   | That the talks collapsed seemed unlikely.      | subject, with a longer main predicate      |
-| 10  | That the archive flooded angered the trustees. | close on the subject case                  |
+| #   | Sentence                                          | The step                                    |
+| --- | ------------------------------------------------- | ------------------------------------------- |
+| 1   | She knew that the belt broke.                     | **lesson 28's sentence, with the marker**   |
+| 2   | That the belt broke surprised the driver.         | **the same clause, now the subject**        |
+| 3   | We believed that the bridge was safe.             | object again, so item 1 was not a one-off   |
+| 4   | That the ferry sank was obvious.                  | subject, with a linking main verb           |
+| 5   | The trouble was that the gate was locked.         | **a subject complement** — a third slot     |
+| 6   | That the wiring failed worried the inspector.     | subject, transitive main verb               |
+| 7   | That storm surprised the driver.                  | **_that_ is a determiner here**             |
+| 8   | That the storm arrived surprised the driver.      | **_that_ is a marker here** — same opening  |
+| 9   | That the talks collapsed seemed unlikely.         | subject, with a longer main predicate       |
+| 10  | What the children wanted surprised their teacher. | **a fused relative** fills the subject slot |
 
 ## Notes
 
@@ -39,6 +39,10 @@ of them side by side.** This is the cheapest place to do it.
 
 Item 5 puts a nominal clause in a subject-complement slot, which appears nowhere
 in the course.
+
+Item 10 adds the Course 1 fused-relative shape from
+[../difficulty.md](../difficulty.md). The fixture corpus proves `Nom >
+Pron/head`; the proposal still needs its own parse and reach review.
 
 **Extraposition is deliberately absent.** _It was obvious that the ferry sank_
 uses `func:placeholderSubject` and `func:extraposed`, both of which the model
