@@ -158,8 +158,12 @@ export function replay(
     must(created, `${sentence.id}/${reading.id}: ${source.form} was not created`);
     learnerId.set(sourceId, created);
 
-    if (source.form === 'V') {
-      const want = source.verbType!;
+    // A verb whose type the reading does not name. Every fixture names one, but
+    // a lesson target does not: naming the verb is lesson 3 and saying what kind
+    // of verb it is is lesson 8, so between them a V stands with no type. The
+    // bang that used to be here asked for row `vt:undefined`.
+    if (source.form === 'V' && source.verbType) {
+      const want = source.verbType;
       const verbType = optionFor(state, sentence.words, created, `vt:${want}`, scope);
       must(verbType && isPickable(verbType), `${sentence.id}/${reading.id}: cannot choose ${want}`);
       state = setVerbType(state, created, want);
@@ -177,8 +181,8 @@ export function replay(
     // Which kind of `Part` this is, and what verb form a clause has. Both are
     // answers on the node itself rather than roles under a parent, so they are
     // taken here, straight after the form that made the question askable.
-    if (source.form === 'Part') {
-      const want = source.partKind!;
+    if (source.form === 'Part' && source.partKind) {
+      const want = source.partKind;
       const option = optionFor(state, sentence.words, created, `part:${want}`, scope);
       must(
         option && isPickable(option),
@@ -186,8 +190,8 @@ export function replay(
       );
       state = setPartKind(state, created, want);
     }
-    if (source.form === 'Aux') {
-      const want = source.auxKind!;
+    if (source.form === 'Aux' && source.auxKind) {
+      const want = source.auxKind;
       const option = optionFor(state, sentence.words, created, `aux:${want}`, scope);
       must(
         option && isPickable(option),

@@ -46,6 +46,7 @@
   import type { Rect } from '$lib/workspace/viewport.ts';
   import { replaySentence } from '$lib/course/sentence-renderer.ts';
   import {
+    COURSE_LESSONS,
     COURSE_STAGES,
     CourseContents,
     Lesson,
@@ -53,6 +54,7 @@
     SentenceGraphs,
     lessonById,
     lessonDoc,
+    scopeThrough,
   } from '$lib/course';
 
   const ws = new WorkspaceState();
@@ -75,8 +77,22 @@
   /** A lesson with authored prose reads as a document; one without still shows
       its finished diagrams, so an unwritten lesson is visibly unwritten. */
   const doc = $derived(lessonDoc(lessonId));
-  let sentenceId = $state('fix-vtr');
-  const sentence = $derived(FIXTURES.find((s) => s.id === sentenceId)!);
+  /**
+   * Every sentence the workspace can open: the lessons' own, plus the contract
+   * fixtures, which stay reachable so the sweeps and the free workspace keep
+   * working. Course sentences win a name clash, since a lesson's copy is the
+   * one its scope was checked against.
+   */
+  const POOL = [...COURSE_LESSONS.flatMap((l) => l.sentences), ...FIXTURES];
+  let sentenceId = $state<string | null>(null);
+  /**
+   * Falls back to the lesson's first sentence rather than trusting the id.
+   * The id used to be a hardcoded fixture and the lookup ended in a bang, so
+   * the page crashed outright the day lesson 1 stopped owning that fixture.
+   */
+  const sentence = $derived(
+    POOL.find((s) => s.id === sentenceId) ?? lessonSentences[0] ?? FIXTURES[0]!,
+  );
   const words = $derived(sentence.words);
 
   let build = $state(emptyBuild());
@@ -161,8 +177,21 @@
     return null;
   });
   const targetKey = $derived(targetSpan ? `${targetSpan[0]}-${targetSpan[1]}` : '');
+  /**
+   * What this lesson has taught. The palette shows the whole inventory either
+   * way — a learner who never sees a row does not learn the choice exists — but
+   * a label from a later lesson is marked `untaught` rather than offered.
+   *
+   * A sentence opened from outside the course carries no scope, so the free
+   * workspace keeps the full palette.
+   */
+  const scope = $derived(
+    lessonSentences.some((s) => s.id === sentence.id)
+      ? scopeThrough(COURSE_LESSONS, lesson.number)
+      : {},
+  );
   const choices = $derived(
-    blockRejectedOptions(optionsFor(build, words, selection), rejected[targetKey] ?? {}),
+    blockRejectedOptions(optionsFor(build, words, selection, scope), rejected[targetKey] ?? {}),
   );
 
   /**
@@ -195,7 +224,7 @@
       get view() {
         return middleView;
       },
-      sentenceIds: FIXTURES.map((s) => s.id),
+      sentenceIds: POOL.map((s) => s.id),
       get words() {
         return words.map((x) => x.text);
       },
