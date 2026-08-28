@@ -11,7 +11,7 @@
  * Nesting inside a noun phrase is unambiguous; stacking after a verb is not, and
  * that contrast is worth an author knowing.
  */
-import { bare, det, postmod, pp, pron, sv, svo, svoPlus, svPlus, v } from './shape.ts';
+import { bare, det, postmod, pp, pron, sv, svoPlus, svPlus, v } from './shape.ts';
 
 export const LESSON_19 = [
   svPlus(
