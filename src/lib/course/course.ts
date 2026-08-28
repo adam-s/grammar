@@ -111,7 +111,16 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 6,
         stage: 'Frame',
         title: 'Determiners',
-        teaches: ['form:Det', 'func:determiner'],
+        // `fuse:determiner` is the decision behind *Most agreed* — a determiner
+        // standing in for the noun phrase it would have pointed out. It belongs
+        // here because this is where the determiner arrives, and difficulty.md
+        // has assigned the shape to lesson 6 since the inventory was written.
+        teaches: ['form:Det', 'form:DP', 'func:determiner', 'fuse:determiner'],
+        // `form:DP` is here because *Almost every seat squeaked* asked nothing
+        // about a determinative phrase without it: the DP pruned away and the
+        // learner labelled a bare `N` head with two unnamed words in front. The
+        // premodifier inside it still waits for lesson 16, which is the ladder
+        // working — the phrase boundary is this lesson's question.
         sentences: LESSON_06,
       },
       {

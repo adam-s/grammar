@@ -99,10 +99,8 @@ test('scope only ever grows, and lesson one already teaches something', () => {
  * course has never thought about.
  */
 const NOT_IN_COURSE_ONE: Record<string, string> = {
-  'fuse:determiner':
-    'fusion is assigned to no lesson in either course; see docs/course/difficulty.md',
-  'fuse:premodifier': 'the same',
-  'form:DP': 'determinative phrases are unassigned; see docs/course/difficulty.md',
+  'fuse:premodifier':
+    'the adjective-headed fusion of *The poor protested* is assigned to lesson 16 and not yet written',
   'func:flat': 'flat names are unassigned',
   'func:prenucleus': 'questions and fronting are Course 2, lesson 41',
   'func:placeholderSubject': 'dummy it and existential there are Course 2, lesson 45',

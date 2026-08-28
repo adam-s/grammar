@@ -112,6 +112,46 @@ export const bare =
   (fn) =>
     n('NP', fn, [w('N', 'head', noun)]);
 
+/**
+ * *Most agreed.* — a determiner with no noun after it.
+ *
+ * The determiner is doing two jobs at once: pointing something out, and being
+ * the thing pointed at. `fusedWith` records the one the missing word would have
+ * done, and the node shows both in CGEL's order — `D+H`.
+ */
+export const fused =
+  (word: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [w('Det', 'head', word, { fusedWith: 'determiner' })]);
+
+/**
+ * *almost every seat* — a phrase filling the determiner slot.
+ *
+ * *almost* does not modify *seat*; it modifies *every*. So the two of them are
+ * a phrase of their own, and it is that phrase, not the bare determiner, that
+ * points the noun out.
+ */
+export const dp =
+  (premodifier: string, determiner: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      n('DP', 'determiner', [w('Adv', 'premodifier', premodifier), w('Det', 'head', determiner)]),
+      w('N', 'head', noun),
+    ]);
+
+/**
+ * *nobody in the back row* — a pronoun with a phrase after it.
+ *
+ * It goes under a `Nom`, exactly as a noun's postmodifier does, because a `NP`
+ * has no postmodifier slot. That is worth knowing for its own sake: it is the
+ * structural evidence that a pronoun fills the noun phrase's slot rather than
+ * the noun's.
+ */
+export const pronmod =
+  (pronoun: string, after: Phrase): Phrase =>
+  (fn) =>
+    n('NP', fn, [n('Nom', 'head', [w('Pron', 'head', pronoun), after('postmodifier')])]);
+
 /** *she* — a noun phrase that is just its pronoun. */
 export const pron =
   (word: string): Phrase =>
