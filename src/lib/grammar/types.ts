@@ -126,6 +126,18 @@ export type PartKind = 'infinitival' | 'verbal';
 export const PART_KINDS: readonly PartKind[] = ['infinitival', 'verbal'];
 
 /**
+ * What an auxiliary is doing.
+ *
+ * *has*, *is*, *was*, *will* and *did* are one word class and five jobs, and
+ * the job is what a reader has to recover: *was repaired* is passive, *was
+ * repairing* is not, and the auxiliary is the only difference. Modals are the
+ * odd one out — they carry no slots of their own, which is why they sit outside
+ * Morenberg's six rather than inside them.
+ */
+export type AuxKind = 'modal' | 'perfect' | 'progressive' | 'passive' | 'do';
+export const AUX_KINDS: readonly AuxKind[] = ['modal', 'perfect', 'progressive', 'passive', 'do'];
+
+/**
  * Function — what a constituent DOES. Orthogonal to form: a PP may be an
  * adverbial, a postmodifier, or a complement. Keeping these two axes separate
  * is the whole point (docs/taxonomy.md §3).
@@ -272,6 +284,8 @@ export interface Constituent {
   finiteness?: Finiteness;
   /** For `form: 'Part'` — infinitival *to*, or a particle belonging to a verb. */
   partKind?: PartKind;
+  /** For `form: 'Aux'` — which of the five jobs this auxiliary is doing. */
+  auxKind?: AuxKind;
   /**
    * This node covers no words: a slot the sentence leaves empty.
    *

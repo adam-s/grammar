@@ -330,8 +330,14 @@ function auditOneClause(ctx: Ctx, clauseId: string): string[] {
     // *was repaired*, not *repaired*. A participle with no helping verb in
     // front of it is a different structure — a reduced relative — and building
     // one needs a gap where the subject would be (docs/model-gaps.md).
-    if (!vp.children.some((k) => ctx.cs[k]?.function === 'auxiliary')) {
+    const helpers = vp.children.filter((k) => ctx.cs[k]?.function === 'auxiliary');
+    if (helpers.length === 0) {
       f.push(`${where} is marked passive but has no helping verb: the passive needs "be"`);
+    } else if (!helpers.some((k) => ctx.cs[k]?.auxKind === 'passive')) {
+      f.push(
+        `${where} is marked passive, but none of its helping verbs is the passive "be" — ` +
+          '*was repairing* and *was repaired* differ in nothing else',
+      );
     }
   }
 
@@ -485,6 +491,10 @@ export function auditGaps(ctx: Ctx): string[] {
 export function auditFiniteness(ctx: Ctx): string[] {
   const f: string[] = [];
   for (const [id, c] of Object.entries(ctx.cs)) {
+    if (c.form === 'Aux' && !c.auxKind) {
+      const word = ctx.words[c.span[0]]?.text ?? id;
+      f.push(`"${word}" is a helping verb but does not say which job it is doing`);
+    }
     if (c.form !== 'Part') continue;
     const word = ctx.words[c.span[0]]?.text ?? id;
     if (!c.partKind) {

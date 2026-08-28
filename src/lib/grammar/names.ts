@@ -9,7 +9,16 @@
  * `title` attribute would be inaccessible on touch and fragile by keyboard.
  */
 import { label } from './audits.ts';
-import type { ClauseKind, Finiteness, Form, Func, PartKind, VerbType, Voice } from './types.ts';
+import type {
+  AuxKind,
+  ClauseKind,
+  Finiteness,
+  Form,
+  Func,
+  PartKind,
+  VerbType,
+  Voice,
+} from './types.ts';
 
 export { label };
 
@@ -96,6 +105,26 @@ export const PART_KIND_NAME: Record<PartKind, string> = {
 
 export const partKindMark = (kind: PartKind): string => PART_KIND_MARK[kind];
 export const partKindName = (kind: PartKind): string => PART_KIND_NAME[kind];
+
+/** Compact marks for the five jobs an auxiliary does. */
+export const AUX_KIND_MARK: Record<AuxKind, string> = {
+  modal: 'Mod',
+  perfect: 'Perf',
+  progressive: 'Prog',
+  passive: 'Pass',
+  do: 'Do',
+};
+
+export const AUX_KIND_NAME: Record<AuxKind, string> = {
+  modal: 'modal',
+  perfect: 'perfect “have”',
+  progressive: 'progressive “be”',
+  passive: 'passive “be”',
+  do: 'supporting “do”',
+};
+
+export const auxKindMark = (kind: AuxKind): string => AUX_KIND_MARK[kind];
+export const auxKindName = (kind: AuxKind): string => AUX_KIND_NAME[kind];
 
 /** Finiteness rides the clause-kind mark, the way voice rides the verb type. */
 export const FINITENESS_MARK: Record<Finiteness, string> = {

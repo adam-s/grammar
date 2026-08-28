@@ -8,6 +8,7 @@ import {
   hypothesisFor,
   licenseFor,
   nodeOver,
+  setAuxKind,
   setClauseKind,
   setFiniteness,
   setFunction,
@@ -211,6 +212,15 @@ function replay(sentence: SentenceEntry, reading: Reading): BuildState {
         `${sentence.id}/${reading.id}: cannot choose ${want} for a particle`,
       );
       state = setPartKind(state, created, want);
+    }
+    if (source.form === 'Aux') {
+      const want = source.auxKind!;
+      const option = optionFor(state, sentence.words, created, `aux:${want}`);
+      assert.ok(
+        option && isPickable(option),
+        `${sentence.id}/${reading.id}: cannot choose ${want} for a helping verb`,
+      );
+      state = setAuxKind(state, created, want);
     }
     if (source.form === 'Cl' && source.clauseKind) {
       const want = source.clauseKind;

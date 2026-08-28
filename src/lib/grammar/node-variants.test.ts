@@ -39,7 +39,24 @@ test('the inventory covers every function mark and obligatory adverbial', () => 
     ),
   );
   expected.add('A!');
+  // An auxiliary shows no function mark on an `Aux`, so the catalogue cannot
+  // show one either — see the test below, which is where that lives now.
+  expected.delete(nodeLabelParts({ form: 'NP', function: 'auxiliary' }).functionMark);
+  covered.delete(null);
   assert.deepEqual(covered, expected);
+});
+
+test('a helping verb does not repeat itself', () => {
+  // Every `Aux` is a helping verb, so marking the function says nothing the
+  // form has not said — and over a short word the two marks plus the subtype
+  // do not fit. The mark comes back the moment the function is something else.
+  assert.equal(nodeLabelParts({ form: 'Aux', function: 'auxiliary' }).functionMark, null);
+  assert.equal(nodeLabelParts({ form: 'Aux', function: 'coordinate' }).functionMark, 'Co');
+  assert.equal(
+    nodeLabelParts({ form: 'Aux', function: 'auxiliary' }).functionName,
+    'helping verb',
+    'the full name stays, for assistive tech and the palette',
+  );
 });
 
 /* The mark test above compares label strings, so a variant whose host form went

@@ -77,28 +77,34 @@ tree a graph. Everything that walks the tree assumes one parent.
 Worth recording and worth leaving alone. Nothing in the course plan needs it,
 and the cost lands on every file.
 
-## 5 · The small missing categories — hour each
+## 5 · The small missing categories — DONE except one
 
-Each is an enum entry plus a rule plus a fixture, and none of them interact:
+`DP`, `flat`, and the interrogative and exclamative clause kinds are in, each
+with a fixture. What is left:
 
-- **`DP`, a determinative phrase** — ***almost every*** *student*, where
-  *almost* has nothing to modify but the noun.
-- **Interrogative and exclamative clause kinds** — `ClauseKind` has four and
-  needs six.
-- **`flat` / `compounding`** — *New York*, where no internal head is worth
-  arguing about.
-- **`postnucleus`** — the tail position. `extraposed` currently covers the one
-  case that needed it, which is not the same as having the position.
+- **`postnucleus`** — the tail position. `extraposed` covers the one case that
+  needed it, which is not the same as having the position. It has no second
+  case until discontinuity exists, so it waits on 2.
 
-## 6 · Things the model holds but does not record — hour each
+## 6 · Things the model holds but does not record
 
-These build today and say less than they could:
+**Modals: done.** `auxKind` records which of five jobs a helping verb is doing
+— modal, perfect, progressive, passive, do-support — because *was repairing*
+and *was repaired* differ in nothing else. It also let `auditVerbType` get
+stricter: a passive clause needs the passive *be* specifically, not any helper.
 
-- **Raising against control** — *seems to leave* against *wants to leave*.
-  Same tree, different source for the understood subject.
+Still open, and both need more than a property:
+
+- **Raising against control** — *seems to leave* against *wants to leave*. Same
+  tree; the difference is where the understood subject comes from, and the
+  understood subject of a control clause is outside it. That is the same
+  "antecedent we cannot point at" the gap rule already runs into, so it is
+  probably one piece of work with a general antecedent link rather than a flag.
 - **Existential *there*** — builds as an ordinary `Vbe` clause, and nothing
-  records that its subject is not what the sentence is about.
-- **Modals** — carry no slots of their own and sit outside the six as `Aux`.
+  records that its subject is not what the sentence is about. The pair shape
+  used for extraposition (`placeholderSubject` + `extraposed`) may be the right
+  answer here too, with the real subject inside the predicate; worth an hour of
+  probing before writing anything.
 
 ## Documentation debt
 
@@ -115,6 +121,5 @@ part of the model.
 ## The order I would take them
 
 1 first, because it is an hour and every later item adds fixtures to the file it
-fixes. Then 5 and 6 whenever there is an hour — each makes the model more honest
-without touching anything shared. Then 2, which wants a clear afternoon and a
-decision made before any code. 3 after 2. 4 probably never.
+fixes. Then 2, which wants a clear afternoon and a decision made before any
+code — and which 5's last item and 3 both wait on. 3 after 2. 4 probably never.

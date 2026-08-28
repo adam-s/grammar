@@ -8,6 +8,7 @@ import {
   canStackOver,
   emptyBuild,
   nodeOver,
+  setAuxKind,
   setClauseKind,
   setFiniteness,
   setFunction,
@@ -23,6 +24,7 @@ import {
   type Constituent,
   type Form,
   type Func,
+  type AuxKind,
   type ClauseKind,
   type Finiteness,
   type PartKind,
@@ -40,6 +42,7 @@ export type RenderStep = {
     | 'part-kind'
     | 'finiteness'
     | 'clause-kind'
+    | 'aux-kind'
     | 'gap';
   canonicalId: string | null;
   state: BuildState;
@@ -55,6 +58,7 @@ export type RenderStep = {
     verbType?: VerbType;
     voice?: Voice;
     partKind?: PartKind;
+    auxKind?: AuxKind;
     finiteness?: Finiteness;
     clauseKind?: ClauseKind;
     /** The form goes OVER what is already there rather than replacing it. */
@@ -169,6 +173,17 @@ export function replaySentence(sentence: SentenceEntry): SentenceReplay {
   for (const canonicalId of order) {
     const constituent = reading.constituents[canonicalId]!;
     const nodeId = generated.get(canonicalId)!;
+    if (constituent.form === 'Aux' && constituent.auxKind) {
+      state = setAuxKind(state, nodeId, constituent.auxKind);
+      steps.push({
+        kind: 'aux-kind',
+        canonicalId,
+        state,
+        span: constituent.span,
+        nodeId,
+        choice: { auxKind: constituent.auxKind },
+      });
+    }
     if (constituent.form === 'Part' && constituent.partKind) {
       state = setPartKind(state, nodeId, constituent.partKind);
       steps.push({

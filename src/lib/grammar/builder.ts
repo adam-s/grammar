@@ -31,6 +31,7 @@ import {
 import { hypothesizes, licenses, type LicenseContext, type Verdict } from './rules.ts';
 import { isPhraseForm, isPunctuation } from './types.ts';
 import type {
+  AuxKind,
   ClauseKind,
   Constituent,
   ConstituentMap,
@@ -490,6 +491,15 @@ export function setPartKind(state: BuildState, id: string, partKind: PartKind): 
   if (!c || c.form !== 'Part') return state;
   const cs = cloneMap(state.constituents);
   cs[id]!.partKind = partKind;
+  return { ...state, constituents: cs };
+}
+
+/** Say which of the five jobs a helping verb is doing. */
+export function setAuxKind(state: BuildState, id: string, auxKind: AuxKind): BuildState {
+  const c = state.constituents[id];
+  if (!c || c.form !== 'Aux') return state;
+  const cs = cloneMap(state.constituents);
+  cs[id]!.auxKind = auxKind;
   return { ...state, constituents: cs };
 }
 

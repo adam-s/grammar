@@ -17,6 +17,7 @@ import { verbs } from './clause.ts';
 import { label } from './audits.ts';
 import type { BuildState, Span } from './builder.ts';
 import type {
+  AuxKind,
   ClauseKind,
   Constituent,
   Finiteness,
@@ -273,6 +274,31 @@ export function gradeVoice(sentence: SentenceEntry, wordIndex: number, voice: Vo
     reason: voice === 'passive' ? 'This one is not passive.' : 'This one is passive.',
     test: VOICE_TEST,
   };
+}
+
+/** The test for what an auxiliary is helping with: look at the verb after it. */
+export const AUX_KIND_TEST =
+  'Look at the verb after it. A bare verb means a modal; an -ing verb means ' +
+  'progressive; an -ed or -en verb means perfect or passive, and which one ' +
+  'depends on whether the subject does it or has it done.';
+
+export function gradeAuxKind(sentence: SentenceEntry, wordIndex: number, kind: AuxKind): Outcome {
+  for (const r of ordered(sentence)) {
+    const aux = Object.keys(r.constituents).find(
+      (id) => r.constituents[id]!.form === 'Aux' && r.constituents[id]!.span[0] === wordIndex,
+    );
+    if (aux && r.constituents[aux]!.auxKind === kind) {
+      return r.id === sentence.canonicalId
+        ? { kind: 'correct', readingId: r.id }
+        : {
+            kind: 'alternate',
+            readingId: r.id,
+            gloss: r.gloss,
+            canonicalGloss: canonical(sentence).gloss,
+          };
+    }
+  }
+  return { kind: 'wrong', reason: 'That is not what it is helping with.', test: AUX_KIND_TEST };
 }
 
 /** The test that tells the two kinds of `Part` apart. */

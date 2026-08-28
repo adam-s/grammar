@@ -1,4 +1,6 @@
 import {
+  auxKindMark,
+  auxKindName,
   clauseKindMark,
   clauseKindName,
   formName,
@@ -9,7 +11,16 @@ import {
   verbTypeMark,
   verbTypeName,
 } from './names.ts';
-import type { ClauseKind, Finiteness, Form, Func, PartKind, VerbType, Voice } from './types.ts';
+import type {
+  AuxKind,
+  ClauseKind,
+  Finiteness,
+  Form,
+  Func,
+  PartKind,
+  VerbType,
+  Voice,
+} from './types.ts';
 
 /** Everything visible around the primary form label of one diagram node. */
 export interface NodeLabelValue {
@@ -24,6 +35,8 @@ export interface NodeLabelValue {
   finiteness?: Finiteness | null;
   /** Only meaningful on a `Part`. */
   partKind?: PartKind | null;
+  /** Only meaningful on an `Aux`. */
+  auxKind?: AuxKind | null;
   /** This node covers no words. */
   gap?: boolean;
   /** Ties this node to the gap or filler it is one half of. */
@@ -67,7 +80,13 @@ export function nodeLabelOffsets(form: Form): { functionX: number; subtypeX: num
  * meaningful only on V, and clause kind only on Cl.
  */
 export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
-  const fnMark = value.function ? functionMark(value.function, value.obligatory === true) : null;
+  // A helping verb's function adds nothing its form has not already said, and
+  // over a short word the two marks plus the subtype do not fit — *has been*
+  // put "Perf" hard against "Help". Dropping the redundant half is better than
+  // abbreviating an informative one.
+  const redundant = value.form === 'Aux' && value.function === 'auxiliary';
+  const fnMark =
+    value.function && !redundant ? functionMark(value.function, value.obligatory === true) : null;
   const fnName = value.function ? functionName(value.function, value.obligatory === true) : null;
   const voice = value.voice ?? 'active';
   const finiteness = value.finiteness ?? 'finite';
@@ -78,7 +97,9 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
         ? clauseKindMark(value.clauseKind ?? null, finiteness)
         : value.form === 'Part' && value.partKind
           ? partKindMark(value.partKind)
-          : null;
+          : value.form === 'Aux' && value.auxKind
+            ? auxKindMark(value.auxKind)
+            : null;
   const subtypeName =
     value.form === 'V' && value.verbType
       ? verbTypeName(value.verbType, voice)
@@ -86,7 +107,9 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
         ? clauseKindName(value.clauseKind ?? null, finiteness)
         : value.form === 'Part' && value.partKind
           ? partKindName(value.partKind)
-          : null;
+          : value.form === 'Aux' && value.auxKind
+            ? auxKindName(value.auxKind)
+            : null;
   const primaryName = formName(value.form);
   // The link between a filler and its gap is the whole claim being made, and a
   // reader who cannot see it sees two unrelated phrases. The number is the

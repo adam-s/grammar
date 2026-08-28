@@ -21,6 +21,7 @@
     clauseKind = null,
     finiteness = null,
     partKind = null,
+    auxKind = null,
     gap = false,
     index = null,
   }: Props = $props();
@@ -35,6 +36,7 @@
       clauseKind,
       finiteness,
       partKind,
+      auxKind,
       gap,
       index,
     }),

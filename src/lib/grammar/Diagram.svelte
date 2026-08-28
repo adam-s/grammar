@@ -284,6 +284,7 @@
         clauseKind: c.clauseKind,
         finiteness: c.finiteness,
         partKind: c.partKind,
+        auxKind: c.auxKind,
         gap: c.gap,
         index: c.index,
       })}
@@ -296,6 +297,7 @@
         clauseKind: c.clauseKind,
         finiteness: c.finiteness,
         partKind: c.partKind,
+        auxKind: c.auxKind,
         gap: c.gap,
         index: c.index,
       })}
@@ -360,6 +362,7 @@
           clauseKind={c.clauseKind}
           finiteness={c.finiteness}
           partKind={c.partKind}
+          auxKind={c.auxKind}
           gap={c.gap}
           index={c.index}
         />

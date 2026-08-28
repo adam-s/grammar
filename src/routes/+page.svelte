@@ -31,6 +31,7 @@
   import {
     addGap,
     emptyBuild,
+    setAuxKind,
     nodeOver,
     setFunction,
     setClauseKind,
@@ -43,6 +44,7 @@
   } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
   import {
+    AUX_KIND_TEST,
     CLAUSE_KIND_TEST,
     FINITENESS_TEST,
     GAP_TEST,
@@ -50,6 +52,7 @@
     PLAIN,
     VERB_TYPE_TEST,
     VOICE_TEST,
+    gradeAuxKind,
     gradeClauseKind,
     gradeFiniteness,
     gradeForm,
@@ -65,6 +68,7 @@
   import {
     FORM_TEST,
     FUNCTION_TEST,
+    auxKindName,
     clauseKindName,
     label,
     partKindName,
@@ -281,11 +285,13 @@
                     ? `voice:${step.choice.voice}`
                     : step.choice.partKind !== undefined
                       ? `part:${step.choice.partKind}`
-                      : step.choice.finiteness !== undefined
-                        ? `fin:${step.choice.finiteness}`
-                        : step.choice.clauseKind !== undefined
-                          ? `kind:${step.choice.clauseKind}`
-                          : `vt:${step.choice.verbType}`,
+                      : step.choice.auxKind !== undefined
+                        ? `aux:${step.choice.auxKind}`
+                        : step.choice.finiteness !== undefined
+                          ? `fin:${step.choice.finiteness}`
+                          : step.choice.clauseKind !== undefined
+                            ? `kind:${step.choice.clauseKind}`
+                            : `vt:${step.choice.verbType}`,
         })),
       reset,
     };
@@ -512,6 +518,24 @@
           kind: 'wrong',
           text: outcome?.reason ?? 'Not that voice here.',
           test: outcome?.test ?? VOICE_TEST,
+        };
+        reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
+      }
+      return;
+    }
+
+    if (o.auxKind && selection.kind === 'node') {
+      const at = build.constituents[selection.id]?.span[0];
+      const outcome = at === undefined ? null : gradeAuxKind(sentence, at, o.auxKind);
+      if (outcome && outcome.kind !== 'wrong') {
+        build = setAuxKind(build, selection.id, o.auxKind);
+        verdict = { kind: 'correct', text: `Yes — this is ${auxKindName(o.auxKind)}.` };
+        closeIfComplete();
+      } else {
+        verdict = {
+          kind: 'wrong',
+          text: outcome?.reason ?? 'That is not what it is helping with.',
+          test: outcome?.test ?? AUX_KIND_TEST,
         };
         reject(o, [verdict.text, verdict.test].filter(Boolean).join(' '));
       }

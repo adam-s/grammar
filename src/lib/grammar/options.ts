@@ -45,7 +45,7 @@ import {
 import { CLAUSE_KINDS } from './node-variants.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
-import { FORM_TEST, FUNCTION_TEST, formName, label } from './names.ts';
+import { FORM_TEST, FUNCTION_TEST, auxKindName, formName, label } from './names.ts';
 import {
   CLAUSE_FUNCTIONS,
   PHRASE_FORMS,
@@ -53,6 +53,8 @@ import {
   WORD_FORMS,
   type Form,
   type Func,
+  AUX_KINDS,
+  type AuxKind,
   type ClauseKind,
   type Finiteness,
   type PartKind,
@@ -132,6 +134,7 @@ export interface LabelOption {
   verbType?: VerbType;
   voice?: Voice;
   partKind?: PartKind;
+  auxKind?: AuxKind;
   finiteness?: Finiteness;
   clauseKind?: ClauseKind;
   /**
@@ -467,6 +470,25 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
   };
 
   /**
+   * Which of the five jobs a helping verb is doing.
+   *
+   * *was repairing* and *was repaired* differ in nothing but this, so it is a
+   * real question with a formal test rather than a label to memorise.
+   */
+  const auxKind: OptionGroup = {
+    id: 'aux-kind',
+    question: 'What is it helping with?',
+    notes: 'always',
+    options: AUX_KINDS.map((value) => ({
+      key: `aux:${value}`,
+      label: auxKindName(value),
+      note: AUX_KIND_NOTE[value],
+      state: (c.auxKind === value ? 'chosen' : 'available') as OptionState,
+      auxKind: value,
+    })),
+  };
+
+  /**
    * What job an embedded clause is doing. Not asked of the sentence itself,
    * which is not embedded in anything and so does not have a kind.
    */
@@ -590,6 +612,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
         },
         ...(c.form === 'V' ? [verbType, voice] : []),
         ...(c.form === 'Part' ? [partKind] : []),
+        ...(c.form === 'Aux' ? [auxKind] : []),
         {
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',
@@ -679,6 +702,15 @@ function functionGroup(
 
   return { id: 'function', question: `What does ${subject} do?`, notes: 'always', options };
 }
+
+/** The formal test for each auxiliary job. */
+const AUX_KIND_NOTE: Record<AuxKind, string> = {
+  modal: 'a bare verb follows, and it never takes -s — “will LEAVE”',
+  perfect: '“have” plus an -ed or -en verb — “has LEFT”',
+  progressive: '“be” plus an -ing verb — “is LEAVING”',
+  passive: '“be” plus an -ed or -en verb, and the subject has it done to it',
+  do: '“do” standing in so a question or a negative has something to move',
+};
 
 /** What each clause kind does, in the learner's language. */
 const CLAUSE_KIND_NOTE: Record<ClauseKind, string> = {

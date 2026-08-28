@@ -388,3 +388,32 @@ describe('gaps and the phrases that fill them', () => {
     assert.match(auditReading(r, s.words).all.join(' | '), /is a gap but its span/);
   });
 });
+
+describe('what an auxiliary is helping with', () => {
+  it('every helping verb says which job it is doing', () => {
+    const { r, s } = broken(passive, (r) => {
+      delete r.constituents[idOf(r, (c) => c.form === 'Aux')]!.auxKind;
+    });
+    assert.match(auditReading(r, s.words).all.join(' | '), /does not say which job/);
+  });
+
+  it('a passive clause needs the passive "be", not just any helping verb', () => {
+    // *was repairing* and *was repaired* differ in nothing else, so a passive
+    // whose helper is progressive is a claim the words do not support.
+    const { r, s } = broken(passive, (r) => {
+      r.constituents[idOf(r, (c) => c.form === 'Aux')]!.auxKind = 'progressive';
+    });
+    assert.match(
+      auditReading(r, s.words).all.join(' | '),
+      /none of its helping verbs is the passive "be"/,
+    );
+  });
+
+  it('a chain names each job separately', () => {
+    const r = auxiliaryChain.readings[0]!;
+    const kinds = Object.values(r.constituents)
+      .filter((c) => c.form === 'Aux')
+      .map((c) => c.auxKind);
+    assert.deepEqual(kinds, ['perfect', 'progressive']);
+  });
+});

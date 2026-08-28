@@ -10,6 +10,7 @@
  * tests. Never used at runtime on shipped content, which is already flat.
  */
 import type {
+  AuxKind,
   ClauseKind,
   ClauseType,
   Finiteness,
@@ -41,6 +42,8 @@ export interface SpecNode {
   finiteness?: Finiteness;
   /** On a `Part` leaf. */
   partKind?: PartKind;
+  /** On an `Aux` leaf. */
+  auxKind?: AuxKind;
   /** This node covers no words. Its position comes from where it is written. */
   gap?: true;
   /** Ties a gap to its filler. Shared by exactly two nodes. */
@@ -194,6 +197,8 @@ export function build(
       if (node.clauseKind) self.clauseKind = node.clauseKind;
       if (node.finiteness && node.finiteness !== 'finite') self.finiteness = node.finiteness;
       if (node.partKind) self.partKind = node.partKind;
+      if (node.auxKind) self.auxKind = node.auxKind;
+      if (node.auxKind) self.auxKind = node.auxKind;
       if (node.verbType) self.verbType = node.verbType;
       if (node.voice === 'passive') self.voice = 'passive';
       if (node.clauseType) self.clauseType = node.clauseType;

@@ -601,8 +601,8 @@ export const auxiliaryChain = sentence(
         [
           n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'mechanic')]),
           n('VP', 'predicate', [
-            w('Aux', 'auxiliary', 'has', { xpos: 'VBZ', lemma: 'have' }),
-            w('Aux', 'auxiliary', 'been', { xpos: 'VBN', lemma: 'be' }),
+            w('Aux', 'auxiliary', 'has', { xpos: 'VBZ', lemma: 'have', auxKind: 'perfect' }),
+            w('Aux', 'auxiliary', 'been', { xpos: 'VBN', lemma: 'be', auxKind: 'progressive' }),
             w('V', 'head', 'repairing', { xpos: 'VBG', lemma: 'repair', verbType: 'Vtr' }),
             n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'engine')]),
           ]),
@@ -643,7 +643,7 @@ export const passive = sentence(
         [
           n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'engine')]),
           n('VP', 'predicate', [
-            w('Aux', 'auxiliary', 'was', { xpos: 'VBD', lemma: 'be' }),
+            w('Aux', 'auxiliary', 'was', { xpos: 'VBD', lemma: 'be', auxKind: 'passive' }),
             w('V', 'head', 'repaired', {
               xpos: 'VBN',
               lemma: 'repair',
@@ -995,7 +995,7 @@ export const subjectRelative = sentence(
             ]),
           ]),
           n('VP', 'predicate', [
-            w('Aux', 'auxiliary', 'was', { xpos: 'VBD', lemma: 'be' }),
+            w('Aux', 'auxiliary', 'was', { xpos: 'VBD', lemma: 'be', auxKind: 'passive' }),
             w('V', 'head', 'repaired', {
               xpos: 'VBN',
               lemma: 'repair',
@@ -1097,7 +1097,7 @@ export const question = sentence(
         null,
         [
           n('NP', 'prenucleus', [w('Pron', 'head', 'What', { xpos: 'WP' })], { index: 1 }),
-          w('Aux', 'auxiliary', 'did', { xpos: 'VBD', lemma: 'do' }),
+          w('Aux', 'auxiliary', 'did', { xpos: 'VBD', lemma: 'do', auxKind: 'do' }),
           n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'mechanic')]),
           n('VP', 'predicate', [
             w('V', 'head', 'repair', { xpos: 'VB', lemma: 'repair', verbType: 'Vtr' }),
