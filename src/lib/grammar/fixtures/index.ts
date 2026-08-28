@@ -56,6 +56,7 @@ import {
   appositive,
   numeral,
   prepInPrep,
+  nounPremodifier,
 } from './noun-phrases.ts';
 import {
   acrossTheBoard,
@@ -79,6 +80,7 @@ export const FIXTURES: readonly SentenceEntry[] = [
   vc,
   irregular,
   objectComplementNoun,
+  nounPremodifier,
   ambiguous,
   gardenPath,
   objectClause,

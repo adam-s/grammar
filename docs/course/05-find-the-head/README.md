@@ -7,12 +7,25 @@ Researched 28 August 2026. An author's dossier, not a page for a learner. See
 
 ## What the lesson decides
 
-| Decision | In plain words      |
-| -------- | ------------------- |
-| `form:N` | this word is a noun |
+| Decision   | In plain words             |
+| ---------- | -------------------------- |
+| `form:N`   | this word is a noun        |
+| `form:Nom` | the layer the head sits in |
 
-One label. The head function itself arrived at lesson 3 on the verb, so what is
-new here is applying it to a noun phrase.
+The head function itself arrived at lesson 3 on the verb, so what is new here is
+applying it to a noun phrase.
+
+**`form:Nom` moved here from lesson 16 on 28 August, and the reason only showed
+up when the sentences were built.** A noun's head sits _inside_ a `Nom` whenever
+the phrase has a premodifier or a postmodifier. With `Nom` arriving at 16, every
+one of those pruned away at lesson 5 — head and all — so _The key to the cabinet
+vanished_ asked the learner for a subject, a predicate and a verb, and **no noun
+head at all**. Seven picks, against nine for _The clock stopped_.
+
+So the only noun phrase whose head lesson 5 could ask about was one with nothing
+else in it, which is exactly a noun phrase with no competitor. **The lesson could
+not teach its own subject**, and neither this dossier nor the sentence proposal
+noticed, because both reasoned about sentences rather than about targets.
 
 ## The finding
 

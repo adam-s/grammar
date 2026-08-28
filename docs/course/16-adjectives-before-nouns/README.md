@@ -7,15 +7,19 @@ Researched 28 August 2026. An author's dossier. See
 
 ## What the lesson decides
 
-| Decision           | In plain words                                |
-| ------------------ | --------------------------------------------- |
-| `form:Nom`         | the layer between the determiner and the head |
-| `func:premodifier` | it sits before the head and narrows it        |
+| Decision           | In plain words                         |
+| ------------------ | -------------------------------------- |
+| `func:premodifier` | it sits before the head and narrows it |
 
-`Nom` is the quiet one and it matters more than the adjective does. It is where
-premodifiers and postmodifiers attach, and until it arrives every noun phrase in
-the course is flat. This is why lesson 4's rich subjects collapsed: `Nom` was
-twelve lessons away.
+**`form:Nom` used to be taught here and moved to lesson 5 on 28 August.** The
+reason is in [../05-find-the-head/README.md](../05-find-the-head/README.md): a
+noun's head sits _inside_ the `Nom`, so while `Nom` arrived at 16 every lesson
+before it could only ask for a head on a noun phrase with nothing else in it —
+which is exactly a noun phrase with no competitor. Lesson 5 could not teach its
+own subject.
+
+The move costs this lesson nothing. No lesson between 5 and 15 has a `Nom` in
+its sentences, so not one of their targets changed.
 
 ## The finding: this is the best-composed lesson in Stage 3
 

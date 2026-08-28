@@ -129,6 +129,7 @@ describe('the two corpora agree on how a construction is drawn', () => {
     repair: 'a noun and a verb',
     rusted: 'an adjective and a verb',
     that: 'a determiner and a clause marker',
+    to: 'a preposition before a noun phrase, the infinitival particle before a verb',
     up: 'a preposition and a verb particle',
     was: 'a main verb and an auxiliary',
     were: 'a main verb and an auxiliary',

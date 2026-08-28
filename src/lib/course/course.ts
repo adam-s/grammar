@@ -103,7 +103,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 5,
         stage: 'Frame',
         title: 'Find the head',
-        teaches: ['form:N'],
+        teaches: ['form:N', 'form:Nom'],
         sentences: LESSON_05,
       },
       {
@@ -221,7 +221,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // needs a layer to share with it. `Nom` is that layer, and it arrives
         // here because this is the first sentence that cannot be drawn without
         // one.
-        teaches: ['form:Nom', 'func:premodifier'],
+        teaches: ['func:premodifier'],
         sentences: LESSON_16,
       },
       {

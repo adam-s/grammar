@@ -73,6 +73,39 @@ export const postmod =
       n('Nom', 'head', [w('N', 'head', noun), after('postmodifier')]),
     ]);
 
+/**
+ * *the kitchen clock* — a NOUN in the adjective's slot.
+ *
+ * Not `adjn`, and the difference is the whole point of the shape. *kitchen*
+ * takes no comparative and cannot follow a linking verb, so the tests that
+ * separate an adjective from a determiner separate it from an adjective too.
+ * `fix-noun-premodifier` proves it.
+ */
+export const nounmod =
+  (d: string, premodifier: string, noun: string): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [w('N', 'premodifier', premodifier), w('N', 'head', noun)]),
+    ]);
+
+/**
+ * *New York* — a name whose nouns do not choose a head.
+ *
+ * Neither word is the one the phrase is named after: *New* does not modify
+ * *York*, and dropping either destroys the name rather than widening it. So
+ * every word is `flat` and nothing is the head, which is the one noun phrase in
+ * the course where the head test has no answer.
+ */
+export const flatName =
+  (...parts: string[]): Phrase =>
+  (fn) =>
+    n(
+      'NP',
+      fn,
+      parts.map((part) => w('N', 'flat', part)),
+    );
+
 /** *water* — a noun phrase that is just its noun. */
 export const bare =
   (noun: string): Phrase =>

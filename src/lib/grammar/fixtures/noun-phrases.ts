@@ -352,3 +352,48 @@ export const prepInPrep = sentence(
   ],
   'r1',
 );
+
+/* ------------- a noun premodifying a noun — The kitchen clock stopped.
+ *
+ * *kitchen* sits exactly where *old* sits in `fix-nominal` and is not an
+ * adjective. It takes no comparative — there is no *kitchener clock* — and it
+ * cannot follow a linking verb: *the clock is old* is fine, *the clock is
+ * kitchen* is not. Those are the tests that separate an adjective from a
+ * determiner in lesson 6, run against a different intruder.
+ *
+ * It was proved by nothing until now, and nobody had noticed: `Nom >
+ * N/premodifier` is not on difficulty.md's list of unbuilt shapes, because that
+ * list counts shapes a fixture proves and no course sentence uses. This one was
+ * absent from both, which is a gap the list cannot see.
+ *
+ * It is the trap lesson 16 wants — a word in the adjective's slot that is not
+ * one — and the head-finding decoy lesson 5 wants, where the head is still the
+ * last noun and a learner counting nouns has to choose.
+ */
+export const nounPremodifier = sentence(
+  'fix-noun-premodifier',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [w('N', 'premodifier', 'kitchen'), w('N', 'head', 'clock')]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'stopped', { lemma: 'stop', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The clock in the kitchen went dead.',
+      },
+    ),
+  ],
+  'r1',
+);
