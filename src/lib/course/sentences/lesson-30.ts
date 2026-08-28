@@ -2,42 +2,140 @@
  * Lesson 30 — Nominal clauses. A clause filling a noun-shaped slot.
  *
  * Nothing new is named. What is new is where the clause sits: lesson 28 put
- * one in the object slot, and this one is the SUBJECT — so the *it* test from
- * lesson 4 works on it, which is the evidence that it is doing a noun's job.
+ * one in the object slot, and these are SUBJECTS — so the *it* test from
+ * lesson 4 works on them, which is the evidence they are doing a noun's job.
  */
-import { build, n, pt, w } from '../../grammar/build.ts';
-import { constructed } from './constructed.ts';
+import { clauseSubject, det, v } from './shape.ts';
 
 export const LESSON_30 = [
-  constructed('c30-a', 30, [
-    build(
-      n(
-        'S',
-        null,
-        [
-          n(
-            'Cl',
-            'subject',
-            [
-              w('Subord', 'marker', 'That'),
-              n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'belt')]),
-              n('VP', 'predicate', [w('V', 'head', 'broke', { lemma: 'break', verbType: 'Vint' })]),
-            ],
-            { clauseKind: 'nominal', clauseType: 'SV' },
-          ),
-          n('VP', 'predicate', [
-            w('V', 'head', 'surprised', { lemma: 'surprise', verbType: 'Vtr' }),
-            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'driver')]),
-          ]),
-          pt('.'),
-        ],
-        { clauseType: 'SVO' },
-      ),
-      {
-        id: 'r1',
-        status: 'canonical',
-        gloss: 'The driver was surprised that the belt had broken.',
-      },
-    ),
-  ]),
+  clauseSubject(
+    'c30-a',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'belt'),
+      verb: v('broke', 'break', 'Vint'),
+      kind: 'nominal',
+    },
+    v('surprised', 'surprise', 'Vtr'),
+    det('the', 'driver'),
+    'The driver was surprised that the belt had broken.',
+  ),
+  clauseSubject(
+    'c30-b',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'ferry'),
+      verb: v('sank', 'sink', 'Vint'),
+      kind: 'nominal',
+    },
+    v('shocked', 'shock', 'Vtr'),
+    det('the', 'town'),
+    'The town was shocked by the sinking.',
+  ),
+  clauseSubject(
+    'c30-c',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'wiring'),
+      verb: v('failed', 'fail', 'Vint'),
+      kind: 'nominal',
+    },
+    v('worried', 'worry', 'Vtr'),
+    det('the', 'inspector'),
+    'The failing wiring worried the inspector.',
+  ),
+  clauseSubject(
+    'c30-d',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'archive'),
+      verb: v('flooded', 'flood', 'Vint'),
+      kind: 'nominal',
+    },
+    v('angered', 'anger', 'Vtr'),
+    det('the', 'trustees'),
+    'The trustees were angry about the flood.',
+  ),
+  clauseSubject(
+    'c30-e',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'talks'),
+      verb: v('collapsed', 'collapse', 'Vint'),
+      kind: 'nominal',
+    },
+    v('troubled', 'trouble', 'Vtr'),
+    det('the', 'minister'),
+    'The collapse troubled the minister.',
+  ),
+  clauseSubject(
+    'c30-f',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'witness'),
+      verb: v('hesitated', 'hesitate', 'Vint'),
+      kind: 'nominal',
+    },
+    v('interested', 'interest', 'Vtr'),
+    det('the', 'jury'),
+    'The pause interested the jury.',
+  ),
+  clauseSubject(
+    'c30-g',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'engine'),
+      verb: v('restarted', 'restart', 'Vint'),
+      kind: 'nominal',
+    },
+    v('relieved', 'relieve', 'Vtr'),
+    det('the', 'crew'),
+    'The crew were relieved it started again.',
+  ),
+  clauseSubject(
+    'c30-h',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'boundary'),
+      verb: v('shifted', 'shift', 'Vint'),
+      kind: 'nominal',
+    },
+    v('puzzled', 'puzzle', 'Vtr'),
+    det('the', 'surveyor'),
+    'The moved boundary puzzled the surveyor.',
+  ),
+  clauseSubject(
+    'c30-i',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'lock'),
+      verb: v('rusted', 'rust', 'Vint'),
+      kind: 'nominal',
+    },
+    v('annoyed', 'annoy', 'Vtr'),
+    det('the', 'landlord'),
+    'The rusted lock annoyed the landlord.',
+  ),
+  clauseSubject(
+    'c30-j',
+    30,
+    {
+      marker: 'That',
+      subject: det('the', 'queue'),
+      verb: v('lengthened', 'lengthen', 'Vint'),
+      kind: 'nominal',
+    },
+    v('alarmed', 'alarm', 'Vtr'),
+    det('the', 'baker'),
+    'The growing queue alarmed the baker.',
+  ),
 ];

@@ -18,8 +18,16 @@
  * needs something else is written by hand, which is the honest signal that it
  * has outgrown the stage.
  */
-import { build, n, pt, w, type SpecNode } from '../../grammar/build.ts';
-import type { AuxKind, ClauseType, Func, VerbType, Voice } from '../../grammar/types.ts';
+import { build, gap, n, pt, w, type SpecNode } from '../../grammar/build.ts';
+import type {
+  AuxKind,
+  ClauseKind,
+  ClauseType,
+  Finiteness,
+  Func,
+  VerbType,
+  Voice,
+} from '../../grammar/types.ts';
 import type { SentenceEntry } from '../../grammar/types.ts';
 import { constructed } from './constructed.ts';
 
@@ -357,5 +365,226 @@ export function ambiguous(
       build(attachedToNoun, { id: 'r2', status: 'alternate', gloss: which }),
     ],
     'r1',
+  );
+}
+
+/* ----------------------------------------------------------------- clauses */
+
+/**
+ * A clause inside another clause.
+ *
+ * Everything stages 4 and 5 need in one description: what marks it, what its
+ * subject is (or that its subject slot is empty), its verb, and whatever the
+ * verb requires. The clause pattern is worked out from what is actually there
+ * rather than written down beside it, because a pattern nobody derives is a
+ * pattern nobody checks.
+ */
+export type Inner = {
+  /** *because*, *that*, *than*, or infinitival *to*. */
+  marker?: string;
+  /** Written as a `Part` rather than a `Subord`: infinitival *to* is not a subordinator. */
+  infinitival?: boolean;
+  subject?: Phrase;
+  /** The subject slot is real and empty — a relative clause's, usually. */
+  subjectGap?: boolean;
+  verb: Verb;
+  object?: Phrase;
+  /** The object slot is real and empty: *than we expected __*. */
+  objectGap?: boolean;
+  complement?: Phrase;
+  adverbial?: Phrase;
+  kind?: ClauseKind;
+  finiteness?: Finiteness;
+  /** Ties this clause to the phrase it answers to, for a comparison. */
+  index?: number;
+};
+
+export const cl =
+  (inner: Inner): Phrase =>
+  (fn) => {
+    const before: SpecNode[] = [];
+    if (inner.marker !== undefined) {
+      before.push(
+        inner.infinitival
+          ? w('Part', 'marker', inner.marker, { partKind: 'infinitival' })
+          : w('Subord', 'marker', inner.marker),
+      );
+    }
+    if (inner.subject) before.push(inner.subject('subject'));
+    if (inner.subjectGap) before.push(gap('NP', 'subject'));
+
+    const predicate: SpecNode[] = [
+      ...(inner.verb.aux ?? []).map((a) =>
+        w('Aux', 'auxiliary', a.text, { lemma: a.lemma, auxKind: a.kind }),
+      ),
+      w('V', 'head', inner.verb.text, {
+        lemma: inner.verb.lemma,
+        verbType: inner.verb.type,
+        ...(inner.verb.voice ? { voice: inner.verb.voice } : {}),
+      }),
+    ];
+    if (inner.verb.particle) {
+      predicate.push(w('Part', 'particle', inner.verb.particle, { partKind: 'verbal' }));
+    }
+    if (inner.object) predicate.push(inner.object('directObject'));
+    if (inner.objectGap) predicate.push(gap('NP', 'directObject'));
+    if (inner.complement) predicate.push(inner.complement('subjectComplement'));
+    if (inner.adverbial) predicate.push(inner.adverbial('adverbial'));
+
+    const pattern: ClauseType =
+      inner.object || inner.objectGap ? 'SVO' : inner.complement ? 'SVC' : 'SV';
+
+    return n('Cl', fn, [...before, n('VP', 'predicate', predicate)], {
+      ...(inner.kind ? { clauseKind: inner.kind } : {}),
+      ...(inner.finiteness ? { finiteness: inner.finiteness } : {}),
+      ...(inner.index !== undefined ? { index: inner.index } : {}),
+      clauseType: pattern,
+    });
+  };
+
+/** *She knew the belt broke.* A clause where the object would be. */
+export const svClause = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  inner: Inner,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [cl(inner)('directObject')], 'SVO'), gloss);
+
+/** *The ferry waited because the tide turned.* */
+export const svWhy = (
+  id: string,
+  lesson: number,
+  s: Phrase,
+  verb: Verb,
+  inner: Inner,
+  gloss: string,
+) => one(id, lesson, clause(s, verb, [cl(inner)('adverbial')], 'SV'), gloss);
+
+/** *That the belt broke surprised the driver.* A clause where the subject would be. */
+export const clauseSubject = (
+  id: string,
+  lesson: number,
+  inner: Inner,
+  verb: Verb,
+  object: Phrase,
+  gloss: string,
+) => one(id, lesson, clause(cl(inner), verb, [object('directObject')], 'SVO'), gloss);
+
+/** *the driver that complained* — a clause modifying a noun. */
+export const modifiedBy =
+  (d: string, noun: string, inner: Inner): Phrase =>
+  (fn) =>
+    n('NP', fn, [
+      w('Det', 'determiner', d),
+      n('Nom', 'head', [w('N', 'head', noun), cl(inner)('postmodifier')]),
+    ]);
+
+/**
+ * *The bill was larger than we expected.*
+ *
+ * The comparative clause sits at the end of the sentence rather than inside
+ * the verb phrase, because what it completes is the adjective phrase, not the
+ * verb — and it is tied to that phrase by an index rather than by position.
+ */
+export function comparison(
+  id: string,
+  lesson: number,
+  subject: Phrase,
+  verb: Verb,
+  adjective: string,
+  inner: Inner,
+  gloss: string,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        subject('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+          n('AdjP', 'subjectComplement', [w('Adj', 'head', adjective)], { index: 1 }),
+        ]),
+        cl({ ...inner, kind: 'comparative', index: 1 })('postnucleus'),
+        pt('.'),
+      ],
+      { clauseType: 'SVC' },
+    ),
+    gloss,
+  );
+}
+
+/**
+ * *The kettle boiled and the lights dimmed.*
+ *
+ * The outer sentence joins rather than predicates: it has no verb of its own,
+ * and each clause inside answers for itself. A comma before the conjunction is
+ * evidence for the join and takes no label, which is lesson 39's whole point.
+ */
+export function joined(
+  id: string,
+  lesson: number,
+  left: Inner,
+  conjunction: string,
+  right: Inner,
+  gloss: string,
+  comma = false,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        cl(left)('coordinate'),
+        ...(comma ? [pt(',')] : []),
+        w('Conj', 'coordinator', conjunction),
+        cl(right)('coordinate'),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
+  );
+}
+
+/**
+ * *Unfortunately, the ferry sank.*
+ *
+ * The opening word is not the subject, the predicate, or anything inside them.
+ * It comments on the whole sentence from outside the frame, which is a real job
+ * and needs a name that is honestly not a clause role.
+ */
+export function remark(
+  id: string,
+  lesson: number,
+  word: string,
+  subject: Phrase,
+  verb: Verb,
+  gloss: string,
+) {
+  return one(
+    id,
+    lesson,
+    n(
+      'S',
+      null,
+      [
+        n('AdvP', 'supplement', [w('Adv', 'head', word)]),
+        pt(','),
+        subject('subject'),
+        n('VP', 'predicate', [
+          w('V', 'head', verb.text, { lemma: verb.lemma, verbType: verb.type }),
+        ]),
+        pt('.'),
+      ],
+      { clauseType: 'SV' },
+    ),
+    gloss,
   );
 }
