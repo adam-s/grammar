@@ -39,7 +39,7 @@
   import { READABLE_ZOOM_FLOOR } from '$lib/grammar/node-label.ts';
   import type { Form, Span } from '$lib/grammar/types.ts';
   import type { Rect } from '$lib/workspace/viewport.ts';
-  import { replaySentence } from '$lib/course/sentence-renderer.ts';
+  import { replayOptionKey, replaySentence } from '$lib/course/sentence-renderer.ts';
   import {
     COURSE_LESSONS,
     COURSE_STAGES,
@@ -166,8 +166,7 @@
     draft = null;
     preview = null;
     marqueeIds = [];
-    verdict = null;
-    navigation = null;
+    clearFeedback();
     depthMark = 0;
     misses = {};
     rejected = {};
@@ -259,11 +258,24 @@
     depthMark = tutorialDepth;
   }
 
+  /**
+   * Feedback belongs to the decision that produced it.
+   *
+   * The verdict and the movement instruction are two halves of one result, so
+   * a gesture that changes what is selected clears both or neither. Keeping
+   * them in step by hand at every entry point is how a stale "stay here"
+   * survives into the next selection and pins the palette to a question the
+   * learner has moved on from.
+   */
+  function clearFeedback() {
+    verdict = null;
+    navigation = null;
+  }
+
   /** Replay names an existing node when its next decision belongs to that
       node. Live word-row gestures remain spans so they can build underneath. */
   function selectAs(next: Selection) {
-    verdict = null;
-    navigation = null;
+    clearFeedback();
     if (next.kind !== 'span') {
       selection = next;
       return;
@@ -342,13 +354,11 @@
       },
       openSentence: (id: string) => openSentence(id),
       selectSpan: (span: Span) => {
-        verdict = null;
-        navigation = null;
+        clearFeedback();
         selection = { kind: 'span', span };
       },
       selectNode: (id: string) => {
-        verdict = null;
-        navigation = null;
+        clearFeedback();
         selection = { kind: 'node', id };
       },
       /** Click an option by key, through the same handler the palette uses. */
@@ -368,35 +378,12 @@
         // rest of the parse is not merely unasked-for, it is unbuildable, and a
         // driver told to build it reports failures that are the point.
         replaySentence(sentence, target ?? undefined).steps.map((step) => ({
-          kind: step.kind,
+          // A stacked layer is made from the existing node. Every other form
+          // begins at the word row; every non-form decision edits its node.
+          kind: step.choice.stack ? 'stack' : step.kind,
           span: step.span,
-          nodeId: step.nodeId,
-          key:
-            step.choice.anchor !== undefined
-              ? `anchor:${step.choice.anchorForm}:${step.choice.anchor[0]}-${step.choice.anchor[1]}`
-              : step.choice.fusedWith !== undefined
-                ? `func:head+${step.choice.fusedWith}`
-                : step.choice.gap && step.choice.func !== undefined
-                  ? `gap:${step.choice.func}:${step.choice.form}`
-                  : step.choice.form !== undefined
-                    ? `${step.choice.stack ? 'stack' : 'form'}:${step.choice.form}`
-                    : step.choice.func !== undefined
-                      ? // The required S V A adverbial is a distinct row, because it is
-                        // a distinct claim about the verb.
-                        step.choice.func === 'adverbial' && step.choice.obligatory
-                        ? 'func:obligatoryAdverbial'
-                        : `func:${step.choice.func}`
-                      : step.choice.voice !== undefined
-                        ? `voice:${step.choice.voice}`
-                        : step.choice.partKind !== undefined
-                          ? `part:${step.choice.partKind}`
-                          : step.choice.auxKind !== undefined
-                            ? `aux:${step.choice.auxKind}`
-                            : step.choice.finiteness !== undefined
-                              ? `fin:${step.choice.finiteness}`
-                              : step.choice.clauseKind !== undefined
-                                ? `kind:${step.choice.clauseKind}`
-                                : `vt:${step.choice.verbType}`,
+          nodeId: step.choice.stack ? step.selectNodeId : step.nodeId,
+          key: replayOptionKey(step.choice),
         })),
       reset,
     };
@@ -414,8 +401,7 @@
     draft = grammatical;
     if (!done) return;
     draft = null;
-    verdict = null;
-    navigation = null;
+    clearFeedback();
     if (!grammatical) return;
     // The word row always means "build from these words." A node label means
     // "edit this exact node." Keeping those gestures distinct is what lets a
@@ -436,8 +422,7 @@
     if (!done) return;
 
     marqueeIds = [];
-    verdict = null;
-    navigation = null;
+    clearFeedback();
     preview = null;
     selection =
       hit.ids.length === 0 && hit.span
@@ -459,8 +444,7 @@
   function closePalette() {
     selection = { kind: 'none' };
     preview = null;
-    verdict = null;
-    navigation = null;
+    clearFeedback();
   }
 
   let previousRouteLessonId = $state('');
@@ -647,8 +631,7 @@
         interactive={!solved}
         onpick={(s) => {
           if (solved) return;
-          verdict = null;
-          navigation = null;
+          clearFeedback();
           selection = s;
         }}
         {ondraft}

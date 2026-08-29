@@ -14,6 +14,7 @@ import {
   parentOf,
   roots,
   setFunction,
+  setFunctionForParent,
   smallestCovering,
   stackOver,
   setOnlyVerbType,
@@ -544,5 +545,51 @@ describe('anchors for a tail phrase', () => {
         'a tail belongs to something said earlier',
       );
     }
+  });
+});
+
+/**
+ * Naming a relationship before its parent exists.
+ *
+ * Some jobs are licensed by their company rather than by the parent's form:
+ * a postmodifier under an `NP` is legal only beside an `NP` head, which is
+ * the recursive noun-phrase analysis of *the shoes on my feet*. The palette
+ * offers such a row using the company the readings promise, so the builder
+ * has to be told the same thing or it silently refuses a move the learner
+ * has just been told is right.
+ */
+describe('a job hypothesised into a parent that does not exist yet', () => {
+  const shoes: Word[] = [
+    { i: 0, text: 'The', upos: 'DET', xpos: 'DT', lemma: 'the' },
+    { i: 1, text: 'shoes', upos: 'NOUN', xpos: 'NNS', lemma: 'shoe' },
+    { i: 2, text: 'on', upos: 'ADP', xpos: 'IN', lemma: 'on' },
+  ];
+
+  /** A lone PP, with no parent drawn over it. */
+  const loosePP = (): { state: BuildState; id: string } => {
+    const state = wrap(emptyBuild(), shoes, [2, 2], 'PP');
+    return { state, id: nodeOver(state, [2, 2])! };
+  };
+
+  it('is refused when nothing says what the parent will contain', () => {
+    const { state, id } = loosePP();
+    assert.equal(
+      setFunctionForParent(state, id, 'postmodifier', 'NP'),
+      state,
+      'an NP alone does not license a postmodifier',
+    );
+  });
+
+  it('is applied when the company that licenses it is passed through', () => {
+    const { state, id } = loosePP();
+    const after = setFunctionForParent(state, id, 'postmodifier', 'NP', false, {
+      siblings: ['head'],
+      siblingForms: ['NP'],
+    });
+    assert.equal(
+      after.constituents[id]!.function,
+      'postmodifier',
+      'the recursive noun phrase promises an NP head beside it',
+    );
   });
 });

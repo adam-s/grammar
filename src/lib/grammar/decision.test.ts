@@ -97,7 +97,13 @@ describe('the snapshot separates the states one boolean used to hide', () => {
     assert.equal(d.completion, 'open');
     const complement = fn.candidates.find((c) => c.action.key === 'func:complement')!;
     assert.equal(complement.availability, 'available');
-    assert.ok(fn.candidates.every((candidate) => candidate.availability === 'available'));
+    // The snapshot is the developer's window, so it still says which jobs the
+    // structure rules out and why. What the LEARNER meets is the projection,
+    // and there every job is a real choice.
+    const shown = sessionPanel(s.build, W, nodeOver(s, 3, 4), shoes).groups.find(
+      (g) => g.id === 'function',
+    )!;
+    assert.ok(shown.options.every((option) => isPickable(option)));
   });
 
   it('a future parent permits a plausible wrong job, then disables only that attempt', () => {
@@ -196,7 +202,13 @@ describe('the snapshot separates the states one boolean used to hide', () => {
     const d = decisionSnapshot(build, W, { kind: 'node', id: vp }, shoes);
     const fn = question(d, 'function');
     assert.equal(fn.role, 'required');
-    assert.ok(fn.candidates.every((candidate) => candidate.availability === 'available'));
+    const shown = sessionPanel(build, W, { kind: 'node', id: vp }, shoes).groups.find(
+      (g) => g.id === 'function',
+    )!;
+    assert.ok(
+      shown.options.every((option) => isPickable(option)),
+      'one legal job does not narrow the menu the learner is shown',
+    );
   });
 
   it('lesson scope does not disable untried choices', () => {
@@ -205,8 +217,14 @@ describe('the snapshot separates the states one boolean used to hide', () => {
     });
     const wc = question(d, 'word-class');
     assert.equal(wc.role, 'required', 'the full grammar still offers a real choice');
+    // The snapshot records the lesson boundary; the palette does not enforce
+    // it, because the builder is an exploration surface and `scope` decides
+    // what the lesson REQUIRES rather than what the grammar permits.
     const untaught = wc.candidates.find((c) => c.action.key === 'form:V')!;
-    assert.equal(untaught.availability, 'available');
+    assert.equal(untaught.availability, 'blocked');
+    const shown = sessionPanel(emptySession().build, W, span(1, 1), shoes, new Set(['form:N']));
+    const row = shown.groups.flatMap((g) => g.options).find((option) => option.key === 'form:V')!;
+    assert.ok(isPickable(row), 'and a learner may still try it');
   });
 });
 

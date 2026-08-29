@@ -502,6 +502,27 @@ export function headed(word: Form, phrase: Form): Verdict {
 }
 
 /**
+ * When two forms cover the very same words, which one belongs on top?
+ *
+ * Same-span stacking is ordinary — a `Cl` over the `VP` of *the horse raced
+ * past the barn*, an `NP` over the `Nom` of *old cars* — and the two layers
+ * are not interchangeable. Put them the wrong way up and the tree is one no
+ * reading can ever match, which is what makes this a grammar question rather
+ * than a drawing preference.
+ *
+ * `HEAD_FORMS` already holds the answer. A phrase takes its name from its
+ * head, so the form that can be HEADED by the other is the one that goes
+ * outside: a nominal heads a noun phrase, so the noun phrase is above it.
+ *
+ * False when neither can head the other, and false when each could — the
+ * order is then not settled by what heads what, and the caller keeps its own
+ * rule rather than guessing.
+ */
+export function nestsOver(inner: Form, outer: Form): boolean {
+  return headed(inner, outer).state === 'allowed' && headed(outer, inner).state !== 'allowed';
+}
+
+/**
  * Could this word class stand alone as one of these phrases on its own merit?
  *
  * "On its own merit" excludes fusion, which is a second decision the learner

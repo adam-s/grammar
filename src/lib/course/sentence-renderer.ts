@@ -54,6 +54,11 @@ export type RenderStep = {
   span: Span;
   /** The node in `state` the decision landed on. */
   nodeId: string;
+  /**
+   * For a stacked form, the node that existed before this step and must be
+   * selected to put the new layer over it.
+   */
+  selectNodeId?: string;
   /** The palette option a learner would have clicked to produce this step. */
   choice: {
     form?: Form;
@@ -79,6 +84,27 @@ export type RenderStep = {
 };
 
 export type SentenceReplay = { steps: RenderStep[]; final: BuildState };
+
+/** The learner-facing option key that performs one replayed decision. */
+export function replayOptionKey(choice: RenderStep['choice']): string {
+  if (choice.anchor !== undefined) {
+    return `anchor:${choice.anchorForm}:${choice.anchor[0]}-${choice.anchor[1]}`;
+  }
+  if (choice.fusedWith !== undefined) return `func:head+${choice.fusedWith}`;
+  if (choice.gap && choice.func !== undefined) return `gap:${choice.func}:${choice.form}`;
+  if (choice.form !== undefined) return `${choice.stack ? 'stack' : 'form'}:${choice.form}`;
+  if (choice.func !== undefined) {
+    return choice.func === 'adverbial' && choice.obligatory
+      ? 'func:obligatoryAdverbial'
+      : `func:${choice.func}`;
+  }
+  if (choice.voice !== undefined) return `voice:${choice.voice}`;
+  if (choice.partKind !== undefined) return `part:${choice.partKind}`;
+  if (choice.auxKind !== undefined) return `aux:${choice.auxKind}`;
+  if (choice.finiteness !== undefined) return `fin:${choice.finiteness}`;
+  if (choice.clauseKind !== undefined) return `kind:${choice.clauseKind}`;
+  return `vt:${choice.verbType}`;
+}
 
 function roots(reading: ReturnType<typeof canonicalReading>): string[] {
   return Object.keys(reading.constituents)
@@ -149,6 +175,7 @@ export function replaySentence(sentence: SentenceEntry, only?: Reading): Sentenc
       state,
       span: constituent.span,
       nodeId: generatedId,
+      ...(stack && under ? { selectNodeId: under } : {}),
       choice: { form: constituent.form, ...(stack ? { stack: true as const } : {}) },
     });
   }

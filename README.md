@@ -68,16 +68,8 @@ labels for that question. So:
   what the phrase is; a node that exists also asks what it does.
 - **A settled group keeps its answer in the left pane**, while the live question
   opens on the right. Moving between questions replaces only the right pane.
-- **Suggestions live in the shared header and keep their taxonomy seat.** The
-  header makes the likely action immediate; the row keeps the menu learnable.
-- **Only one explanation is visible at a time.** The header shows the evidence,
-  test, feedback, or blocking reason for the option currently in focus.
-- **Functions are contingent, so they *are* filtered.** `rules.ts` already draws
-  the line: `hidden` means "never here" and is omitted, `disabled` means "not
-  yet" and is shown with its reason.
-- **Accent means one thing: look here.** Three simultaneous blue treatments read
-  as three unrelated emphases. Suggested gets the accent; *chosen* gets a tint
-  and a tick; the pointer gets plain grey; focus gets an inset ring.
+- **Only one explanation is visible at a time.** The header shows the test,
+  the feedback, or the reason a gesture will not work.
 - **Descriptions remain accessible without changing row height.** Pointer and
   keyboard focus both update the fixed information line in the header.
 
@@ -94,6 +86,41 @@ arrives on the second miss.
 
 `src/lib/grammar/options.ts` is the authority, and its tests are the
 specification.
+
+### The palette is a quiz, not an answer key
+
+The menu shows every label the grammar has and says nothing about which of them
+is right. It is worth writing down, because each half of it looks like a bug
+from the outside and the obvious "fix" for each is to undo it:
+
+- **No suggestions, no evidence, no number keys.** `options.ts` still ranks the
+  visible evidence and `evidence.ts` still holds the strength order, because
+  the decision layer and the developer's snapshot need to know. The learner's
+  palette is a projection of that analysis — `sessionAnalysis` is the truth,
+  `quizView` is what a learner meets — and the projection makes every row a
+  plain choice.
+- **A rule may explain a wrong answer; it may not grey out a right one.**
+  Blocked and untaught rows are takeable. The grader decides after the pick,
+  which is what keeps identical visible structures identical to answer.
+- **Nothing is inferred on the learner's behalf.** A question with one legal
+  answer is still a question they answer.
+- **A refusal is a result, not a property of the words.** Building more
+  structure can make an earlier answer right, so refusals are re-graded rather
+  than remembered for ever.
+- **The two gestures mean different things.** Dragging the word row means
+  "build from these words" and refines *inside* a phrase that already has those
+  exact bounds — unless the grammar says the new form belongs above it, which
+  is how a clause goes over the verb phrase it is made of (`nestsOver`).
+  Clicking a node edits that node.
+- **A sentence can have more than one right tree.** `Reading.equivalentStructures`
+  holds analyses that mean the same thing, and `analysesOf` is how every
+  consumer enumerates them — miss it in one place and a learner is told their
+  correct build means something else.
+
+What the palette still refuses outright is a gesture that cannot be performed:
+a run that would cut an established group in half, and a selection with no
+grammar in it at all. Both say so in the header, and both name the selection
+rather than casting doubt on the label.
 
 ### One verb type per verb
 

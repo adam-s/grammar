@@ -16,7 +16,7 @@
 import { verbs } from './clause.ts';
 import { label } from './audits.ts';
 import { FORMAL_TEST } from './names.ts';
-import { isPhraseForm, isWordForm } from './types.ts';
+import { analysesOf, isPhraseForm, isWordForm } from './types.ts';
 import type { BuildState, Span } from './builder.ts';
 import type {
   AuxKind,
@@ -68,9 +68,7 @@ const sameSpan = (c: Constituent, span: Span) => c.span[0] === span[0] && c.span
 
 /** Every constituent in `reading` covering exactly `span`. */
 function at(reading: Reading, span: Span): Constituent[] {
-  return [reading.constituents, ...(reading.equivalentStructures ?? [])].flatMap((cs) =>
-    Object.values(cs).filter((c) => sameSpan(c, span)),
-  );
+  return analysesOf(reading).flatMap((cs) => Object.values(cs).filter((c) => sameSpan(c, span)));
 }
 
 function canonical(sentence: SentenceEntry): Reading {
@@ -535,7 +533,7 @@ export function gradeBuild(
   sentence: SentenceEntry,
 ): { readingId: string | null; wrong: string[] } {
   for (const r of ordered(sentence)) {
-    for (const constituents of [r.constituents, ...(r.equivalentStructures ?? [])]) {
+    for (const constituents of analysesOf(r)) {
       const wrong = compare(build, { ...r, constituents });
       if (wrong.length === 0) return { readingId: r.id, wrong: [] };
     }

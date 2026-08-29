@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { COURSE_LESSONS } from '../course/course.ts';
 import { ambiguous, subjectPhrase, vtr } from './fixtures.ts';
 import { optionsFor } from './options.ts';
 import { answer, emptySession, sessionChoices, sessionPanel, type Session } from './session.ts';
@@ -287,5 +288,140 @@ describe('facts with no choice are inferred', () => {
     assert.equal(s.selection.kind, 'node', 'the subject question remains real');
     const panel = sessionPanel(s.build, W, s.selection, vtr);
     assert.equal(panel.groups.find((g) => g.id === 'function')!.optional, undefined);
+  });
+});
+
+/**
+ * A drag on the word row builds from those words. What the learner gets for it
+ * has to be the thing they were told they built — the two ways this went wrong
+ * both praised a move that left the diagram unmatchable.
+ */
+describe('what a word-row drag actually builds', () => {
+  const C35 = COURSE_LESSONS.flatMap((l) => l.sentences).find((s) => s.id === 'c35-a')!;
+
+  /** Pick a row by key on a span selection, and say whether it was applied. */
+  function span(s: Session, at: [number, number], key: string, sentence = C35): Session {
+    const next: Session = { ...s, selection: { kind: 'span', span: at }, verdict: null };
+    const row = sessionChoices(next, sentence, sentence.words)
+      .groups.flatMap((g) => g.options)
+      .find((o) => o.key === key);
+    assert.ok(row, `the palette does not offer ${key} over [${at}]`);
+    return answer(next, sentence, sentence.words, row);
+  }
+
+  const phraseAt = (s: Session, form: string, at: [number, number]) =>
+    Object.entries(s.build.constituents).find(
+      ([, c]) => c.form === form && c.span[0] === at[0] && c.span[1] === at[1],
+    );
+
+  it('puts a clause OVER the verb phrase it is made of, not under it', () => {
+    let s: Session = emptySession();
+    for (const [at, key] of [
+      [[2, 2], 'form:V'],
+      [[3, 3], 'form:P'],
+      [[4, 4], 'form:Det'],
+      [[5, 5], 'form:N'],
+      [[4, 5], 'form:NP'],
+      [[3, 5], 'form:PP'],
+      [[2, 5], 'form:VP'],
+    ] as const) {
+      s = span(s, at as [number, number], key);
+    }
+    s = span(s, [2, 5], 'form:Cl');
+
+    const cl = phraseAt(s, 'Cl', [2, 5]);
+    const vp = phraseAt(s, 'VP', [2, 5]);
+    assert.ok(cl && vp, 'both layers exist');
+    assert.equal(vp[1].parent, cl[0], 'the clause is the verb phrase’s parent');
+    assert.equal(cl[1].parent, null, 'and nothing has been pushed above the clause');
+  });
+
+  it('and reaches the same shape when the clause is drawn first', () => {
+    // The other build order. Drawing the outside first is the whole reason a
+    // word-row drag refines downwards, so the rule has to send the verb
+    // phrase INSIDE the clause here while sending the clause above it there.
+    let s: Session = emptySession();
+    s = span(s, [2, 2], 'form:V');
+    s = span(s, [2, 5], 'form:Cl');
+    s = span(s, [2, 5], 'form:VP');
+
+    const cl = phraseAt(s, 'Cl', [2, 5]);
+    const vp = phraseAt(s, 'VP', [2, 5]);
+    assert.ok(cl && vp, 'both layers exist');
+    assert.equal(vp[1].parent, cl[0], 'the verb phrase is still the one underneath');
+  });
+
+  it('refuses a run that would cut an established group in half', () => {
+    // *The shoes on my feet pinched.* — with the nominal built, "The shoes"
+    // is not a run this build can take, whatever it would have been called.
+    const shoes = COURSE_LESSONS.flatMap((l) => l.sentences).find((x) => x.id === 'c02-d')!;
+    let s: Session = emptySession();
+    for (const [at, key] of [
+      [[1, 1], 'form:N'],
+      [[2, 2], 'form:P'],
+      [[3, 3], 'form:Det'],
+      [[4, 4], 'form:N'],
+      [[3, 4], 'form:NP'],
+      [[2, 4], 'form:PP'],
+      [[1, 4], 'form:Nom'],
+      [[0, 0], 'form:Det'],
+    ] as const) {
+      s = span(s, at as [number, number], key, shoes);
+    }
+    const before = s.build;
+    const after = span(s, [0, 1], 'form:NP', shoes);
+
+    assert.equal(after.build, before, 'nothing entered the diagram');
+    assert.equal(after.verdict?.kind, 'wrong');
+    assert.match(after.verdict!.text, /cut “shoes on my feet” in half/);
+    assert.doesNotMatch(
+      after.verdict!.text,
+      /Not a noun phrase/,
+      'the label may be right; only the run is wrong, and the wording must not pretend otherwise',
+    );
+  });
+});
+
+/**
+ * Copy a learner reads has to be English, and has to be about grammar rather
+ * than about the program. Both of these were broken by composition rather than
+ * by anyone writing a bad sentence, which is why they are checked in bulk.
+ */
+describe('what the palette says out loud', () => {
+  const KEYLIKE = /\b(form|func|vt|fin|aux|part|kind|voice|gap|anchor|stack):/;
+
+  it('never shows an internal row key', () => {
+    let s: Session = { ...emptySession(), selection: { kind: 'span', span: [0, 0] } };
+    const pron = sessionChoices(s, vtr, W)
+      .groups.flatMap((g) => g.options)
+      .find((o) => o.key === 'form:Pron')!;
+    s = answer(s, vtr, W, pron);
+
+    const panel = sessionChoices(s, vtr, W);
+    for (const group of panel.groups) {
+      assert.doesNotMatch(group.question, KEYLIKE, `${group.id} question`);
+      if (group.roleReason) assert.doesNotMatch(group.roleReason, KEYLIKE, `${group.id} reason`);
+      for (const option of group.options) {
+        assert.doesNotMatch(option.label, KEYLIKE, option.key);
+        if (option.note) assert.doesNotMatch(option.note, KEYLIKE, `${option.key} note`);
+      }
+    }
+    assert.doesNotMatch(panel.prompt, KEYLIKE);
+  });
+
+  it('gives every wrong form answer a first hint that is a whole sentence', () => {
+    // "A prepositional phrase a preposition plus the noun phrase after it" is
+    // what gluing the label's name to a bare reminder produced.
+    const s: Session = { ...emptySession(), selection: { kind: 'span', span: [2, 3] } };
+    const rows = sessionChoices(s, vtr, W)
+      .groups.flatMap((g) => g.options)
+      .filter((o) => o.form && o.key.startsWith('form:'));
+    assert.ok(rows.length > 4, 'the phrase menu is on screen');
+    for (const row of rows) {
+      const said = answer(s, vtr, W, row).verdict;
+      if (said?.kind !== 'wrong' || !said.test) continue;
+      assert.match(said.test, /^[“"A-Z]/, `${row.key} starts a sentence`);
+      assert.match(said.test, /[.?]$/, `${row.key} ends one: ${said.test}`);
+    }
   });
 });

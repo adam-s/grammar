@@ -23,7 +23,7 @@ import {
   type QuestionRole,
   type Selection,
 } from './options.ts';
-import { sessionPanel, targetKey, targetSpan } from './session.ts';
+import { sessionAnalysis, targetKey, targetSpan } from './session.ts';
 import type { Form, Func, SentenceEntry, Span } from './types.ts';
 
 /** A node the learner has established, as a plain fact. */
@@ -106,7 +106,10 @@ export function decisionSnapshot(
     rejected?: Readonly<Record<string, Record<string, string>>>;
   } = {},
 ): DecisionSnapshot {
-  const scoped = sessionPanel(build, words, selection, sentence, opts.scope);
+  // The analysis, not the quiz projection. This is the developer's window:
+  // it has to say that a row is blocked and why, which is exactly what the
+  // learner's palette deliberately stops saying.
+  const scoped = sessionAnalysis(build, words, selection, sentence, opts.scope);
   const refused = opts.rejected?.[targetKey(build, selection, words)];
   const panel: Panel = refused ? blockRejectedOptions(scoped, refused) : scoped;
 
@@ -114,9 +117,11 @@ export function decisionSnapshot(
     const role: QuestionRole = g.role ?? (g.optional ? 'offer' : 'required');
     const reason =
       g.roleReason ??
-      (role === 'offer'
-        ? 'an offer — the build can close without it'
-        : 'a real choice the learner must make');
+      (role === 'settled'
+        ? `answered: ${g.answered?.key ?? 'nothing left to ask'}`
+        : role === 'offer'
+          ? 'an offer — the build can close without it'
+          : 'a real choice the learner must make');
     return { id: g.id, question: g.question, role, reason, candidates: g.options.map(candidate) };
   });
 

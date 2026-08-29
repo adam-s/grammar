@@ -33,10 +33,11 @@ import {
   fuses,
   hypothesizes,
   licenses,
+  nestsOver,
   type LicenseContext,
   type Verdict,
 } from './rules.ts';
-import { isPhraseForm, isPunctuation } from './types.ts';
+import { contentSpan, isPhraseForm, isPunctuation } from './types.ts';
 import type {
   AuxKind,
   ClauseKind,
@@ -85,26 +86,32 @@ const containsSpan = (outer: Span, inner: Span): boolean =>
 
 const sameSpan = (left: Span, right: Span): boolean => left[0] === right[0] && left[1] === right[1];
 
-/** The deepest phrase that contains `span`, optionally including an exact match. */
+/**
+ * The deepest phrase that contains `span`, optionally including an exact match.
+ *
+ * One pass rather than a sort. `depthOf` walks a node's parents, and calling
+ * it from inside a comparator walked them again for every comparison — on a
+ * path that runs on each wrap and each span panel.
+ */
 function containingPhrase(state: BuildState, span: Span, includeEqual: boolean): string | null {
-  return (
-    Object.keys(state.constituents)
-      .filter((id) => {
-        const c = state.constituents[id]!;
-        return (
-          c.word === undefined &&
-          !c.gap &&
-          containsSpan(c.span, span) &&
-          (includeEqual || !sameSpan(c.span, span))
-        );
-      })
-      .sort((a, b) => {
-        const left = state.constituents[a]!.span;
-        const right = state.constituents[b]!.span;
-        const width = left[1] - left[0] - (right[1] - right[0]);
-        return width || depthOf(state, b) - depthOf(state, a);
-      })[0] ?? null
-  );
+  let best: string | null = null;
+  let bestWidth = Infinity;
+  let bestDepth = -1;
+  for (const id of Object.keys(state.constituents)) {
+    const c = state.constituents[id]!;
+    if (c.word !== undefined || c.gap) continue;
+    if (!containsSpan(c.span, span)) continue;
+    if (!includeEqual && sameSpan(c.span, span)) continue;
+    const width = c.span[1] - c.span[0];
+    if (width > bestWidth) continue;
+    const depth = depthOf(state, id);
+    if (width < bestWidth || depth > bestDepth) {
+      best = id;
+      bestWidth = width;
+      bestDepth = depth;
+    }
+  }
+  return best;
 }
 
 /** Nodes available to group at one level of the tree. */
@@ -297,11 +304,15 @@ export function canStackOver(current: Constituent | undefined): boolean {
   return current.parent === null;
 }
 
-/** The real-word bounds of a selection, excluding punctuation at its edges. */
-function contentBounds(words: Word[], span: Span): Span | null {
-  const inside: number[] = [];
-  for (let i = span[0]; i <= span[1]; i++) if (!isPunctuation(words[i]!)) inside.push(i);
-  return inside.length === 0 ? null : [inside[0]!, inside.at(-1)!];
+/**
+ * Does a node with this form already cover exactly these words?
+ *
+ * The whole stack, not just the layer nearest the words or the one furthest
+ * from them. A second copy of a layer the learner already built is never new
+ * structure, and checking one end of the stack let a three-deep one through.
+ */
+function stackHasForm(state: BuildState, span: Span, form: Form): boolean {
+  return stackOver(state, span).some((id) => state.constituents[id]!.form === form);
 }
 
 /** Add a phrase at one known level, adopting the direct children in its span. */
@@ -312,7 +323,7 @@ function groupAt(
   form: Form,
   parent: string | null,
 ): BuildState {
-  const bounds = contentBounds(words, span);
+  const bounds = contentSpan(words, span);
   if (!bounds) return state;
   const cs = cloneMap(state.constituents);
   const kids = childrenAt(state, parent).filter((id) => {
@@ -356,7 +367,7 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
         installChild(cs, parent, id, [], a);
         return { constituents: cs, seq };
       }
-      if (cs[leaf]!.form === form) return state; // a node cannot go inside itself
+      if (stackHasForm(state, span, form)) return state; // a node cannot go inside itself
       const id = `c${++seq}`;
       const parent = cs[leaf]!.parent;
       cs[id] = { form, function: null, parent, children: [leaf], span: [a, a] };
@@ -379,8 +390,7 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
   // A same-form wrapper over the same words carries no new structure. The
   // learner-facing transaction reports this as a wrong attempt; the builder
   // also refuses it so no caller can manufacture an endless unary chain.
-  const exact = nodeOver(state, span);
-  if (exact && state.constituents[exact]!.form === form) return state;
+  if (stackHasForm(state, span, form)) return state;
 
   // A run wholly inside a phrase is grouped among that phrase's children. The
   // old root-only rule mistook this ordinary top-down refinement for a crossing
@@ -395,16 +405,22 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
  * groups above them. Dragging across the words is the distinct top-down path:
  * if a phrase already has precisely those bounds, the new detail goes beneath
  * its deepest layer and the established ancestor stays put.
+ *
+ * Beneath, unless the grammar says the new form belongs above. *standing by
+ * the gate* is a `VP`, and the `Cl` that covers the same words is over it in
+ * every analysis there is — so building the clause from the word row put it
+ * underneath, was told it was right, and left a tree no reading could match.
+ * `nestsOver` decides that from what heads what, so both build orders reach
+ * the same shape: draw the clause first and the verb phrase goes inside it.
  */
 export function wrapInside(state: BuildState, words: Word[], span: Span, form: Form): BuildState {
   if (span[0] === span[1] && !isPhraseForm(form)) return wrap(state, words, span, form);
   const parent = containingPhrase(state, span, true);
   if (!parent) return wrap(state, words, span, form);
-  if (
-    state.constituents[parent]!.form === form &&
-    sameSpan(state.constituents[parent]!.span, span)
-  ) {
-    return state;
+  const covering = state.constituents[parent]!;
+  if (sameSpan(covering.span, span) && stackHasForm(state, span, form)) return state;
+  if (sameSpan(covering.span, span) && nestsOver(covering.form, form)) {
+    return wrap(state, words, span, form);
   }
   return groupAt(state, words, span, form, parent);
 }
@@ -463,6 +479,13 @@ export function setFunctionForParent(
   fn: Func,
   parentForm: Form,
   obligatory = false,
+  /**
+   * What else will be in that parent. Some jobs are licensed by their
+   * company rather than by the parent's form alone — a postmodifier under an
+   * `NP` needs the `NP` head beside it — so the caller that knows the future
+   * group passes it. Empty means "nothing known", which licenses less.
+   */
+  company: { siblings: Func[]; siblingForms: Form[] } = { siblings: [], siblingForms: [] },
 ): BuildState {
   const c = state.constituents[id];
   if (!c) return state;
@@ -473,8 +496,8 @@ export function setFunctionForParent(
       parentForm,
       childForm: c.form,
       verbType: null,
-      siblings: [],
-      siblingForms: [],
+      siblings: company.siblings,
+      siblingForms: company.siblingForms,
     }).state !== 'allowed'
   ) {
     return state;

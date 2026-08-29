@@ -138,6 +138,16 @@ describe('a lesson refuses an untaught label, in the module and not just the vie
     selection: { kind: 'span' as const, span },
   });
 
+  /**
+   * The contract `answer` keeps, stated once.
+   *
+   * The builder is an exploration surface: `scope` decides what a lesson
+   * REQUIRES, never what the grammar permits, so the learner's palette offers
+   * every label and the test below this one proves a later one still applies.
+   * A surface may nonetheless choose to show its lesson's boundary — that is
+   * what a scoped `optionsFor` is for — and when it does, `answer` honours the
+   * refusal it is handed rather than second-guessing which surface asked.
+   */
   it('leaves the build untouched when one is applied anyway', () => {
     const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [1, 1] }, scope);
     const noun = panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:N')!;

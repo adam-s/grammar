@@ -15,9 +15,9 @@
  *      this word?", a run of words asks "what is this phrase?", an existing
  *      node also asks "and what does it do?".
  *
- *   3. **Suggestions keep their taxonomy seat.** Presentation may repeat them
- *      in the shared header for a fast action, but the underlying order never
- *      changes. Suggestions gain evidence and a number key.
+ *   3. **Suggestions keep their taxonomy seat.** Evidence may rank a row and
+ *      give it a number key; it never moves it. See the note below on who
+ *      actually sees that ranking.
  *
  *   4. **A blocked option keeps its reason.** The palette shows one reason at a
  *      time in its stable information header rather than expanding every row.
@@ -31,6 +31,16 @@
  * Availability comes from `rules.ts` and `builder.ts` — the same predicates
  * `audits.ts` runs over frozen content — so what a learner may pick and what
  * the content must satisfy cannot drift apart.
+ *
+ * ## This is the analysis, not the menu
+ *
+ * Everything here is the truthful account of a selection: what is suggested,
+ * what is blocked and why, what a lesson has not reached yet. The LEARNER is
+ * shown a projection of it — `quizView` in `session.ts` — which makes every
+ * row a plain choice and strips the evidence, the ranks and the number keys,
+ * because a menu that points at the answer is not an exercise. Read
+ * `README.md` under "The palette is a quiz, not an answer key" before
+ * restoring anything that looks missing on screen.
  */
 import {
   anchorsFor,
@@ -374,12 +384,56 @@ export function optionsFor(
     case 'span':
       return grammaticalSpan
         ? spanPanel(state, words, grammaticalSpan, scope, true)
-        : idlePanel(scope);
+        : punctuationPanel(words, sel.span, scope);
     case 'node':
       return nodePanel(state, words, sel.id, scope);
     case 'nodes':
-      return grammaticalSpan ? spanPanel(state, words, grammaticalSpan, scope) : idlePanel(scope);
+      return grammaticalSpan
+        ? spanPanel(state, words, grammaticalSpan, scope)
+        : punctuationPanel(words, sel.span, scope);
   }
+}
+
+/**
+ * A selection with no grammar in it — a comma, a full stop, or a run of them.
+ *
+ * The idle panel used to stand in here, which answered a question nobody had
+ * asked: it named no subject and gave no reason, so a learner who managed to
+ * select a mark was shown an empty menu that looked broken. This says what was
+ * selected and why nothing labels it, which is the same thing `canWrap` says
+ * about a mark it is asked to wrap.
+ */
+function punctuationPanel(words: Word[], span: Span, scope: ChapterScope): Panel {
+  const reason = 'Punctuation marks the sentence; it is not one of the parts it is built from.';
+  // `idle` rather than `blocked`: there is no question here to get wrong. A
+  // blocked row is one the learner may still try and be told about, and the
+  // quiz projection rightly makes those takeable — but no label can ever
+  // apply to a mark, so trying one would be a click that does nothing.
+  const build = (forms: readonly Form[]): LabelOption[] =>
+    forms.map((f) => formOption(f, 'idle', reason));
+  return finish(
+    {
+      subject: quote(words, span),
+      singledOut: null,
+      prompt: reason,
+      blocked: reason,
+      groups: [
+        {
+          id: 'word-class',
+          question: `What is ${quote(words, span)}?`,
+          notes: 'ondemand',
+          options: build(WORD_FORMS),
+        },
+        {
+          id: 'phrase-form',
+          question: 'Or is it a one-word phrase?',
+          notes: 'ondemand',
+          options: build(PHRASE_FORMS.filter((f) => f !== 'S')),
+        },
+      ],
+    },
+    scope,
+  );
 }
 
 /**
@@ -869,46 +923,72 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
  * filtered — see rule 5 in the module note. `hidden` disappears, `disabled`
  * stays and shows why.
  */
+/**
+ * Every function row the menu can hold, in taxonomy order.
+ *
+ * The obligatory adverbial rides directly behind the plain one: it is a second
+ * claim about the same function — that the verb REQUIRES it — so it is a row
+ * of its own rather than a separate group.
+ *
+ * Exported because the learner boundary restores the rows the structural
+ * palette leaves out, and building that list a second time is how a function
+ * added here goes missing there.
+ */
+export interface FunctionRow {
+  key: string;
+  func: Func;
+  label: string;
+  note: string;
+  /** Set only on the two adverbial rows, which differ by nothing else. */
+  obligatory?: boolean;
+}
+
+const OBLIGATORY_NOTE =
+  'The verb requires it to complete the sentence; removing it makes the clause incomplete.';
+
+export const FUNCTION_ROWS: readonly FunctionRow[] = [
+  ...CLAUSE_FUNCTIONS,
+  ...PHRASE_INTERNAL_FUNCTIONS,
+].flatMap((fn): FunctionRow[] =>
+  fn === 'adverbial'
+    ? [
+        {
+          key: `func:${fn}`,
+          func: fn,
+          label: label(fn),
+          note: FUNCTION_TEST[fn],
+          obligatory: false,
+        },
+        {
+          key: 'func:obligatoryAdverbial',
+          func: fn as Func,
+          label: 'obligatory adverbial',
+          note: OBLIGATORY_NOTE,
+          obligatory: true,
+        },
+      ]
+    : [{ key: `func:${fn}`, func: fn, label: label(fn), note: FUNCTION_TEST[fn] }],
+);
+
 function functionGroup(state: BuildState, id: string, subject: string): OptionGroup {
   const c = state.constituents[id]!;
   const current = c.function;
 
   const options: LabelOption[] = [];
-  for (const fn of [...CLAUSE_FUNCTIONS, ...PHRASE_INTERNAL_FUNCTIONS]) {
-    const verdict = hypothesisFor(state, id, fn);
+  for (const row of FUNCTION_ROWS) {
+    const verdict = hypothesisFor(state, id, row.func);
     if (verdict.state === 'hidden') continue;
+    // The two adverbial rows differ only in whether the verb requires it, so
+    // that is what tells them apart when one of them is the answer already.
+    const chosen = row.func === current && (row.obligatory ?? false) === (c.obligatory === true);
     options.push({
-      key: `func:${fn}`,
-      label: label(fn),
-      note: verdict.state === 'disabled' ? verdict.reason : FUNCTION_TEST[fn],
-      state:
-        fn === current && (fn !== 'adverbial' || c.obligatory !== true)
-          ? 'chosen'
-          : verdict.state === 'disabled'
-            ? 'blocked'
-            : 'available',
-      func: fn,
-      ...(fn === 'adverbial' ? { obligatory: false } : {}),
+      key: row.key,
+      label: row.label,
+      note: verdict.state === 'disabled' ? verdict.reason : row.note,
+      state: chosen ? 'chosen' : verdict.state === 'disabled' ? 'blocked' : 'available',
+      func: row.func,
+      ...(row.obligatory === undefined ? {} : { obligatory: row.obligatory }),
     });
-
-    if (fn === 'adverbial') {
-      options.push({
-        key: 'func:obligatoryAdverbial',
-        label: 'obligatory adverbial',
-        note:
-          verdict.state === 'disabled'
-            ? verdict.reason
-            : 'The verb requires it to complete the sentence; removing it makes the clause incomplete.',
-        state:
-          current === 'adverbial' && c.obligatory === true
-            ? 'chosen'
-            : verdict.state === 'disabled'
-              ? 'blocked'
-              : 'available',
-        func: 'adverbial',
-        obligatory: true,
-      });
-    }
   }
 
   // One word doing two jobs. Offered only where English actually does it, and
@@ -1074,11 +1154,14 @@ export function refreshPanel(panel: Panel): Panel {
 function finish(draft: Omit<Panel, 'step' | 'suggested'>, scope?: ChapterScope): Panel {
   const groups: OptionGroup[] = withhold(draft.groups, scope).map((g) => {
     const answered = g.options.find((o) => o.state === 'chosen') ?? null;
+    // No `roleReason` for an answered group. The reason is the answer, and the
+    // menu already shows it beside the group's name; writing the row's key
+    // here put `answered: form:Pron` on the line a learner reads. What a
+    // reason is FOR is a closure they cannot see for themselves.
     return {
       ...g,
       answered,
       role: answered ? 'settled' : g.optional ? 'offer' : 'required',
-      ...(answered ? { roleReason: `answered: ${answered.key}` } : {}),
     };
   });
   return { ...draft, ...withStep(groups) };

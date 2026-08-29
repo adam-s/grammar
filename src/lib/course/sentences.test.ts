@@ -16,7 +16,7 @@ import { describe, it } from 'node:test';
 import { auditReading } from '../grammar/audits.ts';
 import { verbs } from '../grammar/clause.ts';
 import { formsOf } from '../grammar/morphology.ts';
-import { canonicalReading, isPunctuation } from '../grammar/types.ts';
+import { analysesOf, canonicalReading, isPunctuation } from '../grammar/types.ts';
 import { COURSE_LESSONS } from './course.ts';
 import { isAssessmentReady, isReviewed, reviewStatus } from './readiness.ts';
 
@@ -28,10 +28,7 @@ describe('every course sentence is a well-formed parse', () => {
   for (const { lesson, sentence } of SENTENCES) {
     it(`${lesson.id} — ${sentence.id} passes every audit`, () => {
       for (const reading of sentence.readings) {
-        for (const [analysis, constituents] of [
-          reading.constituents,
-          ...(reading.equivalentStructures ?? []),
-        ].entries()) {
+        for (const [analysis, constituents] of analysesOf(reading).entries()) {
           const report = auditReading({ ...reading, constituents }, sentence.words);
           assert.equal(
             report.ok,

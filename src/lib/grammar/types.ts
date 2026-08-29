@@ -442,6 +442,21 @@ export interface Reading {
   equivalentStructures?: ConstituentMap[];
 }
 
+/**
+ * Every tree that counts as this reading, the canonical one first.
+ *
+ * Only works if every consumer remembers it. A place that reaches for
+ * `reading.constituents` alone silently drops the equivalent analyses, and the
+ * learner who builds one is told their sentence means something else — so the
+ * enumeration lives here, beside the field, rather than being spelled out at
+ * each of the places that grade, settle, or audit against a reading.
+ */
+export function analysesOf(reading: Reading): ConstituentMap[] {
+  return reading.equivalentStructures?.length
+    ? [reading.constituents, ...reading.equivalentStructures]
+    : [reading.constituents];
+}
+
 export interface SentenceSource {
   /** The work it was taken from, or `constructed` when nobody took it. */
   work: string;

@@ -222,3 +222,22 @@ test('a box that skips a frontier node is not a phrase selection', () => {
     },
   );
 });
+
+/**
+ * Punctuation is in the sentence and not in the tree, so two siblings either
+ * side of a comma have a gap between their spans. Reading that gap as "not a
+ * run" refused the one gesture an appositive is built with.
+ */
+test('siblings separated by a comma are still one run', () => {
+  const appos = FIXTURES.find((entry) => entry.id === 'fix-appositive')!;
+  const cs = appos.readings[0]!.constituents;
+  const state = { constituents: cs, seq: 100 };
+  // *The captain , a Scot , resigned .* — the head noun and the appositive
+  // noun phrase are siblings inside the subject, with a comma between them.
+  const head = Object.keys(cs).find((id) => cs[id]!.span[0] === 1 && cs[id]!.span[1] === 1)!;
+  const other = Object.keys(cs).find((id) => cs[id]!.span[0] === 3 && cs[id]!.span[1] === 4)!;
+
+  const hit = nodesInMarquee(cs, appos.words, around(state, [head, other], appos.words), 0);
+  assert.deepEqual(hit.ids.sort(), [head, other].sort());
+  assert.deepEqual(hit.span, [1, 4]);
+});

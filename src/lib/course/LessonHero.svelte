@@ -28,6 +28,7 @@
     drawnRect,
   } from '../grammar/Diagram.svelte';
   import LabelPanel from '../grammar/LabelPanel.svelte';
+  import { quizView } from '../grammar/session.ts';
   import { optionsFor, type LabelOption } from '../grammar/options.ts';
   import type { Selection } from '../grammar/options.ts';
   import { emptyBuild } from '../grammar/builder.ts';
@@ -94,7 +95,13 @@
   /** The words the decision is about, lit on the diagram throughout the beat. */
   const lit = $derived<Span | null>(reduced || !beat || !step ? null : step.span);
 
-  const panel = $derived(optionsFor(build, sentence.words, panelSelection ?? { kind: 'none' }));
+  // The same projection the learner meets, not the raw structural palette.
+  // The hero's whole claim is that this IS the palette; showing evidence notes
+  // and number keys the real one no longer has would make it a picture of a
+  // product that does not exist.
+  const panel = $derived(
+    quizView(optionsFor(build, sentence.words, panelSelection ?? { kind: 'none' })),
+  );
 
   /** Which row the pointer is resting on during `aim`. */
   const pointerOn = $derived.by(() => {

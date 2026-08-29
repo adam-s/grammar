@@ -20,14 +20,7 @@
   import { PHONE_QUERY, useMediaQuery, useVisualViewport } from '../workspace/responsive.svelte.ts';
   import { planSelectionVisibility, usableViewport } from '../workspace/selection-visibility.ts';
   import type { Rect } from '../workspace/viewport.ts';
-  import {
-    byHotkey,
-    bestIndex,
-    isPickable,
-    openingGroup,
-    type LabelOption,
-    type Panel,
-  } from './options.ts';
+  import { bestIndex, isPickable, openingGroup, type LabelOption, type Panel } from './options.ts';
   import type { NavigationResult } from './session.ts';
   import {
     GROUP_NAME,
@@ -145,20 +138,13 @@
 
   const active = $derived(openingGroup(panel, activeId));
   const reachable = $derived(active?.options.filter(isPickable) ?? []);
-  const suggestions = $derived(
-    (
-      panel.groups
-        .find((g) => g.id === panel.step)
-        ?.options.filter((o) => o.state === 'suggested') ?? []
-    ).sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity)),
-  );
   /** A driven pointer wins over the real one, and neither exists at rest. */
   const shown = $derived(
     pointerOn
       ? (panel.groups.flatMap((g) => g.options).find((o) => o.key === pointerOn) ?? null)
       : pointed,
   );
-  const detail = $derived(shown ?? reachable[cursor] ?? suggestions[0] ?? null);
+  const detail = $derived(shown ?? reachable[cursor] ?? null);
 
   $effect(() => {
     const subjectChanged = activeSubject !== panel.subject;
@@ -244,12 +230,6 @@
       e.preventDefault();
       onclose?.();
       return;
-    }
-    if (!/^[1-9]$/.test(e.key) || e.metaKey || e.ctrlKey || e.altKey || !anchor) return;
-    const hit = byHotkey(panel, e.key);
-    if (hit) {
-      e.preventDefault();
-      choose(hit);
     }
   }
 
@@ -337,16 +317,23 @@
   const information = $derived.by(() => {
     if (verdict) return [verdict.text, verdict.test].filter(Boolean).join(' ');
     if (panel.blocked) return panel.blocked;
+    // A question the sentence has closed says something about THIS group that
+    // the prompt cannot. The prompt is general advice — "group it with its
+    // neighbours to give it a job" — and it was landing on exactly the nodes
+    // whose job the readings say has to wait for a named parent, telling the
+    // learner to do the one thing that would not help.
+    if (active?.roleReason && (active.role === 'deferred' || active.role === 'settled')) {
+      return active.roleReason;
+    }
     // Context about what this move will do wins over a label reminder. Without
     // this, "Building inside…" existed in the panel model but the first
     // suggestion's note hid it, so the learner could not see that the outer
     // phrase would be preserved.
     if (panel.prompt) return panel.prompt;
-    if (active?.role === 'deferred' || active?.role === 'settled') return active.roleReason ?? '';
     if (detail?.note) return detail.note;
-    // The question is already on the line above, unless suggestions took that
-    // line instead. Repeating it printed it twice, one grey copy under another.
-    return suggestions.length > 0 ? (active?.question ?? panel.prompt) : panel.prompt;
+    // The question is already on the line above, so repeating it here would
+    // print it twice, one grey copy under another.
+    return panel.prompt;
   });
 
   /**
@@ -398,17 +385,7 @@
       </div>
 
       <div class="suggestion-line">
-        {#if suggestions.length > 0}
-          <span class="eyebrow">Likely</span>
-          {#each suggestions as o (o.key)}
-            <button class="suggestion" type="button" onclick={() => choose(o)}>
-              {#if o.hotkey}<kbd>{o.hotkey}</kbd>{/if}
-              {o.label}
-            </button>
-          {/each}
-        {:else}
-          <span class="question">{active.question}</span>
-        {/if}
+        <span class="question">{active.question}</span>
       </div>
 
       <!-- The teaching loop, spoken. The verdict changes the look of the line
@@ -753,19 +730,6 @@
   .option.untaught {
     opacity: 0.48;
   }
-  kbd {
-    display: grid;
-    place-items: center;
-    min-width: 15px;
-    height: 15px;
-    padding: 0 3px;
-    border-radius: 3px;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font: inherit;
-    font-size: 9px;
-    font-weight: 700;
-  }
   .sr {
     position: absolute;
     width: 1px;
@@ -907,11 +871,6 @@
       min-height: 48px;
       padding: 7px 12px;
       font-size: 13px;
-    }
-    kbd {
-      min-width: 22px;
-      height: 22px;
-      font-size: 10px;
     }
   }
 

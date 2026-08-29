@@ -27,6 +27,7 @@ import {
   setPartKind,
   setVerbType,
   setVoice,
+  canWrap,
   hypothesisFor,
   unwrap,
   wrap,
@@ -60,6 +61,7 @@ import {
   type Outcome,
 } from './grader.ts';
 import {
+  FORMAL_TEST,
   FORM_TEST,
   FUNCTION_TEST,
   auxKindName,
@@ -68,6 +70,7 @@ import {
   partKindName,
 } from './names.ts';
 import {
+  FUNCTION_ROWS,
   blockRejectedOptions,
   closeSettledGroups,
   isPanelComplete,
@@ -76,12 +79,15 @@ import {
   refreshPanel,
   type ChapterScope,
   type LabelOption,
+  type Panel,
   type Selection,
 } from './options.ts';
-import { hypothesizes, LONG } from './rules.ts';
+import { textOf } from './build.ts';
+import { ALLOWED, hypothesizes, LONG } from './rules.ts';
 import {
   CLAUSE_FUNCTIONS,
   PHRASE_INTERNAL_FUNCTIONS,
+  analysesOf,
   contentSpan,
   isPhraseForm,
   type Form,
@@ -138,16 +144,19 @@ export const emptySession = (): Session => ({
   navigation: null,
 });
 
-/** The words a decision is about, whatever kind of selection made it. */
-export function targetSpan(build: BuildState, selection: Selection, words?: Word[]): Span | null {
-  if (selection.kind === 'span') {
-    return words ? contentSpan(words, selection.span) : selection.span;
-  }
-  if (selection.kind === 'node') {
-    return build.constituents[selection.id]?.span ?? null;
-  }
-  if (selection.kind === 'nodes') {
-    return words ? contentSpan(words, selection.span) : selection.span;
+/**
+ * The words a decision is about, whatever kind of selection made it.
+ *
+ * `words` is required, and normalization is not optional: a drag that runs
+ * through the full stop asks the same question as one that stops before it.
+ * Making the argument optional put a second definition of "these words" back
+ * within reach — one caller omitting it computes a different key for the same
+ * question, and a remembered refusal stops matching the row it refused.
+ */
+export function targetSpan(build: BuildState, selection: Selection, words: Word[]): Span | null {
+  if (selection.kind === 'node') return build.constituents[selection.id]?.span ?? null;
+  if (selection.kind === 'span' || selection.kind === 'nodes') {
+    return contentSpan(words, selection.span);
   }
   return null;
 }
@@ -167,7 +176,7 @@ const spanKey = (span: Span | null): string => (span ? `${span[0]}-${span[1]}` :
  * Exported because the route looks rejections up by the same identity, and two
  * definitions of "the same question" is how they drift apart.
  */
-export const targetKey = (build: BuildState, selection: Selection, words?: Word[]): string =>
+export const targetKey = (build: BuildState, selection: Selection, words: Word[]): string =>
   selection.kind === 'node' ? `#${selection.id}` : spanKey(targetSpan(build, selection, words));
 
 /** Does any accepted reading contain a node with the given visible identity? */
@@ -177,13 +186,17 @@ function readingHas(
   test: (form: string, fn: string | null) => boolean,
 ): boolean {
   return sentence.readings.some((reading) =>
-    [reading.constituents, ...(reading.equivalentStructures ?? [])].some((constituents) =>
+    analysesOf(reading).some((constituents) =>
       Object.values(constituents).some(
         (c) => c.span[0] === span[0] && c.span[1] === span[1] && test(c.form, c.function),
       ),
     ),
   );
 }
+
+/** The words of a span, as a learner would read them back. */
+const quoteSpan = (sentence: SentenceEntry, span: Span): string =>
+  textOf(sentence.words.slice(span[0], span[1] + 1));
 
 interface ReadingJob {
   func: Func;
@@ -193,11 +206,36 @@ interface ReadingJob {
   siblingForms: Form[];
 }
 
+/**
+ * Every job scan for one sentence, kept.
+ *
+ * A sentence is frozen content, so the jobs a span-and-form has in it cannot
+ * change while the app is open. Deriving one palette asks for the same scan
+ * three times — the scoped panel, the unrestricted one behind it, and the
+ * settlement check — and each scan walks every reading, every equivalent
+ * structure and every constituent in them.
+ */
+const JOB_CACHE = new WeakMap<SentenceEntry, Map<string, ReadingJob[]>>();
+
 /** Jobs this exact node has in the accepted readings, with the group that supplies each job. */
 function readingJobs(sentence: SentenceEntry, span: Span, form: Form): ReadingJob[] {
+  let cached = JOB_CACHE.get(sentence);
+  if (!cached) {
+    cached = new Map();
+    JOB_CACHE.set(sentence, cached);
+  }
+  const key = `${span[0]}-${span[1]}:${form}`;
+  const hit = cached.get(key);
+  if (hit) return hit;
+  const found = scanReadingJobs(sentence, span, form);
+  cached.set(key, found);
+  return found;
+}
+
+function scanReadingJobs(sentence: SentenceEntry, span: Span, form: Form): ReadingJob[] {
   const jobs: ReadingJob[] = [];
   for (const reading of sentence.readings) {
-    for (const constituents of [reading.constituents, ...(reading.equivalentStructures ?? [])]) {
+    for (const constituents of analysesOf(reading)) {
       for (const [id, c] of Object.entries(constituents)) {
         if (
           c.span[0] !== span[0] ||
@@ -282,7 +320,8 @@ export function readingSettlements(
     settled.push({
       group: 'phrase-form',
       kind: 'settled',
-      reason: 'no accepted reading lets these words stand alone as a phrase',
+      reason:
+        'These words do not stand alone as a phrase here — they belong with their neighbours.',
     });
   }
   const jobs = readingJobs(sentence, node.span, node.form);
@@ -297,12 +336,7 @@ export function readingSettlements(
     // applies inside an outer phrase too: top-down construction may create the
     // eventual child before its immediate parent has been drawn.
     const future = jobs[0];
-    const parentWords = future
-      ? sentence.words
-          .slice(future.parentSpan[0], future.parentSpan[1] + 1)
-          .map((word) => word.text)
-          .join(' ')
-      : '';
+    const parentWords = future ? quoteSpan(sentence, future.parentSpan) : '';
     settled.push(
       future
         ? {
@@ -313,7 +347,8 @@ export function readingSettlements(
         : {
             group: 'function',
             kind: 'settled',
-            reason: 'no accepted reading gives these words a job at this level',
+            reason:
+              'Nothing here has a job to give these words. This is the whole of what they are part of.',
           },
     );
   }
@@ -386,10 +421,7 @@ function offerFutureJobs(
               : 'That job does not fit the larger group these words belong to.',
         };
       }
-      const parentWords = sentence.words
-        .slice(possible.job.parentSpan[0], possible.job.parentSpan[1] + 1)
-        .map((word) => word.text)
-        .join(' ');
+      const parentWords = quoteSpan(sentence, possible.job.parentSpan);
       return {
         ...option,
         state: option.state === 'chosen' ? ('chosen' as const) : ('available' as const),
@@ -398,10 +430,7 @@ function offerFutureJobs(
     });
     for (const job of future) {
       if (options.some((option) => option.func === job.func)) continue;
-      const parentWords = sentence.words
-        .slice(job.parentSpan[0], job.parentSpan[1] + 1)
-        .map((word) => word.text)
-        .join(' ');
+      const parentWords = quoteSpan(sentence, job.parentSpan);
       options.push({
         key: `func:${job.func}`,
         label: label(job.func),
@@ -438,34 +467,24 @@ function offerFutureJobs(
  * in a quiz. At the learner boundary we restore those rows in the same stable
  * order as the taxonomy. The grader, not this inventory, decides a click.
  */
-function completeFunctionInventory(panel: ReturnType<typeof optionsFor>) {
-  const order = [...CLAUSE_FUNCTIONS, ...PHRASE_INTERNAL_FUNCTIONS];
+function completeFunctionInventory(panel: Panel): Panel {
   const groups = panel.groups.map((group) => {
     if (group.id !== 'function') return group;
     const byKey = new Map(group.options.map((option) => [option.key, option]));
-    const options: LabelOption[] = [];
-    for (const func of order) {
-      options.push(
-        byKey.get(`func:${func}`) ?? {
-          key: `func:${func}`,
-          label: label(func),
-          state: 'available',
-          func,
-          ...(func === 'adverbial' ? { obligatory: false } : {}),
+    // `FUNCTION_ROWS` is the palette's own inventory and its order. Spelling
+    // the taxonomy out again here is how a function added to the menu goes
+    // missing from the quiz that is supposed to hold every one of them.
+    const options: LabelOption[] = FUNCTION_ROWS.map(
+      (row) =>
+        byKey.get(row.key) ?? {
+          key: row.key,
+          label: row.label,
+          note: row.note,
+          state: 'available' as const,
+          func: row.func,
+          ...(row.obligatory === undefined ? {} : { obligatory: row.obligatory }),
         },
-      );
-      if (func === 'adverbial') {
-        options.push(
-          byKey.get('func:obligatoryAdverbial') ?? {
-            key: 'func:obligatoryAdverbial',
-            label: 'obligatory adverbial',
-            state: 'available',
-            func: 'adverbial',
-            obligatory: true,
-          },
-        );
-      }
-    }
+    );
     // Keep contextual choices such as fused functions after the shared list.
     const standardKeys = new Set(options.map((option) => option.key));
     options.push(...group.options.filter((option) => !standardKeys.has(option.key)));
@@ -474,14 +493,23 @@ function completeFunctionInventory(panel: ReturnType<typeof optionsFor>) {
   return refreshPanel({ ...panel, groups });
 }
 
-/** The learner-facing palette after sentence context and prior attempts are applied. */
-export function sessionPanel(
+/**
+ * What the grammar, the lesson and the stored readings say about this
+ * selection — every row still carrying the state and the reason it earned.
+ *
+ * This is the truthful account, and the one a developer should read. It is
+ * NOT what the learner sees: `sessionPanel` projects the quiz out of it. The
+ * two used to be one function that computed all of this and then erased it a
+ * few lines later, so the reasons written here reached nobody and a reader
+ * could not tell which half was live.
+ */
+export function sessionAnalysis(
   build: BuildState,
   words: Word[],
   selection: Selection,
   sentence: SentenceEntry,
   scope?: ChapterScope,
-) {
+): Panel {
   const panel = offerFutureJobs(
     optionsFor(build, words, selection, scope),
     build,
@@ -494,37 +522,73 @@ export function sessionPanel(
   const full = scope
     ? offerFutureJobs(optionsFor(build, words, selection), build, selection, sentence)
     : panel;
-  const closed = closeSettledGroups(panel, readingSettlements(build, selection, sentence, full));
-  // Later lessons and impossible hypotheses remain explorable, but they do not
-  // become requirements for finishing the question in front of the learner.
-  // Capture that completion fact before all rows are made clickable.
-  const scopedCompletion = {
-    ...closed,
-    groups: closed.groups.map((group) =>
+  return closeSettledGroups(panel, readingSettlements(build, selection, sentence, full));
+}
+
+/**
+ * One row, as the learner meets it.
+ *
+ * A chosen answer stays chosen; everything else becomes a plain choice and
+ * loses the evidence, the rank and the number key that would have ranked it.
+ *
+ * Including the rows a lesson has not reached. The builder is an exploration
+ * surface — a learner who wants to name something the course has not covered
+ * yet may — and `scope` decides what the lesson REQUIRES, not what the grammar
+ * permits. A surface that would rather show its lesson's boundary builds its
+ * menu from `optionsFor` with a scope and keeps the `untaught` rows; `answer`
+ * honours that surface's refusal by taking the row it is handed at its word.
+ */
+function takeable(option: LabelOption): LabelOption {
+  if (option.state === 'chosen' || option.state === 'idle') return option;
+  const plain: LabelOption = { ...option, state: 'available' };
+  delete plain.hotkey;
+  delete plain.rank;
+  delete plain.note;
+  return plain;
+}
+
+/**
+ * The palette as a quiz rather than an answer key.
+ *
+ * Grammar rules and stored readings may explain why an answer is wrong after
+ * it is tried; they do not get to grey it out beforehand. So every row the
+ * learner can act on begins takeable, and the complete function vocabulary is
+ * restored — a menu that lists only the jobs that fit has already answered the
+ * question it is asking.
+ *
+ * Whether a question can still be answered is settled FIRST, from the
+ * analysis. Both steps below make rows takeable that the grammar or the lesson
+ * had ruled out, and a question with no real answer must not reopen just
+ * because its rows now look like choices.
+ */
+export function quizView(analysis: Panel): Panel {
+  const settled: Panel = {
+    ...analysis,
+    groups: analysis.groups.map((group) =>
       group.optional || (!group.answered && !group.options.some((option) => isPickable(option)))
         ? { ...group, optional: true }
         : group,
     ),
   };
-  const settled = completeFunctionInventory(scopedCompletion);
+  const restored = completeFunctionInventory(settled);
+  return refreshPanel({
+    ...restored,
+    groups: restored.groups.map((group) => ({
+      ...group,
+      options: group.options.map(takeable),
+    })),
+  });
+}
 
-  // The palette is a quiz, not an answer key. Grammar rules and stored
-  // readings may explain why an answer is wrong after it is tried, but they do
-  // not get to grey it out beforehand. Every displayed row therefore begins
-  // takeable. Only a chosen answer and a learner's remembered rejection may
-  // carry a different state.
-  const groups = settled.groups.map((group) => ({
-    ...group,
-    options: group.options.map((option) => {
-      if (option.state === 'chosen' || option.state === 'idle') return option;
-      const cleaned: LabelOption = { ...option, state: 'available' };
-      delete cleaned.hotkey;
-      delete cleaned.rank;
-      delete cleaned.note;
-      return cleaned;
-    }),
-  }));
-  return refreshPanel({ ...settled, groups });
+/** The learner-facing palette after sentence context and prior attempts are applied. */
+export function sessionPanel(
+  build: BuildState,
+  words: Word[],
+  selection: Selection,
+  sentence: SentenceEntry,
+  scope?: ChapterScope,
+): Panel {
+  return quizView(sessionAnalysis(build, words, selection, sentence, scope));
 }
 
 /**
@@ -544,6 +608,11 @@ interface Ask {
   /** Form picks create a node, and the selection follows it. */
   reselect?: Span;
   reselectForm?: Form;
+  /**
+   * The refusal is about the shape of the selection, not about the label.
+   * `verdictFor` says so at once instead of climbing the hint ladder.
+   */
+  structural?: true;
 }
 
 /**
@@ -581,6 +650,16 @@ export function sessionChoices(
 const sentenceCase = (t: string) => `${t.charAt(0).toUpperCase()}${t.slice(1).trimEnd()}.`;
 
 /**
+ * What to try instead when a run cuts an established group in half.
+ *
+ * The label may well be the right one — the words are simply not a run this
+ * build can take — so this says what to do rather than casting doubt on the
+ * answer.
+ */
+const CROSSING_TEST =
+  'Select the whole group, or ungroup what is in the way, and try the same label again.';
+
+/**
  * Which question this row asks, and everything needed to answer it.
  *
  * Order matters in one place: a gap row carries a form — it is what the missing
@@ -614,13 +693,22 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const loose = id ? build.constituents[id] : undefined;
     const duplicateStack = stack && loose?.form === o.form;
     const duplicateStackTest = `These words already have a ${bareName} layer. A larger group must add a different kind of structure.`;
-    const outcome: Outcome = duplicateStack
-      ? {
-          kind: 'wrong',
-          reason: `A ${bareName} cannot sit inside another ${bareName} over the same words.`,
-          test: duplicateStackTest,
-        }
-      : gradeForm(sentence, span, o.form, o.level);
+    // A run that cuts an established group in half cannot be built, whatever
+    // it would have been called. The palette says so in its header before the
+    // pick; this is what makes the refusal true of the build as well, because
+    // the rows themselves are takeable now and the readings will happily
+    // grade a phrase whose words the learner has already committed elsewhere.
+    const crossing = selection.kind === 'span' ? canWrap(build, words, selection.span) : ALLOWED;
+    const cuts = crossing.state === 'disabled' ? crossing.reason : null;
+    const outcome: Outcome = cuts
+      ? { kind: 'wrong', reason: cuts, test: CROSSING_TEST }
+      : duplicateStack
+        ? {
+            kind: 'wrong',
+            reason: `A ${bareName} cannot sit inside another ${bareName} over the same words.`,
+            test: duplicateStackTest,
+          }
+        : gradeForm(sentence, span, o.form, o.level);
     return {
       // `level` and not just the words: the word class and the one-word phrase
       // over it are different questions asked of the same letters.
@@ -630,9 +718,11 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
       outcome,
       praise: `that is ${named}`,
       refused: named,
-      firstMiss: duplicateStack
-        ? duplicateStackTest
-        : sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`),
+      firstMiss: cuts
+        ? CROSSING_TEST
+        : duplicateStack
+          ? duplicateStackTest
+          : (FORMAL_TEST[o.form] ?? sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`)),
       apply: (b) => {
         // `wrap` always puts a node OVER what is there, so renaming means
         // taking the old one away first. The row says which this is.
@@ -644,6 +734,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
       },
       reselect: span,
       reselectForm: o.form,
+      ...(cuts ? { structural: true as const } : {}),
     };
   }
 
@@ -675,7 +766,22 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
 
   if (o.func && node && selection.kind === 'node') {
     const id = selection.id;
-    const future = readingJobs(sentence, node.span, node.form).find((job) => job.func === o.func);
+    // The job whose company actually licenses this function, not merely the
+    // first one that shares its name. `offerFutureJobs` offered the row on
+    // exactly that basis, and picking a different job here would apply the
+    // move under a context that never permitted it.
+    const named = readingJobs(sentence, node.span, node.form).filter((job) => job.func === o.func);
+    const future =
+      named.find(
+        (job) =>
+          hypothesizes(o.func!, {
+            parentForm: job.parentForm,
+            childForm: node.form,
+            verbType: null,
+            siblings: job.siblings,
+            siblingForms: job.siblingForms,
+          }).state === 'allowed',
+      ) ?? named[0];
     const needsFutureParent = hypothesisFor(build, id, o.func).state !== 'allowed';
     return {
       key: `func:${targetKey(build, selection, words)}`,
@@ -685,7 +791,10 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
       firstMiss: sentenceCase(`the ${label(o.func)} answers: ${FUNCTION_TEST[o.func]}`),
       apply: (b) =>
         future && needsFutureParent
-          ? setFunctionForParent(b, id, o.func!, future.parentForm, o.obligatory ?? false)
+          ? setFunctionForParent(b, id, o.func!, future.parentForm, o.obligatory ?? false, {
+              siblings: future.siblings,
+              siblingForms: future.siblingForms,
+            })
           : setFunction(b, id, o.func!, o.obligatory ?? false),
     };
   }
@@ -814,6 +923,14 @@ function verdictFor(ask: Ask, misses: number): Verdict {
       test: `Here it means: ${ask.outcome.canonicalGloss}`,
     };
   }
+  // A refusal about the SHAPE of the selection skips the ladder. The ladder
+  // withholds the reason so the answer is not given away, and here the reason
+  // gives nothing away: the label may be exactly right and still unbuildable
+  // over these words. Saying "Not a noun phrase" first would be a guess the
+  // program has not made and cannot support.
+  if (ask.structural) {
+    return { kind: 'wrong', text: ask.outcome.reason, test: ask.outcome.test };
+  }
   return misses === 1
     ? { kind: 'wrong', text: `Not ${ask.refused}.`, test: ask.firstMiss }
     : { kind: 'wrong', text: ask.outcome.reason, test: ask.outcome.test };
@@ -840,6 +957,11 @@ export function answer(
    * verb-type row belongs to lesson 8 and was withheld — while `answer` asked
    * the unrestricted palette, saw an open verb-type question, and held the
    * selection and the verdict open on a node the learner had finished.
+   *
+   * COMPLETION only. It decides when this question is finished; it never
+   * decides whether a move is grammatical. The builder is an exploration
+   * surface, so a label from a later lesson still applies here — see
+   * `grading.test.ts`, which holds both halves of that contract.
    */
   scope?: ChapterScope,
 ): Session {
@@ -905,9 +1027,10 @@ export function answer(
     navigation:
       moved.selection.kind === 'none'
         ? { kind: 'close' }
-        : {
-            kind: 'advance',
-            question: sessionPanel(moved.build, words, moved.selection, sentence, scope).step,
-          },
+        : // `next` IS the panel for this build and selection — recomputing it
+          // here asked the same expensive question twice per correct answer.
+          // It records what the transaction saw; a surface showing a panel of
+          // its own follows that panel's step instead.
+          { kind: 'advance', question: next.step },
   };
 }

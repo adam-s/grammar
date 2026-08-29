@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { hypothesizes, licenses } from './rules.ts';
+import { hypothesizes, licenses, nestsOver } from './rules.ts';
 import type { Form, Func, VerbType } from './types.ts';
 
 type Row = {
@@ -489,5 +489,30 @@ describe('the two kinds of particle, and material at the edge', () => {
 
   it('a supplement may repeat: a sentence can carry more than one aside', () => {
     assert.equal(lic('supplement', 'S', 'AdvP', ['supplement']), 'allowed');
+  });
+});
+
+/**
+ * Which of two same-span layers goes on top.
+ *
+ * Not a drawing preference. Build *standing by the gate* as a clause under its
+ * own verb phrase and the tree is one no analysis can match, so the learner is
+ * told "correct" and left with a build that can never finish.
+ */
+describe('same-span stacking has an order', () => {
+  it('a clause goes over the verb phrase it is made of', () => {
+    assert.equal(nestsOver('VP', 'Cl'), true);
+    assert.equal(nestsOver('Cl', 'VP'), false, 'and never the other way up');
+  });
+
+  it('a noun phrase goes over its nominal', () => {
+    assert.equal(nestsOver('Nom', 'NP'), true);
+    assert.equal(nestsOver('NP', 'Nom'), false);
+  });
+
+  it('says nothing where what heads what does not settle it', () => {
+    // Two clause forms head each other's list vacuously, so neither is above.
+    assert.equal(nestsOver('Cl', 'S'), false);
+    assert.equal(nestsOver('NP', 'PP'), false);
   });
 });
