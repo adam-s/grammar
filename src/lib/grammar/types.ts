@@ -434,6 +434,12 @@ export interface Reading {
   /** For `status: 'blocked'` — why the surrounding passage rules it out. */
   blockedBy?: string;
   constituents: ConstituentMap;
+  /**
+   * Other well-formed trees with the same meaning. These are analyses of this
+   * reading, not additional readings: choosing one must not tell the learner
+   * that the sentence means something different.
+   */
+  equivalentStructures?: ConstituentMap[];
 }
 
 export interface SentenceSource {

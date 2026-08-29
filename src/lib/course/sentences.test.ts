@@ -28,8 +28,17 @@ describe('every course sentence is a well-formed parse', () => {
   for (const { lesson, sentence } of SENTENCES) {
     it(`${lesson.id} — ${sentence.id} passes every audit`, () => {
       for (const reading of sentence.readings) {
-        const report = auditReading(reading, sentence.words);
-        assert.equal(report.ok, true, `${sentence.id}/${reading.id}: ${report.all.join(' | ')}`);
+        for (const [analysis, constituents] of [
+          reading.constituents,
+          ...(reading.equivalentStructures ?? []),
+        ].entries()) {
+          const report = auditReading({ ...reading, constituents }, sentence.words);
+          assert.equal(
+            report.ok,
+            true,
+            `${sentence.id}/${reading.id}/analysis-${analysis + 1}: ${report.all.join(' | ')}`,
+          );
+        }
       }
     });
   }

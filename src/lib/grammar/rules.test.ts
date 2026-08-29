@@ -8,6 +8,8 @@ type Row = {
   parentForm: Form;
   verbType: VerbType | null;
   siblings: Func[];
+  siblingForms?: Form[];
+  childForm?: Form;
   want: 'allowed' | 'disabled' | 'hidden';
   match?: RegExp;
 };
@@ -131,6 +133,15 @@ const TABLE: Row[] = [
   { fn: 'complement', parentForm: 'NP', verbType: null, siblings: [], want: 'hidden' },
   { fn: 'postmodifier', parentForm: 'Nom', verbType: null, siblings: [], want: 'allowed' },
   { fn: 'postmodifier', parentForm: 'NP', verbType: null, siblings: [], want: 'hidden' },
+  {
+    fn: 'postmodifier',
+    parentForm: 'NP',
+    verbType: null,
+    siblings: ['head'],
+    siblingForms: ['NP'],
+    childForm: 'PP',
+    want: 'allowed',
+  },
   { fn: 'premodifier', parentForm: 'Nom', verbType: null, siblings: [], want: 'allowed' },
   { fn: 'premodifier', parentForm: 'NP', verbType: null, siblings: [], want: 'hidden' },
   { fn: 'premodifier', parentForm: 'AdjP', verbType: null, siblings: [], want: 'allowed' },
@@ -142,11 +153,7 @@ describe('licensing rules', () => {
       `${row.fn} under ${row.parentForm} (verb ${row.verbType ?? 'unclassified'}` +
       `${row.siblings.length ? ', siblings: ' + row.siblings.join('+') : ''}) → ${row.want}`;
     it(name, () => {
-      const v = licenses(row.fn, {
-        parentForm: row.parentForm,
-        verbType: row.verbType,
-        siblings: row.siblings,
-      });
+      const v = licenses(row.fn, row);
       assert.equal(v.state, row.want);
       if (row.match) {
         assert.equal(v.state, 'disabled');

@@ -20,6 +20,7 @@ import {
   canStackOver,
   unwrap,
   wrap,
+  wrapInside,
   type BuildState,
 } from './builder.ts';
 import { build, gap, n, pt, w } from './build.ts';
@@ -110,6 +111,42 @@ describe('grouping', () => {
   it('allows a span that takes an existing group whole', () => {
     const s = wrap(labelled(), W, [2, 3], 'NP');
     assert.equal(canWrap(s, W, [1, 3]).state, 'allowed');
+  });
+
+  it('builds a smaller phrase beneath an outer phrase without removing it', () => {
+    let s = wrap(emptyBuild(), W, [0, 3], 'S');
+    const sentence = roots(s)[0]!;
+    s = wrap(s, W, [2, 3], 'NP');
+    const object = Object.keys(s.constituents).find((id) => s.constituents[id]!.form === 'NP')!;
+
+    assert.equal(s.constituents[object]!.parent, sentence);
+    assert.deepEqual(s.constituents[sentence]!.children, [object]);
+    assert.deepEqual(s.constituents[sentence]!.span, [0, 3]);
+  });
+
+  it('moves existing inner labels under the phrase added around them', () => {
+    let s = wrap(emptyBuild(), W, [0, 3], 'S');
+    s = wrap(s, W, [2, 2], 'Det');
+    s = wrap(s, W, [3, 3], 'N');
+    const det = Object.keys(s.constituents).find((id) => s.constituents[id]!.form === 'Det')!;
+    const noun = Object.keys(s.constituents).find((id) => s.constituents[id]!.form === 'N')!;
+    s = wrap(s, W, [2, 3], 'NP');
+    const object = Object.keys(s.constituents).find((id) => s.constituents[id]!.form === 'NP')!;
+
+    assert.deepEqual(s.constituents[object]!.children, [det, noun]);
+    assert.equal(s.constituents[det]!.parent, object);
+    assert.equal(s.constituents[noun]!.parent, object);
+  });
+
+  it('the word-row path can fill a one-word phrase drawn first', () => {
+    let s = wrap(emptyBuild(), W, [1, 1], 'VP');
+    const vp = roots(s)[0]!;
+    s = wrapInside(s, W, [1, 1], 'V');
+    const verb = Object.keys(s.constituents).find((id) => s.constituents[id]!.word === 1)!;
+
+    assert.equal(s.constituents[verb]!.parent, vp);
+    assert.deepEqual(s.constituents[vp]!.children, [verb]);
+    assert.equal(roots(s)[0], vp, 'the established VP stays on top');
   });
 
   it('unwrapping returns the children to the top level and loses no word', () => {
@@ -348,7 +385,13 @@ describe('levels — a span of words names a stack, not a node', () => {
 });
 
 describe('a clause may stack over a phrase of the same words', () => {
-  const W: Word[] = [
+  it('does not stack the same multi-word phrase over itself forever', () => {
+    const once = wrap(labelled(), W, [2, 3], 'NP');
+    const twice = wrap(once, W, [2, 3], 'NP');
+    assert.equal(twice, once);
+  });
+
+  const REDUCED_WORDS: Word[] = [
     { i: 0, text: 'raced', upos: 'VERB', xpos: 'VBD', lemma: 'race' },
     { i: 1, text: 'past', upos: 'ADP', xpos: 'IN', lemma: 'past' },
   ];
@@ -381,12 +424,12 @@ describe('a clause may stack over a phrase of the same words', () => {
   });
 
   it('the stacked clause keeps the phrase underneath it', () => {
-    let s = wrap(emptyBuild(), W, [0, 0], 'V');
-    s = wrap(s, W, [1, 1], 'P');
-    s = wrap(s, W, [0, 1], 'VP');
+    let s = wrap(emptyBuild(), REDUCED_WORDS, [0, 0], 'V');
+    s = wrap(s, REDUCED_WORDS, [1, 1], 'P');
+    s = wrap(s, REDUCED_WORDS, [0, 1], 'VP');
     const vp = roots(s)[0]!;
     assert.equal(canStackOver(s.constituents[vp]), true);
-    s = wrap(s, W, [0, 1], 'Cl');
+    s = wrap(s, REDUCED_WORDS, [0, 1], 'Cl');
     const cl = roots(s)[0]!;
     assert.equal(s.constituents[cl]!.form, 'Cl');
     assert.deepEqual(s.constituents[cl]!.children, [vp]);

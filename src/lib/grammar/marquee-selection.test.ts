@@ -182,6 +182,22 @@ test('wrapping the marquee span preserves the selected NP as a VP child', () => 
   assert.equal(next.constituents[object]!.children.length, 2);
 });
 
+test('boxing sibling nodes still works after an outer group is drawn first', () => {
+  let state = builtFrontier();
+  state = wrap(state, words, [0, 3], 'S');
+  const sentence = Object.keys(state.constituents).find(
+    (id) => state.constituents[id]!.form === 'S',
+  )!;
+  const children = state.constituents[sentence]!.children;
+  const verb = children.find((id) => state.constituents[id]!.form === 'V')!;
+  const object = children.find((id) => state.constituents[id]!.span[0] === 2)!;
+
+  assert.deepEqual(nodesInMarquee(state.constituents, words, around(state, [verb, object])), {
+    ids: [verb, object],
+    span: [1, 3],
+  });
+});
+
 test('nested labels are ignored when their top-level parent is boxed', () => {
   const state = builtFrontier();
   const object = Object.keys(state.constituents).find(

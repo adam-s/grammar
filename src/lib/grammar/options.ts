@@ -36,17 +36,17 @@ import {
   anchorsFor,
   canStackOver,
   canWrap,
+  containerFor,
   gappableSlots,
   hypothesisFor,
   nodeOver,
-  rootAt,
-  roots,
   type BuildState,
   type Span,
 } from './builder.ts';
 import { verbs } from './clause.ts';
+import { formEvidence } from './evidence.ts';
 import { CLAUSE_KINDS } from './node-variants.ts';
-import { ALLOWED, FUSIONS, HEAD_FORMS, headed, plainlyHeads } from './rules.ts';
+import { FUSIONS, HEAD_FORMS, plainlyHeads } from './rules.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { cleft, passiveFor, performed, type Demonstration } from './transform.ts';
@@ -67,6 +67,7 @@ import {
   type VerbType,
   type Voice,
   type Word,
+  contentSpan,
 } from './types.ts';
 
 /**
@@ -121,12 +122,55 @@ export function blockRejectedOptions(
   return { ...panel, ...withStep(groups) };
 }
 
-/** Make questions already settled by the surrounding sentence non-blocking. */
-export function makeGroupsOptional(panel: Panel, ids: readonly string[]): Panel {
-  if (ids.length === 0) return panel;
-  const groups = panel.groups.map((group) =>
-    ids.includes(group.id) ? { ...group, optional: true } : group,
-  );
+/**
+ * What state a question is in, and why the palette treats it the way it does.
+ *
+ * `required` has a live choice; `offer` can be left untaken for ever;
+ * `deferred` cannot be answered until larger structure exists; `settled` has
+ * its answer, or provably has none to give. A sole correct answer is still a
+ * required choice: the learner must choose it.
+ */
+export type QuestionRole = 'required' | 'offer' | 'deferred' | 'settled';
+
+/** A question the readings have closed: which one, in which sense, and why. */
+export interface GroupClosure {
+  group: string;
+  kind: 'settled' | 'deferred';
+  reason: string;
+}
+
+/**
+ * Make questions the readings have closed non-blocking — and say so.
+ *
+ * The closure is recorded on the group, not merely applied to it. `optional`
+ * still carries the behaviour (the panel can finish with the group untouched),
+ * but a reader of the panel can now tell an offer nobody has to take from a
+ * question that is premature and from one with no answer to give. Those states
+ * used to share one silent boolean, which is what made them undebuggable.
+ */
+export function closeSettledGroups(panel: Panel, closures: readonly GroupClosure[]): Panel {
+  if (closures.length === 0) return panel;
+  const byId = new Map(closures.map((c) => [c.group, c]));
+  const groups = panel.groups.map((group) => {
+    const closure = byId.get(group.id);
+    // An answered question is settled by its answer; the readings do not
+    // get to recolour what the learner has already established.
+    if (!closure || group.answered) return group;
+    return {
+      ...group,
+      optional: true,
+      role: closure.kind,
+      roleReason: closure.reason,
+      // A closed question has no truthful move at this stage. Leaving a
+      // structurally plausible row clickable let the learner choose “head”
+      // for an NP whose real complement job arrives only after its PP exists.
+      options: group.options.map((option) => ({
+        ...option,
+        state: 'blocked' as const,
+        note: closure.reason,
+      })),
+    };
+  });
   return { ...panel, ...withStep(groups) };
 }
 
@@ -202,6 +246,14 @@ export interface OptionGroup {
   optional?: boolean;
   /** The option already picked here, if any. A group with one is settled. */
   answered?: LabelOption | null;
+  /**
+   * The question's state, as far as this panel can know it. `finish` assigns
+   * `settled`, `offer` or `required`; `closeSettledGroups` overlays what the
+   * readings prove.
+   */
+  role?: QuestionRole;
+  /** Why the role is what it is, where the default wording would not say. */
+  roleReason?: string;
 }
 
 export interface Panel {
@@ -314,15 +366,19 @@ export function optionsFor(
   sel: Selection,
   scope?: ChapterScope,
 ): Panel {
+  const grammaticalSpan =
+    sel.kind === 'span' || sel.kind === 'nodes' ? contentSpan(words, sel.span) : null;
   switch (sel.kind) {
     case 'none':
       return idlePanel(scope);
     case 'span':
-      return spanPanel(state, words, sel.span, scope);
+      return grammaticalSpan
+        ? spanPanel(state, words, grammaticalSpan, scope, true)
+        : idlePanel(scope);
     case 'node':
       return nodePanel(state, words, sel.id, scope);
     case 'nodes':
-      return spanPanel(state, words, sel.span, scope);
+      return grammaticalSpan ? spanPanel(state, words, grammaticalSpan, scope) : idlePanel(scope);
   }
 }
 
@@ -376,84 +432,26 @@ function formOption(f: Form, state: OptionState, note?: string): LabelOption {
  */
 const ONE_WORD_PHRASES: readonly Form[] = PHRASE_FORMS.filter((f) => f !== 'S');
 
-/**
- * Evidence supplied by labels the learner has already established.
- *
- * Spelling is useful before a word is named and weaker afterwards. In
- * “shoes on my feet”, the final -s makes `shoes` look verb-like in isolation,
- * but a visible N node settles that question. If a determiner is waiting just
- * before the run, the noun and what follows are the nominal it points at.
- */
-function visibleEvidence(state: BuildState, words: Word[], span: Span) {
-  const guessed = suggest(words, span);
-  if (span[0] === span[1]) return guessed;
-  const selected = roots(state)
-    .map((id) => state.constituents[id]!)
-    .filter((c) => c.span[0] >= span[0] && c.span[1] <= span[1]);
-  if (
-    selected[0]?.span[0] === span[0] &&
-    selected.at(-1)?.span[1] === span[1] &&
-    selected.some((c) => c.function === 'subject') &&
-    selected.some((c) => c.function === 'predicate')
-  ) {
-    return [
-      {
-        form: 'S' as const,
-        rank: -1,
-        evidence: 'the diagram already shows a subject followed by its predicate',
-      },
-      ...guessed.filter((s) => s.form !== 'S'),
-    ].slice(0, 3);
-  }
-  const firstId = rootAt(state, span[0]);
-  const first = firstId ? state.constituents[firstId] : null;
-  if (!first || first.span[0] !== span[0]) return guessed;
-
-  const beforeId = span[0] > 0 ? rootAt(state, span[0] - 1) : null;
-  const before = beforeId ? state.constituents[beforeId] : null;
-  if (first.form === 'N') {
-    const form: Form = before?.form === 'Det' && before.span[1] === span[0] - 1 ? 'Nom' : 'NP';
-    return [
-      {
-        form,
-        rank: -1,
-        evidence:
-          form === 'Nom'
-            ? 'what the determiner points at — replace the whole run with “ones”'
-            : 'starts with a noun — try replacing the whole run with “it” or “they”',
-      },
-      ...guessed.filter((s) => s.form !== 'VP' && s.form !== form),
-    ].slice(0, 3);
-  }
-  const known: Partial<Record<Form, Form>> = {
-    Det: 'NP',
-    Pron: 'NP',
-    P: 'PP',
-    V: 'VP',
-    Aux: 'VP',
-  };
-  const form = known[first.form];
-  if (!form) return guessed;
-  return [
-    {
-      form,
-      rank: -1,
-      evidence: `starts with the ${first.form} already labelled on the diagram`,
-    },
-    ...guessed.filter((s) => s.form !== form),
-  ].slice(0, 3);
-}
-
 /** A run of words with no node over it yet: only "what is it?" can be asked. */
-function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterScope): Panel {
+function spanPanel(
+  state: BuildState,
+  words: Word[],
+  span: Span,
+  scope: ChapterScope,
+  buildsInside = false,
+): Panel {
   const single = span[0] === span[1];
   const verdict = canWrap(state, words, span);
   const blocked = verdict.state === 'disabled' ? verdict.reason : undefined;
 
   const existing = nodeOver(state, span);
   const chosenForm = existing ? state.constituents[existing]!.form : null;
+  const container = buildsInside ? containerFor(state, span) : null;
 
-  const evidence = new Map(visibleEvidence(state, words, span).map((s) => [s.form, s]));
+  // Availability first, evidence second: `build` below refuses a blocked row
+  // before it ever looks at this map, so ranking cannot resurrect a move the
+  // structural rules turned away. The strength ladder is evidence.ts's law.
+  const evidence = new Map(formEvidence(state, words, span).map((s) => [s.form, s]));
 
   const build = (forms: readonly Form[]): LabelOption[] =>
     forms.map((f) => {
@@ -502,7 +500,11 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
       singledOut: demonstrationFor(state, words, span),
       // The open group's question already asks; a second line saying the same
       // thing in other words is chrome, not guidance.
-      prompt: blocked ?? '',
+      prompt:
+        blocked ??
+        (container
+          ? `Building inside the ${formName(state.constituents[container]!.form).toLowerCase()} that contains these words. It will stay in place.`
+          : ''),
       groups,
       ...(blocked ? { blocked } : {}),
     },
@@ -540,8 +542,12 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       const answered = forms.includes(c.form);
       if (f === c.form) return formOption(f, 'chosen');
       if (locked && (phrase || !isWord)) return formOption(f, 'blocked', UNGROUP);
-      const head = isWord && phrase ? headed(c.form, f) : ALLOWED;
-      if (head.state === 'disabled') return formOption(f, 'blocked', head.reason);
+      // A known word class is evidence about the phrase it can head, not
+      // permission to reveal the answer. Keep every one-word phrase hypothesis
+      // actionable; the grader explains a miss and the session then disables
+      // only that attempted row. Structural locks still apply above because a
+      // word already inside a phrase cannot be wrapped without changing its
+      // parent's children.
       const why = answered ? undefined : evidence.get(f);
       return {
         ...formOption(f, why ? 'suggested' : 'available', why?.evidence),
@@ -1060,11 +1066,21 @@ function withStep(groups: OptionGroup[]): {
   return { groups: keyed, step, suggested: n };
 }
 
+/** Recompute navigation after another decision layer changes group availability. */
+export function refreshPanel(panel: Panel): Panel {
+  return { ...panel, ...withStep(panel.groups) };
+}
+
 function finish(draft: Omit<Panel, 'step' | 'suggested'>, scope?: ChapterScope): Panel {
-  const groups: OptionGroup[] = withhold(draft.groups, scope).map((g) => ({
-    ...g,
-    answered: g.options.find((o) => o.state === 'chosen') ?? null,
-  }));
+  const groups: OptionGroup[] = withhold(draft.groups, scope).map((g) => {
+    const answered = g.options.find((o) => o.state === 'chosen') ?? null;
+    return {
+      ...g,
+      answered,
+      role: answered ? 'settled' : g.optional ? 'offer' : 'required',
+      ...(answered ? { roleReason: `answered: ${answered.key}` } : {}),
+    };
+  });
   return { ...draft, ...withStep(groups) };
 }
 

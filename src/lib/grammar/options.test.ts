@@ -587,11 +587,10 @@ describe('the one-word phrase question is only asked where it has an answer', ()
     assert.equal(p.step, 'phrase-form');
   });
 
-  it('blocks a phrase the word could not head, and says what heads it', () => {
+  it('lets the learner try every one-word phrase before the grader explains a miss', () => {
     const p = named('Pron', [0, 0]);
     const vp = opt(p, 'form:VP')!;
-    assert.equal(vp.state, 'blocked');
-    assert.match(vp.note ?? '', /head of a verb phrase is a verb/);
+    assert.ok(isPickable(vp));
     assert.ok(isPickable(opt(p, 'form:NP')!), 'a pronoun does head a noun phrase');
   });
 

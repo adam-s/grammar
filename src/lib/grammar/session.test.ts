@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { ambiguous, subjectPhrase, vtr } from './fixtures.ts';
 import { optionsFor } from './options.ts';
-import { answer, emptySession, sessionPanel, type Session } from './session.ts';
+import { answer, emptySession, sessionChoices, sessionPanel, type Session } from './session.ts';
 
 const W = vtr.words; // She repaired the engine
 
@@ -41,6 +41,64 @@ describe('one decision, start to finish', () => {
     const s = pick(on(emptySession(), [0, 0]), 'form:N');
     assert.ok(s.rejected['0-0']?.['form:N'], 'the refusal is kept');
     assert.equal(s.rejected['1-1'], undefined, 'and only for those words');
+  });
+});
+
+describe('the transaction accepts only a currently offered row', () => {
+  it('does not trust a caller that marks an absent move available', () => {
+    const s = on(emptySession(), [0, 0]);
+    const after = answer(s, vtr, W, {
+      key: 'func:directObject',
+      label: 'direct object',
+      state: 'available',
+      func: 'directObject',
+    });
+    assert.deepEqual(after, s);
+  });
+
+  it('does not accept a row the calling surface marks untaught', () => {
+    const s = on(emptySession(), [0, 0]);
+    const panel = optionsFor(s.build, W, s.selection, new Set(['form:Pron']));
+    const verb = panel.groups
+      .flatMap((group) => group.options)
+      .find((row) => row.key === 'form:V')!;
+    assert.equal(verb.state, 'untaught');
+    const after = answer(s, vtr, W, verb);
+    assert.deepEqual(after, s);
+  });
+
+  it('does not accept an old copy of a row already refused', () => {
+    const s = on(emptySession(), [0, 0]);
+    const noun = rowFor(s, 'form:N')!;
+    const refused = answer(s, vtr, W, noun);
+    const again = answer(refused, vtr, W, noun);
+    assert.deepEqual(again, refused);
+  });
+
+  it('refuses an identical phrase stacked over itself, then disables that attempt', () => {
+    let s = pick(on(emptySession(), [2, 2]), 'form:Det');
+    s = pick(on(s, [3, 3]), 'form:N');
+    s = pick(on(s, [2, 3]), 'form:NP');
+    const np = Object.keys(s.build.constituents).find(
+      (id) => s.build.constituents[id]!.form === 'NP',
+    )!;
+    s = { ...s, selection: { kind: 'node', id: np } };
+
+    const offered = sessionChoices(s, vtr, W)
+      .groups.flatMap((group) => group.options)
+      .find((option) => option.key === 'stack:NP')!;
+    assert.equal(offered.state, 'available', 'the learner may try it once');
+
+    const before = s.build;
+    const refused = answer(s, vtr, W, offered);
+    assert.equal(refused.build, before, 'the wrong layer never enters the tree');
+    assert.equal(refused.verdict?.kind, 'wrong');
+    assert.match(refused.verdict?.test ?? '', /already have a noun phrase layer/);
+
+    const remembered = sessionChoices(refused, vtr, W)
+      .groups.flatMap((group) => group.options)
+      .find((option) => option.key === 'stack:NP')!;
+    assert.equal(remembered.state, 'blocked', 'only that attempted row is now disabled');
   });
 });
 
@@ -130,6 +188,38 @@ describe('a refusal outlives the verdict', () => {
     // `blockRejectedOptions` is what turns that record into a blocked row; the
     // session keeps the record, the palette applies it.
     assert.match(s.rejected['0-0']!['form:N']!, /Not a noun/);
+  });
+});
+
+describe('a refusal does not outlive the truth that produced it', () => {
+  it('reopens a remembered row when the current reading accepts it', () => {
+    let s = on(emptySession(), [0, 0]);
+    s = {
+      ...s,
+      // Simulate a refusal kept by an open development session while the
+      // accepted analysis changes underneath it.
+      rejected: { '0-0': { 'form:Pron': 'An obsolete refusal.' } },
+    };
+
+    const pronoun = sessionChoices(s, vtr, W)
+      .groups.flatMap((group) => group.options)
+      .find((option) => option.key === 'form:Pron')!;
+    assert.equal(pronoun.state, 'available');
+
+    s = answer(s, vtr, W, pronoun);
+    assert.equal(s.verdict?.kind, 'correct');
+    assert.equal(Object.values(s.build.constituents)[0]?.form, 'Pron');
+  });
+
+  it('keeps a remembered row blocked while it is still wrong', () => {
+    const s: Session = {
+      ...on(emptySession(), [0, 0]),
+      rejected: { '0-0': { 'form:N': 'Not a noun.' } },
+    };
+    const noun = sessionChoices(s, vtr, W)
+      .groups.flatMap((group) => group.options)
+      .find((option) => option.key === 'form:N')!;
+    assert.equal(noun.state, 'blocked');
   });
 });
 

@@ -1,7 +1,35 @@
 # Plan: make grammar decisions inspectable
 
-**Status:** proposed refactor. This document describes the work; it does not
-authorize a rewrite or claim that the phases are complete.
+**Status:** in progress. Phases 0–2 are implemented; Phase 3 is partly
+implemented; Phases 4–6 are not started.
+
+## Implementation state
+
+What exists in the code, verifiable by running the tests named:
+
+- **Phase 0 — done.** `decision-ledger.test.ts` walks the nested lesson-2
+  sentence state by state and pins the paired cases and the wrong-answer,
+  punctuation, and reading-blindness promises.
+- **Phase 1 — done.** `decision.ts` composes the existing reasoning into a
+  serializable `DecisionSnapshot` with question roles and candidate
+  availability; `describeDecision` renders one state as one readable block.
+  `decision.test.ts` proves the roles separate what one boolean used to hide.
+- **Phase 2 — done for evidence; the candidate layer stays put.** The
+  structure-derived ranking moved to `evidence.ts` with the strength ladder
+  stated and tested (`evidence.test.ts`). Availability was already computed
+  before evidence in `options.ts` and now says so. Candidate creation itself
+  still lives in the panel builders.
+- **Phase 3 — partial.** Groups now carry an explicit `role` and `roleReason`;
+  `closeSettledGroups` records why the readings closed a question, and
+  `readingSettlements` distinguishes settled from deferred — including the
+  bare-word case where one node holds both at once. The reading comparison
+  still lives in `session.ts` rather than behind a shared decision layer, and
+  the UI still consumes `optional`.
+- **Review corrections.** Selection normalization now happens at the decision
+  boundary, so edge punctuation cannot create a second question. Established
+  subject-plus-verb structure now outranks the spelling of *The*. The session
+  also resolves every requested action through the current scoped palette, and
+  the panel obeys every navigation result rather than only the `stay` case.
 
 ## Verdict
 
@@ -120,7 +148,7 @@ interface DecisionSnapshot {
 
 interface DecisionQuestion {
   id: string;
-  role: 'required' | 'offer' | 'deferred' | 'settled' | 'inferred';
+  role: 'required' | 'offer' | 'deferred' | 'settled';
   reason: string;
   candidates: DecisionCandidate[];
 }
@@ -142,7 +170,7 @@ The snapshot must answer these questions directly:
 - Why is that move legal, blocked, or irrelevant?
 - Is the learner being asked, offered an optional refinement, or told to build
   more surrounding structure first?
-- Why is one available move ranked ahead of another?
+- Which options has the learner already tried and ruled out?
 - Which question should remain open after the last result?
 
 The UI panel should be a projection of this snapshot, not the place where these
@@ -150,11 +178,19 @@ answers are derived.
 
 ## Rules for the new boundary
 
-### 1. Legality comes before ranking
+### 1. The menu is a question, not an answer key
 
-Suggestions may rank only moves the structural layer has admitted. A spelling
-heuristic must never promote a move that conflicts with a node the learner has
-already established.
+Every option in a displayed category starts active and neutral. Structural
+rules, stored readings, lesson scope, and lexical evidence must not disable,
+rank, suggest, highlight, infer, or auto-select an answer before the learner
+chooses it.
+
+After a wrong choice, the header explains the error and only that attempted
+option becomes disabled. Every untried option remains active. A correct choice
+changes the diagram, but it never answers the next question automatically.
+
+Ranking can still exist as internal evidence for diagnostics and grading. It
+must not leak into the learner-facing menu.
 
 Evidence should have a declared strength and source:
 
@@ -169,11 +205,11 @@ The order can be tested without exposing a confidence score to the learner.
 
 The corpus may decide whether a chosen action is correct, alternate, or wrong.
 It may also prove that every accepted reading requires the selection to wait
-for a larger structure. It must not determine the pre-choice shortlist where a
+for a larger structure. It must not narrow or style the pre-choice menu where a
 genuine choice remains.
 
-This preserves the exercise: identical visible structures receive identical
-suggestions even when their stored readings differ.
+This preserves the exercise: identical visible structures receive the same
+neutral menu even when their stored readings differ.
 
 ### 3. “Optional” and “not ready” are different
 
@@ -187,8 +223,8 @@ Examples:
 - Naming `on my feet` as `postmodifier` before the nominal exists is
   **deferred**.
 - A function already established in the build is **settled**.
-- A sole legal move may be **inferred** when the inference does not come only
-  from a restricted lesson scope.
+- A question with one correct answer is still **required**. The learner must
+  choose that answer.
 
 These states should be visible in tests and developer diagnostics even when
 some of them share compact learner-facing presentation.
@@ -254,7 +290,7 @@ For each meaningful build state, assert:
 - selection identity and normalized span;
 - established root forms and functions;
 - active question;
-- question role: required, offer, deferred, settled, or inferred;
+- question role: required, offer, deferred, or settled;
 - every candidate’s availability and reason;
 - evidence order;
 - whether a correct, wrong, or manual action advances the panel.
@@ -291,14 +327,14 @@ change availability.
 Project the ranked candidates back into the existing `Panel` type temporarily.
 This keeps the UI stable while the core boundary changes.
 
-**Exit condition:** no suggested option is blocked, untaught, or structurally
-incompatible, and suggestion tests do not need menu-order knowledge.
+**Exit condition:** the learner-facing projection is neutral even when the
+structural and evidence layers can rank or reject hypotheses internally.
 
 ### Phase 3 — Make question state explicit
 
 Replace overloaded `optional` behavior with the question roles in the
 snapshot. Centralize the logic that decides whether a question is required,
-offered, deferred, settled, or inferred.
+offered, deferred, or settled.
 
 Move the accepted-reading comparison used by `sessionPanel` behind this
 decision layer. Record its result as a reason rather than silently rewriting a
@@ -364,18 +400,18 @@ it crosses nearly every boundary:
 
 | Build state | Meaningful next result |
 | --- | --- |
-| select `my` | determiner ranks before the suffix-based adjective guess |
-| select `my feet` after Det + N | NP is the phrase suggestion |
+| select `my` | every word class is active; determiner is not revealed |
+| select `my feet` after Det + N | every phrase type is active; NP is not revealed |
 | NP exists without PP | its complement relationship is deferred |
-| P + NP selected | PP is suggested |
+| P + NP selected | every phrase type is active; PP is not revealed |
 | select `my feet` inside PP | complement is available |
-| N + PP selected after an outside determiner | Nom is suggested, not VP |
+| N + PP selected after an outside determiner | Nom and VP remain active until tried |
 | select PP inside Nom | postmodifier is available |
-| Det + Nom selected | NP is suggested |
+| Det + Nom selected | NP remains an explicit choice |
 | select complete NP | subject is available |
-| select the verb node | VP is the compatible one-word phrase |
-| select complete VP | predicate is available or safely inferred |
-| select subject NP + predicate VP | sentence ranks first |
+| select the verb node | every one-word phrase type is active |
+| select complete VP | every function is active; predicate must be chosen |
+| select subject NP + predicate VP | sentence remains an explicit choice |
 | finish | menu closes and the final graph keeps every established label |
 
 Add paired cases so the rules do not overfit this sentence:
@@ -391,19 +427,19 @@ Add paired cases so the rules do not overfit this sentence:
 
 These checks catch whole classes of regressions:
 
-1. Every suggested option is pickable.
+1. Every untried option in a displayed category is active and neutral.
 2. Every required question has at least one action accepted by some reading.
 3. A deferred question cannot become the active question.
-4. A sole move inferred under full grammar remains sole without lesson scope.
+4. A sole correct move is never inferred or auto-applied.
 5. Rejected actions do not alter the build.
 6. Wrong feedback does not advance the active question.
 7. Word, node, and mixed-node selection over the same content reach the same
    structural candidates.
 8. Edge punctuation does not change the grammatical target.
-9. Established node structure outranks conflicting lexical heuristics.
-10. Accepted readings do not affect pre-choice ranking when visible state is
-    identical.
-11. Hotkey order matches evidence order without moving taxonomy rows.
+9. Established structure and lexical evidence do not reveal an answer before a
+   choice.
+10. Accepted readings do not affect the neutral pre-choice menu.
+11. Suggestions and answer-ranking hotkeys do not appear in the learner menu.
 12. A completed build has no unreported required decision in the lesson target.
 
 ## What not to do

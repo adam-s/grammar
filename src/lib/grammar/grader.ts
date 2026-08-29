@@ -68,7 +68,9 @@ const sameSpan = (c: Constituent, span: Span) => c.span[0] === span[0] && c.span
 
 /** Every constituent in `reading` covering exactly `span`. */
 function at(reading: Reading, span: Span): Constituent[] {
-  return Object.values(reading.constituents).filter((c) => sameSpan(c, span));
+  return [reading.constituents, ...(reading.equivalentStructures ?? [])].flatMap((cs) =>
+    Object.values(cs).filter((c) => sameSpan(c, span)),
+  );
 }
 
 function canonical(sentence: SentenceEntry): Reading {
@@ -533,8 +535,10 @@ export function gradeBuild(
   sentence: SentenceEntry,
 ): { readingId: string | null; wrong: string[] } {
   for (const r of ordered(sentence)) {
-    const wrong = compare(build, r);
-    if (wrong.length === 0) return { readingId: r.id, wrong: [] };
+    for (const constituents of [r.constituents, ...(r.equivalentStructures ?? [])]) {
+      const wrong = compare(build, { ...r, constituents });
+      if (wrong.length === 0) return { readingId: r.id, wrong: [] };
+    }
   }
   return { readingId: null, wrong: compare(build, canonical(sentence)) };
 }

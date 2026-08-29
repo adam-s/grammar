@@ -30,16 +30,11 @@
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
   import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
-  import { answer, sessionPanel, targetKey } from '$lib/grammar/session.ts';
+  import { answer, sessionChoices, type NavigationResult } from '$lib/grammar/session.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
 
-  import {
-    blockRejectedOptions,
-    isPickable,
-    type LabelOption,
-    type Selection,
-  } from '$lib/grammar/options.ts';
+  import { isPickable, type LabelOption, type Selection } from '$lib/grammar/options.ts';
   import { canonicalReading, contentSpan } from '$lib/grammar/types.ts';
   import { READABLE_ZOOM_FLOOR } from '$lib/grammar/node-label.ts';
   import type { Form, Span } from '$lib/grammar/types.ts';
@@ -115,7 +110,9 @@
   let preview = $state<Form | null>(null);
   let marqueeIds = $state<string[]>([]);
   let verdict = $state<Verdict | null>(null);
-  /** Wrong choices are disabled only for the exact word span that disproved them. */
+  /** The last decision's movement instruction; cleared when the selection moves. */
+  let navigation = $state<NavigationResult | null>(null);
+  /** Wrong choices are remembered for the exact target that disproved them. */
   let rejected = $state<Record<string, Record<string, string>>>({});
   /**
    * Misses per span, so a first wrong answer does not hand over the right one.
@@ -134,8 +131,19 @@
   /** High-water mark: the picture grows as the tree deepens, and never shrinks
       back, so undoing one step does not re-flow everything the learner built. */
   let depthMark = $state(0);
+  /**
+   * The answer is a view, not a mutation. A learner can inspect the finished
+   * diagram and return to exactly the work they had before opening it.
+   */
+  let solved = $state(false);
+  const solvedBuild = $derived(replaySentence(sentence).final);
+  const visibleBuild = $derived(solved ? solvedBuild : build);
+  const visibleDepth = $derived(
+    solved ? layout(solvedBuild.constituents, words).maxDepth : depthMark,
+  );
+  const visibleSelection = $derived<Selection>(solved ? { kind: 'none' } : selection);
 
-  const frame = $derived(diagramSize(build.constituents, words, depthMark));
+  const frame = $derived(diagramSize(visibleBuild.constituents, words, visibleDepth));
   const popupAnchor = $derived(selectionRect(build.constituents, words, selection, depthMark));
   const popupFocus = $derived(selectionFocusRect(build.constituents, words, selection, depthMark));
   const popupAvoid = $derived(drawnRect(build.constituents, words, depthMark));
@@ -152,15 +160,30 @@
   });
 
   function reset() {
+    solved = false;
     build = emptyBuild();
     selection = { kind: 'none' };
     draft = null;
     preview = null;
     marqueeIds = [];
     verdict = null;
+    navigation = null;
     depthMark = 0;
     misses = {};
     rejected = {};
+  }
+
+  /** Swap what the canvas shows without replacing the learner's build. */
+  async function showSolution(next: boolean) {
+    if (solved === next) return;
+    solved = next;
+    closePalette();
+    draft = null;
+    marqueeIds = [];
+    await tick();
+    // The finished diagram must be visible as a whole, even when fitting it
+    // requires going below the editing view's readability floor.
+    ws.zoomToWhole(frame);
   }
 
   $effect(() => {
@@ -184,12 +207,6 @@
   });
 
   /**
-   * Which question a refusal is remembered against. `session.ts` owns the
-   * definition, because two ideas of "the same question" is how a rejection
-   * ends up blocking a row on a node that never answered it.
-   */
-  const rejectionKey = $derived(targetKey(build, selection));
-  /**
    * The lesson this SENTENCE belongs to, which is not always the lesson whose
    * page you are on. Opening a lesson-9 sentence from the lesson-1 page used to
    * hand over the whole palette, because the scope came from the route.
@@ -209,10 +226,7 @@
    * later labels never become requirements for completing an early lesson.
    */
   const choices = $derived(
-    blockRejectedOptions(
-      sessionPanel(build, words, selection, sentence),
-      rejected[rejectionKey] ?? {},
-    ),
+    sessionChoices({ build, selection, verdict, misses, rejected, navigation }, sentence, words),
   );
 
   /**
@@ -245,10 +259,11 @@
     depthMark = tutorialDepth;
   }
 
-  /** Select the way a pointer does: a run of words already carrying a node is
-      that node, not a fresh span. Same rule the sweep driver follows. */
+  /** Replay names an existing node when its next decision belongs to that
+      node. Live word-row gestures remain spans so they can build underneath. */
   function selectAs(next: Selection) {
     verdict = null;
+    navigation = null;
     if (next.kind !== 'span') {
       selection = next;
       return;
@@ -328,11 +343,12 @@
       openSentence: (id: string) => openSentence(id),
       selectSpan: (span: Span) => {
         verdict = null;
-        const node = nodeOver(build, span);
-        selection = node ? { kind: 'node', id: node } : { kind: 'span', span };
+        navigation = null;
+        selection = { kind: 'span', span };
       },
       selectNode: (id: string) => {
         verdict = null;
+        navigation = null;
         selection = { kind: 'node', id };
       },
       /** Click an option by key, through the same handler the palette uses. */
@@ -392,21 +408,23 @@
   /* --------------------------------------------------------------- events */
 
   function ondraft(span: Span | null, done: boolean) {
+    if (solved) return;
     marqueeIds = [];
     const grammatical = span ? contentSpan(words, span) : null;
     draft = grammatical;
     if (!done) return;
     draft = null;
     verdict = null;
+    navigation = null;
     if (!grammatical) return;
-    // Words that already carry a node select the NODE, so the same gesture
-    // moves the learner from "what is it?" to "what does it do?" without a mode
-    // change — the panel simply gains a group.
-    const id = nodeOver(build, grammatical);
-    selection = id ? { kind: 'node', id } : { kind: 'span', span: grammatical };
+    // The word row always means "build from these words." A node label means
+    // "edit this exact node." Keeping those gestures distinct is what lets a
+    // learner draw the outside first, then add structure beneath it.
+    selection = { kind: 'span', span: grammatical };
   }
 
   function onmarquee(rect: Rect | null, done: boolean) {
+    if (solved) return;
     if (!rect) {
       marqueeIds = [];
       if (done) selection = { kind: 'none' };
@@ -419,6 +437,7 @@
 
     marqueeIds = [];
     verdict = null;
+    navigation = null;
     preview = null;
     selection =
       hit.ids.length === 0 && hit.span
@@ -441,6 +460,7 @@
     selection = { kind: 'none' };
     preview = null;
     verdict = null;
+    navigation = null;
   }
 
   let previousRouteLessonId = $state('');
@@ -478,12 +498,19 @@
    */
   function pick(o: LabelOption) {
     const before = build;
-    const next = answer({ build, selection, verdict, misses, rejected }, sentence, words, o, scope);
+    const next = answer(
+      { build, selection, verdict, misses, rejected, navigation },
+      sentence,
+      words,
+      o,
+      scope,
+    );
     build = next.build;
     selection = next.selection;
     verdict = next.verdict;
     misses = next.misses;
     rejected = next.rejected;
+    navigation = next.navigation;
     if (next.build !== before) grew();
     if (next.selection.kind === 'none') preview = null;
   }
@@ -498,7 +525,7 @@
   {ws}
   bind:active
   content={middleView === 'diagram' ? frame : undefined}
-  onmarquee={middleView === 'diagram' ? onmarquee : undefined}
+  onmarquee={middleView === 'diagram' && !solved ? onmarquee : undefined}
   tabs={['Sentences']}
   inspectorKind="navigation"
   inspectorTitle="Sentences"
@@ -546,7 +573,23 @@
   {/snippet}
 
   {#snippet overlay()}
-    {#if middleView === 'diagram' && tutorialBeats.length > 0}
+    {#if middleView === 'diagram'}
+      <div class="solution-toggle" role="group" aria-label="Diagram state" data-stage-occluder>
+        <button
+          type="button"
+          class:active={!solved}
+          aria-pressed={!solved}
+          onclick={() => showSolution(false)}>Unsolved</button
+        >
+        <button
+          type="button"
+          class:active={solved}
+          aria-pressed={solved}
+          onclick={() => showSolution(true)}>Solved</button
+        >
+      </div>
+    {/if}
+    {#if middleView === 'diagram' && !solved && tutorialBeats.length > 0}
       <!-- Keyed on the sentence: a finished or stopped run belongs to the
            sentence it ran on, and must not greet the next one. -->
       {#key sentenceId}
@@ -566,21 +609,24 @@
         />
       {/key}
     {/if}
-    <LabelPanel
-      panel={choices}
-      {verdict}
-      anchor={popupAnchor}
-      focus={popupFocus}
-      fit={fitSelection}
-      avoid={popupAvoid}
-      placement={tutorialActive ? tutorialMenu : null}
-      manageCamera={!tutorialActive}
-      interactive={!tutorialActive}
-      pointerOn={tutorialActive ? tutorialPointer : null}
-      onpick={pick}
-      onhover={(o) => (preview = o?.form ?? null)}
-      onclose={closePalette}
-    />
+    {#if !solved}
+      <LabelPanel
+        panel={choices}
+        {verdict}
+        {navigation}
+        anchor={popupAnchor}
+        focus={popupFocus}
+        fit={fitSelection}
+        avoid={popupAvoid}
+        placement={tutorialActive ? tutorialMenu : null}
+        manageCamera={!tutorialActive}
+        interactive={!tutorialActive}
+        pointerOn={tutorialActive ? tutorialPointer : null}
+        onpick={pick}
+        onhover={(o) => (preview = o?.form ?? null)}
+        onclose={closePalette}
+      />
+    {/if}
   {/snippet}
 
   {#if middleView === 'lesson'}
@@ -593,13 +639,16 @@
     <div class="board" style="left:0; top:0; width:{frame.w}px; height:{frame.h}px">
       <Diagram
         {words}
-        constituents={build.constituents}
+        constituents={visibleBuild.constituents}
         {marqueeIds}
-        {selection}
+        selection={visibleSelection}
         {draft}
         {preview}
+        interactive={!solved}
         onpick={(s) => {
+          if (solved) return;
           verdict = null;
+          navigation = null;
           selection = s;
         }}
         {ondraft}
@@ -662,5 +711,46 @@
     position: absolute;
     background: transparent;
     pointer-events: none;
+  }
+
+  .solution-toggle {
+    position: absolute;
+    top: 8px;
+    right: 44px;
+    z-index: 46;
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--panel) 94%, transparent);
+    box-shadow: 0 2px 10px oklch(0 0 0 / 18%);
+    backdrop-filter: blur(10px);
+  }
+  .solution-toggle button {
+    min-height: 28px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .solution-toggle button:hover {
+    color: var(--ink);
+  }
+  .solution-toggle button.active {
+    background: color-mix(in oklab, var(--accent) 16%, var(--panel));
+    color: var(--accent);
+  }
+
+  @media (max-width: 700px) {
+    .solution-toggle {
+      top: max(60px, calc(env(safe-area-inset-top) + 60px));
+      right: 8px;
+    }
   }
 </style>

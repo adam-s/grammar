@@ -80,6 +80,61 @@ export type Span = [number, number];
 
 const inSpan = (s: Span, i: number) => i >= s[0] && i <= s[1];
 
+const containsSpan = (outer: Span, inner: Span): boolean =>
+  outer[0] <= inner[0] && outer[1] >= inner[1];
+
+const sameSpan = (left: Span, right: Span): boolean => left[0] === right[0] && left[1] === right[1];
+
+/** The deepest phrase that contains `span`, optionally including an exact match. */
+function containingPhrase(state: BuildState, span: Span, includeEqual: boolean): string | null {
+  return (
+    Object.keys(state.constituents)
+      .filter((id) => {
+        const c = state.constituents[id]!;
+        return (
+          c.word === undefined &&
+          !c.gap &&
+          containsSpan(c.span, span) &&
+          (includeEqual || !sameSpan(c.span, span))
+        );
+      })
+      .sort((a, b) => {
+        const left = state.constituents[a]!.span;
+        const right = state.constituents[b]!.span;
+        const width = left[1] - left[0] - (right[1] - right[0]);
+        return width || depthOf(state, b) - depthOf(state, a);
+      })[0] ?? null
+  );
+}
+
+/** Nodes available to group at one level of the tree. */
+function childrenAt(state: BuildState, parent: string | null): string[] {
+  return parent === null ? roots(state) : (state.constituents[parent]?.children ?? []);
+}
+
+/** Put a child into its parent's ordered list, replacing the children it adopts. */
+function installChild(
+  cs: ConstituentMap,
+  parent: string | null,
+  id: string,
+  adopted: readonly string[],
+  at: number,
+) {
+  if (parent === null) return;
+  const siblings = cs[parent]!.children;
+  const adoptedSet = new Set(adopted);
+  const first = siblings.findIndex((child) => adoptedSet.has(child));
+  if (first !== -1) {
+    cs[parent]!.children = siblings.flatMap((child, index) =>
+      index === first ? [id] : adoptedSet.has(child) ? [] : [child],
+    );
+    return;
+  }
+  const before = siblings.findIndex((child) => cs[child]!.span[0] > at);
+  const cut = before === -1 ? siblings.length : before;
+  cs[parent]!.children = [...siblings.slice(0, cut), id, ...siblings.slice(cut)];
+}
+
 /** Top-level nodes — those the learner has not yet wrapped in anything. */
 export function roots(state: BuildState): string[] {
   return Object.keys(state.constituents)
@@ -102,12 +157,12 @@ export function rootAt(state: BuildState, i: number): string | null {
  *
  * The division of labour that keeps it unambiguous:
  *
- *   - **selecting a span means "make a new group over these words"** — it acts
- *     on the top-level nodes inside the span, so it always means *one level up*
- *     and can never be ambiguous;
- *   - **selecting a node** (by clicking it, or by walking up from a span) names
- *     exactly one thing, and is what relabelling, functions and ungrouping act
- *     on.
+ *   - **dragging on words means "build from these words"** — inside the deepest
+ *     phrase already containing them when there is one;
+ *   - **boxing sibling nodes means "group these nodes"** — one level above
+ *     those siblings, even when that level is itself inside a larger phrase;
+ *   - **clicking one node names exactly that thing**, and is what relabelling,
+ *     functions and ungrouping act on.
  */
 
 /** Every node covering exactly this span, innermost first. */
@@ -120,9 +175,14 @@ export function stackOver(state: BuildState, span: Span): string[] {
     .sort((a, b) => depthOf(state, b) - depthOf(state, a));
 }
 
-/** The outermost node covering exactly this span — what a fresh selection means. */
+/** The outermost node covering exactly this span. */
 export function nodeOver(state: BuildState, span: Span): string | null {
   return stackOver(state, span).at(-1) ?? null;
+}
+
+/** The phrase a word-row selection will be refined inside, if one exists. */
+export function containerFor(state: BuildState, span: Span): string | null {
+  return containingPhrase(state, span, true);
 }
 
 export function depthOf(state: BuildState, id: string): number {
@@ -170,8 +230,8 @@ export function childContaining(state: BuildState, id: string, word: number): st
 /**
  * May this span become a constituent?
  *
- * Two ways it cannot, and both are the crossing-bracket rule: a constituent is
- * a run of words with no gaps that does not cut an existing group in half.
+ * A constituent is a run of words with no gaps that does not cut an existing
+ * group in half. It may sit inside that group or contain it whole.
  */
 export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
   const [a, b] = span;
@@ -192,11 +252,14 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
     return { state: 'allowed' };
   }
 
-  for (const id of roots(state)) {
+  // Properly nested boundaries are always compatible. Only a partial overlap
+  // is a cut: a selection may contain an old group, or sit wholly inside one,
+  // without destroying either boundary.
+  for (const id of Object.keys(state.constituents)) {
+    if (state.constituents[id]!.gap) continue;
     const s = state.constituents[id]!.span;
-    const startsIn = inSpan(span, s[0]);
-    const endsIn = inSpan(span, s[1]);
-    if (startsIn !== endsIn) {
+    const overlaps = span[0] <= s[1] && s[0] <= span[1];
+    if (overlaps && !containsSpan(span, s) && !containsSpan(s, span)) {
       const text = words
         .slice(s[0], s[1] + 1)
         .map((w) => w.text)
@@ -206,25 +269,6 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
         reason: `That would cut “${text}” in half. A group has to be taken whole.`,
       };
     }
-  }
-
-  // Grouping puts a new node over nodes that are currently loose. If one node
-  // already covers all of these words and more, there is nothing loose in here
-  // to group, and the pick would have done nothing at all.
-  const covering = roots(state).find((id) => {
-    const s = state.constituents[id]!.span;
-    return s[0] <= a && s[1] >= b && !(s[0] === a && s[1] === b);
-  });
-  if (covering) {
-    const s = state.constituents[covering]!.span;
-    const text = words
-      .slice(s[0], s[1] + 1)
-      .map((w) => w.text)
-      .join(' ');
-    return {
-      state: 'disabled',
-      reason: `These words are already inside “${text}”. Ungroup it first.`,
-    };
   }
 
   return { state: 'allowed' };
@@ -253,6 +297,36 @@ export function canStackOver(current: Constituent | undefined): boolean {
   return current.parent === null;
 }
 
+/** The real-word bounds of a selection, excluding punctuation at its edges. */
+function contentBounds(words: Word[], span: Span): Span | null {
+  const inside: number[] = [];
+  for (let i = span[0]; i <= span[1]; i++) if (!isPunctuation(words[i]!)) inside.push(i);
+  return inside.length === 0 ? null : [inside[0]!, inside.at(-1)!];
+}
+
+/** Add a phrase at one known level, adopting the direct children in its span. */
+function groupAt(
+  state: BuildState,
+  words: Word[],
+  span: Span,
+  form: Form,
+  parent: string | null,
+): BuildState {
+  const bounds = contentBounds(words, span);
+  if (!bounds) return state;
+  const cs = cloneMap(state.constituents);
+  const kids = childrenAt(state, parent).filter((id) => {
+    const child = state.constituents[id]!;
+    return !child.gap && containsSpan(bounds, child.span);
+  });
+  const seq = state.seq + 1;
+  const id = `c${seq}`;
+  cs[id] = { form, function: null, parent, children: kids, span: bounds };
+  for (const child of kids) cs[child]!.parent = id;
+  installChild(cs, parent, id, kids, bounds[0]);
+  return linkFillers({ constituents: cs, seq });
+}
+
 /** Create (or relabel) a node over `span` with `form`. Pure. */
 export function wrap(state: BuildState, words: Word[], span: Span, form: Form): BuildState {
   const [a, b] = span;
@@ -263,9 +337,8 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
     // The thing a one-word phrase goes over is whatever is loose on that word:
     // usually the word leaf, but an existing one-word phrase when the learner
     // is stacking a second layer on it.
-    const leaf = roots({ ...state, constituents: cs }).find(
-      (id) => cs[id]!.parent === null && cs[id]!.span[0] === a && cs[id]!.span[1] === a,
-    );
+    const exact = stackOver(state, span);
+    const leaf = exact.at(-1);
     // The chosen FORM disambiguates the two things a single-word selection can
     // mean. A word form renames the word ("that is a pronoun, not a noun"); a
     // phrase form wraps it ("that pronoun is a noun phrase"). One-word phrases
@@ -278,46 +351,62 @@ export function wrap(state: BuildState, words: Word[], span: Span, form: Form): 
         // it says so when the parse is graded rather than while it is drawn.
         if (isPunctuation(words[a]!)) return state;
         const id = `c${++seq}`;
-        cs[id] = { form, function: null, parent: null, children: [], span: [a, a] };
+        const parent = containingPhrase(state, span, true);
+        cs[id] = { form, function: null, parent, children: [], span: [a, a] };
+        installChild(cs, parent, id, [], a);
         return { constituents: cs, seq };
       }
       if (cs[leaf]!.form === form) return state; // a node cannot go inside itself
       const id = `c${++seq}`;
-      cs[id] = { form, function: null, parent: null, children: [leaf], span: [a, a] };
+      const parent = cs[leaf]!.parent;
+      cs[id] = { form, function: null, parent, children: [leaf], span: [a, a] };
       cs[leaf]!.parent = id;
+      installChild(cs, parent, id, [leaf], a);
       return { constituents: cs, seq };
     }
-    if (leaf && cs[leaf]!.word !== undefined) {
-      cs[leaf]!.form = form;
+    const word = exact.find((id) => cs[id]!.word !== undefined);
+    if (word) {
+      cs[word]!.form = form;
       return { ...state, constituents: cs };
     }
-    if (leaf) return state; // a word form cannot rename a phrase
+    const parent = containingPhrase(state, span, true);
     const id = `c${++seq}`;
-    cs[id] = { form, function: null, parent: null, children: [], span: [a, a], word: a };
+    cs[id] = { form, function: null, parent, children: [], span: [a, a], word: a };
+    installChild(cs, parent, id, [], a);
     return { constituents: cs, seq };
   }
 
-  const kids = roots({ ...state, constituents: cs }).filter(
-    (id) => !cs[id]!.gap && inSpan(span, cs[id]!.span[0]),
-  );
-  // The node's extent is the run that was chosen, minus any punctuation at its
-  // edges: a selection dragged over the closing period should produce a
-  // sentence that ends at the last word, not one that claims the period.
-  //
-  // Taken from the selection and not from the union of the children, because a
-  // phrase may be drawn before the words inside it are named — top-down is how
-  // the course works, and a span inferred from children would silently shrink
-  // the node to whichever words happened to be labelled already.
-  const inside: number[] = [];
-  for (let i = a; i <= b; i++) if (!isPunctuation(words[i]!)) inside.push(i);
-  if (inside.length === 0) return state;
-  const lo = inside[0]!;
-  const hi = inside.at(-1)!;
-  const id = `c${++seq}`;
-  cs[id] = { form, function: null, parent: null, children: kids, span: [lo, hi] };
-  for (const k of kids) cs[k]!.parent = id;
-  // Grouping is what puts a fronted phrase and a gap into the same clause.
-  return linkFillers({ constituents: cs, seq });
+  // A same-form wrapper over the same words carries no new structure. The
+  // learner-facing transaction reports this as a wrong attempt; the builder
+  // also refuses it so no caller can manufacture an endless unary chain.
+  const exact = nodeOver(state, span);
+  if (exact && state.constituents[exact]!.form === form) return state;
+
+  // A run wholly inside a phrase is grouped among that phrase's children. The
+  // old root-only rule mistook this ordinary top-down refinement for a crossing
+  // boundary and forced the learner to tear down correct outer structure.
+  return groupAt(state, words, span, form, containingPhrase(state, span, false));
+}
+
+/**
+ * Build from the word row, where an exact outer phrase means "inside this".
+ *
+ * Clicking a node still edits that exact node, and boxing sibling nodes still
+ * groups above them. Dragging across the words is the distinct top-down path:
+ * if a phrase already has precisely those bounds, the new detail goes beneath
+ * its deepest layer and the established ancestor stays put.
+ */
+export function wrapInside(state: BuildState, words: Word[], span: Span, form: Form): BuildState {
+  if (span[0] === span[1] && !isPhraseForm(form)) return wrap(state, words, span, form);
+  const parent = containingPhrase(state, span, true);
+  if (!parent) return wrap(state, words, span, form);
+  if (
+    state.constituents[parent]!.form === form &&
+    sameSpan(state.constituents[parent]!.span, span)
+  ) {
+    return state;
+  }
+  return groupAt(state, words, span, form, parent);
 }
 
 /**
@@ -357,6 +446,44 @@ export function setFunction(
   else delete cs[id]!.obligatory;
   // Naming a phrase as fronted is what makes it the answer to a gap already in
   // its clause, so the link is checked for here rather than only at creation.
+  return linkFillers({ ...state, constituents: cs });
+}
+
+/**
+ * Record a graded job whose immediate parent has not been drawn yet.
+ *
+ * A learner can recognise the complement in “on my feet” before grouping the
+ * PP. The sentence grader supplies the future parent form; this function only
+ * checks that the proposed relationship is structurally possible, then stores
+ * the job on the child. `groupAt` preserves it when the parent is built later.
+ */
+export function setFunctionForParent(
+  state: BuildState,
+  id: string,
+  fn: Func,
+  parentForm: Form,
+  obligatory = false,
+): BuildState {
+  const c = state.constituents[id];
+  if (!c) return state;
+  const actual = c.parent ? state.constituents[c.parent] : null;
+  if (actual?.form === parentForm) return setFunction(state, id, fn, obligatory);
+  if (
+    hypothesizes(fn, {
+      parentForm,
+      childForm: c.form,
+      verbType: null,
+      siblings: [],
+      siblingForms: [],
+    }).state !== 'allowed'
+  ) {
+    return state;
+  }
+
+  const cs = cloneMap(state.constituents);
+  cs[id]!.function = fn;
+  if (fn === 'adverbial' && obligatory) cs[id]!.obligatory = true;
+  else delete cs[id]!.obligatory;
   return linkFillers({ ...state, constituents: cs });
 }
 

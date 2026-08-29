@@ -12,14 +12,15 @@ const contains = (rect: Rect, x: number, y: number): boolean =>
   x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
 
 /**
- * Select one contiguous run from the structural frontier.
+ * Select one contiguous run from one visible level of the structure.
  *
- * A frontier item is either a top-level constituent or a word not covered by
- * one yet. Existing nodes therefore win over their descendant words, while a
- * fresh sentence still behaves like a desktop: boxing bare words selects them.
- * Label and word centres are the hit points; large brackets, text bounds, and
- * connector lines are deliberately ignored because edge intersections make
- * marquee selection erratic.
+ * Every visible node is eligible. Restricting this to roots made a finished
+ * outer NP act like a lid: its P and NP children were visible but could not be
+ * boxed together into the PP they form. Selected nodes must still be siblings,
+ * so a box can never silently combine two levels. Bare words remain eligible
+ * only where no root covers them. Label and word centres are the hit points;
+ * large brackets, text bounds, and connector lines are deliberately ignored
+ * because edge intersections make marquee selection erratic.
  */
 export function nodesInMarquee(
   constituents: ConstituentMap,
@@ -37,19 +38,21 @@ export function nodesInMarquee(
     for (let i = lo; i <= hi; i++) covered.add(i);
   }
 
-  const frontier: { id?: string; span: Span; x: number; y: number }[] = roots.flatMap((id) => {
-    const box = result.nodes[id];
-    return box
-      ? [
-          {
-            id,
-            span: constituents[id]!.span,
-            x: DIAGRAM_PAD + box.x,
-            y: DIAGRAM_PAD + box.y + 11,
-          },
-        ]
-      : [];
-  });
+  const frontier: { id?: string; parent?: string | null; span: Span; x: number; y: number }[] =
+    Object.keys(constituents).flatMap((id) => {
+      const box = result.nodes[id];
+      return box
+        ? [
+            {
+              id,
+              parent: constituents[id]!.parent,
+              span: constituents[id]!.span,
+              x: DIAGRAM_PAD + box.x,
+              y: DIAGRAM_PAD + box.y + 11,
+            },
+          ]
+        : [];
+    });
   const wordY = DIAGRAM_PAD + result.height + DIAGRAM_WORD_GAP;
   for (const slot of result.words) {
     if (!covered.has(slot.i) && !isPunctuation(words[slot.i]!)) {
@@ -61,9 +64,38 @@ export function nodesInMarquee(
     }
   }
 
-  const selected = frontier
+  let selected = frontier
     .filter((item) => contains(rect, item.x, item.y))
     .sort((a, b) => a.span[0] - b.span[0]);
+  if (selected.length === 0) return { ids: [], span: null };
+
+  const bare = selected.filter((item) => !item.id);
+  if (bare.length > 0) {
+    // Bare words exist only outside roots. Descendant labels that happen to
+    // fall inside the same rectangle are not on that frontier.
+    selected = selected.filter((item) => !item.id || item.parent === null);
+  } else {
+    // A tall box can catch the intended siblings and some labels beneath them.
+    // Resolve it to one level: the widest contiguous sibling run is the thing
+    // the rectangle actually outlines.
+    const byParent = new Map<string | null, typeof selected>();
+    for (const item of selected) {
+      const group = byParent.get(item.parent ?? null) ?? [];
+      group.push(item);
+      byParent.set(item.parent ?? null, group);
+    }
+    const candidates = [...byParent.values()]
+      .map((items) => items.sort((a, b) => a.span[0] - b.span[0]))
+      .filter((items) =>
+        items.every((item, index) => index === 0 || items[index - 1]!.span[1] + 1 === item.span[0]),
+      )
+      .sort((left, right) => {
+        const leftWidth = left.at(-1)!.span[1] - left[0]!.span[0];
+        const rightWidth = right.at(-1)!.span[1] - right[0]!.span[0];
+        return rightWidth - leftWidth || right.length - left.length;
+      });
+    selected = candidates[0] ?? [];
+  }
   if (selected.length === 0) return { ids: [], span: null };
 
   // A selection is one phrase candidate, never an arbitrary bag of nodes.

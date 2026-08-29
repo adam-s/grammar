@@ -26,10 +26,16 @@
     isPickable,
     openingGroup,
     type LabelOption,
-    type OptionGroup,
     type Panel,
   } from './options.ts';
-  import { activeGroupAfterAnswer, menuOptionState } from './panel-presentation.ts';
+  import type { NavigationResult } from './session.ts';
+  import {
+    GROUP_NAME,
+    activeGroupAfterAnswer,
+    menuOptionState,
+    menuSections,
+    shouldPerformSelectionTest,
+  } from './panel-presentation.ts';
 
   export interface Verdict {
     kind: 'correct' | 'alternate' | 'wrong';
@@ -51,6 +57,13 @@
     /** The surrounding guide owns the camera while it is running. */
     manageCamera?: boolean;
     verdict?: Verdict | null;
+    /**
+     * The transaction's movement instruction: stay beside a refused question,
+     * advance after a correct one, close when the target is finished. The
+     * panel obeys it rather than reconstructing it from the verdict and the
+     * step, which is what let feedback and navigation drift apart.
+     */
+    navigation?: NavigationResult | null;
     /**
      * Show an option as if the pointer were on it, by option key.
      *
@@ -80,6 +93,7 @@
     placement = null,
     manageCamera = true,
     verdict = null,
+    navigation = null,
     pointerOn = null,
     interactive = true,
     onpick,
@@ -148,12 +162,7 @@
 
   $effect(() => {
     const subjectChanged = activeSubject !== panel.subject;
-    activeId = activeGroupAfterAnswer(
-      untrack(() => activeId),
-      subjectChanged,
-      panel.step,
-      verdict?.kind ?? null,
-    );
+    activeId = activeGroupAfterAnswer(subjectChanged, panel.step, navigation);
     activeSubject = panel.subject;
     pointed = null;
     // A guided phone run has no pointer to open the second pane. Put the real
@@ -177,76 +186,9 @@
     return () => cancelAnimationFrame(frame);
   });
 
-  const GROUP_NAME: Record<string, string> = {
-    'word-class': 'Word class',
-    'phrase-form': 'Phrase type',
-    'verb-type': 'Verb type',
-    function: 'Syntactic function',
-  };
-
-  type Section = { name: string; options: LabelOption[] };
-
-  /**
-   * The menu, in sections.
-   *
-   * Every group ends with whatever the named lists did not claim. A row the
-   * panel offers and the menu does not draw is a row nobody can pick, and three
-   * were being dropped in silence: `Nom` and `DP`, which the corpus uses.
-   */
-  function section(g: OptionGroup): Section[] {
-    // A plain array, not a Set: this runs inside a pure function over a list of
-    // at most twenty rows, and Svelte's reactivity rule reads any Set here as
-    // state it has to track.
-    const taken: string[] = [];
-    const take = (name: string, keys: readonly string[]) => {
-      const options = g.options.filter((o) => keys.includes(o.form ?? o.func ?? ''));
-      for (const o of options) taken.push(o.key);
-      return { name, options };
-    };
-    const rest = (named: Section[]): Section[] =>
-      [...named, { name: '', options: g.options.filter((o) => !taken.includes(o.key)) }].filter(
-        (s) => s.options.length > 0,
-      );
-
-    if (g.id === 'word-class') {
-      return rest([
-        take('Content words', ['N', 'V', 'Adj', 'Adv']),
-        take('Function words', ['Det', 'Pron', 'Aux', 'P', 'Conj', 'Subord', 'Part']),
-        take('Other', ['Num', 'Interj']),
-      ]);
-    }
-    if (g.id === 'phrase-form') {
-      return rest([
-        take('Phrases', ['NP', 'Nom', 'DP', 'VP', 'PP', 'AdjP', 'AdvP']),
-        take('Clausal forms', ['S', 'Cl']),
-      ]);
-    }
-    if (g.id === 'function') {
-      return rest([
-        take('Clause roles', [
-          'subject',
-          'predicate',
-          'directObject',
-          'indirectObject',
-          'subjectComplement',
-          'objectComplement',
-          'adverbial',
-        ]),
-        take('Inside a phrase', [
-          'head',
-          'determiner',
-          'premodifier',
-          'postmodifier',
-          'complement',
-          'coordinate',
-          'appositive',
-        ]),
-      ]);
-    }
-    return [{ name: '', options: g.options }];
-  }
-
-  const sections = $derived(active ? section(active) : []);
+  // The taxonomy sections live in `panel-presentation.ts`, tested under
+  // `node --test`; this component only draws them.
+  const sections = $derived(active ? menuSections(active) : []);
 
   function choose(o: LabelOption) {
     if (!isPickable(o)) return;
@@ -395,6 +337,12 @@
   const information = $derived.by(() => {
     if (verdict) return [verdict.text, verdict.test].filter(Boolean).join(' ');
     if (panel.blocked) return panel.blocked;
+    // Context about what this move will do wins over a label reminder. Without
+    // this, "Building inside…" existed in the panel model but the first
+    // suggestion's note hid it, so the learner could not see that the outer
+    // phrase would be preserved.
+    if (panel.prompt) return panel.prompt;
+    if (active?.role === 'deferred' || active?.role === 'settled') return active.roleReason ?? '';
     if (detail?.note) return detail.note;
     // The question is already on the line above, unless suggestions took that
     // line instead. Repeating it printed it twice, one grey copy under another.
@@ -414,7 +362,16 @@
    * One line either way. The panel is short on purpose, and showing the test
    * and the same test performed would be saying it twice.
    */
-  const performed = $derived(interactive && !verdict && !panel.blocked ? panel.singledOut : null);
+  const performed = $derived(
+    shouldPerformSelectionTest(
+      interactive,
+      verdict !== null,
+      panel.blocked !== undefined,
+      shown?.state,
+    )
+      ? panel.singledOut
+      : null,
+  );
 </script>
 
 <svelte:window onkeydown={globalKey} onpointerdown={outside} />
@@ -485,6 +442,9 @@
             <span>
               <span class="category-name">{GROUP_NAME[g.id] ?? g.question}</span>
               {#if g.answered}<span class="answer">{g.answered.label}</span>{/if}
+              {#if !g.answered && g.role === 'deferred'}
+                <span class="answer">build its group first</span>
+              {/if}
             </span>
             <ChevronRight size={13} strokeWidth={2} aria-hidden="true" />
           </button>

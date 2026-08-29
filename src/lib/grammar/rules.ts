@@ -259,7 +259,15 @@ export function licenses(fn: Func, ctx: LicenseContext): Verdict {
       return childIs('N', 'Num', 'Adj', 'Pron') ? ALLOWED : HIDDEN;
 
     case 'postmodifier':
-      if (p !== 'Nom') return HIDDEN;
+      if (p === 'NP') {
+        // A recursive noun phrase analysis: `[NP [NP the shoes] [PP on my
+        // feet]]`. The inner NP is the head; the following phrase narrows that
+        // head just as it does under the course's canonical Nom analysis.
+        const recursiveHead = siblings.some(
+          (fn, i) => fn === 'head' && ctx.siblingForms?.[i] === 'NP',
+        );
+        if (!recursiveHead) return HIDDEN;
+      } else if (p !== 'Nom') return HIDDEN;
       return childIs('PP', 'Cl', 'AdjP', 'AdvP', 'NP') ? ALLOWED : HIDDEN;
 
     case 'complement':
