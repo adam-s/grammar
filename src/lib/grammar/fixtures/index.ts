@@ -29,7 +29,19 @@ export * from './movement.ts';
 export * from './edges.ts';
 export * from './ellipsis.ts';
 
-import { vint, vtr, vbe, vlink, vg, vc, irregular, objectComplementNoun } from './verb-types.ts';
+import {
+  sentenceFrame,
+  cameraWatchedGuard,
+  guardWatchedCamera,
+  vint,
+  vtr,
+  vbe,
+  vlink,
+  vg,
+  vc,
+  irregular,
+  objectComplementNoun,
+} from './verb-types.ts';
 import { ambiguous } from './ambiguity.ts';
 import {
   gardenPath,
@@ -94,6 +106,9 @@ import { vpEllipsis, gapping, sluicing, stripping } from './ellipsis.ts';
 
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
+  sentenceFrame,
+  cameraWatchedGuard,
+  guardWatchedCamera,
   vint,
   vtr,
   vbe,

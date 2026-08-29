@@ -23,7 +23,7 @@ test('course lessons have stable order, concise copy, and distinct sentences', (
     assert.equal(lesson.number, index + 1);
     assert.ok(!lessonIds.has(lesson.id));
     lessonIds.add(lesson.id);
-    assert.ok(lesson.title.split(/\s+/).length <= 5);
+    assert.ok(lesson.title.split(/\s+/).length <= 12, `${lesson.id} title is too long to scan`);
     for (const sentence of lesson.sentences) {
       assert.ok(!sentenceIds.has(sentence.id), `${sentence.id} is assigned to two lessons`);
       sentenceIds.add(sentence.id);

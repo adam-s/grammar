@@ -64,17 +64,19 @@
   text {
     fill: var(--hue);
     font-family: var(--font-mono);
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .form {
     font-size: 13px;
+    letter-spacing: -0.02em;
     text-anchor: middle;
   }
 
   .qualifier {
     font-size: 7.5px;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.015em;
+    opacity: 0.86;
   }
 
   /* Function and subtype marks arrive on an existing node. Fade only the new

@@ -1,6 +1,81 @@
 import { build, n, pt, w } from '../build.ts';
 import { sentence } from '../entry.ts';
 
+/* ------------------------------------------------- Sentence frame — The rain stopped. */
+
+export const sentenceFrame = sentence(
+  'fix-sentence-frame',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'rain')]),
+          n('VP', 'predicate', [w('V', 'head', 'stopped', { lemma: 'stop', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The rain came to an end.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------------------------ Switched roles — The camera watched the guard. */
+
+export const cameraWatchedGuard = sentence(
+  'fix-camera-watched-guard',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'camera')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'watched', { lemma: 'watch', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'guard')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The camera recorded what the guard did.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------------------------ Switched roles — The guard watched the camera. */
+
+export const guardWatchedCamera = sentence(
+  'fix-guard-watched-camera',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'guard')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'watched', { lemma: 'watch', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('Det', 'determiner', 'the'), w('N', 'head', 'camera')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The guard kept an eye on the camera.' },
+    ),
+  ],
+  'r1',
+);
+
 /* -------------------------------------------------- Vint — The engine stalled. */
 
 export const vint = sentence(

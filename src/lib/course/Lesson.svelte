@@ -7,12 +7,15 @@
    * `lesson-content.ts`, and its diagram is drawn by `Diagram.svelte`.
    */
   import ArrowRight from '@lucide/svelte/icons/arrow-right';
+  import { diagramSize } from '../grammar/Diagram.svelte';
   import { FIXTURES } from '../grammar/fixtures.ts';
   import { canonicalReading } from '../grammar/types.ts';
   import InlineText from './InlineText.svelte';
   import LessonHero from './LessonHero.svelte';
-  import SentenceGraph from './SentenceGraph.svelte';
+  import StaticFigure from './StaticFigure.svelte';
+  import { sharedFrameWidth } from './figure-scale.ts';
   import { COURSE_LESSONS } from './course.ts';
+  import { replaySentence } from './sentence-renderer.ts';
   import { scopeThrough, targetReading } from './scope.ts';
   import type { LessonDoc } from './lesson-content.ts';
   import type { CourseLesson } from './types.ts';
@@ -37,13 +40,22 @@
       ? undefined
       : targetReading(canonicalReading(sentenceById(id)), scopeThrough(COURSE_LESSONS, through));
   const number = $derived(String(lesson.number).padStart(2, '0'));
+
+  /** How wide this sentence's finished diagram is, for sharing a scale. */
+  const figureWidth = (id: string, through: number | undefined): number => {
+    const sentence = sentenceById(id);
+    const build = replaySentence(sentence, readingFor(id, through)).final;
+    return diagramSize(build.constituents, sentence.words).w;
+  };
 </script>
 
 <article class="lesson">
   <header class="opening">
     <p class="eyebrow">{number} · {lesson.stage}</p>
     <h1>{lesson.title}</h1>
-    <p class="lede"><InlineText text={doc.lede} /></p>
+    {#if doc.lede}
+      <p class="lede"><InlineText text={doc.lede} /></p>
+    {/if}
   </header>
 
   {#each doc.blocks as block, i (i)}
@@ -56,6 +68,8 @@
       </header>
     {:else if block.kind === 'prose'}
       <p class="prose"><InlineText text={block.text} /></p>
+    {:else if block.kind === 'bridge'}
+      <p class="bridge"><InlineText text={block.text} /></p>
     {:else if block.kind === 'sentence'}
       <p class="subject"><InlineText text={block.text} /></p>
     {:else if block.kind === 'readings'}
@@ -67,21 +81,29 @@
       </div>
     {:else if block.kind === 'diagram'}
       <figure class="figure">
-        <SentenceGraph
+        <StaticFigure
           sentence={sentenceById(block.sentenceId)}
           reading={readingFor(block.sentenceId, block.through)}
         />
-        <figcaption><InlineText text={block.caption} /></figcaption>
+        {#if block.caption}
+          <figcaption><InlineText text={block.caption} /></figcaption>
+        {/if}
       </figure>
     {:else if block.kind === 'contrast'}
       <figure class="contrast">
         <figcaption class="question"><InlineText text={block.question} /></figcaption>
+        <!-- Both sides are drawn into the wider of the two boxes, so the
+             shapes the reader is asked to compare share a scale. -->
         <div class="pair">
           {#each [block.left, block.right] as side (side.sentenceId)}
+            {@const shared = sharedFrameWidth(
+              [block.left, block.right].map((s) => figureWidth(s.sentenceId, block.through)),
+            )}
             <div class="side">
-              <SentenceGraph
+              <StaticFigure
                 sentence={sentenceById(side.sentenceId)}
                 reading={readingFor(side.sentenceId, block.through)}
+                frameWidth={shared}
               />
               <p class="side-caption"><InlineText text={side.caption} /></p>
             </div>
@@ -207,6 +229,19 @@
     line-height: 1.7;
   }
 
+  .bridge {
+    margin: clamp(30px, 5vh, 48px) 0;
+    color: var(--ink-muted);
+    font-size: 17px;
+    font-style: italic;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .bridge + .figure {
+    margin-top: 0;
+  }
+
   /* The object of study. Set apart, because a sentence being analysed is never
      something the reader should skim as prose. */
   .subject {
@@ -270,20 +305,20 @@
 
     max-width: var(--figure);
     margin: clamp(30px, 5vh, 46px) 0 0;
-    padding: 8px 0 0;
+    padding: 10px 0 0;
     border-radius: var(--radius-lg);
-    background: var(--artboard);
-    border: 1px solid var(--border);
+    background: transparent;
+    border: 0;
   }
 
   figcaption {
-    margin: 0;
-    padding: 12px 20px 16px;
-    border-top: 1px solid var(--border);
+    margin: 0 8px;
+    padding: 4px 0 18px;
     color: var(--ink-muted);
-    font-family: var(--font-sans);
-    font-size: 12px;
-    line-height: 1.5;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.55;
   }
 
   /* ------------------------------------------------------------- contrast */
@@ -296,20 +331,20 @@
 
     max-width: var(--figure);
     margin: clamp(30px, 5vh, 46px) 0 0;
-    border: 1px solid var(--border);
+    border: 0;
     border-radius: var(--radius-lg);
-    background: var(--artboard);
+    background: transparent;
   }
 
   .question {
-    margin: 0;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
+    margin: 0 22px;
+    padding: 20px 0 8px;
     color: var(--ink);
-    font-family: var(--font-sans);
-    font-size: 13px;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-style: normal;
     font-weight: 600;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
   /* Stacked, not side by side. Two 55rem columns put the fit at 59%, under the
@@ -323,16 +358,50 @@
 
   .side + .side {
     border-top: 1px solid var(--border);
+    padding-top: 8px;
   }
 
   .side-caption {
-    margin: 0;
-    padding: 12px 18px 16px;
-    border-top: 1px solid var(--border);
+    margin: 0 22px;
+    padding: 2px 0 18px;
     color: var(--ink-muted);
-    font-family: var(--font-sans);
-    font-size: 12px;
-    line-height: 1.5;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    .figure,
+    .contrast {
+      margin-top: 26px;
+    }
+
+    /* Once the frame disappears, its old inset has no edge to relate to.
+       Align questions and captions with the reading column on a phone; the
+       SVG keeps its own breathing room around the drawing. */
+    .question,
+    .side-caption,
+    .figure figcaption {
+      margin-inline: 0;
+    }
+
+    .question {
+      padding-top: 16px;
+      font-size: 16px;
+    }
+
+    .side + .side {
+      padding-top: 6px;
+    }
+
+    .side-caption {
+      padding-bottom: 16px;
+    }
+
+    .bridge {
+      margin-block: 26px;
+    }
   }
 
   /* ------------------------------------------------------------ procedure */

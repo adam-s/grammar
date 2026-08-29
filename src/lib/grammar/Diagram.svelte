@@ -190,6 +190,22 @@
     minDepth?: number;
     /** Read-only renderers use this same diagram without editor controls. */
     interactive?: boolean;
+    /**
+     * Let the SVG size itself from its own viewBox instead of fixed pixels.
+     *
+     * The drawing is already resolution-independent — a viewBox and vector
+     * geometry. A static figure that says so gets scaling and centring from the
+     * browser, and needs no measured camera to supply either.
+     */
+    fluid?: boolean;
+    /**
+     * Draw into a wider box than this sentence needs, centred.
+     *
+     * Two figures meant to be compared have to share a scale. Sizing each to its
+     * own content renders a longer sentence smaller, and the reader compares two
+     * shapes that were never drawn at the same size.
+     */
+    frameWidth?: number;
     onpick?: (sel: Selection) => void;
     ondraft?: (span: Span | null, done: boolean) => void;
   };
@@ -202,6 +218,8 @@
     preview = null,
     minDepth = 0,
     interactive = true,
+    fluid = false,
+    frameWidth = 0,
     onpick = () => {},
     ondraft = () => {},
   }: Props = $props();
@@ -216,6 +234,17 @@
   const wordY = $derived(L.height + WORD_GAP);
 
   const size = $derived(diagramSize(constituents, words, minDepth));
+  /**
+   * The box the SVG actually declares, and how far in to draw.
+   *
+   * `frameWidth` widens it so a pair of figures can share one scale; the extra
+   * room is split evenly, which keeps each sentence centred in the box it
+   * shares rather than pinned to one side of it.
+   */
+  const frame = $derived.by(() => {
+    const w = Math.max(size.w, frameWidth);
+    return { w, h: size.h, inset: (w - size.w) / 2 };
+  });
   /**
    * The arcs, placed from the same layout the tree uses. A node with no box —
    * one the layout could not place — drops its whole arc rather than half of it.
@@ -307,13 +336,15 @@
 <svg
   class="diagram"
   class:readonly={!interactive}
-  width={size.w}
-  height={size.h}
-  viewBox="0 0 {size.w} {size.h}"
+  class:fluid
+  width={fluid ? undefined : size.w}
+  height={fluid ? undefined : size.h}
+  viewBox="0 0 {frame.w} {frame.h}"
+  preserveAspectRatio="xMidYMid meet"
   role="group"
   aria-label="Sentence structure"
 >
-  <g transform="translate({PAD},{PAD})">
+  <g transform="translate({PAD + frame.inset},{PAD})">
     <!-- What picking the hovered label would produce. The contextual palette
          protects the word row, so this preview and its source stay visible. -->
     {#if previewBox}
@@ -507,6 +538,12 @@
 </svg>
 
 <style>
+  .diagram.fluid {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: var(--graph-h, none);
+  }
   .diagram {
     display: block;
     overflow: visible;
@@ -531,7 +568,8 @@
 
   .edge {
     stroke: var(--border-strong);
-    stroke-width: 1.25;
+    stroke-width: 0.9;
+    opacity: 0.72;
   }
 
   /* A guided run adds one claim at a time. Let the new ink settle into place
@@ -548,8 +586,10 @@
   }
 
   .node .bracket {
-    stroke: var(--hue);
-    stroke-width: 2;
+    /* Colour identifies the form; the line only has to show its reach. A
+       saturated two-pixel rule made every phrase compete with the words. */
+    stroke: color-mix(in oklab, var(--hue) 72%, var(--border-strong));
+    stroke-width: 1.25;
     stroke-linecap: round;
   }
   .node .hit {
@@ -601,6 +641,27 @@
 
   .word text {
     font-size: 17px;
+  }
+
+  /* Finished lesson figures read like editorial graphics, not frozen editor
+     canvases. Keep the notation technical, but let the sentence itself carry
+     the typographic weight and quiet the construction lines behind it. */
+  .diagram.readonly .edge {
+    stroke-width: 0.75;
+    opacity: 0.58;
+  }
+  .diagram.readonly .node .bracket {
+    stroke: color-mix(in oklab, var(--hue) 58%, var(--border-strong));
+    stroke-width: 0.9;
+  }
+  .diagram.readonly .word text {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 450;
+    letter-spacing: -0.01em;
+  }
+  .diagram.readonly :global(.node-label text) {
+    opacity: 0.9;
   }
   .word:hover .mark {
     fill: color-mix(in oklab, var(--ink) 8%, transparent);

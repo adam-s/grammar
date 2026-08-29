@@ -75,7 +75,7 @@ export const COURSE_STAGES: CourseStage[] = [
         id: '02-sentence-frame',
         number: 2,
         stage: 'Frame',
-        title: 'A sentence has two parts',
+        title: 'A subject and predicate give a sentence its basic shape',
         teaches: [],
         sentences: LESSON_02,
       },

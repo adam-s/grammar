@@ -20,6 +20,8 @@ export type LessonBlock =
   /** Prose. One paragraph, doing one of: pose the question, state the test,
       say what changed and why it matters. */
   | { kind: 'prose'; text: string }
+  /** A short hinge between two examples that must be read together. */
+  | { kind: 'bridge'; text: string }
   /** The object of study, set apart so it is never mistaken for prose. */
   | { kind: 'sentence'; text: string }
   /** Two readings of one word string, bracketed. The reading is the point, so
@@ -29,7 +31,7 @@ export type LessonBlock =
       fixture id: the lesson points at sentence truth instead of copying it.
       `through` prunes the tree to what the course has taught by that lesson, so
       a page never shows a label its reader has not met. */
-  | { kind: 'diagram'; sentenceId: string; caption: string; through?: number }
+  | { kind: 'diagram'; sentenceId: string; caption?: string; through?: number }
   /** Two diagrams side by side, holding the words still while the analysis
       changes. The question is the point; the captions say what to notice. */
   | {
@@ -57,9 +59,7 @@ export type LessonBlock =
 
 export type LessonDoc = {
   id: string;
-  /** One sentence, 18 words, ordinary language. Stated as the lede so the
-      definitional move happens before the first example without costing the
-      first viewport its sentence. */
+  /** An optional opening line, set apart from the body. */
   lede: string;
   blocks: LessonBlock[];
 };
@@ -193,125 +193,24 @@ const INTRODUCTION: LessonDoc = {
 
 const SENTENCE_FRAME: LessonDoc = {
   id: '02-sentence-frame',
-  lede: 'Every sentence splits in two. The work is knowing where the split falls.',
+  lede: '',
   blocks: [
     {
       kind: 'prose',
-      text:
-        'The two parts are the **subject** and the **predicate**. In _The rain ' +
-        'stopped_, the subject is _the rain_ and the predicate is _stopped_. ' +
-        'Every sentence has both, and the cut between them falls in one place.',
+      text: 'The **subject** names what the sentence is about. The **predicate** says something about it.',
     },
-    {
-      kind: 'diagram',
-      sentenceId: 'fix-subject-phrase',
-      through: 2,
-      caption:
-        'The subject runs from _The_ to _tunnel_. Everything after it is the predicate: here, one word.',
-    },
+    { kind: 'diagram', sentenceId: 'fix-sentence-frame', through: 2 },
     {
       kind: 'prose',
-      text:
-        'That is easy to state and hard to place, because a subject can be one ' +
-        'word or five. Above, it is five, and the noun nearest the verb is not ' +
-        'what waited.',
+      text: 'Switch the same words around, and the meaning changes completely.',
     },
-
-    { kind: 'section', eyebrow: 'the question', title: 'Where does the subject end?' },
+    { kind: 'diagram', sentenceId: 'fix-camera-watched-guard', through: 2 },
+    { kind: 'bridge', text: '— and the other —' },
+    { kind: 'diagram', sentenceId: 'fix-guard-watched-camera', through: 2 },
     {
       kind: 'prose',
-      text:
-        'Lesson 1 asked where a sentence splits. This asks something harder: ' +
-        'which words the subject takes with it. Move one phrase across that ' +
-        'line and the sentence stops meaning the same thing.',
+      text: 'This pattern helps words form a complete claim instead of a loose list. But it is only one common sentence pattern, not the whole story: commands, questions, fragments, and sentences with several clauses can work differently.',
     },
-    {
-      kind: 'contrast',
-      question: 'Same six words. Why are these not the same sentence?',
-      through: 2,
-      left: {
-        sentenceId: 'fix-subject-phrase',
-        caption: '_in the tunnel_ is inside the subject: it says **which workers**.',
-      },
-      right: {
-        sentenceId: 'fix-subject-phrase-moved',
-        caption: '_in the tunnel_ is in the predicate: it says **where they waited**.',
-      },
-    },
-
-    { kind: 'section', eyebrow: 'the test', title: 'Run this on a new sentence' },
-    {
-      kind: 'procedure',
-      title: 'Replace the whole run.',
-      steps: [
-        'Take the words you think are the subject.',
-        'Swap all of them for _it_ or _they_.',
-        'If the sentence still works, you had the subject: _They waited_.',
-        'If it does not, you cut in the wrong place: _*The workers in them waited_.',
-      ],
-      limit:
-        'This finds where the subject ends. It does not tell you which word inside it the phrase is named after — that question is lesson 5.',
-    },
-
-    { kind: 'section', eyebrow: 'the confusion', title: 'The noun in front of the verb' },
-    {
-      kind: 'prose',
-      text:
-        'A short subject makes a shortcut look reliable: take the noun just ' +
-        'before the verb. It survives every two-word subject and then fails on ' +
-        'the first long one.',
-    },
-    { kind: 'sentence', text: 'The key to the cabinets is missing.' },
-    {
-      kind: 'prose',
-      text:
-        '_cabinets_ sits right in front of the verb and is plural. The verb is ' +
-        '_is_, because what is missing is the key. **Agreement points at the ' +
-        'subject**, and it points past the nearest noun to do it.',
-    },
-    {
-      kind: 'prose',
-      text:
-        'You may also meet a rule that says the subject is what the sentence is ' +
-        'about. Both names come from logic, not from English: _subject_ is what ' +
-        'lies under discussion and _predicate_ is what is said of it. That is ' +
-        'why the rule breaks on _It rained_, where the subject is _it_ and the ' +
-        'sentence is about no such thing.',
-    },
-
-    { kind: 'section', eyebrow: 'more', title: 'Subjects of three sizes' },
-    {
-      kind: 'prose',
-      text:
-        'The cut is in the same place in all three: after everything the ' +
-        'sentence is saying something about. What changes is how much work it ' +
-        'takes to find it.',
-    },
-    {
-      kind: 'readings',
-      rows: [
-        { bracketed: '[The rain] stopped.', means: 'two words, and no way to cut it wrong' },
-        {
-          bracketed: '[The workers in the tunnel] waited.',
-          means:
-            'five words: a phrase inside the subject, and the last noun is not the one that waited',
-        },
-        {
-          bracketed: '[The key to the cabinets] is missing.',
-          means: 'five words, and the verb agrees past the nearest noun to reach _key_',
-        },
-      ],
-    },
-
-    { kind: 'section', eyebrow: 'connections', title: 'Where this goes' },
-    {
-      kind: 'prose',
-      text:
-        'Lesson 1 asked where a sentence splits. This page fixes the edge of the ' +
-        'subject. Lesson 5 opens the subject up and asks which single word the ' +
-        'phrase is named after: _workers_, not _tunnel_.',
-    },
-    { kind: 'start', sentenceId: 'fix-subject-phrase', text: 'Find where the subject ends.' },
   ],
 };
 
