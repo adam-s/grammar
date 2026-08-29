@@ -67,13 +67,20 @@ import {
 import {
   isPanelComplete,
   isPickable,
+  makeGroupsOptional,
   optionsFor,
   type ChapterScope,
   type LabelOption,
   type Selection,
 } from './options.ts';
 import { LONG } from './rules.ts';
-import type { SentenceEntry, Word } from './types.ts';
+import {
+  CLAUSE_FUNCTIONS,
+  isPhraseForm,
+  type Form,
+  type SentenceEntry,
+  type Word,
+} from './types.ts';
 
 /** What the learner is told after a decision. */
 export interface Verdict {
@@ -130,6 +137,108 @@ const spanKey = (span: Span | null): string => (span ? `${span[0]}-${span[1]}` :
  */
 export const targetKey = (build: BuildState, selection: Selection): string =>
   selection.kind === 'node' ? `#${selection.id}` : spanKey(targetSpan(build, selection));
+
+/** Does any accepted reading contain a node with the given visible identity? */
+function readingHas(
+  sentence: SentenceEntry,
+  span: Span,
+  test: (form: string, fn: string | null) => boolean,
+): boolean {
+  return sentence.readings.some((reading) =>
+    Object.values(reading.constituents).some(
+      (c) => c.span[0] === span[0] && c.span[1] === span[1] && test(c.form, c.function),
+    ),
+  );
+}
+
+/**
+ * The palette after facts already fixed by the sentence have been inferred.
+ *
+ * A bare word such as *visitors* cannot be a one-word phrase in *Our visitors*;
+ * every accepted reading groups it with *Our*. Likewise, *the stove* has no
+ * clause role in *on the stove*: its job appears only after the prepositional
+ * phrase is built. Neither fact is a choice for the learner, so neither should
+ * become a "No" button. The stored analyses let the program move past both.
+ *
+ * This only removes questions with no possible correct answer. If any accepted
+ * reading leaves a real choice, the question stays with the learner.
+ */
+export function sessionPanel(
+  build: BuildState,
+  words: Word[],
+  selection: Selection,
+  sentence: SentenceEntry,
+  scope?: ChapterScope,
+) {
+  const panel = optionsFor(build, words, selection, scope);
+  if (selection.kind !== 'node') return panel;
+  const node = build.constituents[selection.id];
+  if (!node) return panel;
+
+  const settled: string[] = [];
+  if (
+    node.word !== undefined &&
+    !readingHas(sentence, node.span, (form) => isPhraseForm(form as Form))
+  ) {
+    settled.push('phrase-form');
+  }
+  if (
+    node.parent === null &&
+    !readingHas(
+      sentence,
+      node.span,
+      (form, fn) =>
+        form === node.form && fn !== null && (CLAUSE_FUNCTIONS as readonly string[]).includes(fn),
+    )
+  ) {
+    settled.push('function');
+  }
+  return makeGroupsOptional(panel, settled);
+}
+
+/**
+ * Apply answers that the grammar has reduced to one legal move.
+ *
+ * Count against the unrestricted palette, not the current lesson's scope. A
+ * lesson may have taught only one label so far, but that does not make every
+ * other grammatical possibility disappear. Only a single legal move in the
+ * full builder is an inference rather than a learner choice.
+ */
+function advanceForced(
+  session: Session,
+  sentence: SentenceEntry,
+  words: Word[],
+  scope?: ChapterScope,
+): Session {
+  let current = session;
+
+  for (let guard = 0; guard < 20; guard += 1) {
+    const scoped = sessionPanel(current.build, words, current.selection, sentence, scope);
+    if (isPanelComplete(scoped)) {
+      return { ...current, verdict: null, selection: { kind: 'none' } };
+    }
+
+    const full = sessionPanel(current.build, words, current.selection, sentence);
+    const group = full.groups.find((g) => g.id === scoped.step);
+    const candidates = group?.options.filter(
+      (option) => isPickable(option) && option.state !== 'chosen',
+    );
+    if (!group || group.optional || candidates?.length !== 1) return current;
+
+    const forced = ask(current, sentence, words, candidates[0]!);
+    if (!forced || forced.outcome.kind === 'wrong') return current;
+
+    const build = forced.apply(current.build);
+    let selection = current.selection;
+    if (forced.reselect) {
+      const id = nodeOver(build, forced.reselect);
+      if (id) selection = { kind: 'node', id };
+    }
+    current = { ...current, build, selection };
+  }
+
+  return current;
+}
 
 /**
  * One question, asked and answered.
@@ -401,13 +510,18 @@ export function answer(
     const id = nodeOver(build, decision.reselect);
     if (id) selection = { kind: 'node', id };
   }
-  // Close a settled question, but keep the palette open for a real follow-up.
-  const done = isPanelComplete(optionsFor(build, words, selection, scope));
-  return {
-    ...session,
-    build,
-    misses,
-    verdict: done ? null : verdict,
-    selection: done ? { kind: 'none' } : selection,
-  };
+  // Close settled questions, and apply any next step the grammar has reduced
+  // to one legal move. A real choice leaves the palette open.
+  return advanceForced(
+    {
+      ...session,
+      build,
+      misses,
+      verdict,
+      selection,
+    },
+    sentence,
+    words,
+    scope,
+  );
 }

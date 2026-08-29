@@ -223,22 +223,36 @@ export function layout(cs: ConstituentMap, words: Word[], opts: LayoutOpts = {})
       return box;
     }
 
-    // Tidy rule: centre over the FIRST and LAST child's centres, not over the
-    // subtree extent — a node with one wide and one narrow child should sit
-    // between its children, not over their bounding box.
-    const first = kids[0]!;
-    const last = kids[kids.length - 1]!;
+    // A node reaches as far as the words it claims, not as far as the children
+    // it happens to have. Mid-build those differ: grouping "Our visitors" into
+    // an NP before naming "visitors" leaves the NP one child wide, and drawing
+    // it over that child alone showed an NP covering "Our" — the very reading
+    // the grader rejects. The children stay in the min/max because a gap sits
+    // between word slots and would otherwise fall outside its own parent.
+    const lo = slots[c.span[0]];
+    const hi = slots[c.span[1]];
+    const kidsLeft = Math.min(...kids.map((k) => k.left));
+    const kidsRight = Math.max(...kids.map((k) => k.right));
+    const left = lo ? Math.min(kidsLeft, lo.left) : kidsLeft;
+    const right = hi ? Math.max(kidsRight, hi.right) : kidsRight;
+
+    // Tidy rule: centre over the FIRST and LAST thing it covers, not over the
+    // bounding box — a node with one wide and one narrow child should sit
+    // between them. That thing is a child wherever there is one, and the bare
+    // word where the learner has not named it yet, so an unnamed word pulls the
+    // label towards it instead of leaving it pinned over its only named child.
+    const first = lo && lo.left < kidsLeft ? lo : kids[0]!;
+    const last = hi && hi.right > kidsRight ? hi : kids[kids.length - 1]!;
     const box: NodeBox = {
       id,
       x: (first.x + last.x) / 2,
       y: depth * rowHeight,
       depth,
-      left: Math.min(...kids.map((k) => k.left)),
-      right: Math.max(...kids.map((k) => k.right)),
-      width: 0,
+      left,
+      right,
+      width: right - left,
       isLeaf: false,
     };
-    box.width = box.right - box.left;
     nodes[id] = box;
     return box;
   };

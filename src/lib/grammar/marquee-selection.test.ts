@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { wrap } from './builder.ts';
-import { FIXTURES } from './fixtures.ts';
+import { emptyBuild, nodeOver, wrap } from './builder.ts';
+import { FIXTURES, punctuation, subjectPhrase } from './fixtures.ts';
 import { layout } from './layout.ts';
 import { nodesInMarquee } from './marquee-selection.ts';
+import { isPickable, optionsFor, type Selection } from './options.ts';
 import { DIAGRAM_PAD, DIAGRAM_ROW, DIAGRAM_WORD_GAP } from './selection-focus.ts';
+import { contentSpan } from './types.ts';
 
 const sentence = FIXTURES.find((entry) => entry.id === 'fix-vtr')!;
 const words = sentence.words;
@@ -22,8 +24,8 @@ function builtFrontier() {
   return state;
 }
 
-function around(state: ReturnType<typeof builtFrontier>, ids: string[]) {
-  const boxes = layout(state.constituents, words, { rowHeight: DIAGRAM_ROW }).nodes;
+function around(state: ReturnType<typeof builtFrontier>, ids: string[], selectedWords = words) {
+  const boxes = layout(state.constituents, selectedWords, { rowHeight: DIAGRAM_ROW }).nodes;
   const points = ids.map((id) => ({
     x: DIAGRAM_PAD + boxes[id]!.x,
     y: DIAGRAM_PAD + boxes[id]!.y + 11,
@@ -35,8 +37,12 @@ function around(state: ReturnType<typeof builtFrontier>, ids: string[]) {
   return { x: left, y: top, w: right - left, h: bottom - top };
 }
 
-function aroundWords(state: ReturnType<typeof builtFrontier>, indexes: number[]) {
-  const result = layout(state.constituents, words, { rowHeight: DIAGRAM_ROW });
+function aroundWords(
+  state: ReturnType<typeof builtFrontier>,
+  indexes: number[],
+  selectedWords = words,
+) {
+  const result = layout(state.constituents, selectedWords, { rowHeight: DIAGRAM_ROW });
   const points = indexes.map((index) => ({
     x: DIAGRAM_PAD + result.words[index]!.x,
     y: DIAGRAM_PAD + result.height + DIAGRAM_WORD_GAP,
@@ -66,6 +72,21 @@ test('boxing one bare word behaves like selecting that word', () => {
     ids: [],
     span: [2, 2],
   });
+});
+
+test('boxing through a closing period selects the phrase before it', () => {
+  const state = { constituents: {}, seq: 0, verbType: null } as ReturnType<
+    typeof import('./builder.ts').emptyBuild
+  >;
+  const last = punctuation.words.length - 1;
+  assert.deepEqual(
+    nodesInMarquee(
+      state.constituents,
+      punctuation.words,
+      aroundWords(state, [last - 2, last - 1, last], punctuation.words),
+    ),
+    { ids: [], span: [last - 2, last - 1] },
+  );
 });
 
 test('an existing frontier node wins over its underlying word', () => {
@@ -98,6 +119,38 @@ test('a box can combine an existing node with adjacent bare words', () => {
     }),
     { ids: [pronoun], span: [0, 1] },
   );
+});
+
+test('word and node paths offer the same phrase over the same words', () => {
+  const selectedWords = subjectPhrase.words; // The workers in the tunnel waited.
+  let state = emptyBuild();
+  state = wrap(state, selectedWords, [2, 2], 'P');
+  state = wrap(state, selectedWords, [3, 3], 'Det');
+  state = wrap(state, selectedWords, [4, 4], 'N');
+  state = wrap(state, selectedWords, [3, 4], 'NP');
+
+  const preposition = nodeOver(state, [2, 2])!;
+  const nounPhrase = nodeOver(state, [3, 4])!;
+  const nodeHit = nodesInMarquee(
+    state.constituents,
+    selectedWords,
+    around(state, [preposition, nounPhrase], selectedWords),
+  );
+  const wordSpan = contentSpan(selectedWords, [2, 4]);
+
+  assert.deepEqual(nodeHit, { ids: [preposition, nounPhrase], span: [2, 4] });
+  assert.deepEqual(wordSpan, [2, 4]);
+
+  const selections: Selection[] = [
+    { kind: 'span', span: wordSpan! },
+    { kind: 'nodes', ids: nodeHit.ids, span: nodeHit.span! },
+  ];
+  for (const selection of selections) {
+    const pp = optionsFor(state, selectedWords, selection)
+      .groups.flatMap((group) => group.options)
+      .find((option) => option.key === 'form:PP');
+    assert.ok(pp && isPickable(pp), `${selection.kind} must allow a prepositional phrase`);
+  }
 });
 
 test('boxing a verb and an adjacent NP produces one phrase span', () => {

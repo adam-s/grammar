@@ -295,18 +295,52 @@ describe('the verb type is a third question, asked alongside', () => {
 });
 
 describe('the shortlist is what the keyboard reaches', () => {
-  it('numbers suggestions only, from one, in visual order', () => {
+  it('numbers suggestions only, from one, in evidence order', () => {
     const p = optionsFor(emptyBuild(), W, { kind: 'span', span: [2, 2] });
     const keyed = p.groups.flatMap((g) => g.options).filter((o) => o.hotkey);
     assert.ok(keyed.length > 0);
-    assert.deepEqual(
-      keyed.map((o) => o.hotkey),
-      keyed.map((_, i) => String(i + 1)),
-    );
     assert.ok(keyed.every((o) => o.state === 'suggested'));
     assert.equal(p.suggested, keyed.length);
     assert.equal(byHotkey(p, '1')!.state, 'suggested');
     assert.equal(byHotkey(p, '9'), null);
+  });
+
+  it('keeps a possessive determiner ahead of a suffix guess', () => {
+    const lesson = COURSE_LESSONS.find((l) => l.id === '02-sentence-frame')!;
+    const sentence = lesson.sentences.find((s) => s.id === 'c02-d')!;
+    const p = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [3, 3] });
+
+    assert.equal(byHotkey(p, '1')?.form, 'Det');
+    assert.equal(byHotkey(p, '2')?.form, 'Adj');
+  });
+
+  it('trusts a noun node over the verb-like ending of “shoes”', () => {
+    const lesson = COURSE_LESSONS.find((l) => l.id === '02-sentence-frame')!;
+    const sentence = lesson.sentences.find((s) => s.id === 'c02-d')!;
+    let state = emptyBuild();
+    state = wrap(state, sentence.words, [0, 0], 'Det');
+    state = wrap(state, sentence.words, [1, 1], 'N');
+    state = wrap(state, sentence.words, [2, 4], 'PP');
+    const p = optionsFor(state, sentence.words, { kind: 'span', span: [1, 4] });
+
+    assert.equal(byHotkey(p, '1')?.form, 'Nom');
+    assert.notEqual(byHotkey(p, '2')?.form, 'VP');
+  });
+
+  it('trusts a built subject and predicate over the sentence’s first word', () => {
+    let state = emptyBuild();
+    state = wrap(state, W, [0, 0], 'Pron');
+    state = wrap(state, W, [0, 0], 'NP');
+    state = setFunction(state, nodeOver(state, [0, 0])!, 'subject');
+    state = wrap(state, W, [1, 1], 'V');
+    state = wrap(state, W, [2, 2], 'Det');
+    state = wrap(state, W, [3, 3], 'N');
+    state = wrap(state, W, [2, 3], 'NP');
+    state = wrap(state, W, [1, 3], 'VP');
+    state = setFunction(state, nodeOver(state, [1, 3])!, 'predicate');
+    const p = optionsFor(state, W, { kind: 'span', span: [0, 3] });
+
+    assert.equal(byHotkey(p, '1')?.form, 'S');
   });
 });
 
@@ -527,4 +561,45 @@ test('every lesson opens a palette a learner can act on', () => {
       }
     }
   }
+});
+
+describe('the one-word phrase question is only asked where it has an answer', () => {
+  const lesson2 = COURSE_LESSONS.find((l) => l.id === '02-sentence-frame')!;
+  const scope = scopeThrough(COURSE_LESSONS, lesson2.number);
+  const named = (form: 'Det' | 'Pron' | 'V', at: [number, number]) => {
+    const s = wrap(emptyBuild(), W, at, form);
+    return optionsFor(s, W, { kind: 'node', id: nodeOver(s, at)! }, scope);
+  };
+
+  it('does not park a determiner on a list it cannot answer', () => {
+    // The reported bug: naming "the" a determiner — correctly — advanced the
+    // palette to "Or is it a one-word phrase?", whose only reachable row was a
+    // noun phrase, which is wrong here. A determiner heads a determinative
+    // phrase and nothing else, and lesson 2 has never shown one.
+    const p = named('Det', [2, 2]);
+    assert.equal(group(p, 'phrase-form')!.optional, true, 'an offer, not a question');
+    assert.equal(p.step, 'word-class', 'the palette rests on the answer just given');
+  });
+
+  it('still asks a verb, which does head a phrase of its own', () => {
+    const p = named('V', [1, 1]);
+    assert.equal(group(p, 'phrase-form')!.optional, false);
+    assert.equal(p.step, 'phrase-form');
+  });
+
+  it('blocks a phrase the word could not head, and says what heads it', () => {
+    const p = named('Pron', [0, 0]);
+    const vp = opt(p, 'form:VP')!;
+    assert.equal(vp.state, 'blocked');
+    assert.match(vp.note ?? '', /head of a verb phrase is a verb/);
+    assert.ok(isPickable(opt(p, 'form:NP')!), 'a pronoun does head a noun phrase');
+  });
+
+  it('leaves the fused reading reachable — Most were gone', () => {
+    // *Most* has no noun to determine, so it determines and heads at once. The
+    // row has to stay takeable or `fix-fused` cannot be built at all; it just
+    // does not get to hold the palette open.
+    const p = named('Det', [2, 2]);
+    assert.ok(isPickable(opt(p, 'form:NP')!), 'fusion is rare, not forbidden');
+  });
 });

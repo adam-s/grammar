@@ -496,6 +496,22 @@ export function isPunctuation(word: Word): boolean {
   return word.upos === 'PUNCT';
 }
 
+/**
+ * The grammatical part of a visible selection.
+ *
+ * A drag may naturally run through the period after a phrase. The mark stays
+ * selected as part of the gesture, but it cannot become part of the phrase:
+ * punctuation marks the sentence rather than filling a slot in its tree.
+ * Internal punctuation remains inside the span because a clause can cross a
+ * comma; only marks at the two edges fall away.
+ */
+export function contentSpan(words: Word[], span: Span): Span | null {
+  let [lo, hi] = span;
+  while (lo <= hi && isPunctuation(words[lo]!)) lo += 1;
+  while (hi >= lo && isPunctuation(words[hi]!)) hi -= 1;
+  return lo <= hi ? [lo, hi] : null;
+}
+
 /** Does this node cover no words? A gap, and nothing else, is empty. */
 export function isEmpty(c: Constituent): boolean {
   return c.span[1] < c.span[0];

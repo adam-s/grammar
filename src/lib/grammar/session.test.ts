@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { ambiguous, vtr } from './fixtures.ts';
+import { ambiguous, subjectPhrase, vtr } from './fixtures.ts';
 import { optionsFor } from './options.ts';
-import { answer, emptySession, type Session } from './session.ts';
+import { answer, emptySession, sessionPanel, type Session } from './session.ts';
 
 const W = vtr.words; // She repaired the engine
 
@@ -117,7 +117,7 @@ describe('a reading the answer allows', () => {
       s = pick(on(s, span as [number, number]), key, ambiguous);
     }
     assert.deepEqual(s.rejected, {}, 'nothing was refused on the way');
-    assert.equal(s.verdict?.kind, 'correct');
+    assert.equal(s.verdict, null, 'the last word has no unresolved follow-up, so the panel closes');
   });
 });
 
@@ -150,7 +150,10 @@ describe('one question, one counter', () => {
     const node = Object.keys(right.build.constituents)[0]!;
 
     const onPhrase = { ...right, selection: { kind: 'node' as const, id: node } };
-    const wrongPhrase = pick(onPhrase, 'form:VP');
+    // A nominal rather than a verb phrase: both are wrong over *She*, but only
+    // this one is still offered. The palette no longer lists a phrase the word
+    // could not head, and a pronoun heads no verb phrase.
+    const wrongPhrase = pick(onPhrase, 'form:Nom');
 
     assert.equal(wrongPhrase.misses['form:word:0-0'], 1, 'the word question keeps its own miss');
     assert.equal(
@@ -164,5 +167,35 @@ describe('one question, one counter', () => {
       /noun phrase/,
       'and the answer is not given away on a first try',
     );
+  });
+});
+
+describe('facts with no choice are inferred', () => {
+  it('moves on when a word must join its neighbours', () => {
+    const after = pick(on(emptySession(), [2, 2]), 'form:Det');
+    assert.equal(after.selection.kind, 'none', '"the" needs no separate No answer');
+  });
+
+  it('still asks when a word really can stand as a phrase', () => {
+    const after = pick(on(emptySession(), [0, 0]), 'form:Pron');
+    assert.equal(after.selection.kind, 'node');
+    const panel = sessionPanel(after.build, W, after.selection, vtr);
+    assert.equal(panel.groups.find((g) => g.id === 'phrase-form')!.optional, false);
+  });
+
+  it('moves on when a phrase gets its job only from a larger phrase', () => {
+    const P = subjectPhrase;
+    let s = pick(on(emptySession(), [3, 3]), 'form:Det', P);
+    s = pick(on(s, [4, 4]), 'form:N', P);
+    s = pick(on(s, [3, 4]), 'form:NP', P);
+    assert.equal(s.selection.kind, 'none', '"the tunnel" waits for "in the tunnel"');
+  });
+
+  it('still asks for a clause role when the phrase already has one', () => {
+    let s = pick(on(emptySession(), [0, 0]), 'form:Pron');
+    s = pick(on(s, [0, 0]), 'form:NP');
+    assert.equal(s.selection.kind, 'node', 'the subject question remains real');
+    const panel = sessionPanel(s.build, W, s.selection, vtr);
+    assert.equal(panel.groups.find((g) => g.id === 'function')!.optional, undefined);
   });
 });

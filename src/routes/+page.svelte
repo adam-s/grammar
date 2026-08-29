@@ -30,18 +30,17 @@
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
   import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
-  import { answer, targetKey } from '$lib/grammar/session.ts';
+  import { answer, sessionPanel, targetKey } from '$lib/grammar/session.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
 
   import {
     blockRejectedOptions,
     isPickable,
-    optionsFor,
     type LabelOption,
     type Selection,
   } from '$lib/grammar/options.ts';
-  import { canonicalReading } from '$lib/grammar/types.ts';
+  import { canonicalReading, contentSpan } from '$lib/grammar/types.ts';
   import { READABLE_ZOOM_FLOOR } from '$lib/grammar/node-label.ts';
   import type { Form, Span } from '$lib/grammar/types.ts';
   import type { Rect } from '$lib/workspace/viewport.ts';
@@ -210,7 +209,10 @@
    * later labels never become requirements for completing an early lesson.
    */
   const choices = $derived(
-    blockRejectedOptions(optionsFor(build, words, selection), rejected[rejectionKey] ?? {}),
+    blockRejectedOptions(
+      sessionPanel(build, words, selection, sentence),
+      rejected[rejectionKey] ?? {},
+    ),
   );
 
   /**
@@ -391,16 +393,17 @@
 
   function ondraft(span: Span | null, done: boolean) {
     marqueeIds = [];
-    draft = span;
+    const grammatical = span ? contentSpan(words, span) : null;
+    draft = grammatical;
     if (!done) return;
     draft = null;
     verdict = null;
-    if (!span) return;
+    if (!grammatical) return;
     // Words that already carry a node select the NODE, so the same gesture
     // moves the learner from "what is it?" to "what does it do?" without a mode
     // change — the panel simply gains a group.
-    const id = nodeOver(build, span);
-    selection = id ? { kind: 'node', id } : { kind: 'span', span };
+    const id = nodeOver(build, grammatical);
+    selection = id ? { kind: 'node', id } : { kind: 'span', span: grammatical };
   }
 
   function onmarquee(rect: Rect | null, done: boolean) {

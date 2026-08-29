@@ -360,3 +360,61 @@ describe('a childless constituent never lands on the word row', () => {
     for (const id of res.leaves) assert.equal(res.nodes[id]!.y, res.height);
   });
 });
+
+describe('a node half taken apart still covers all its words', () => {
+  /** "the engine" grouped into an NP, with only "the" named so far. */
+  const partlyNamed = {
+    obj: {
+      form: 'NP' as const,
+      function: 'directObject' as const,
+      parent: null,
+      children: ['det'],
+      span: [2, 3] as [number, number],
+    },
+    det: {
+      form: 'Det' as const,
+      function: 'determiner' as const,
+      parent: 'obj',
+      children: [],
+      span: [2, 2] as [number, number],
+      word: 2,
+    },
+  };
+
+  it('reaches the word it claims but has not named', () => {
+    // Drawing the NP over its one child put it above "the" alone, which is the
+    // reading the grader rejects: "the" is not a noun phrase.
+    const res = layout(partlyNamed, vtr.words);
+    const np = res.nodes.obj!;
+    const engine = res.words[3]!;
+    assert.ok(
+      np.right >= engine.right,
+      'the NP stops short of "engine", so the picture claims a span the model does not',
+    );
+    assert.equal(np.left, res.words[2]!.left);
+  });
+
+  it('does not move when the missing word is named', () => {
+    const before = layout(partlyNamed, vtr.words).nodes.obj!;
+    const after = layout(
+      {
+        ...partlyNamed,
+        obj: { ...partlyNamed.obj, children: ['det', 'head'] },
+        head: {
+          form: 'N' as const,
+          function: 'head' as const,
+          parent: 'obj',
+          children: [],
+          span: [3, 3] as [number, number],
+          word: 3,
+        },
+      },
+      vtr.words,
+    ).nodes.obj!;
+    assert.deepEqual(
+      { x: before.x, left: before.left, right: before.right },
+      { x: after.x, left: after.left, right: after.right },
+      'naming a word inside a group must not shift the group',
+    );
+  });
+});

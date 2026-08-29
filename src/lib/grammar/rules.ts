@@ -474,6 +474,45 @@ export const HEAD_FORMS: Record<string, readonly Form[]> = {
   AdvP: ['Adv', 'AdvP'],
 };
 
+/**
+ * May a word of this class stand alone as a phrase of this form?
+ *
+ * `HEAD_FORMS` already says what heads what, and `auditHead` enforces it on a
+ * finished tree. The palette has to ask the same question earlier, or it offers
+ * a one-word phrase the audit would reject the moment it is built. Forms with
+ * no entry — the clauses — are not ruled on here.
+ */
+export function headed(word: Form, phrase: Form): Verdict {
+  const allowed = HEAD_FORMS[phrase];
+  if (!allowed || allowed.includes(word)) return ALLOWED;
+  // Fusion is the exception: *Most were gone* has no noun for *most* to
+  // determine, so the determiner determines and heads at once. Rare, and a
+  // second decision the learner makes deliberately — see `plainlyHeads`, which
+  // is why this path stays open without holding the palette open.
+  if (FUSIONS[phrase]?.[word]) return ALLOWED;
+  return no(`The head of ${HEAD_ARTICLE[phrase]} is ${HEAD_NAMES[phrase]}.`);
+}
+
+/**
+ * Could this word class stand alone as one of these phrases on its own merit?
+ *
+ * "On its own merit" excludes fusion, which is a second decision the learner
+ * makes deliberately rather than the ordinary reason to wrap a word. `reachable`
+ * excludes what a lesson has not taught yet: a determiner heads a determinative
+ * phrase, but a learner three lessons in has never met one, so asking them has
+ * no right answer they can give.
+ *
+ * False means the question is not a question for this word — offer the list,
+ * but do not hold the palette open waiting for a pick from it.
+ */
+export function plainlyHeads(
+  word: Form,
+  forms: readonly Form[],
+  reachable: (f: Form) => boolean = () => true,
+): boolean {
+  return forms.some((f) => (HEAD_FORMS[f] ?? []).includes(word) && reachable(f));
+}
+
 const HEAD_ARTICLE: Record<string, string> = {
   NP: 'a noun phrase',
   Nom: 'a nominal',

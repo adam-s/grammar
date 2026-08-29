@@ -1,7 +1,7 @@
 import type { Rect } from '../workspace/viewport.ts';
 import { DIAGRAM_PAD, DIAGRAM_ROW, DIAGRAM_WORD_GAP } from './selection-focus.ts';
 import { layout } from './layout.ts';
-import type { ConstituentMap, Span, Word } from './types.ts';
+import { contentSpan, isPunctuation, type ConstituentMap, type Span, type Word } from './types.ts';
 
 export interface MarqueeSelection {
   ids: string[];
@@ -52,7 +52,7 @@ export function nodesInMarquee(
   });
   const wordY = DIAGRAM_PAD + result.height + DIAGRAM_WORD_GAP;
   for (const slot of result.words) {
-    if (!covered.has(slot.i)) {
+    if (!covered.has(slot.i) && !isPunctuation(words[slot.i]!)) {
       frontier.push({
         span: [slot.i, slot.i],
         x: DIAGRAM_PAD + slot.x,
@@ -74,5 +74,8 @@ export function nodesInMarquee(
   }
 
   const ids = selected.flatMap((item) => (item.id ? [item.id] : []));
-  return { ids, span: [selected[0]!.span[0], selected[selected.length - 1]!.span[1]] };
+  return {
+    ids,
+    span: contentSpan(words, [selected[0]!.span[0], selected[selected.length - 1]!.span[1]]),
+  };
 }

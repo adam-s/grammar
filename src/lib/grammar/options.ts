@@ -39,12 +39,14 @@ import {
   gappableSlots,
   hypothesisFor,
   nodeOver,
+  rootAt,
+  roots,
   type BuildState,
   type Span,
 } from './builder.ts';
 import { verbs } from './clause.ts';
 import { CLAUSE_KINDS } from './node-variants.ts';
-import { FUSIONS, HEAD_FORMS } from './rules.ts';
+import { ALLOWED, FUSIONS, HEAD_FORMS, headed, plainlyHeads } from './rules.ts';
 import { VERB_TYPE_MENU, hasPassive } from './rules.ts';
 import { suggest } from './suggest.ts';
 import { cleft, passiveFor, performed, type Demonstration } from './transform.ts';
@@ -113,11 +115,19 @@ export function blockRejectedOptions(
         : option;
     }),
   }));
-  return {
-    ...panel,
-    groups,
-    suggested: groups.flatMap((group) => group.options).filter((option) => option.hotkey).length,
-  };
+  // Ask again which group is open. A refusal can take a group's last takeable
+  // row, and the step chosen before the refusal would then point at a question
+  // with nothing left to answer it.
+  return { ...panel, ...withStep(groups) };
+}
+
+/** Make questions already settled by the surrounding sentence non-blocking. */
+export function makeGroupsOptional(panel: Panel, ids: readonly string[]): Panel {
+  if (ids.length === 0) return panel;
+  const groups = panel.groups.map((group) =>
+    ids.includes(group.id) ? { ...group, optional: true } : group,
+  );
+  return { ...panel, ...withStep(groups) };
 }
 
 export interface LabelOption {
@@ -360,6 +370,80 @@ function formOption(f: Form, state: OptionState, note?: string): LabelOption {
   };
 }
 
+/**
+ * The phrases a single word can stand alone as. `S` is not among them: a whole
+ * sentence is never one word wide in this course.
+ */
+const ONE_WORD_PHRASES: readonly Form[] = PHRASE_FORMS.filter((f) => f !== 'S');
+
+/**
+ * Evidence supplied by labels the learner has already established.
+ *
+ * Spelling is useful before a word is named and weaker afterwards. In
+ * “shoes on my feet”, the final -s makes `shoes` look verb-like in isolation,
+ * but a visible N node settles that question. If a determiner is waiting just
+ * before the run, the noun and what follows are the nominal it points at.
+ */
+function visibleEvidence(state: BuildState, words: Word[], span: Span) {
+  const guessed = suggest(words, span);
+  if (span[0] === span[1]) return guessed;
+  const selected = roots(state)
+    .map((id) => state.constituents[id]!)
+    .filter((c) => c.span[0] >= span[0] && c.span[1] <= span[1]);
+  if (
+    selected[0]?.span[0] === span[0] &&
+    selected.at(-1)?.span[1] === span[1] &&
+    selected.some((c) => c.function === 'subject') &&
+    selected.some((c) => c.function === 'predicate')
+  ) {
+    return [
+      {
+        form: 'S' as const,
+        rank: -1,
+        evidence: 'the diagram already shows a subject followed by its predicate',
+      },
+      ...guessed.filter((s) => s.form !== 'S'),
+    ].slice(0, 3);
+  }
+  const firstId = rootAt(state, span[0]);
+  const first = firstId ? state.constituents[firstId] : null;
+  if (!first || first.span[0] !== span[0]) return guessed;
+
+  const beforeId = span[0] > 0 ? rootAt(state, span[0] - 1) : null;
+  const before = beforeId ? state.constituents[beforeId] : null;
+  if (first.form === 'N') {
+    const form: Form = before?.form === 'Det' && before.span[1] === span[0] - 1 ? 'Nom' : 'NP';
+    return [
+      {
+        form,
+        rank: -1,
+        evidence:
+          form === 'Nom'
+            ? 'what the determiner points at — replace the whole run with “ones”'
+            : 'starts with a noun — try replacing the whole run with “it” or “they”',
+      },
+      ...guessed.filter((s) => s.form !== 'VP' && s.form !== form),
+    ].slice(0, 3);
+  }
+  const known: Partial<Record<Form, Form>> = {
+    Det: 'NP',
+    Pron: 'NP',
+    P: 'PP',
+    V: 'VP',
+    Aux: 'VP',
+  };
+  const form = known[first.form];
+  if (!form) return guessed;
+  return [
+    {
+      form,
+      rank: -1,
+      evidence: `starts with the ${first.form} already labelled on the diagram`,
+    },
+    ...guessed.filter((s) => s.form !== form),
+  ].slice(0, 3);
+}
+
 /** A run of words with no node over it yet: only "what is it?" can be asked. */
 function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterScope): Panel {
   const single = span[0] === span[1];
@@ -369,7 +453,7 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
   const existing = nodeOver(state, span);
   const chosenForm = existing ? state.constituents[existing]!.form : null;
 
-  const evidence = new Map(suggest(words, span).map((s) => [s.form, s.evidence]));
+  const evidence = new Map(visibleEvidence(state, words, span).map((s) => [s.form, s]));
 
   const build = (forms: readonly Form[]): LabelOption[] =>
     forms.map((f) => {
@@ -380,7 +464,10 @@ function spanPanel(state: BuildState, words: Word[], span: Span, scope: ChapterS
       // answer, promoting a conflicting heuristic makes the current label look
       // wrong even when it has just been confirmed by the grader.
       const why = answered ? undefined : evidence.get(f);
-      return formOption(f, why ? 'suggested' : 'available', why);
+      return {
+        ...formOption(f, why ? 'suggested' : 'available', why?.evidence),
+        ...(why ? { rank: why.rank } : {}),
+      };
     });
 
   const groups: OptionGroup[] = single
@@ -434,7 +521,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
 
   const subject = quote(words, c.span);
   const isWord = c.word !== undefined;
-  const evidence = new Map(suggest(words, c.span).map((s) => [s.form, s.evidence]));
+  const evidence = new Map(suggest(words, c.span).map((s) => [s.form, s]));
 
   /**
    * Once a node is inside a group, changing what it IS would change what the
@@ -445,13 +532,21 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
   const locked = c.parent !== null;
   const UNGROUP = 'Ungroup what it is inside before changing what it is.';
 
+  /** Has the course reached this label yet? Everything, outside a lesson. */
+  const taught = (f: Form): boolean => !scope || scope.has(`form:${f}`);
+
   const build = (forms: readonly Form[], phrase: boolean): LabelOption[] =>
     forms.map((f) => {
       const answered = forms.includes(c.form);
       if (f === c.form) return formOption(f, 'chosen');
       if (locked && (phrase || !isWord)) return formOption(f, 'blocked', UNGROUP);
+      const head = isWord && phrase ? headed(c.form, f) : ALLOWED;
+      if (head.state === 'disabled') return formOption(f, 'blocked', head.reason);
       const why = answered ? undefined : evidence.get(f);
-      return formOption(f, why ? 'suggested' : 'available', why);
+      return {
+        ...formOption(f, why ? 'suggested' : 'available', why?.evidence),
+        ...(why ? { rank: why.rank } : {}),
+      };
     });
 
   const verbType: OptionGroup = {
@@ -562,6 +657,10 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
    * which is not embedded in anything and so does not have a kind.
    */
   const clauseKind: OptionGroup = {
+    // What kind of clause this is follows from the job it does — a coordinate
+    // clause has no kind at all. Until the job is set, every kind on offer may
+    // be wrong, so the group is an offer rather than a question.
+    ...(c.function === null ? { optional: true } : {}),
     id: 'clause-kind',
     question: 'What kind of clause is it?',
     notes: 'always',
@@ -713,10 +812,15 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
           id: 'phrase-form',
           question: 'Or is it a one-word phrase?',
           notes: 'ondemand',
-          options: build(
-            PHRASE_FORMS.filter((f) => f !== 'S'),
-            true,
-          ),
+          // A question where the word could head one of these phrases, and an
+          // offer where it could not. A determiner heads nothing the learner has
+          // met, so holding the palette open on it parked someone who had just
+          // answered correctly in front of a list with no right answer in it.
+          // The rows stay, because fusion is real and reachable from here.
+          optional: !plainlyHeads(c.form, ONE_WORD_PHRASES, taught),
+          // No "no" for a word already inside a phrase: the structure has
+          // answered the question, and the rows above say so with `UNGROUP`.
+          options: build(ONE_WORD_PHRASES, true),
         },
       ]
     : [
@@ -894,18 +998,28 @@ function withhold(groups: OptionGroup[], scope: ChapterScope): OptionGroup[] {
   }));
 }
 
-function finish(draft: Omit<Panel, 'step' | 'suggested'>, scope?: ChapterScope): Panel {
-  const groups: OptionGroup[] = withhold(draft.groups, scope).map((g) => ({
-    ...g,
-    answered: g.options.find((o) => o.state === 'chosen') ?? null,
-  }));
+/**
+ * Which group the palette opens on, and the number keys that go with it.
+ *
+ * Separated from `finish` because the step is not settled once. A refusal
+ * blocks the row it refused, and the group the palette was resting on can lose
+ * its last takeable answer — a learner who guessed "noun phrase" on a bare noun
+ * was then shown that question with every row greyed out. Whatever changes an
+ * option's state has to ask this again.
+ */
+function withStep(groups: OptionGroup[]): {
+  groups: OptionGroup[];
+  step: string | null;
+  suggested: number;
+} {
+  const takeable = (g: OptionGroup) => g.options.some(isPickable);
 
   // The open group is the first unanswered question. An optional group is not a
   // question — it is an offer — so it stays collapsed however long it goes
   // untaken, and the palette never opens on one.
   let step: string | null = null;
   for (const g of groups) {
-    if (!g.optional && !g.answered && g.options.some(isPickable)) {
+    if (!g.optional && !g.answered && takeable(g)) {
       step = g.id;
       break;
     }
@@ -916,27 +1030,42 @@ function finish(draft: Omit<Panel, 'step' | 'suggested'>, scope?: ChapterScope):
   // comes to rest, or every finished node would open on "is a piece missing?".
   if (!step) {
     for (let i = groups.length - 1; i >= 0; i--) {
-      if (!groups[i]!.optional && groups[i]!.options.some(isPickable)) {
+      if (!groups[i]!.optional && takeable(groups[i]!)) {
         step = groups[i]!.id;
         break;
       }
     }
   }
-  step ??= groups[0]?.id ?? null;
+  // Nothing anywhere can be taken. Resting on the first group would open the
+  // palette on a wall of greyed-out rows, which says "answer this" about a
+  // question that has no answer left to give.
+  step ??= groups.some(takeable) ? (groups[0]?.id ?? null) : null;
 
-  let n = 0;
+  const ranked = (step ? groups.find((g) => g.id === step)?.options : [])
+    ?.filter((o) => o.state === 'suggested')
+    .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
+    .slice(0, 9);
+  const hotkeys = new Map(ranked?.map((o, i) => [o.key, String(i + 1)]) ?? []);
+  const n = hotkeys.size;
   const keyed = groups.map((g) =>
     g.id !== step
       ? g
       : {
           ...g,
           options: g.options.map((o) =>
-            o.state === 'suggested' && n < 9 ? { ...o, hotkey: String(++n) } : o,
+            hotkeys.has(o.key) ? { ...o, hotkey: hotkeys.get(o.key) } : o,
           ),
         },
   );
+  return { groups: keyed, step, suggested: n };
+}
 
-  return { ...draft, groups: keyed, step, suggested: n };
+function finish(draft: Omit<Panel, 'step' | 'suggested'>, scope?: ChapterScope): Panel {
+  const groups: OptionGroup[] = withhold(draft.groups, scope).map((g) => ({
+    ...g,
+    answered: g.options.find((o) => o.state === 'chosen') ?? null,
+  }));
+  return { ...draft, ...withStep(groups) };
 }
 
 /* ---------------------------------------------------------------- filter */

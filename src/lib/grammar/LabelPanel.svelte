@@ -22,13 +22,14 @@
   import type { Rect } from '../workspace/viewport.ts';
   import {
     byHotkey,
+    bestIndex,
     isPickable,
     openingGroup,
     type LabelOption,
     type OptionGroup,
     type Panel,
   } from './options.ts';
-  import { menuOptionState } from './panel-presentation.ts';
+  import { activeGroupAfterAnswer, menuOptionState } from './panel-presentation.ts';
 
   export interface Verdict {
     kind: 'correct' | 'alternate' | 'wrong';
@@ -118,6 +119,7 @@
     };
   });
   let activeId = $state<string | null>(null);
+  let activeSubject = '';
   let cursor = $state(0);
   let pointed = $state<LabelOption | null>(null);
   let mobileDetail = $state(false);
@@ -130,8 +132,11 @@
   const active = $derived(openingGroup(panel, activeId));
   const reachable = $derived(active?.options.filter(isPickable) ?? []);
   const suggestions = $derived(
-    panel.groups.find((g) => g.id === panel.step)?.options.filter((o) => o.state === 'suggested') ??
-      [],
+    (
+      panel.groups
+        .find((g) => g.id === panel.step)
+        ?.options.filter((o) => o.state === 'suggested') ?? []
+    ).sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity)),
   );
   /** A driven pointer wins over the real one, and neither exists at rest. */
   const shown = $derived(
@@ -142,8 +147,14 @@
   const detail = $derived(shown ?? reachable[cursor] ?? suggestions[0] ?? null);
 
   $effect(() => {
-    void [panel.subject, phone.matches];
-    activeId = panel.step;
+    const subjectChanged = activeSubject !== panel.subject;
+    activeId = activeGroupAfterAnswer(
+      untrack(() => activeId),
+      subjectChanged,
+      panel.step,
+      verdict?.kind ?? null,
+    );
+    activeSubject = panel.subject;
     pointed = null;
     // A guided phone run has no pointer to open the second pane. Put the real
     // option rows on screen directly so the highlighted answer is visible.
@@ -152,8 +163,7 @@
 
   $effect(() => {
     void [activeId, panel.subject];
-    const i = reachable.findIndex((o) => o.state === 'suggested');
-    cursor = i >= 0 ? i : 0;
+    cursor = bestIndex(reachable);
   });
 
   $effect(() => {
@@ -176,27 +186,43 @@
 
   type Section = { name: string; options: LabelOption[] };
 
+  /**
+   * The menu, in sections.
+   *
+   * Every group ends with whatever the named lists did not claim. A row the
+   * panel offers and the menu does not draw is a row nobody can pick, and three
+   * were being dropped in silence: `Nom` and `DP`, which the corpus uses.
+   */
   function section(g: OptionGroup): Section[] {
-    const take = (name: string, keys: readonly string[]) => ({
-      name,
-      options: g.options.filter((o) => keys.includes(o.form ?? o.func ?? '')),
-    });
+    // A plain array, not a Set: this runs inside a pure function over a list of
+    // at most twenty rows, and Svelte's reactivity rule reads any Set here as
+    // state it has to track.
+    const taken: string[] = [];
+    const take = (name: string, keys: readonly string[]) => {
+      const options = g.options.filter((o) => keys.includes(o.form ?? o.func ?? ''));
+      for (const o of options) taken.push(o.key);
+      return { name, options };
+    };
+    const rest = (named: Section[]): Section[] =>
+      [...named, { name: '', options: g.options.filter((o) => !taken.includes(o.key)) }].filter(
+        (s) => s.options.length > 0,
+      );
 
     if (g.id === 'word-class') {
-      return [
+      return rest([
         take('Content words', ['N', 'V', 'Adj', 'Adv']),
         take('Function words', ['Det', 'Pron', 'Aux', 'P', 'Conj', 'Subord', 'Part']),
         take('Other', ['Num', 'Interj']),
-      ].filter((s) => s.options.length > 0);
+      ]);
     }
     if (g.id === 'phrase-form') {
-      return [
-        take('Phrases', ['NP', 'VP', 'PP', 'AdjP', 'AdvP']),
+      return rest([
+        take('Phrases', ['NP', 'Nom', 'DP', 'VP', 'PP', 'AdjP', 'AdvP']),
         take('Clausal forms', ['S', 'Cl']),
-      ].filter((s) => s.options.length > 0);
+      ]);
     }
     if (g.id === 'function') {
-      return [
+      return rest([
         take('Clause roles', [
           'subject',
           'predicate',
@@ -215,7 +241,7 @@
           'coordinate',
           'appositive',
         ]),
-      ].filter((s) => s.options.length > 0);
+      ]);
     }
     return [{ name: '', options: g.options }];
   }
