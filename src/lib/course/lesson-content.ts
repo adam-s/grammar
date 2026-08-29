@@ -214,9 +214,98 @@ const SENTENCE_FRAME: LessonDoc = {
   ],
 };
 
+const MAIN_VERB: LessonDoc = {
+  id: '03-main-verb',
+  lede: '',
+  blocks: [
+    {
+      kind: 'prose',
+      text:
+        'The **main verb** is the **head** of the verb phrase: the word the whole predicate is built around. ' +
+        'In the sentences used here, it is also the word that changes when you place the sentence in a different time.',
+    },
+    {
+      kind: 'diagram',
+      sentenceId: 'fix-main-verb-competitor',
+      through: 3,
+      caption:
+        '_Walk_ names an activity, but _tired_ is the word that changes for tense. ' +
+        'That makes _tired_ the verb and the head of the predicate.',
+    },
+    {
+      kind: 'section',
+      eyebrow: 'the test',
+      title: 'Move the sentence through time',
+    },
+    {
+      kind: 'prose',
+      text:
+        'Say the same sentence about today and yesterday. Keep the people and activity the same. ' +
+        'The word that has to change is the main verb.',
+    },
+    { kind: 'sentence', text: 'Today the daily walk **tires** Maya.' },
+    { kind: 'sentence', text: 'Yesterday the daily walk **tired** Maya.' },
+    {
+      kind: 'prose',
+      text:
+        '_Walk_ stays put. _Tires_ becomes _tired_, so that is the verb. ' +
+        'The test uses tense to find the word; it does not ask you to name the tense.',
+    },
+    {
+      kind: 'procedure',
+      title: 'Use the tense test',
+      steps: [
+        'Say the sentence as true today.',
+        'Say the same sentence as true yesterday.',
+        'Find the word that changes. That word is the main verb.',
+      ],
+      limit:
+        'This lesson uses predicates with one tensed verb. Later, helping verbs and verb forms without tense will make the test produce more than one word to inspect.',
+    },
+    {
+      kind: 'section',
+      eyebrow: 'the shortcut',
+      title: 'An action word is not always the verb',
+    },
+    {
+      kind: 'prose',
+      text:
+        'A word can name an activity without being the verb in its sentence. ' +
+        'It can also be a verb without ending in _-ed_.',
+    },
+    {
+      kind: 'diagram',
+      sentenceId: 'fix-main-verb-irregular',
+      through: 3,
+      caption:
+        '_Run_ names an activity, but _began_ changes: today the run _begins_; yesterday it _began_. ' +
+        'The irregular form has no _-ed_ ending.',
+    },
+    {
+      kind: 'section',
+      eyebrow: 'the head',
+      title: 'The predicate is larger than its verb',
+    },
+    {
+      kind: 'prose',
+      text:
+        'The verb phrase is the whole predicate, while the main verb is the word at its centre. ' +
+        'In school grammar, you may know these as the **complete predicate** and **simple predicate**. ' +
+        'This course calls the central word the head because the same idea works inside other phrases too.',
+    },
+    {
+      kind: 'prose',
+      text:
+        'The previous lesson found the boundary between subject and predicate. ' +
+        'This lesson opens the predicate and finds its head. Lesson 5 will use the same idea inside a noun phrase.',
+    },
+  ],
+};
+
 const DOCS: Record<string, LessonDoc> = {
   [INTRODUCTION.id]: INTRODUCTION,
   [SENTENCE_FRAME.id]: SENTENCE_FRAME,
+  [MAIN_VERB.id]: MAIN_VERB,
 };
 
 /** `undefined` for a lesson with no authored prose yet; the route falls back. */

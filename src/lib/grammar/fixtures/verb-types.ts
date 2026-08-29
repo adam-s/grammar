@@ -76,6 +76,72 @@ export const guardWatchedCamera = sentence(
   'r1',
 );
 
+/* ------------------------ Main-verb lesson — The daily walk tired Maya. */
+
+export const mainVerbCompetitor = sentence(
+  'fix-main-verb-competitor',
+  'lesson 03 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [w('Adj', 'premodifier', 'daily'), w('N', 'head', 'walk')]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'tired', { lemma: 'tire', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('N', 'head', 'Maya', { xpos: 'NNP' })]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'Walking every day made Maya tired.',
+      },
+    ),
+  ],
+  'r1',
+);
+
+/* --------------------------- Irregular verb — The morning run began late. */
+
+export const mainVerbIrregular = sentence(
+  'fix-main-verb-irregular',
+  'lesson 03 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [w('Adj', 'premodifier', 'morning'), w('N', 'head', 'run')]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'began', { lemma: 'begin', verbType: 'Vint' }),
+            n('AdvP', 'adverbial', [w('Adv', 'head', 'late')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The scheduled run started late in the morning.',
+      },
+    ),
+  ],
+  'r1',
+);
+
 /* -------------------------------------------------- Vint — The engine stalled. */
 
 export const vint = sentence(

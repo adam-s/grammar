@@ -17,10 +17,9 @@ The interactive work remains elsewhere:
 Separating those jobs keeps the lesson useful to two readers: someone moving
 through the course and someone who arrived directly with one grammar question.
 
-**Implementation status:** Lessons 1 and 2 are built to this contract at
-`src/lib/course/lesson-content.ts`. Lesson 2 still ends by handing the reader a
-sentence to build, which the contract permits and does not require; lesson 1
-ends on the page. The word
+**Implementation status:** Lessons 1 through 3 are built to this contract at
+`src/lib/course/lesson-content.ts`. Each ends with a non-blocking handoff to the
+lesson's practice sentences. The word
 budgets that used to sit in `lesson-content.test.ts` are gone; what the tests
 hold now is that a page answers before it asks, cites sentences that exist, and
 draws no label the lesson has not taught.

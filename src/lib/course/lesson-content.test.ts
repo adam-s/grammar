@@ -47,7 +47,7 @@ test('no diagram shows a label the lesson has not reached', () => {
 });
 
 test('lessons without authored prose report nothing rather than a placeholder', () => {
-  assert.equal(lessonDoc('03-main-verb'), undefined);
+  assert.equal(lessonDoc('04-noun-phrases'), undefined);
 });
 
 test('a lesson page answers its title before it asks anything of the reader', () => {
