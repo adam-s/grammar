@@ -957,6 +957,26 @@ const score = (o: LabelOption, q: string): number => {
 };
 
 /** Filtering is the one thing allowed to reorder: the learner asked for it. */
+/**
+ * Which group the palette should open on.
+ *
+ * Not simply the first. Under an early lesson every word class is `untaught`,
+ * so selecting a word opened thirteen greyed rows with no way forward while the
+ * two rows the learner could actually pick sat in the group below — the palette
+ * looked broken and was, from the learner's side, a dead end.
+ *
+ * `panel.step` already names the decision in front of them, and the suggestion
+ * line already trusts it. Honour it here too, and fall back to any group with
+ * something takeable before giving up and showing the first.
+ */
+export function openingGroup(panel: Panel, activeId?: string | null): OptionGroup | null {
+  const named = activeId ? panel.groups.find((g) => g.id === activeId) : undefined;
+  if (named) return named;
+  const step = panel.groups.find((g) => g.id === panel.step);
+  if (step?.options.some(isPickable)) return step;
+  return panel.groups.find((g) => g.options.some(isPickable)) ?? panel.groups[0] ?? null;
+}
+
 export function filterPanel(panel: Panel, query: string): Panel {
   const q = query.trim().toLowerCase();
   if (!q) return panel;

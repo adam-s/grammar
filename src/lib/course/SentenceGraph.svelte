@@ -4,10 +4,11 @@
   import { SvelteMap } from 'svelte/reactivity';
   import Diagram, { diagramSize } from '../grammar/Diagram.svelte';
   import type { Selection } from '../grammar/options.ts';
-  import type { SentenceEntry, Span } from '../grammar/types.ts';
+  import type { Reading, SentenceEntry, Span } from '../grammar/types.ts';
   import { pinch, pinchDelta, type Pinch } from '../workspace/gesture.ts';
   import { observeStageSize } from '../workspace/stage-resize.ts';
   import {
+    centerOn,
     fit,
     IDENTITY,
     nextStop,
@@ -18,13 +19,16 @@
     type Size,
     type Viewport,
   } from '../workspace/viewport.ts';
+  import { READABLE_ZOOM_FLOOR } from '../grammar/node-label.ts';
   import { refitsFigure } from './figure-camera.ts';
   import { replaySentence } from './sentence-renderer.ts';
 
-  type Props = { sentence: SentenceEntry };
-  let { sentence }: Props = $props();
+  /** `reading` overrides the canonical parse: a lesson page passes the tree
+      pruned to what it has taught, so a figure never shows a later label. */
+  type Props = { sentence: SentenceEntry; reading?: Reading };
+  let { sentence, reading }: Props = $props();
 
-  const build = $derived(replaySentence(sentence).final);
+  const build = $derived(replaySentence(sentence, reading).final);
   const content = $derived(diagramSize(build.constituents, sentence.words));
   const emptySelection: Selection = { kind: 'none' };
   const ignorePick = (_selection: Selection) => {};
@@ -48,7 +52,16 @@
   function fitted(size = stageSize): Viewport {
     // `diagramSize` already includes its own visual padding, so fitting to the
     // measured container needs no second inset or arbitrary zoom ceiling.
-    return fit(content, size, 0);
+    //
+    // The floor is the same rule the workspace applies: a fit the app performs
+    // FOR a reader may not put the labels under nine pixels. The Fit button
+    // below is a request for an overview and is left alone.
+    const whole = fit(content, size, 0);
+    if (whole.z >= READABLE_ZOOM_FLOOR) return whole;
+    // Below the floor, show the START of the diagram rather than all of it —
+    // the same trade the workspace makes, for the same reason.
+    const visible = Math.max(1, size.w) / READABLE_ZOOM_FLOOR;
+    return centerOn({ ...content, w: Math.min(content.w, visible) }, size, READABLE_ZOOM_FLOOR);
   }
 
   function reset() {
@@ -165,6 +178,7 @@
   <div
     class="stage"
     class:ready
+    style="--graph-aspect:{content.w} / {content.h}"
     bind:this={stage}
     role="application"
     aria-label="Pan and zoom diagram: {sentence.text}"
@@ -202,9 +216,21 @@
     width: 100%;
   }
 
+  /**
+   * The box takes the diagram's own proportions rather than a fixed height.
+   *
+   * A flat clamp gave every sentence the same tall box, so a short tree over a
+   * wide row of words sat in a third of it — measurably two thirds empty, which
+   * reads as a picture that missed its frame. Deriving the height from the
+   * content's aspect makes the fit fill the box in both directions instead of
+   * only across. `--graph-h` stays as the ceiling, so a deep tree is still
+   * capped and the lesson keeps the last word on how tall a figure may get.
+   */
   .stage {
     position: relative;
-    height: var(--graph-h, clamp(310px, 52vh, 560px));
+    aspect-ratio: var(--graph-aspect, 2 / 1);
+    min-height: 150px;
+    max-height: var(--graph-h, clamp(310px, 52vh, 560px));
     overflow: hidden;
     background: transparent;
     cursor: grab;

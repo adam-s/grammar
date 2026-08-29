@@ -11,7 +11,7 @@ import {
   VERB_TYPES,
   WORD_FORMS,
 } from '../grammar/types.ts';
-import { COURSE_LESSONS, COURSE_STAGES } from './course.ts';
+import { COURSE_LESSONS, COURSE_STAGES, lessonNeighbours } from './course.ts';
 import { scopeThrough } from './scope.ts';
 
 test('course lessons have stable order, concise copy, and distinct sentences', () => {
@@ -141,4 +141,21 @@ test('nothing is both taught and excused', () => {
   for (const decision of Object.keys(NOT_IN_COURSE_ONE)) {
     assert.ok(!taught.has(decision), `${decision} is taught, so drop its excuse`);
   }
+});
+
+test('the lesson steps walk the course in order and stop at both ends', () => {
+  const first = COURSE_LESSONS[0]!;
+  const last = COURSE_LESSONS.at(-1)!;
+  assert.equal(lessonNeighbours(first.id).prev, undefined, 'lesson 1 has nothing before it');
+  assert.equal(lessonNeighbours(last.id).next, undefined, 'the last lesson has nothing after it');
+
+  // Every step lands on the lesson the contents panel lists next, so the panel
+  // and the sidebar can never disagree about what follows what.
+  for (const [at, lesson] of COURSE_LESSONS.entries()) {
+    const { prev, next } = lessonNeighbours(lesson.id);
+    assert.equal(prev?.id, COURSE_LESSONS[at - 1]?.id);
+    assert.equal(next?.id, COURSE_LESSONS[at + 1]?.id);
+  }
+
+  assert.deepEqual(lessonNeighbours('no-such-lesson'), {});
 });

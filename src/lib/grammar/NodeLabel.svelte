@@ -77,11 +77,29 @@
     letter-spacing: -0.01em;
   }
 
+  /* Function and subtype marks arrive on an existing node. Fade only the new
+     mark; moving the whole node would make the diagram feel unstable. */
+  :global(main:has(.banner)) .qualifier {
+    animation: tutorial-mark-in 180ms ease-out both;
+  }
+
+  @keyframes tutorial-mark-in {
+    from {
+      opacity: 0;
+    }
+  }
+
   .function {
     text-anchor: end;
   }
 
   .subtype {
     text-anchor: start;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(main:has(.banner)) .qualifier {
+      animation: none;
+    }
   }
 </style>

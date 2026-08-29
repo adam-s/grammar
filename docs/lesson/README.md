@@ -17,11 +17,13 @@ The interactive work remains elsewhere:
 Separating those jobs keeps the lesson useful to two readers: someone moving
 through the course and someone who arrived directly with one grammar question.
 
-**Implementation status:** This is the target contract, not a description of the
-current route. `src/lib/course/lesson-content.ts` still contains one earlier
-prototype that ends by opening a builder sentence, and its tests enforce a
-350-word cap. That prototype predates this decision and must be revised before a
-learner page can be called compliant with this contract.
+**Implementation status:** Lessons 1 and 2 are built to this contract at
+`src/lib/course/lesson-content.ts`. Lesson 2 still ends by handing the reader a
+sentence to build, which the contract permits and does not require; lesson 1
+ends on the page. The word
+budgets that used to sit in `lesson-content.test.ts` are gone; what the tests
+hold now is that a page answers before it asks, cites sentences that exist, and
+draws no label the lesson has not taught.
 
 ## The search-result test
 
@@ -49,8 +51,8 @@ A page passes the test when a reader can leave with four things:
 
 ### Direct answer
 
-Open with two or three sentences that answer the title. Plain language comes
-first. Introduce the grammatical term after the reader understands the thing it
+Open by answering the title, in plain language and in as few sentences as that
+takes. Introduce the grammatical term after the reader understands the thing it
 names.
 
 Do not open with course navigation, a learning objective, a rhetorical question,
@@ -82,9 +84,9 @@ the page with generic mistakes.
 
 ### More examples
 
-Give three or four approved examples that vary position, phrase form, or clause
-pattern. These examples demonstrate breadth; the separate practice set provides
-the ten-sentence progression.
+Give approved examples that vary position, phrase form, or clause pattern —
+enough to show the shape is not one trick. These demonstrate breadth; the
+separate practice set provides the ten-sentence progression.
 
 ### Connections
 
@@ -94,8 +96,9 @@ Neither may be required to understand the page in front of the reader.
 
 ## Visual requirements
 
-Use two to four purposeful visuals on a typical page. An early lesson may need
-one or two; a lesson built around ambiguity or comparison may need four.
+A page carries as many visuals as it has claims to make, and no more. Each one
+answers a question the prose has raised; a tree beside a paragraph is not
+evidence merely because both mention the same sentence.
 
 Every visual must:
 
@@ -113,14 +116,21 @@ Every visual must:
 A static page may show sequence through small multiples. It must not depend on a
 play button or animation to reveal the argument.
 
-## Length and voice
+## Voice
 
-Most pages should be 500–800 words. An early lesson may be 300–500 words. A
-later synthesis may reach 1,000 only when the extra structure earns the space.
+A page runs as long as its answer takes. There is no word budget, and there was
+one: 350 words of prose, 18 for a lede, 24 for a caption, 60 before the first
+figure. Every number was a guess, and a guess held in a test edits the page to
+fit itself — that cap is what kept a lesson from carrying a procedure and a
+contrast at the same time. Length is read and judged, not counted.
+
+What replaces it is the thing a count could never do: read the draft against
+[../signs-of-ai-slop.md](../signs-of-ai-slop.md). Filler is four sentences doing
+one sentence's work, and that shows at any length.
 
 Write at a 10th-grade reading level. Assume the reader may already know the
 topic and wants a precise refresher. Locate difficulty in the sentence, not in
-the person. Use the rules in [../signs-of-ai-slop.md](../signs-of-ai-slop.md).
+the person.
 
 The author dossier can be long, disputed, and heavily sourced. The lesson page
 cannot. It selects the settled answer, the best test, the strongest contrast,
@@ -169,7 +179,7 @@ graded.
 4. Choose the main diagram and the revealing contrast.
 5. Write the identification procedure and its limit.
 6. Use the shortcut register to choose one common confusion.
-7. Add three or four approved examples.
+7. Add the approved examples that show breadth.
 8. Add backward and forward connections.
 9. Render every visual at desktop and narrow widths.
 10. Read the page as a standalone search result and as part of the course.

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ChevronRight from '@lucide/svelte/icons/chevron-right';
   import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
   import type { SentenceEntry } from '../grammar/types.ts';
 
@@ -19,10 +20,11 @@
         class:selected={sentence.id === selectedId}
         type="button"
         aria-current={sentence.id === selectedId ? 'true' : undefined}
+        aria-label="{sentence.text}, open diagram"
         onclick={() => onselect(sentence.id)}
       >
         <span class="sentence">{sentence.text}</span>
-        <span class="action">Open diagram</span>
+        <ChevronRight class="chevron" size={13} strokeWidth={2} aria-hidden="true" />
       </button>
     </li>
   {/each}
@@ -42,15 +44,24 @@
     list-style: none;
   }
   li button {
-    display: block;
+    display: flex;
+    gap: 6px;
+    align-items: center;
     width: 100%;
-    padding: 9px 8px;
+    padding: 7px 8px;
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
     color: inherit;
     font: inherit;
     text-align: left;
+  }
+  /* The global ring sits 1px outside its box. These rows are the full width of
+     the panel, so that offset lands outside the scroll container and gets
+     clipped into two rails. Tuck it inside, where it follows the radius. */
+  li button:focus-visible {
+    outline-width: 1.5px;
+    outline-offset: -3px;
   }
   li button:hover {
     background: color-mix(in oklab, var(--ink) 7%, transparent);
@@ -59,15 +70,22 @@
     background: color-mix(in oklab, var(--accent) 18%, transparent);
   }
   .sentence {
-    display: block;
+    flex: 1;
     color: var(--ink);
     font-size: 12px;
   }
-  .action {
-    display: block;
-    margin-top: 2px;
+  /* The chevron carries the affordance the second line used to spell out. It
+     stays faint until the row is under the pointer or holds the selection. */
+  li button :global(.chevron) {
+    flex: none;
     color: var(--ink-faint);
-    font-size: 9.5px;
+    opacity: 0.55;
+  }
+  li button:hover :global(.chevron),
+  li button:focus-visible :global(.chevron),
+  li button.selected :global(.chevron) {
+    color: var(--ink-muted);
+    opacity: 1;
   }
   .reset {
     display: flex;

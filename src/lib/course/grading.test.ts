@@ -156,6 +156,15 @@ describe('a lesson refuses an untaught label, in the module and not just the vie
     assert.equal(Object.keys(after.build.constituents).length, 1);
     assert.equal(Object.values(after.build.constituents)[0]!.form, 'NP');
   });
+
+  it('lets the open builder apply a valid later label without requiring it for this lesson', () => {
+    const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [1, 1] });
+    const noun = panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:N')!;
+    assert.ok(isPickable(noun));
+
+    const after = answer(looking([1, 1]), sentence, sentence.words, noun, scope);
+    assert.equal(Object.values(after.build.constituents)[0]!.form, 'N');
+  });
 });
 
 /**

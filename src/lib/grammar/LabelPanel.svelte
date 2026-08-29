@@ -23,6 +23,7 @@
   import {
     byHotkey,
     isPickable,
+    openingGroup,
     type LabelOption,
     type OptionGroup,
     type Panel,
@@ -44,6 +45,10 @@
     fit?: boolean;
     /** A protected world-space region, normally the complete sentence row. */
     avoid?: Rect | null;
+    /** A stable screen-space home supplied by a guided layout. */
+    placement?: Pick<Rect, 'x' | 'y' | 'h'> | null;
+    /** The surrounding guide owns the camera while it is running. */
+    manageCamera?: boolean;
     verdict?: Verdict | null;
     /**
      * Show an option as if the pointer were on it, by option key.
@@ -71,6 +76,8 @@
     focus = null,
     fit = false,
     avoid = null,
+    placement = null,
+    manageCamera = true,
     verdict = null,
     pointerOn = null,
     interactive = true,
@@ -120,7 +127,7 @@
   );
   onDestroy(camera.cancel);
 
-  const active = $derived(panel.groups.find((g) => g.id === activeId) ?? panel.groups[0] ?? null);
+  const active = $derived(openingGroup(panel, activeId));
   const reachable = $derived(active?.options.filter(isPickable) ?? []);
   const suggestions = $derived(
     panel.groups.find((g) => g.id === panel.step)?.options.filter((o) => o.state === 'suggested') ??
@@ -135,16 +142,29 @@
   const detail = $derived(shown ?? reachable[cursor] ?? suggestions[0] ?? null);
 
   $effect(() => {
-    void panel.subject;
+    void [panel.subject, phone.matches];
     activeId = panel.step;
     pointed = null;
-    mobileDetail = false;
+    // A guided phone run has no pointer to open the second pane. Put the real
+    // option rows on screen directly so the highlighted answer is visible.
+    mobileDetail = !interactive && phone.matches;
   });
 
   $effect(() => {
     void [activeId, panel.subject];
     const i = reachable.findIndex((o) => o.state === 'suggested');
     cursor = i >= 0 ? i : 0;
+  });
+
+  $effect(() => {
+    if (interactive || !phone.matches || !pointerOn || !root) return;
+    const frame = requestAnimationFrame(() => {
+      const option = Array.from(
+        root?.querySelectorAll<HTMLButtonElement>('[data-option]') ?? [],
+      ).find((row) => row.dataset.option === pointerOn);
+      option?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+    return () => cancelAnimationFrame(frame);
   });
 
   const GROUP_NAME: Record<string, string> = {
@@ -274,6 +294,7 @@
 
   /** Choose the side with the least overflow, preferring below and above. */
   const position = $derived.by(() => {
+    if (placement) return placement;
     if (!anchor || ws.stage.w === 0) return { x: 0, y: 0 };
     const a = screenRect(ws.viewport, anchor);
     return placeFloating(a, avoid ? screenRect(ws.viewport, avoid) : a, POPUP, ws.stage);
@@ -301,7 +322,7 @@
       visualViewport.rect.h,
     ];
     camera.cancel();
-    if (!phone.matches || !root || !focus) return;
+    if (!manageCamera || !phone.matches || !root || !focus) return;
 
     const frame = requestAnimationFrame(() => {
       if (!root || !focus) return;
@@ -317,7 +338,7 @@
         ? visualViewport.rect.x + visualViewport.rect.w - stageBox.left
         : stageBox.width;
       let top = 12;
-      for (const control of stage.querySelectorAll<HTMLElement>('.reopen')) {
+      for (const control of stage.querySelectorAll<HTMLElement>('.reopen, [data-stage-occluder]')) {
         const box = control.getBoundingClientRect();
         if (box.width > 0 && box.height > 0) top = Math.max(top, box.bottom - stageBox.top + 12);
       }
@@ -348,7 +369,10 @@
   const information = $derived.by(() => {
     if (verdict) return [verdict.text, verdict.test].filter(Boolean).join(' ');
     if (panel.blocked) return panel.blocked;
-    return detail?.note ?? active?.question ?? panel.prompt;
+    if (detail?.note) return detail.note;
+    // The question is already on the line above, unless suggestions took that
+    // line instead. Repeating it printed it twice, one grey copy under another.
+    return suggestions.length > 0 ? (active?.question ?? panel.prompt) : panel.prompt;
   });
 
   /**
@@ -364,7 +388,7 @@
    * One line either way. The panel is short on purpose, and showing the test
    * and the same test performed would be saying it twice.
    */
-  const performed = $derived(!verdict && !panel.blocked ? panel.singledOut : null);
+  const performed = $derived(interactive && !verdict && !panel.blocked ? panel.singledOut : null);
 </script>
 
 <svelte:window onkeydown={globalKey} onpointerdown={outside} />
@@ -373,17 +397,21 @@
   <div
     bind:this={root}
     class="popup"
-    style="left:{position.x}px;top:{position.y}px"
+    class:guided={!!placement}
+    style="left:{position.x}px;top:{position.y}px;--guided-menu-h:{placement?.h ?? 318}px"
     role="dialog"
     tabindex="-1"
+    inert={!interactive}
     aria-label="Label {panel.subject}"
   >
     <header class="context" class:wrong={verdict?.kind === 'wrong'}>
       <div class="subject-line">
         <strong>{panel.subject}</strong>
-        <button class="close" type="button" aria-label="Close label menu" onclick={onclose}>
-          <X size={13} strokeWidth={2} />
-        </button>
+        {#if interactive}
+          <button class="close" type="button" aria-label="Close label menu" onclick={onclose}>
+            <X size={13} strokeWidth={2} />
+          </button>
+        {/if}
       </div>
 
       <div class="suggestion-line">
@@ -507,6 +535,17 @@
       0 16px 42px oklch(0 0 0 / 34%),
       0 2px 8px oklch(0 0 0 / 22%);
     user-select: none;
+  }
+
+  .popup.guided {
+    animation: guided-palette-in 160ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  }
+
+  @keyframes guided-palette-in {
+    from {
+      opacity: 0;
+      transform: translateY(7px) scale(0.99);
+    }
   }
 
   .context {
@@ -768,6 +807,25 @@
       );
       border-radius: 14px;
     }
+    .popup.guided {
+      max-height: min(
+        var(--guided-menu-h),
+        calc(
+          100svh - var(--mobile-nav-h) - env(safe-area-inset-top) - env(safe-area-inset-bottom) -
+            24px
+        )
+      );
+    }
+    .popup.guided .pane {
+      max-height: max(72px, calc(var(--guided-menu-h) - 104px));
+    }
+    .popup.guided .mobile-back,
+    .popup.guided h3 {
+      display: none;
+    }
+    .popup.guided .pane-title {
+      padding-left: 12px;
+    }
     .context {
       height: auto;
       min-height: 104px;
@@ -868,6 +926,12 @@
       min-width: 22px;
       height: 22px;
       font-size: 10px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .popup.guided {
+      animation: none;
     }
   }
 </style>

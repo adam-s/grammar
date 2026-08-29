@@ -506,3 +506,120 @@ export const ordinal = sentence(
   ],
   'r1',
 );
+
+/* ---- where the subject ends — The workers in the tunnel waited.
+ *
+ * Lesson 2's whole question, and the corpus could not ask it in a picture. The
+ * subject runs five words and the noun nearest the verb is *tunnel*, which is
+ * not what waited. Substitution settles it: *They waited*, never *\*The workers
+ * in them waited*.
+ *
+ * These three are demonstration sentences. They exist so the lesson page can
+ * show a worked answer without printing the answer to a sentence the learner is
+ * about to be assessed on.
+ */
+export const subjectPhrase = sentence(
+  'fix-subject-phrase',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'workers'),
+              n('PP', 'postmodifier', [
+                w('P', 'head', 'in'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'tunnel')]),
+              ]),
+            ]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'waited', { lemma: 'wait', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The tunnel workers stayed where they were.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ---- the same words, the other side of the cut — The workers waited in the
+ * tunnel.
+ *
+ * The pair `fix-subject-phrase` needs. Six words each, one phrase, and the only
+ * thing that moves is where the subject stops: *in the tunnel* tells you which
+ * workers in the first and where the waiting happened in the second. Nothing in
+ * the words decides it — the position does, and that is what a diagram can show
+ * and a paragraph cannot.
+ */
+export const subjectPhraseMoved = sentence(
+  'fix-subject-phrase-moved',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'workers')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'waited', { lemma: 'wait', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'in'),
+              n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'tunnel')]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The workers stayed inside the tunnel.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ---- agreement finds the head — The key to the cabinets is missing.
+ *
+ * The sentence that defeats "the subject is the noun in front of the verb".
+ * *cabinets* is plural and sits right there; the verb is *is*, because what is
+ * missing is the key. Agreement is the one subject test that runs on a sentence
+ * this long without asking the reader to already know the answer.
+ */
+export const subjectAgreement = sentence(
+  'fix-subject-agreement',
+  'contract fixture',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'key'),
+              n('PP', 'postmodifier', [
+                w('P', 'head', 'to'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'cabinets')]),
+              ]),
+            ]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'is', { lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [w('Adj', 'head', 'missing')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Nobody can find the cabinet key.' },
+    ),
+  ],
+  'r1',
+);

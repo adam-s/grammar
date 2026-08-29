@@ -56,7 +56,7 @@ import { LESSON_37 } from './sentences/lesson-37.ts';
 import { LESSON_38 } from './sentences/lesson-38.ts';
 import { LESSON_39 } from './sentences/lesson-39.ts';
 import { LESSON_40 } from './sentences/lesson-40.ts';
-import type { CourseStage } from './types.ts';
+import type { CourseLesson, CourseStage } from './types.ts';
 
 export const COURSE_STAGES: CourseStage[] = [
   {
@@ -463,4 +463,15 @@ export const COURSE_LESSONS = COURSE_STAGES.flatMap((stage) => stage.lessons);
 
 export function lessonById(id: string) {
   return COURSE_LESSONS.find((lesson) => lesson.id === id) ?? COURSE_LESSONS[0]!;
+}
+
+/** The lessons either side of this one in course order. Either is undefined at
+    the ends, which is what the panel reads to decide whether to draw a step. */
+export function lessonNeighbours(id: string): {
+  prev?: CourseLesson;
+  next?: CourseLesson;
+} {
+  const at = COURSE_LESSONS.findIndex((lesson) => lesson.id === id);
+  if (at < 0) return {};
+  return { prev: COURSE_LESSONS[at - 1], next: COURSE_LESSONS[at + 1] };
 }

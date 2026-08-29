@@ -129,12 +129,10 @@ to earlier and later lessons, but it must not require either one to explain its
 main point. Avoid shell-dependent lines such as "as you just saw" and "you will
 need this next."
 
-The earlier lesson prototype has copy budgets enforced by
-`src/lib/course/lesson-content.test.ts`. Those limits still test the prototype;
-they do not override the static page lengths in
-[`lesson/README.md`](lesson/README.md). When the implementation changes, its
-tests must enforce the new contract. A budget helps, but it cannot distinguish a
-complete search answer from compressed filler.
+Lesson pages carry no word budget. They used to, and a cap cannot distinguish a
+complete search answer from compressed filler — it only guarantees the page ends
+somewhere. This document is what a draft is read against instead, which means
+somebody has to read it.
 
 ## Sources
 

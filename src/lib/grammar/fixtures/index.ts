@@ -76,6 +76,9 @@ import {
   adjectiveComplement,
   adverbPhrase,
   ordinal,
+  subjectPhrase,
+  subjectPhraseMoved,
+  subjectAgreement,
 } from './noun-phrases.ts';
 import {
   acrossTheBoard,
@@ -103,6 +106,9 @@ export const FIXTURES: readonly SentenceEntry[] = [
   adjectiveComplement,
   adverbPhrase,
   ordinal,
+  subjectPhrase,
+  subjectPhraseMoved,
+  subjectAgreement,
   ambiguous,
   gardenPath,
   objectClause,

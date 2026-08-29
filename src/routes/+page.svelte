@@ -7,7 +7,6 @@
    * what a pick does to the structure, whether it was right — belongs to
    * `src/lib/grammar/`, which is browser-free and tested under `node --test`.
    */
-  import Type from '@lucide/svelte/icons/type';
   import Tag from '@lucide/svelte/icons/tag';
   import Layers from '@lucide/svelte/icons/layers';
   import Settings from '@lucide/svelte/icons/settings';
@@ -25,6 +24,7 @@
     diagramSize,
     selectionFocusRect,
     selectionRect,
+    drawnRect,
     wordRowRect,
   } from '$lib/grammar/Diagram.svelte';
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
@@ -36,6 +36,7 @@
 
   import {
     blockRejectedOptions,
+    isPickable,
     optionsFor,
     type LabelOption,
     type Selection,
@@ -50,26 +51,35 @@
     COURSE_STAGES,
     CourseContents,
     Lesson,
+    LessonNav,
     LessonSentenceList,
     SentenceGraphs,
     lessonById,
+    lessonNeighbours,
     lessonDoc,
     scopeThrough,
     targetReading,
   } from '$lib/course';
+  import { Tutorial, buildSignature, tutorialScript } from '$lib/tutorial';
+  import { tutorialLayout } from '$lib/tutorial/layout.ts';
 
   const ws = new WorkspaceState();
   // The workspace does not know what it is drawing. This is the one place that
   // does, so it is the place that says how small a diagram may be fitted to.
   ws.fitFloor = READABLE_ZOOM_FLOOR;
 
+  /**
+   * The course is the first thing in the rail, because it is the thing a reader
+   * arrives for. The sentences it owns sit on the other side of the page, next
+   * to the diagram they open.
+   */
   const items: RailItem[] = [
-    { id: 'sentences', label: 'Sentences', icon: Type },
+    { id: 'lessons', label: 'Lessons', icon: BookOpen },
     { id: 'labels', label: 'Labels', icon: Tag },
     { id: 'layers', label: 'Layers', icon: Layers },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
-  let active = $state('sentences');
+  let active = $state('lessons');
 
   /* ------------------------------------------------------------- the work */
 
@@ -78,6 +88,7 @@
   let middleView = $state<'lesson' | 'diagram'>('lesson');
   const lesson = $derived(lessonById(lessonId));
   const lessonSentences = $derived(lesson.sentences);
+  const neighbours = $derived(lessonNeighbours(lessonId));
   /** A lesson with authored prose reads as a document; one without still shows
       its finished diagrams, so an unwritten lesson is visibly unwritten. */
   const doc = $derived(lessonDoc(lessonId));
@@ -128,7 +139,7 @@
   const frame = $derived(diagramSize(build.constituents, words, depthMark));
   const popupAnchor = $derived(selectionRect(build.constituents, words, selection, depthMark));
   const popupFocus = $derived(selectionFocusRect(build.constituents, words, selection, depthMark));
-  const popupAvoid = $derived(wordRowRect(build.constituents, words, depthMark));
+  const popupAvoid = $derived(drawnRect(build.constituents, words, depthMark));
   const fitSelection = $derived.by(() => {
     const span =
       selection.kind === 'span'
@@ -187,20 +198,77 @@
   const owner = $derived(
     COURSE_LESSONS.find((l) => l.sentences.some((s) => s.id === sentence.id)) ?? null,
   );
-  /**
-   * What that lesson has taught. The palette shows the whole inventory either
-   * way — a learner who never sees a row does not learn the choice exists — but
-   * a label from a later lesson is marked `untaught` rather than offered.
-   *
-   * A sentence outside the course carries no scope, so the free workspace and
-   * the contract fixtures keep the full palette.
-   */
+  /** What this lesson requires. It limits the guided target and decides when a
+      course question is complete; it does not lock the open builder. */
   const scope = $derived(owner ? scopeThrough(COURSE_LESSONS, owner.number) : undefined);
   /** The part of the answer this lesson actually asks for. */
   const target = $derived(scope ? targetReading(canonicalReading(sentence), scope) : null);
+  /**
+   * The builder is an exploration surface, not the course gate. Show every
+   * valid label here so a learner can keep analysing a sentence after the
+   * lesson's required work ends. `answer` still receives `scope` below, so
+   * later labels never become requirements for completing an early lesson.
+   */
   const choices = $derived(
-    blockRejectedOptions(optionsFor(build, words, selection, scope), rejected[rejectionKey] ?? {}),
+    blockRejectedOptions(optionsFor(build, words, selection), rejected[rejectionKey] ?? {}),
   );
+
+  /**
+   * The guided run for this sentence, or nothing where there is not one.
+   *
+   * Held to the introduction because that is the lesson whose runs have been
+   * checked end to end — `src/lib/tutorial/script.test.ts` proves every
+   * decision it names is a row the palette offers and will take. Widening this
+   * is a one-line change once the same is proved of the rest.
+   */
+  const tutorialBeats = $derived(
+    owner?.number === 1 ? tutorialScript(sentence, scope, target ?? undefined).beats : [],
+  );
+  const tutorialBuild = $derived(replaySentence(sentence, target ?? undefined).final);
+  const tutorialNaturalDepth = $derived(layout(tutorialBuild.constituents, words).maxDepth);
+  const tutorialDepth = $derived(tutorialNaturalDepth);
+  const tutorialFrame = $derived(diagramSize(tutorialBuild.constituents, words, tutorialDepth));
+  const tutorialFrameAnchor = $derived(
+    wordRowRect(tutorialBuild.constituents, words, tutorialDepth),
+  );
+  let tutorialActive = $state(false);
+  let tutorialPointer = $state<string | null>(null);
+  const tutorialMenu = $derived(tutorialLayout(ws.stage).menu);
+
+  /** Reserve the finished tree before the first label lands. Without this the
+      words move down one row at a time while the tutorial is trying to teach
+      what appeared above them. */
+  function resetForTutorial() {
+    reset();
+    depthMark = tutorialDepth;
+  }
+
+  /** Select the way a pointer does: a run of words already carrying a node is
+      that node, not a fresh span. Same rule the sweep driver follows. */
+  function selectAs(next: Selection) {
+    verdict = null;
+    if (next.kind !== 'span') {
+      selection = next;
+      return;
+    }
+    const node = nodeOver(build, next.span);
+    selection = node ? { kind: 'node', id: node } : next;
+  }
+
+  /** What the live palette says about one row, for the tutorial's postcondition. */
+  function offeredRow(key: string) {
+    const option = choices.groups.flatMap((g) => g.options).find((o) => o.key === key);
+    return option
+      ? { found: true, pickable: isPickable(option), state: option.state }
+      : { found: false, pickable: false };
+  }
+
+  function pickByKey(key: string) {
+    const hit = choices.groups.flatMap((g) => g.options).find((o) => o.key === key);
+    if (!hit) return { ok: false, reason: `no option ${key}` };
+    pick(hit);
+    return { ok: true };
+  }
 
   /**
    * Handle for `scripts/snapshot.mjs` to drive this page.
@@ -228,6 +296,13 @@
       },
       get lessonId() {
         return lessonId;
+      },
+      /** Which lesson owns the open sentence, and how much it has taught. */
+      get ownerId() {
+        return owner?.id ?? null;
+      },
+      get scopeSize() {
+        return scope ? scope.size : null;
       },
       get view() {
         return middleView;
@@ -421,13 +496,27 @@
   bind:active
   content={middleView === 'diagram' ? frame : undefined}
   onmarquee={middleView === 'diagram' ? onmarquee : undefined}
-  tabs={['Course']}
+  tabs={['Sentences']}
   inspectorKind="navigation"
-  inspectorTitle="Lessons"
+  inspectorTitle="Sentences"
   surface={middleView === 'diagram' ? 'canvas' : 'document'}
 >
   {#snippet panel(section, closeDrawer)}
-    {#if section === 'sentences'}
+    {#if section === 'lessons'}
+      <CourseContents
+        stages={COURSE_STAGES}
+        {lessonId}
+        onselect={(id) => selectLesson(id, closeDrawer)}
+      />
+    {:else}
+      <p class="empty">
+        Nothing here yet — see <code>src/routes/+page.svelte</code>.
+      </p>
+    {/if}
+  {/snippet}
+
+  {#snippet inspector(closeDrawer)}
+    <div class="inspector-stack">
       <button
         class="lesson-return"
         type="button"
@@ -443,22 +532,37 @@
         onselect={(id) => openSentence(id, closeDrawer)}
         onreset={reset}
       />
-    {:else}
-      <p class="empty">
-        Nothing here yet — see <code>src/routes/+page.svelte</code>.
-      </p>
-    {/if}
-  {/snippet}
-
-  {#snippet inspector(closeDrawer)}
-    <CourseContents
-      stages={COURSE_STAGES}
-      {lessonId}
-      onselect={(id) => selectLesson(id, closeDrawer)}
-    />
+      <div class="stack-end">
+        <LessonNav
+          prev={neighbours.prev}
+          next={neighbours.next}
+          onselect={(id) => selectLesson(id, closeDrawer)}
+        />
+      </div>
+    </div>
   {/snippet}
 
   {#snippet overlay()}
+    {#if middleView === 'diagram' && tutorialBeats.length > 0}
+      <!-- Keyed on the sentence: a finished or stopped run belongs to the
+           sentence it ran on, and must not greet the next one. -->
+      {#key sentenceId}
+        <Tutorial
+          beats={tutorialBeats}
+          frame={tutorialFrame}
+          frameAnchor={tutorialFrameAnchor}
+          anchorRect={() => wordRowRect(build.constituents, words, depthMark)}
+          focusRect={(sel) => selectionFocusRect(build.constituents, words, sel, depthMark)}
+          select={selectAs}
+          offered={offeredRow}
+          pick={pickByKey}
+          signature={() => buildSignature(build.constituents)}
+          onstart={resetForTutorial}
+          onactive={(active) => (tutorialActive = active)}
+          onpoint={(key) => (tutorialPointer = key)}
+        />
+      {/key}
+    {/if}
     <LabelPanel
       panel={choices}
       {verdict}
@@ -466,6 +570,10 @@
       focus={popupFocus}
       fit={fitSelection}
       avoid={popupAvoid}
+      placement={tutorialActive ? tutorialMenu : null}
+      manageCamera={!tutorialActive}
+      interactive={!tutorialActive}
+      pointerOn={tutorialActive ? tutorialPointer : null}
       onpick={pick}
       onhover={(o) => (preview = o?.form ?? null)}
       onclose={closePalette}
@@ -498,6 +606,17 @@
 </Workspace>
 
 <style>
+  /* The panel body scrolls, so the stack claims its full height and the nav
+     takes what is left. Ten sentences never fill it, so the steps sit at the
+     bottom; if a lesson ever ran long they would follow the list instead. */
+  .inspector-stack {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  .stack-end {
+    margin-top: auto;
+  }
   .lesson-return {
     display: flex;
     align-items: center;

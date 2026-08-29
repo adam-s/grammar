@@ -60,5 +60,52 @@ export function placeFloating(
     Math.max(edge, Math.min(Math.max(edge, extent - size - edge), v));
   best.x = clamp(best.x, stage.w, popup.w);
   best.y = clamp(best.y, stage.h, popup.h);
+
+  // Then slide clear of the protected rect, if sliding can clear it.
+  //
+  // The four candidates all hug the anchor, so when the protected rect is
+  // bigger than the anchor — a whole diagram rather than one word — every
+  // candidate overlaps it and the cheapest still lands on top. Choosing a side
+  // is not the same as getting out of the way. This pushes the surface along
+  // the axis it chose until nothing is underneath, and takes the move only if
+  // it fits: a stage with no clear band keeps the least-bad placement it had
+  // rather than being shoved off its own edge.
+  const slid = slideClear(best, popup, avoid, stage, edge);
+  if (slid) {
+    best.x = slid.x;
+    best.y = slid.y;
+  }
   return best;
+}
+
+/**
+ * Move a placed surface off `avoid` without leaving the stage.
+ *
+ * Tries the four ways out — above, below, left, right of the protected rect —
+ * and takes the smallest move that both clears it and still fits. Returns null
+ * when no direction fits, which is the signal to keep what was already chosen.
+ */
+function slideClear(
+  at: { x: number; y: number },
+  popup: Size,
+  avoid: Rect,
+  stage: Size,
+  edge: number,
+): { x: number; y: number } | null {
+  const box: Rect = { x: at.x, y: at.y, ...popup };
+  if (overlapArea(box, avoid) === 0) return null;
+
+  const fits = (x: number, y: number) =>
+    x >= edge && y >= edge && x + popup.w <= stage.w - edge && y + popup.h <= stage.h - edge;
+
+  const tries = [
+    { x: at.x, y: avoid.y - popup.h - edge },
+    { x: at.x, y: avoid.y + avoid.h + edge },
+    { x: avoid.x - popup.w - edge, y: at.y },
+    { x: avoid.x + avoid.w + edge, y: at.y },
+  ].filter((p) => fits(p.x, p.y) && overlapArea({ ...p, ...popup }, avoid) === 0);
+
+  if (tries.length === 0) return null;
+  const distance = (p: { x: number; y: number }) => Math.abs(p.x - at.x) + Math.abs(p.y - at.y);
+  return tries.reduce((a, b) => (distance(b) < distance(a) ? b : a));
 }

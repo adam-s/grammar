@@ -187,9 +187,10 @@ The order above is a dependency graph, not just a table of contents.
 - A later lesson must name the earlier test it reuses. “Relative clauses are
   postmodifiers” points back to lesson 21; it does not redefine
   _postmodifier_.
-- Course scope and menu scope are the same data. A label is `untaught` until its
-  first lesson, available afterward, and never enabled early merely because the
-  answer key contains it.
+- Course scope says what a lesson requires and when its practice is complete.
+  The open builder still offers every valid label, so a learner may keep
+  analysing beyond the current lesson without making that later work part of
+  the lesson's assessment.
 
 ### Course 1 coverage map
 

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { describe, it, test } from 'node:test';
 import {
   emptyBuild,
   nodeOver,
@@ -15,6 +15,7 @@ import {
   blockRejectedOptions,
   filterPanel,
   isPickable,
+  openingGroup,
   isPanelComplete,
   optionsFor,
   pickable,
@@ -23,6 +24,8 @@ import {
   type Panel,
 } from './options.ts';
 import { WORD_FORMS } from './types.ts';
+import { COURSE_LESSONS } from '../course/course.ts';
+import { scopeThrough } from '../course/scope.ts';
 
 const W = vtr.words; // She(0) repaired(1) the(2) engine(3)
 
@@ -472,4 +475,56 @@ describe('an offer is not a question', () => {
     assert.ok(!optional.includes(p.step!), `the palette opened on ${p.step}`);
     assert.equal(isPanelComplete(p), true, 'an untaken offer does not hold the palette open');
   });
+});
+
+/* --------------------------------------------- which group the palette opens */
+
+test('the palette opens where there is something to pick, not simply first', () => {
+  // The reported bug: selecting a word under lesson 2 opened the word-class
+  // group, where every row is untaught, while the two takeable rows sat below.
+  const lesson2 = COURSE_LESSONS.find((l) => l.id === '02-sentence-frame')!;
+  const sentence = lesson2.sentences[0]!;
+  const scope = scopeThrough(COURSE_LESSONS, lesson2.number);
+  const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [1, 1] }, scope);
+
+  const first = panel.groups[0]!;
+  assert.equal(first.id, 'word-class');
+  assert.equal(first.options.filter(isPickable).length, 0, 'the first group is a dead end here');
+
+  const opened = openingGroup(panel)!;
+  assert.ok(
+    opened.options.filter(isPickable).length > 0,
+    `opened ${opened.id} with nothing to pick`,
+  );
+  assert.equal(opened.id, panel.step, 'and it is the group the panel calls the current step');
+});
+
+test('a group the learner has chosen wins over the panel step', () => {
+  const lesson2 = COURSE_LESSONS.find((l) => l.id === '02-sentence-frame')!;
+  const sentence = lesson2.sentences[0]!;
+  const scope = scopeThrough(COURSE_LESSONS, lesson2.number);
+  const panel = optionsFor(emptyBuild(), sentence.words, { kind: 'span', span: [1, 1] }, scope);
+  assert.equal(openingGroup(panel, 'word-class')!.id, 'word-class');
+});
+
+test('every lesson opens a palette a learner can act on', () => {
+  for (const lesson of COURSE_LESSONS) {
+    const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+    for (const sentence of lesson.sentences.slice(0, 3)) {
+      for (let w = 0; w < Math.min(sentence.words.length, 4); w++) {
+        const panel = optionsFor(
+          emptyBuild(),
+          sentence.words,
+          { kind: 'span', span: [w, w] },
+          scope,
+        );
+        if (!panel.groups.some((g) => g.options.some(isPickable))) continue;
+        const opened = openingGroup(panel);
+        assert.ok(
+          opened?.options.some(isPickable),
+          `${lesson.id} “${sentence.words[w]!.text}” opens ${opened?.id} with nothing to pick`,
+        );
+      }
+    }
+  }
 });

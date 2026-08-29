@@ -6,10 +6,14 @@
    * This file owns typography and nothing else. A lesson's words live in
    * `lesson-content.ts`, and its diagram is drawn by `Diagram.svelte`.
    */
+  import ArrowRight from '@lucide/svelte/icons/arrow-right';
   import { FIXTURES } from '../grammar/fixtures.ts';
+  import { canonicalReading } from '../grammar/types.ts';
   import InlineText from './InlineText.svelte';
   import LessonHero from './LessonHero.svelte';
   import SentenceGraph from './SentenceGraph.svelte';
+  import { COURSE_LESSONS } from './course.ts';
+  import { scopeThrough, targetReading } from './scope.ts';
   import type { LessonDoc } from './lesson-content.ts';
   import type { CourseLesson } from './types.ts';
 
@@ -21,6 +25,17 @@
   let { lesson, doc, onstart }: Props = $props();
 
   const sentenceById = (id: string) => FIXTURES.find((sentence) => sentence.id === id)!;
+
+  /**
+   * A page may not show a label its reader has not met, so a diagram is pruned
+   * to what the course has taught by the lesson it appears in. The pruning is
+   * the same `targetReading` the practice scope uses, so the picture and the
+   * question a learner is asked cannot drift apart.
+   */
+  const readingFor = (id: string, through: number | undefined) =>
+    through === undefined
+      ? undefined
+      : targetReading(canonicalReading(sentenceById(id)), scopeThrough(COURSE_LESSONS, through));
   const number = $derived(String(lesson.number).padStart(2, '0'));
 </script>
 
@@ -47,14 +62,44 @@
       <div class="readings">
         {#each block.rows as row (row.bracketed)}
           <p class="bracketed">{row.bracketed}</p>
-          <p class="means">{row.means}</p>
+          <p class="means"><InlineText text={row.means} /></p>
         {/each}
       </div>
     {:else if block.kind === 'diagram'}
       <figure class="figure">
-        <SentenceGraph sentence={sentenceById(block.sentenceId)} />
-        <figcaption>{block.caption}</figcaption>
+        <SentenceGraph
+          sentence={sentenceById(block.sentenceId)}
+          reading={readingFor(block.sentenceId, block.through)}
+        />
+        <figcaption><InlineText text={block.caption} /></figcaption>
       </figure>
+    {:else if block.kind === 'contrast'}
+      <figure class="contrast">
+        <figcaption class="question"><InlineText text={block.question} /></figcaption>
+        <div class="pair">
+          {#each [block.left, block.right] as side (side.sentenceId)}
+            <div class="side">
+              <SentenceGraph
+                sentence={sentenceById(side.sentenceId)}
+                reading={readingFor(side.sentenceId, block.through)}
+              />
+              <p class="side-caption"><InlineText text={side.caption} /></p>
+            </div>
+          {/each}
+        </div>
+      </figure>
+    {:else if block.kind === 'procedure'}
+      <div class="procedure">
+        <p class="claim"><InlineText text={block.title} /></p>
+        <ol>
+          {#each block.steps as step (step)}
+            <li><InlineText text={step} /></li>
+          {/each}
+        </ol>
+        {#if block.limit}
+          <p class="limit"><InlineText text={block.limit} /></p>
+        {/if}
+      </div>
     {:else if block.kind === 'rule'}
       <div class="rule">
         <p class="claim"><InlineText text={block.claim} /></p>
@@ -71,6 +116,14 @@
       </div>
     {/if}
   {/each}
+
+  <div class="begin">
+    <button class="cta" type="button" onclick={() => onstart(lesson.sentences[0]!.id)}>
+      Start analyzing
+      <ArrowRight size={17} strokeWidth={2.2} aria-hidden="true" />
+    </button>
+    <p class="under">Ten sentences from this lesson, one decision at a time.</p>
+  </div>
 </article>
 
 <style>
@@ -233,6 +286,90 @@
     line-height: 1.5;
   }
 
+  /* ------------------------------------------------------------- contrast */
+
+  /* The pair is the argument, so it sits in one frame with one question over
+     it. Two separate figures would let a reader take them one at a time, which
+     is the reading that misses the point. */
+  .contrast {
+    --graph-h: clamp(200px, 26vh, 270px);
+
+    max-width: var(--figure);
+    margin: clamp(30px, 5vh, 46px) 0 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--artboard);
+  }
+
+  .question {
+    margin: 0;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* Stacked, not side by side. Two 55rem columns put the fit at 59%, under the
+     app's readable floor of 69%, and a diagram nobody can read is not evidence.
+     Stacking also puts the two word rows directly above each other, which is
+     what the reader is actually comparing. */
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .side + .side {
+    border-top: 1px solid var(--border);
+  }
+
+  .side-caption {
+    margin: 0;
+    padding: 12px 18px 16px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* ------------------------------------------------------------ procedure */
+
+  .procedure {
+    margin: 28px 0 0;
+    padding: 20px 24px 22px;
+    border-radius: var(--radius-md);
+    background: var(--sunken);
+  }
+
+  .procedure ol {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .procedure li {
+    margin-top: 6px;
+  }
+
+  .procedure li::marker {
+    color: var(--ink-faint);
+    font-family: var(--font-sans);
+    font-size: 13px;
+  }
+
+  .limit {
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
   /* ---------------------------------------------------------------- rules */
 
   .rule {
@@ -289,5 +426,31 @@
   .start .prose {
     margin-top: 14px;
     color: var(--ink-muted);
+  }
+
+  /* ---------------------------------------------------------- the handoff */
+
+  /* The page ends on the action, not on more reading. Centred and larger than
+     any other control here, because it is the only thing to do next. */
+  .begin {
+    margin-top: clamp(48px, 8vh, 76px);
+    padding-top: clamp(32px, 5vh, 44px);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .begin .cta {
+    align-items: center;
+    gap: 9px;
+    padding: 15px 30px;
+    font-size: 15px;
+  }
+  .begin .cta:hover {
+    background: color-mix(in oklab, var(--accent) 88%, black);
+  }
+  .begin .under {
+    margin: 14px 0 0;
+    color: var(--ink-faint);
+    font-family: var(--font-sans);
+    font-size: 12px;
   }
 </style>

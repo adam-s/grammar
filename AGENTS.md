@@ -17,8 +17,18 @@ instance, it is a fact wearing a rule's clothes; write the principle instead.
   reads.
 - Plain language first, the term second. Introduce a name for something the
   reader already understands, never as the thing to be understood.
+- Trust what the learner already knows in practice, even when they have
+  forgotten its name.
+- Lead with the main idea, then make it concrete. Let examples do most of the
+  teaching, and move one clear step at a time.
 - Prose — docs, comments, commit messages, READMEs — is concrete and
-  front-loaded. Plain words, rationed em-dashes, no filler.
+  front-loaded. Use short paragraphs, active verbs, plain words, rationed
+  em-dashes, and no filler.
+- Earn interest with a problem, a surprise, or a real consequence — never
+  hype. When it helps, end with one plain sentence that says what the example
+  teaches.
+- Be clear without oversimplifying, friendly without chatter, and confident
+  without sounding academic.
 - Reframing is not sanitizing. Soften the word if it helps; never drop the
   honest substance to reach a nicer tone.
 

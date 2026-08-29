@@ -111,6 +111,37 @@
     return focusRect(cs, words, selection, minDepth);
   }
 
+  /**
+   * Everything drawn: the tree so far, and the sentence row under it.
+   *
+   * `wordRowRect` protects the words alone, which was enough while the tree was
+   * the thing being built and the palette was the thing building it. In a
+   * figure that shows both at once the palette then opened straight onto the
+   * tree it was labelling — measurably, 64% of it — so contextual UI needs to
+   * know about the structure as well as the sentence.
+   *
+   * Reserved depth is deliberately excluded. `minDepth` holds the finished
+   * frame open so the picture does not jump as it grows, but empty rows are
+   * exactly where a menu should be allowed to go.
+   */
+  export function drawnRect(cs: ConstituentMap, words: Word[], minDepth = 0): Rect | null {
+    const row = wordRowRect(cs, words, minDepth);
+    if (!row) return null;
+    const l = layout(cs, words, { rowHeight: ROW, minDepth });
+    const boxes = Object.values(l.nodes);
+    if (boxes.length === 0) return row;
+    const top = PAD + Math.min(...boxes.map((b) => b.y));
+    const left = PAD + Math.min(...boxes.map((b) => b.left));
+    const right = PAD + Math.max(...boxes.map((b) => b.right));
+    const x = Math.min(row.x, left);
+    return {
+      x,
+      y: Math.min(row.y, top),
+      w: Math.max(row.x + row.w, right) - x,
+      h: row.y + row.h - Math.min(row.y, top),
+    };
+  }
+
   /** The complete sentence row is protected from contextual UI, not only the selection. */
   export function wordRowRect(cs: ConstituentMap, words: Word[], minDepth = 0): Rect | null {
     const l = layout(cs, words, { rowHeight: ROW, minDepth });
@@ -205,6 +236,14 @@
     if (selection.kind === 'node') return constituents[selection.id]?.span ?? null;
     if (selection.kind === 'nodes') return selection.span;
     return null;
+  });
+
+  /** Phrase selections mark the phrases themselves. Only a word gesture or a
+      committed word span marks the word row. Showing both made a phrase click
+      look as though the learner had selected its words instead. */
+  const activeWordSpan = $derived.by<Span | null>(() => {
+    if (draft) return draft;
+    return selection.kind === 'span' ? selection.span : null;
   });
 
   const inSpan = (s: Span | null, i: number) => !!s && i >= s[0] && i <= s[1];
@@ -423,7 +462,7 @@
          learner starts with a bare sentence and no structure at all, and a word
          must never appear or vanish as the structure grows. -->
     {#each L.words as slot (slot.i)}
-      {@const sel = inSpan(activeSpan, slot.i)}
+      {@const sel = inSpan(activeWordSpan, slot.i)}
       {@const wordHitW = phone.matches ? Math.max(slot.width, minimumTouchWorld) : slot.width}
       {@const wordHitH = phone.matches ? Math.max(48, minimumTouchWorld) : 30}
       {@const wordMarkH = phone.matches ? 36 / ws.viewport.z : 30}
@@ -493,6 +532,19 @@
   .edge {
     stroke: var(--border-strong);
     stroke-width: 1.25;
+  }
+
+  /* A guided run adds one claim at a time. Let the new ink settle into place
+     without moving geometry the learner is already tracking. */
+  :global(main:has(.banner)) .node,
+  :global(main:has(.banner)) .edge {
+    animation: tutorial-ink-in 180ms ease-out both;
+  }
+
+  @keyframes tutorial-ink-in {
+    from {
+      opacity: 0;
+    }
   }
 
   .node .bracket {
@@ -576,5 +628,12 @@
 
   :where(.node, .word) {
     cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(main:has(.banner)) .node,
+    :global(main:has(.banner)) .edge {
+      animation: none;
+    }
   }
 </style>

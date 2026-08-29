@@ -25,21 +25,22 @@
     diagramSize,
     selectionFocusRect,
     selectionRect,
-    wordRowRect,
+    drawnRect,
   } from '../grammar/Diagram.svelte';
   import LabelPanel from '../grammar/LabelPanel.svelte';
   import { optionsFor, type LabelOption } from '../grammar/options.ts';
   import type { Selection } from '../grammar/options.ts';
   import { emptyBuild } from '../grammar/builder.ts';
-  import type { SentenceEntry, Span } from '../grammar/types.ts';
+  import type { Reading, SentenceEntry, Span } from '../grammar/types.ts';
   import { observeStageSize } from '../workspace/stage-resize.ts';
   import { fit, type Size } from '../workspace/viewport.ts';
   import { Workspace, setWorkspace } from '../workspace/workspace.svelte.ts';
   import { beatAt, duration, frameDepth, script, stateIndexFor } from './hero-script.ts';
   import { replaySentence } from './sentence-renderer.ts';
 
-  type Props = { sentence: SentenceEntry };
-  let { sentence }: Props = $props();
+  /** The pruned tree, when the lesson shows only part of the parse. */
+  type Props = { sentence: SentenceEntry; reading?: Reading };
+  let { sentence, reading }: Props = $props();
 
   /**
    * A little air above the tree. The palette needs no reservation of its own —
@@ -58,10 +59,10 @@
   const MIN_H = 452;
   const MAX_H = 620;
 
-  const steps = $derived(replaySentence(sentence).steps);
+  const steps = $derived(replaySentence(sentence, reading).steps);
   const beats = $derived(script(steps));
   const total = $derived(duration(steps));
-  const finished = $derived(replaySentence(sentence).final);
+  const finished = $derived(replaySentence(sentence, reading).final);
   /** One frame for the whole loop: neither the words nor the following prose move. */
   const depth = $derived(frameDepth(finished, sentence.words));
 
@@ -115,7 +116,7 @@
       ? selectionFocusRect(build.constituents, sentence.words, panelSelection, depth)
       : null,
   );
-  const avoid = $derived(wordRowRect(build.constituents, sentence.words, depth));
+  const avoid = $derived(drawnRect(build.constituents, sentence.words, depth));
   const content = $derived(diagramSize(build.constituents, sentence.words, depth));
 
   /** The finished frame is reserved before the first label lands. */
