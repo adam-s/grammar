@@ -109,6 +109,7 @@
   class:responsive-ready={compact.ready}
   class:left-collapsed={!leftOpen}
   class:right-collapsed={!rightVisible}
+  class:document-surface={surface === 'document'}
 >
   <div class="nav-slot">
     <Rail
@@ -196,6 +197,13 @@
   }
   .app.left-collapsed.right-collapsed {
     grid-template-columns: auto 1fr;
+  }
+  /* A lesson is read in the middle, so its evidence needs more room than the
+     navigation beside it. These narrower desktop columns give lesson figures
+     about one fifth more width without changing the diagram workspace. */
+  .app.document-surface {
+    --panel-w: 14rem;
+    --inspector-w: 15.5rem;
   }
   .stage {
     position: relative;

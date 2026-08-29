@@ -1,23 +1,24 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { sharedFrameWidth } from './figure-scale.ts';
+import { READABLE_ZOOM_FLOOR } from '../grammar/node-label.ts';
+import { comparisonFrameWidth } from './figure-scale.ts';
 
-test('a compared pair is drawn into the wider of the two boxes', () => {
-  assert.equal(sharedFrameWidth([420, 610]), 610);
-  assert.equal(sharedFrameWidth([610, 420]), 610);
+test('similar figures share the wider frame', () => {
+  assert.equal(comparisonFrameWidth(425, [425, 610]), 610);
+  assert.equal(comparisonFrameWidth(610, [425, 610]), 610);
 });
 
 test('a lone figure is left to its own width', () => {
-  assert.equal(sharedFrameWidth([420]), 0, 'nothing to compare it against');
-  assert.equal(sharedFrameWidth([]), 0);
+  assert.equal(comparisonFrameWidth(420, [420]), 0, 'nothing to compare it against');
+  assert.equal(comparisonFrameWidth(420, []), 0);
 });
 
 /**
- * The bug this exists for: two sentences of different lengths, each sized to
- * its own content, render at different scales — so a reader comparing the two
- * shapes compares drawings that were never the same size.
+ * A much shorter tree used to inherit all of the long tree's empty frame. Its
+ * labels stayed technically on the same scale and became needlessly small.
  */
-test('the shared width does not depend on the order the pair is given in', () => {
-  const pair = [531, 704];
-  assert.equal(sharedFrameWidth(pair), sharedFrameWidth([...pair].reverse()));
+test('a short figure stops absorbing frame before it becomes too small', () => {
+  const readableFrame = 250 / READABLE_ZOOM_FLOOR;
+  assert.ok(Math.abs(comparisonFrameWidth(250, [250, 704]) - readableFrame) < 1e-9);
+  assert.ok(Math.abs(comparisonFrameWidth(250, [704, 250]) - readableFrame) < 1e-9);
 });

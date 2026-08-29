@@ -40,7 +40,7 @@ export const gardenPath = sentence(
                     ]),
                   ]),
                 ],
-                { clauseKind: 'relative', clauseType: 'SV' },
+                { clauseKind: 'relative', clauseType: 'SV', finiteness: 'participial' },
               ),
             ]),
           ]),

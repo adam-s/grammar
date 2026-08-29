@@ -98,17 +98,7 @@ test('scope only ever grows, and lesson one already teaches something', () => {
  * reason. A row that is neither is a decision a learner can make that the
  * course has never thought about.
  */
-const NOT_IN_COURSE_ONE: Record<string, string> = {
-  'func:flat': 'flat names are unassigned',
-  'func:prenucleus': 'questions and fronting are Course 2, lesson 41',
-  'func:placeholderSubject': 'dummy it and existential there are Course 2, lesson 45',
-  'func:extraposed': 'extraposition is Course 2, lesson 46',
-  'func:displaced': 'heavy-NP shift is assigned to neither course',
-  'kind:interrogative': 'questions are Course 2, lesson 41',
-  'kind:exclamative': 'Course 2 at the earliest; no lesson claims it',
-  'fin:finite': 'the standing answer on every clause; never a question the course asks',
-  'voice:active': 'the standing answer on every verb',
-};
+const NOT_IN_COURSE_ONE: Record<string, string> = {};
 
 test('every decision the palette can emit is taught or explained', () => {
   const taught = new Set(COURSE_LESSONS.flatMap((l) => l.teaches));

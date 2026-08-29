@@ -278,7 +278,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 22,
         stage: 'Phrases',
         title: 'Appositives',
-        teaches: ['func:appositive'],
+        teaches: ['func:appositive', 'func:flat'],
         sentences: LESSON_22,
       },
       {
@@ -343,7 +343,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // to be some kind of clause, and this is the first lesson that draws
         // one. Lesson 30 teaches the JOBS a nominal clause does — subject,
         // object, complement — which is where the work actually is.
-        teaches: ['form:Cl', 'kind:nominal'],
+        teaches: ['form:Cl', 'kind:nominal', 'fin:finite'],
         sentences: LESSON_28,
       },
       {
@@ -359,7 +359,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 30,
         stage: 'Clauses',
         title: 'Nominal clauses',
-        teaches: [],
+        teaches: ['func:placeholderSubject', 'func:extraposed', 'func:displaced'],
         sentences: LESSON_30,
       },
       {
@@ -371,7 +371,7 @@ export const COURSE_STAGES: CourseStage[] = [
         // slot: the clause has a subject and no word for it, and the noun it
         // modifies is what fills it. The palette has always offered the row;
         // until now no lesson admitted introducing it.
-        teaches: ['kind:relative', 'gap'],
+        teaches: ['kind:relative', 'kind:interrogative', 'func:prenucleus', 'gap'],
         sentences: LESSON_31,
       },
       {
@@ -428,7 +428,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 37,
         stage: 'Reduced and marked',
         title: 'Passive voice',
-        teaches: ['voice:passive', 'aux:passive'],
+        teaches: ['voice:active', 'voice:passive', 'aux:passive'],
         sentences: LESSON_37,
       },
       {
@@ -444,7 +444,7 @@ export const COURSE_STAGES: CourseStage[] = [
         number: 39,
         stage: 'Reduced and marked',
         title: 'Punctuation is evidence',
-        teaches: [],
+        teaches: ['kind:exclamative'],
         sentences: LESSON_39,
       },
       {

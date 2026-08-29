@@ -162,6 +162,20 @@ Every worked example must:
 - differ from graded practice unless the sentence is explicitly marked as a
   demonstration and removed from assessment.
 
+Across the course, **every stable item in the label menus must have at least
+one worked lesson-blog example that makes its distinction visible**. This
+includes contextual actions such as stacking, adding a gap, and choosing an
+anchor. A menu note, a `teaches` entry, or a sentence that merely happens to
+contain the label does not count. The page must cite a parsed fixture, draw it
+at a scope that shows the label, and say in the prose or caption what that answer distinguishes.
+The menu-example coverage test is the ledger; update it when a label or its
+best example changes.
+
+When one sentence demonstrates several menu items, the caption may name more
+than one only when the relationship among them is the point. Otherwise give
+the secondary item its own small example. Coverage must not turn one diagram
+into a glossary dump.
+
 Prefer a matched pair over two unrelated examples. In a matched pair, keep
 everything still except the feature being taught. If the words, tense, length,
 and situation all change, the reader cannot tell what caused the difference.
@@ -186,8 +200,15 @@ Each figure must:
 - fit a narrow screen without making labels too small to read.
 
 Use side-by-side figures only when the reader must compare them. Stack them on
-narrow screens, preserve their shared scale, and keep each caption attached to
-its own figure.
+narrow screens and keep each caption attached to its own figure. Similar-sized
+diagrams should share a scale. When one diagram is much shorter, let it grow
+rather than shrinking its labels below the app's readability floor. Exact scale
+is useful only while both pieces of evidence remain easy to read.
+
+On a desktop, a diagram is the page's main evidence and may be about one fifth
+wider than the reading column's former figure frame. On a narrow screen, it
+must remain bounded by the viewport. Do not buy desktop restraint by making the
+labels hard to read.
 
 The hero is optional. Use it only when a finished diagram creates a useful
 question before the explanation starts. A decorative tree under every title
@@ -360,6 +381,8 @@ Before calling the page done:
    exact result.
 7. Read the page aloud and remove filler, repeated cadence, and generic
    transitions.
+8. If the page introduces a menu item, add its parsed example to the menu
+   coverage ledger and confirm that no item is left without one.
 
 ## Acceptance test
 

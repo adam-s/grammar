@@ -206,7 +206,7 @@ first lessons. This is the readable copy.
 | ------------------------------------------------------- | ---------------------------------- |
 | Phrase forms: S, NP, VP                                 | 1                                  |
 | Phrase forms: AdjP, PP, AdvP                            | 10, 14, 14                         |
-| Phrase forms: Nom, DP, Cl                               | 16, later, 28                      |
+| Phrase forms: Nom, DP, Cl                               | 5, 6, 28                           |
 | Word forms: V, N, Det, Pron                             | 3, 5, 6, 7                         |
 | Word forms: Adj, P, Adv                                 | 10, 14, 14                         |
 | Word forms: Num, Aux, Part, Conj, Subord, Interj        | 23, 24, 25, 26, 29, 38             |
@@ -217,11 +217,15 @@ first lessons. This is the readable copy.
 | Phrase function: head                                   | 3, on the verb; generalised at 5   |
 | Phrase functions: determiner, complement                | 6, 14                              |
 | Phrase functions: premodifier, postmodifier, appositive | 16, 21, 22                         |
-| Phrase function: coordinate                             | 26                                 |
+| Phrase functions: flat, coordinate, coordinator         | 22, 26, 26                         |
+| Phrase functions: placeholder, extraposed, displaced    | 30                                 |
+| Phrase functions: prenucleus, postnucleus               | 31, 32                             |
 | Verb types: Vint, Vtr, Vlink, Vbe, Vg, Vc               | 8–13                               |
 | Clause kinds: nominal, adverbial, relative, comparative | 28, 29, 31, 32                     |
-| Clause kind: interrogative                              | Course 2, lesson 41                |
-| Clause kind: exclamative                                | outside both current course plans  |
+| Clause kinds: interrogative, exclamative                | 31, 39                             |
+| Fused functions: determiner-head, premodifier-head      | 6, 16                              |
+| Clause finiteness: finite, infinitival, participial, -ing | 28, 34, 35, 36                   |
+| Voice: active, passive                                  | 37                                 |
 | Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA    | 8–15                               |
 | Ambiguity and alternate readings                        | 1, demonstrated fully in 27 and 40 |
 
@@ -253,16 +257,18 @@ the learner must use the labels together on a new sentence.
 “Complete” needs a boundary. This course is a course in **English syntax**: how
 words form phrases, how phrases fill clause slots, and how structure changes
 meaning. Within that boundary the sequence above covers every verb type and
-simple-clause pattern assigned to Course 1, four clause kinds, and both reading
-states. Interrogatives are reserved for Course 2; exclamatives are supported by
-the app but remain outside both current course plans.
+simple-clause pattern assigned to Course 1, both reading states, and every
+stable grammatical choice visible in the menus. Some later labels receive one
+small reference example rather than a full practice set: lesson 31 uses an
+embedded question to explain the prenucleus and interrogative labels; lesson
+39 uses an embedded exclamative to separate clause type from punctuation.
+Course 2 still teaches the larger systems of inversion, dummy subjects,
+extraposition, and ellipsis in depth.
 
-It does **not** cover every form and function the app exposes, and saying it did
-was wrong. Fusion — a determiner or an adjective heading a noun phrase — is
-assigned to no lesson in either course, and neither are determinative phrases or
-flat names, though `rules.ts` licenses all three and fixtures prove them.
-[difficulty.md](difficulty.md) has the full inventory of what is missing and
-where it should go.
+The menu-example ledger is separate from `teaches`. The scope ladder says when
+a learner may use a label. The ledger proves that a lesson blog cites a parsed
+example containing it. Keeping those claims separate prevents a data assignment
+from masquerading as an explanation.
 
 The first course does not teach spelling, capitalization rules, punctuation
 mechanics, vocabulary, style advice, historical grammar, or a complete account

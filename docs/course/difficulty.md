@@ -198,17 +198,17 @@ missing entries**, recorded here and in
   describes the direct object", which _to wait_ does not do. It was removed. The
   question is what slot the model should have instead.
 
-**Nine belong to Course 2 and are properly absent**, since lessons 41–50 are
-planned and unwritten: `S > Aux/auxiliary`, `S > NP/prenucleus` and
-`Cl > NP/prenucleus` (questions and inversion, 41); `S > NP/placeholderSubject`
-(dummy _it_ and existential _there_, 45); `S > Cl/extraposed` (extraposition, 46);
-`VP > VP/head` with the properties `gap V/head`, `gap VP/head` and
-`gap VP/predicate` (ellipsis in coordination, 48).
+**The stable menu labels now have lesson-blog examples even when their full
+systems belong to Course 2.** Lesson 30 demonstrates placeholder _it_, an
+extraposed clause, and existential _there_ with its displaced subject. Lesson
+31 demonstrates a prenucleus in an embedded question. The graded Course 1
+corpus still does not practise subject–auxiliary inversion or ellipsis; lessons
+41–50 retain those larger teaching jobs.
 
-**One is assigned to neither course.** `VP > NP/displaced` — the displaced subject
-of `fix-existential`, _There is a problem_. Lesson 45 covers existential _there_,
-so it probably belongs there, but the README does not say so, and this is the note
-saying it should.
+The remaining missing shapes are not stable menu labels. `S > Aux/auxiliary`
+belongs to inversion, while `VP > VP/head` with `gap V/head`, `gap VP/head`, or
+`gap VP/predicate` belongs to ellipsis in coordination. A single blog example
+of _gap_ does not pretend to teach every construction that can contain one.
 
 ### Checked against the model, not against the corpus
 

@@ -13,7 +13,7 @@
   import InlineText from './InlineText.svelte';
   import LessonHero from './LessonHero.svelte';
   import StaticFigure from './StaticFigure.svelte';
-  import { sharedFrameWidth } from './figure-scale.ts';
+  import { comparisonFrameWidth } from './figure-scale.ts';
   import { COURSE_LESSONS } from './course.ts';
   import { replaySentence } from './sentence-renderer.ts';
   import { scopeThrough, targetReading } from './scope.ts';
@@ -92,18 +92,19 @@
     {:else if block.kind === 'contrast'}
       <figure class="contrast">
         <figcaption class="question"><InlineText text={block.question} /></figcaption>
-        <!-- Both sides are drawn into the wider of the two boxes, so the
-             shapes the reader is asked to compare share a scale. -->
+        <!-- Similar-sized trees share a scale. A much shorter tree stops
+             absorbing empty frame before its labels become too small. -->
         <div class="pair">
           {#each [block.left, block.right] as side (side.sentenceId)}
-            {@const shared = sharedFrameWidth(
-              [block.left, block.right].map((s) => figureWidth(s.sentenceId, block.through)),
+            {@const widths = [block.left, block.right].map((s) =>
+              figureWidth(s.sentenceId, block.through),
             )}
+            {@const own = figureWidth(side.sentenceId, block.through)}
             <div class="side">
               <StaticFigure
                 sentence={sentenceById(side.sentenceId)}
                 reading={readingFor(side.sentenceId, block.through)}
-                frameWidth={shared}
+                frameWidth={comparisonFrameWidth(own, widths)}
               />
               <p class="side-caption"><InlineText text={side.caption} /></p>
             </div>
@@ -151,14 +152,17 @@
 <style>
   .lesson {
     --measure: 40rem;
-    --figure: 55rem;
+    /* Give diagrams enough room to be read as the page's main evidence on a
+       desktop. The viewport cap below still keeps them full-width on phones. */
+    --figure: 66rem;
+    --page-pad: clamp(20px, 6vw, 72px);
 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: clamp(56px, 9vh, 108px) clamp(20px, 6vw, 72px) clamp(96px, 18vh, 200px);
+    padding: clamp(56px, 9vh, 108px) var(--page-pad) clamp(96px, 18vh, 200px);
     color: var(--ink);
     font-family: var(--font-serif);
     text-wrap: pretty;
@@ -171,6 +175,7 @@
 
   /* The demonstration is the widest thing on the page, and it comes first. */
   .lesson > :global(.hero) {
+    width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
     max-width: var(--figure);
     margin: clamp(18px, 3vh, 32px) 0 clamp(20px, 3vh, 34px);
   }
@@ -301,8 +306,9 @@
   /* --------------------------------------------------------------- figure */
 
   .figure {
-    --graph-h: clamp(230px, 32vh, 330px);
+    --graph-h: clamp(280px, 40vh, 380px);
 
+    width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
     max-width: var(--figure);
     margin: clamp(30px, 5vh, 46px) 0 0;
     padding: 10px 0 0;
@@ -327,8 +333,9 @@
      it. Two separate figures would let a reader take them one at a time, which
      is the reading that misses the point. */
   .contrast {
-    --graph-h: clamp(200px, 26vh, 270px);
+    --graph-h: clamp(280px, 38vh, 360px);
 
+    width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
     max-width: var(--figure);
     margin: clamp(30px, 5vh, 46px) 0 0;
     border: 0;
@@ -377,13 +384,12 @@
       margin-top: 26px;
     }
 
-    /* Once the frame disappears, its old inset has no edge to relate to.
-       Align questions and captions with the reading column on a phone; the
-       SVG keeps its own breathing room around the drawing. */
+    /* The graph uses the full phone width. Keep its words aligned with the
+       reading column so captions do not touch the screen edge. */
     .question,
     .side-caption,
     .figure figcaption {
-      margin-inline: 0;
+      margin-inline: var(--page-pad);
     }
 
     .question {

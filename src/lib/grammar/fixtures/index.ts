@@ -28,6 +28,7 @@ export * from './noun-phrases.ts';
 export * from './movement.ts';
 export * from './edges.ts';
 export * from './ellipsis.ts';
+export * from './menu-examples.ts';
 
 import {
   sentenceFrame,
@@ -93,6 +94,12 @@ import {
   subjectPhrase,
   subjectPhraseMoved,
   subjectAgreement,
+  subjectAgreementPlural,
+  determinerA,
+  determinerThat,
+  determinerBare,
+  pronounLongSubject,
+  pronounReplacement,
 } from './noun-phrases.ts';
 import {
   acrossTheBoard,
@@ -105,6 +112,14 @@ import {
 } from './movement.ts';
 import { punctuation, supplement, existential, frontedAdverbial, interjection } from './edges.ts';
 import { vpEllipsis, gapping, sluicing, stripping } from './ellipsis.ts';
+import {
+  determinativePhrase,
+  exclamativeClause,
+  fusedDeterminer,
+  fusedPremodifier,
+  modalAuxiliary,
+  supportingDo,
+} from './menu-examples.ts';
 
 /** Every good fixture. All must pass every audit. */
 export const FIXTURES: readonly SentenceEntry[] = [
@@ -128,6 +143,12 @@ export const FIXTURES: readonly SentenceEntry[] = [
   subjectPhrase,
   subjectPhraseMoved,
   subjectAgreement,
+  subjectAgreementPlural,
+  determinerA,
+  determinerThat,
+  determinerBare,
+  pronounLongSubject,
+  pronounReplacement,
   ambiguous,
   gardenPath,
   objectClause,
@@ -177,6 +198,12 @@ export const FIXTURES: readonly SentenceEntry[] = [
   gapping,
   sluicing,
   stripping,
+  determinativePhrase,
+  fusedDeterminer,
+  fusedPremodifier,
+  modalAuxiliary,
+  supportingDo,
+  exclamativeClause,
 ];
 
 export const BY_ID: Record<string, SentenceEntry> = Object.fromEntries(

@@ -623,3 +623,169 @@ export const subjectAgreement = sentence(
   ],
   'r1',
 );
+
+/* ---- agreement follows the other head — The keys to the cabinet are missing.
+ *
+ * The matched half of `fix-subject-agreement`. The noun nearest the verb is
+ * singular this time, but the verb is plural because the head is *keys*.
+ * Holding the wording still this closely makes the source of agreement visible
+ * instead of asking the caption to assert it.
+ */
+export const subjectAgreementPlural = sentence(
+  'fix-subject-agreement-plural',
+  'lesson 05 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'keys'),
+              n('PP', 'postmodifier', [
+                w('P', 'head', 'to'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'cabinet')]),
+              ]),
+            ]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'are', { lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [w('Adj', 'head', 'missing')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Nobody can find the cabinet keys.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ---- determiners change the reference — A light flashed. / That light flashed.
+ *
+ * The noun and event stay fixed. Only the determiner changes: *a* introduces
+ * an unspecified light; *that* asks the listener to identify one. A bare
+ * plural closes the tempting rule that every noun phrase needs this slot.
+ */
+export const determinerA = sentence(
+  'fix-determiner-a-light',
+  'lesson 06 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'A'), w('N', 'head', 'light')]),
+          n('VP', 'predicate', [w('V', 'head', 'flashed', { lemma: 'flash', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'An unspecified light flashed.' },
+    ),
+  ],
+  'r1',
+);
+
+export const determinerThat = sentence(
+  'fix-determiner-that-light',
+  'lesson 06 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'That'), w('N', 'head', 'light')]),
+          n('VP', 'predicate', [w('V', 'head', 'flashed', { lemma: 'flash', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The indicated light flashed.' },
+    ),
+  ],
+  'r1',
+);
+
+export const determinerBare = sentence(
+  'fix-determiner-bare-lights',
+  'lesson 06 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('N', 'head', 'Lights')]),
+          n('VP', 'predicate', [w('V', 'head', 'flashed', { lemma: 'flash', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'More than one light flashed.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ---- a pronoun replaces the whole phrase — The pilot near the window waved.
+ *
+ * Lesson 7 needs the long phrase and its one-word replacement in the fixture
+ * ledger so both diagrams come from approved parses. *She* replaces all five
+ * subject words, not merely the noun *pilot*.
+ */
+export const pronounLongSubject = sentence(
+  'fix-pronoun-long-subject',
+  'lesson 07 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'pilot'),
+              n('PP', 'postmodifier', [
+                w('P', 'head', 'near'),
+                n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'window')]),
+              ]),
+            ]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'waved', { lemma: 'wave', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The pilot who was near the window waved.' },
+    ),
+  ],
+  'r1',
+);
+
+export const pronounReplacement = sentence(
+  'fix-pronoun-she-waved',
+  'lesson 07 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [w('V', 'head', 'waved', { lemma: 'wave', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The previously identified woman waved.' },
+    ),
+  ],
+  'r1',
+);
