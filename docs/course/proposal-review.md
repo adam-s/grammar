@@ -585,7 +585,7 @@ Status values:
 | #   | Sentence                             | Natural reading      | Intended parse             | Scope reach           | Model / fixture             |
 | --- | ------------------------------------ | -------------------- | -------------------------- | --------------------- | --------------------------- |
 | 1   | Oh, the gate opened.                 | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
-| 2   | Well, the clerk waited.              | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
+| 2   | Wow, the clerk returned.             | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 3   | Unfortunately, that ferry sank.      | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 4   | Surprisingly, the engine restarted.  | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 5   | The engine, surprisingly, restarted. | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |

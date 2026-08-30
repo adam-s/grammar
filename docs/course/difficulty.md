@@ -247,7 +247,7 @@ prompt to try another shape before it is a finding, and the script says so.
 Separately, two decisions were **taught and never used** anywhere in the 400
 sentences this corpus replaced: `aux:do` at lesson 24 and `form:Interj` at lesson 38. Each was a claim the course had not earned, and each was fixed the cheap way,
 by writing the sentence: _The visitors did wait_ and _The clerk did file the
-deeds_ for the first, _Oh, the gate opened_ and _Well, the clerk waited_ for the
+deeds_ for the first, _Oh, the gate opened_ and _Wow, the clerk returned_ for the
 second. That is the **0** in the table above.
 
 ## Where this came from

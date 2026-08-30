@@ -167,7 +167,7 @@ export const LESSON_34 = [
       infinitival: true,
       verb: v('lift', 'lift', 'Vtr'),
       objectGap: true,
-      kind: 'nominal',
+      kind: 'comparative',
       finiteness: 'infinitival',
     },
     'The box weighed more than anyone could raise.',

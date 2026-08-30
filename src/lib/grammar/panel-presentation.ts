@@ -72,7 +72,12 @@ export interface MenuSection {
 export function menuSections(g: OptionGroup): MenuSection[] {
   const taken: string[] = [];
   const take = (name: string, keys: readonly string[]) => {
-    const options = g.options.filter((o) => keys.includes(o.form ?? o.func ?? ''));
+    // The key list is ordered by use in the course corpus. Look each key up in
+    // that order instead of filtering the taxonomy, whose order answers a
+    // different question.
+    const options = keys.flatMap((key) =>
+      g.options.filter((o) => (o.form ?? o.func ?? '') === key),
+    );
     for (const o of options) taken.push(o.key);
     return { name, options };
   };
@@ -84,13 +89,13 @@ export function menuSections(g: OptionGroup): MenuSection[] {
   if (g.id === 'word-class') {
     return rest([
       take('Content words', ['N', 'V', 'Adj', 'Adv']),
-      take('Function words', ['Det', 'Pron', 'Aux', 'P', 'Conj', 'Subord', 'Part']),
+      take('Function words', ['Det', 'P', 'Pron', 'Subord', 'Conj', 'Aux', 'Part']),
       take('Other', ['Num', 'Interj']),
     ]);
   }
   if (g.id === 'phrase-form') {
     return rest([
-      take('Phrases', ['NP', 'Nom', 'DP', 'VP', 'PP', 'AdjP', 'AdvP']),
+      take('Phrases', ['NP', 'VP', 'Nom', 'PP', 'AdjP', 'AdvP', 'DP']),
       take('Clausal forms', ['S', 'Cl']),
     ]);
   }

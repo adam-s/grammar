@@ -1,75 +1,152 @@
 # Lesson 13 — Naming the object
 
-Researched 28 August 2026. An author's dossier. See
+Researched 30 August 2026. An author's dossier. See
 [../01-introduction/README.md](../01-introduction/README.md).
 
-**Status:** This dossier measures the corpus as it was before the conversion. [sentences.md](sentences.md) is now the live course text, built and reachable; no reading has been accepted by a person, which `npm run course:readiness` reports.
+**Status:** Research pass complete. The learner-facing lesson and practice set
+have been inspected but not revised in this pass.
 
-**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+**Page contract:** The learner-facing lesson will follow
+[the shared lesson contract](../../lesson/README.md). This dossier records the
+claim, evidence, limits, and corpus risks that should guide that revision.
 
-## What the lesson decides
+## Central generalization
 
-| Decision                | In plain words                     |
-| ----------------------- | ---------------------------------- |
-| `func:objectComplement` | it renames or describes the object |
-| `vt:Vc`                 | the verb needs both                |
+An object complement predicates something of the direct object. It can assign
+the object a property, a name, a role, or a resulting state:
 
-## The tests
+- _They considered the route unsafe._ The route is unsafe in their judgment.
+- _They elected Mara chair._ Mara became chair through the election.
+- _They painted the door green._ The door became green through the painting.
 
-This is the one place in Stage 2 where two clean formal tests exist and neither
-is in the app.
+The relationship is the point. “Renames or describes the object” is a useful
+first summary, but it hides two distinctions: a complement may be an adjective
+rather than a name, and it may describe either a state or a result caused by the
+event.
 
-**The _be_ link.** An object complement and its object can be joined by _be_ or
-_become_:
+## The structure to make visible
 
-> An object complement has a copular relationship with the direct object: we can
-> link the two with the linking verb be or become.
+The direct object and object complement have different jobs in the same verb
+phrase. The object is a participant selected by the verb. The complement makes
+a second predication about that participant. In _The committee made Maya a
+partner_, _Maya_ is the direct object and _a partner_ is true of Maya as a
+result of the making.
 
-_The jury found the driver careless_ → _the driver **is** careless_. ✓
-_The porter handed the guest a key_ → _\*the guest is a key_. ✗
+This produces the same visible word-class sequence as a double-object clause:
 
-That single test separates lesson 12 from lesson 13 and runs today, with no
-grammar the learner has not met.
+| Clause                     | Relationship after the verb                          |
+| -------------------------- | ---------------------------------------------------- |
+| _They made her a partner._ | _her_ became _a partner_: object + object complement |
+| _They made her a cake._    | _her_ received _a cake_: indirect + direct object    |
 
-**The passive refusal.**
+The second noun phrase is therefore not identified by being “the last noun
+phrase.” Its relationship to the first noun phrase decides the analysis.
 
-> In the passive voice, while an indirect object can become the subject, an
-> object complement can't.
+The course draws the object and object complement as separate sisters under the
+verb phrase. Other analyses represent the predicative relation as a secondary
+predicate or small clause. The pictures differ, but they agree that the final
+phrase is predicated of the object rather than denoting another transferred
+participant.
 
-_The guest was handed a key_ ✓ against _\*Director was called her_ ✗.
-Unavailable until lesson 37, but worth naming there.
+## Evidence and its limits
 
-## Shortcut register
+### The copular paraphrase
 
-| Shortcut                                              | What defeats it                                | In the course?                     |
-| ----------------------------------------------------- | ---------------------------------------------- | ---------------------------------- |
-| Three noun phrases means two objects                  | this whole lesson                              | yes, that is the lesson            |
-| The last thing is an adjective, so it is a complement | _the lawyer their chair_, _the boat Endeavour_ | **yes** — 4 of 10 are noun phrases |
-| The heading tells you which                           | a mixed lesson                                 | **no**                             |
+Try expressing the relation between the two phrases with _be_ or _become_:
 
-Four distinct asked-shapes, and the adjective/noun-phrase mix is genuinely
-good: _careless_, _green_, _void_, _watertight_, _unfair_, _unsafe_ against
-_their chair_, _its adviser_, _Endeavour_.
+- _They found the driver careless_ → _the driver was careless_.
+- _They made her a partner_ → _she became a partner_.
+- _They made her a cake_ → \*_she was/became a cake_.
 
-What is missing is any sentence from lesson 12. The two constructions share a
-surface shape and are never seen together.
+This is a strong diagnostic for the contrast taught here. It is not a
+definition or a word-insertion rule. Tense, aspect, result, and wording may have
+to change. _They named the boat Endeavour_ is naturally paraphrased as _the boat
+was named Endeavour_, not simply _the boat was Endeavour_. Some object
+complements describe an existing judgment; others describe a result.
 
-## What this should change
+### Passive evidence
 
-1. **Put the _be_ test in the app.** `FUNCTION_TEST.objectComplement` currently
-   reads "renames or describes the direct object", which is a description. _Can
-   you say the object **is** it?_ is a test, is shorter, and is right.
-2. **One two-object sentence in this lesson**, so the count stops being decided
-   by the heading.
+When the active direct object becomes the passive subject, the object complement
+remains predicated of it:
 
-## Sources
+- _They considered him reliable_ → _He was considered reliable._
+- _They elected Tyrone mayor_ → _Tyrone was elected mayor._
 
-Search summaries only, 28 August 2026, from Lemon Grad, Quora's grammar exchange
-and Wyzant on object complement versus indirect object. The two quotations above
-came through search results and should be checked before reuse; the tests
-themselves are standard and verifiable against any sentence.
+The complement itself does not become the passive subject. This supports the
+analysis, but passive voice arrives much later in the course and cannot carry
+the present lesson.
 
-## Rejected
+### Category is not function
 
-- **Deciding by meaning — "does it rename, or does it receive?"** It gets the
-  right answer and it is not a test. Both quoted tests are mechanical.
+The object complement may be an adjective phrase (_unsafe_, _careless_) or a
+noun phrase (_their chair_, _a partner_). Its form does not decide its function.
+That fact matters most when both phrases after the verb are noun phrases,
+because the sequence alone cannot distinguish an object complement from a
+second object.
+
+## How common summaries fall short
+
+| Summary                                       | What it gets right                       | What it leaves out                                     |
+| --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| “It renames or describes the object.”         | It points to the object–complement link. | Results, judgments, and adjective complements differ.  |
+| “Put _is_ between the last two phrases.”      | It exposes a predicative relationship.   | The paraphrase may need _become_, tense, or rewording. |
+| “The pattern is verb + object + complement.”  | It records the surface order.            | The same NP sequence can contain two objects instead.  |
+| “The complement is the adjective at the end.” | Many examples look this way.             | Noun phrases also serve as object complements.         |
+
+## Corpus audit
+
+The live practice set now contains eight object-complement clauses and two
+double-object controls. It includes four noun-phrase complements (_chair_,
+_adviser_, _Endeavour_, _partner_) and four adjective complements (_careless_,
+_void_, _unsafe_, _green_). The pair _They made her a partner_ / _They made her
+a cake_ is especially valuable because the verb and first object stay fixed
+while the relationship changes.
+
+The old dossier's claim that the two constructions were never mixed is no
+longer true. The revised lesson should use the matched _made_ pair rather than
+speaking as though adjective endings create the category.
+
+One example needs care: _named the boat Endeavour_ does express an object
+complement, but the lesson's bare “put _is_ between them” wording gives an
+awkward paraphrase. It is useful evidence for teaching the limit of the test.
+
+## What should change
+
+1. Lead with the predicative relationship: the complement says what the direct
+   object is, is judged to be, or becomes.
+2. Use _made her a partner_ beside _made her a cake_ so that the relationship,
+   not the number or category of phrases, does the explanatory work.
+3. Present the _be/become_ paraphrase as evidence and show one case that needs
+   rewording.
+4. Keep both noun-phrase and adjective-phrase complements visible.
+5. Preserve the mixed practice set; it now blocks the heading-only shortcut.
+
+## Sources opened and read
+
+- Cambridge Dictionary, English Grammar Today,
+  [“Complements”](https://dictionary.cambridge.org/grammar/british-grammar/complements).
+  Gives the introductory account of object complements as adding information
+  about the object.
+- Nigel Caplan, Cambridge University Press & Assessment,
+  [“They Elected Him President: Nouns as object complements”](https://www.cambridge.org/elt/blog/2021/07/28/they-elected-him-president-nouns-as-object-complements/).
+  Covers noun-phrase object complements, their relation to _become_ and _be
+  known as_, and what remains in the passive.
+- Bas Aarts,
+  [“Oblique predicative constructions in English with _for_ and _as_: _qua_ vs _qualitate qua_”](https://discovery.ucl.ac.uk/10176756/1/oblique-predicative-constructions-in-english-with-for-and-as-qua-vs-qualitate-qua.pdf).
+  Situates object-related predicative complements among depictive and
+  resultative predication and records both NP and adjective-phrase realizations.
+- Cambridge Dictionary, English Grammar Today,
+  [“Consider or regard?”](https://dictionary.cambridge.org/us/grammar/british-grammar/consider).
+  Supplies current examples of _consider + object + complement_.
+
+## Rejected claims
+
+- **“An object complement cannot become the subject of a passive.”** Too loose.
+  The direct object becomes the passive subject and the complement remains
+  predicated of it.
+- **“Three noun phrases means two objects.”** Object-complement clauses can have
+  the same surface sequence.
+- **“The final adjective identifies the construction.”** Noun phrases also fill
+  the function, and category does not establish the relationship.
+- **“The _is_ test defines an object complement.”** It is a helpful paraphrase
+  whose wording and interpretation sometimes need adjustment.

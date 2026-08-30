@@ -7,30 +7,38 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'An **intransitive verb** completes its clause without an object or complement. In “The engine stalled,” the verb needs nothing after it: _The engine stalled_ is already a complete claim.',
+        text: 'An **intransitive use** of a verb has no direct object. In _The engine stalled_, the verb and its subject make the clause; no noun phrase fills an object position after _stalled_.',
       },
       {
         kind: 'diagram',
         sentenceId: 'fix-vint',
         through: 8,
         caption:
-          '_Stalled_ completes the predicate by itself. There is no empty object waiting to be supplied.',
+          'The predicate is headed by _stalled_, and the figure shows no object noun phrase after it.',
       },
-      { kind: 'section', eyebrow: 'the test', title: 'Stop at the verb' },
+      {
+        kind: 'section',
+        eyebrow: 'what can follow',
+        title: 'Material after the verb can have another job',
+      },
+      {
+        kind: 'sentence',
+        text: 'She smiled **at us**.',
+      },
       {
         kind: 'prose',
-        text: 'Read the subject and verb, then stop. If the result is a complete sentence, the verb can stand alone in this use. Adding an object does not make the sentence more complete: “The engine stalled the traffic” gives _stalled_ a different use and meaning.',
+        text: '_At us_ gives more information about the smiling, but it does not make _us_ an object of _smiled_. An intransitive clause may therefore continue after the verb. The title “stands alone” names the missing direct-object relation, not a rule that the verb must be final.',
       },
       {
         kind: 'procedure',
-        title: 'Test this use of the verb',
+        title: 'Check the frame in this clause',
         steps: [
-          'Read through the main verb and stop.',
-          'Ask whether the clause already makes a complete claim.',
-          'If it does, and no required phrase follows, treat this use as intransitive.',
+          'Find the main verb and read the whole predicate.',
+          'Look for a noun phrase directly paired with that verb as an object.',
+          'If this use has none, treat it as intransitive even when an adverb or prepositional phrase follows.',
         ],
         limit:
-          'The label belongs to the verb as it is used here, not to the word forever. “The tide turned,” “She turned the wheel,” and “The milk turned sour” use _turn_ in three different frames.',
+          'A clause can feel complete while context supplies an understood object, as in _Have you eaten?_. Classify the relationship shown in this use, not how satisfying the thought feels. The same spelling can enter another frame: _The hatch opened_ and _She opened the hatch_.',
       },
     ],
   },
@@ -40,31 +48,39 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **transitive verb** opens a slot for a **direct object**. The object is a noun phrase that completes what the verb predicts: _She repaired_ leaves the repair unfinished; _She repaired the engine_ supplies the missing piece.',
+        text: 'A **direct object** is a noun phrase that combines directly with a verb inside the predicate. A **transitive use** has that relation: in _She repaired the engine_, _the engine_ is the noun phrase paired with _repaired_.',
       },
       {
         kind: 'contrast',
-        question: 'What changes when a verb opens an object slot?',
+        question: 'What does the predicate contain?',
         through: 9,
-        left: { sentenceId: 'fix-vint', caption: '_The engine stalled_ is complete at the verb.' },
+        left: {
+          sentenceId: 'fix-vint',
+          caption: 'This predicate contains the verb _stalled_ and no object noun phrase.',
+        },
         right: {
           sentenceId: 'fix-vtr',
-          caption: '_Repaired_ predicts a direct object: what did she repair?',
+          caption:
+            'This predicate contains _repaired_ and the noun phrase _the engine_, labeled as its direct object.',
         },
       },
-      { kind: 'section', eyebrow: 'the test', title: 'Replace the object with it or them' },
+      {
+        kind: 'section',
+        eyebrow: 'the evidence',
+        title: 'A pronoun can show the noun-phrase boundary',
+      },
       {
         kind: 'sentence',
         text: 'She repaired **the engine**. → She repaired **it**.',
       },
       {
         kind: 'prose',
-        text: 'The replacement proves that _the engine_ is one noun phrase in the object slot. “Verb what?” is a useful way to find a candidate, but the structure is the real evidence: the noun phrase belongs directly to the verb.',
+        text: 'The replacement shows that _the engine_ is one noun phrase in this position. It does not prove the phrase is an object: a subject complement and a noun phrase inside a prepositional phrase can also be replaced by a pronoun. The verb’s frame and the phrase’s direct relation to the verb decide the function.',
       },
       {
         kind: 'rule',
-        claim: 'An object is a structural job, not a victim.',
-        text: 'In “She heard the music,” nothing acts upon or changes the music. It is still the direct object because _heard_ licenses that noun-phrase slot.',
+        claim: 'Classify the use, not the spelling.',
+        text: '_She opened the gate_ has a direct object; _The gate opened_ does not. In the first clause, the gate is paired with _opened_ inside the predicate. In the second, it is the subject. A direct object need not be something physically acted on: _She heard the music_ has one too.',
       },
     ],
   },
@@ -74,25 +90,29 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **linking verb** connects the subject to a description or identity. The phrase after it is a **subject complement**: in “The soup tasted salty,” _salty_ describes the soup rather than an object of tasting.',
+        text: 'A **linking use** of a verb licenses a **subject complement**: a phrase that says something about the subject. In _The soup tasted salty_, _salty_ gives a property of the soup; it does not name something the soup tasted.',
       },
       {
         kind: 'diagram',
         sentenceId: 'fix-vlink',
         through: 10,
         caption:
-          'The adjective phrase _salty_ points back to _the soup_. Both sides concern the same thing.',
+          'The diagram labels _salty_ as a subject complement beside _tasted_; the adjective phrase predicates a property of the subject _the soup_.',
       },
-      { kind: 'section', eyebrow: 'the test', title: 'Try a form of be' },
+      {
+        kind: 'section',
+        eyebrow: 'a useful paraphrase',
+        title: 'Make the subject–property relation plain',
+      },
       { kind: 'sentence', text: 'The soup **tasted salty**. → The soup **was salty**.' },
       {
         kind: 'prose',
-        text: 'The second sentence keeps the central relationship: the soup is salty. That makes _salty_ a subject complement. The same test fails on a direct object: “She repaired the engine” cannot become “She was the engine.”',
+        text: 'The second sentence preserves the relation between the soup and its saltiness. That supports the subject-complement analysis. It does not make _tasted_ mean the same as _was_: tasting adds a flavour meaning. A _be_ paraphrase is evidence in a controlled example, not a test that classifies every verb.',
       },
       {
         kind: 'rule',
-        claim: 'The sentence decides the verb type.',
-        text: '_The children grew_, _The farmer grew potatoes_, and _The sky grew dark_ use the same word as an intransitive, transitive, and linking verb. Do not classify the word before reading its frame.',
+        claim: 'The frame belongs to this use of the verb.',
+        text: '_The children grew_, _The farmer grew potatoes_, and _The sky grew dark_ use _grew_ in three frames. Here, adjective phrases are the first subject-complement form the course shows; a subject complement can also be a noun phrase, which the next lesson makes visible.',
       },
     ],
   },
@@ -102,21 +122,26 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'The verb **be** links a subject to an identity, description, or required setting, but it earns its own verb type because it supports more sentence frames than ordinary linking verbs. Its forms include _am, is, are, was,_ and _were_.',
+        text: 'When a finite main verb is a form of **be**, the course labels it **Vbe**. _Be_ has unusual forms and question behaviour, but finding it does not settle the phrase after it: that phrase can give the subject a quality or identity, or it can supply a location required by this use.',
       },
       {
         kind: 'contrast',
-        question: 'Why not treat every be sentence alike?',
+        question: 'What relationship follows the verb?',
         through: 11,
         left: {
           sentenceId: 'fix-vlink',
-          caption: '_The soup tasted salty_: a linking verb connects the soup to a description.',
+          caption: 'The diagram labels _salty_ as a subject complement of _tasted_.',
         },
         right: {
           sentenceId: 'fix-vbe',
           caption:
-            '_The keys are on the table_: _are_ requires a setting, not a description of the keys.',
+            'The diagram places _are_ and _on the table_ in the predicate; the phrase locates the keys.',
         },
+      },
+      { kind: 'sentence', text: 'The bread **tasted stale**. → The bread **was stale**.' },
+      {
+        kind: 'prose',
+        text: 'This matched pair keeps the subject and complement fixed. The adjective phrase has the same subject-complement relation in both clauses, while the verb changes from a linking use to _be_. Noun phrases can have that function too: _The winner was a stranger_.',
       },
       {
         kind: 'section',
@@ -126,12 +151,12 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
       { kind: 'sentence', text: 'The keys **are** on the table. → **Are** the keys on the table?' },
       {
         kind: 'prose',
-        text: 'Most main verbs need _do_ to form that question: “Did the keys remain?” The verb _be_ can invert by itself, and it also has the special agreement pair _was/were_. Those behaviours justify keeping it visible as its own type.',
+        text: 'Finite main _be_ can come before its subject without _do_. A typical lexical main verb needs do-support: _Do the keys remain on the table?_ This is evidence for _be_’s unusual behaviour, not a way to identify **Vbe**: auxiliary _be_ also inverts, as in _Are the keys rusting?_.',
       },
       {
         kind: 'rule',
-        claim: 'Be does not guarantee a subject complement.',
-        text: 'Ask what follows it. _The soup was salty_ links to a description. _The keys are on the table_ supplies a place the sentence requires. Lesson 14 tests that difference directly.',
+        claim: 'The phrase after _be_ still has a relationship to identify.',
+        text: '_The soup was salty_ predicates a quality of the soup. _The keys are on the table_ gives their location; the course analyzes that location as a required adverbial in lesson 14. **Vbe** is a course label, not a claim that every grammar uses it as a separate verb type.',
       },
     ],
   },
@@ -141,31 +166,35 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'Some verbs license two objects. In “He gave her the keys,” _the keys_ is the direct object, and _her_ is the **indirect object**—the noun phrase that can usually move into a phrase beginning with _to_ or _for_.',
+        text: 'In the course’s **double-object construction**, a verb licenses two noun phrases: an **indirect object** first and a direct object second. In _He gave her the keys_, _her_ is the indirect object and _the keys_ is the direct object.',
       },
       {
         kind: 'diagram',
         sentenceId: 'fix-vg',
         through: 12,
         caption:
-          'The verb phrase contains two separate noun-phrase slots. Their order alone does not tell you which is which.',
+          'The diagram labels _her_ as the first object and _the keys_ as the second object in this double-object frame.',
       },
-      { kind: 'section', eyebrow: 'the test', title: 'Move one object after to or for' },
+      {
+        kind: 'section',
+        eyebrow: 'evidence for this construction',
+        title: 'Compare a related to or for phrase',
+      },
       { kind: 'sentence', text: 'He gave **her** the keys. → He gave the keys **to her**.' },
       {
         kind: 'prose',
-        text: 'The noun phrase that moves after _to_ is the indirect object. The thing that stays beside the verb’s central meaning—the keys—is the direct object.',
+        text: 'With _give_, this related sentence preserves the transfer relationship. The double-object construction has two NP objects; in the _to_ version, _the keys_ remains the direct object while _her_ is inside a prepositional phrase.',
       },
       {
         kind: 'procedure',
-        title: 'Separate the two objects',
+        title: 'Test a likely double-object reading',
         steps: [
-          'Find the two noun phrases after the verb.',
-          'Move the first one after the second with _to_ or _for_.',
-          'If the paraphrase keeps the relationship, the moved phrase is the indirect object.',
+          'Find two noun phrases directly after the verb.',
+          'Try a related version with the second noun phrase first and _to_ or _for_ before the other participant.',
+          'When that version keeps the relationship, it supports a double-object reading with the first NP as indirect object.',
         ],
         limit:
-          'Meaning can suggest a recipient, but the paraphrase supplies the structural evidence. Not every person after a verb is an indirect object.',
+          'The alternation is restricted to particular verbs and meanings: _donate the books to the library_ does not normally become _donate the library the books_. It also cannot settle every verb-plus-two-noun-phrases sequence. _They elected the lawyer their chair_ has a direct object followed by an object complement, the next lesson’s competing frame.',
       },
     ],
   },
@@ -175,7 +204,7 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'An **object complement** says what the direct object is or becomes. In “They considered him reliable,” _him_ is the direct object and _reliable_ is a description of that same person.',
+        text: 'An **object complement** predicates something of the direct object. In _They considered him reliable_, _him_ is the direct object and _reliable_ says what they judged him to be.',
       },
       {
         kind: 'contrast',
@@ -184,26 +213,30 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
         left: {
           sentenceId: 'fix-vg',
           caption:
-            '_He gave her the keys_: she is not the keys, so the two noun phrases are separate objects.',
+            'The diagram labels _her_ as an indirect object and _the keys_ as a direct object.',
         },
         right: {
           sentenceId: 'fix-vc',
           caption:
-            '_They considered him reliable_: he is reliable, so the final phrase complements the object.',
+            'The diagram labels _him_ as a direct object and _reliable_ as its object complement.',
         },
       },
-      { kind: 'section', eyebrow: 'the test', title: 'Put is or became between them' },
+      {
+        kind: 'section',
+        eyebrow: 'evidence for the predication',
+        title: 'Paraphrase the relation',
+      },
       { kind: 'sentence', text: 'They considered **him reliable**. → **He is reliable**.' },
       {
         kind: 'prose',
-        text: 'If the direct object can be linked to the final phrase with _is_ or _became_, the final phrase is an object complement. “She called him a taxi” fails this test; “She called him a genius” passes it.',
+        text: 'A natural _be_ or _become_ paraphrase supports this analysis: _They made her a partner_ becomes _She became a partner_, while _They made her a cake_ does not say that she became a cake. The paraphrase is evidence, not a word-insertion rule. Tense, result, and wording can change; _They named the boat Endeavour_ needs a fuller rewording.',
       },
       {
         kind: 'diagram',
         sentenceId: 'fix-vc-noun',
         through: 13,
         caption:
-          'An object complement can be a noun phrase as well as an adjective phrase: after the appointment, he was treasurer.',
+          'The diagram labels _treasurer_ as an object complement and shows that this complement is a noun phrase, not an adjective phrase.',
       },
     ],
   },
@@ -213,7 +246,7 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'An **adverbial** can tell where, when, how, or under what circumstances. Some adverbials are optional details; others are required to complete the verb’s frame. The difference is found by removal, not by meaning.',
+        text: 'A **required adverbial** fills a place that this use of the verb needs; an optional adverbial adds a circumstance to a clause that is already complete. A location can do either job. The difference comes from the verb’s frame, not from answering _where?_ or from being a prepositional phrase.',
       },
       {
         kind: 'contrast',
@@ -221,13 +254,12 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
         through: 14,
         left: {
           sentenceId: 'fix-vbe',
-          caption:
-            '_The keys are on the table_ → “The keys are” is unfinished. The location is required.',
+          caption: 'The diagram puts _on the table_ under the predicate as an adverbial.',
         },
         right: {
           sentenceId: 'fix-subject-phrase-moved',
           caption:
-            '_The workers waited in the tunnel_ → “The workers waited” survives. The location is optional.',
+            'The diagram puts _in the tunnel_ under the predicate as an adverbial of _waited_.',
         },
       },
       {
@@ -235,7 +267,7 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
         sentenceId: 'fix-main-verb-irregular',
         through: 14,
         caption:
-          'In _The morning run began late_, the one-word adverb phrase _late_ is an optional adverbial. It is an **adverb** in form, an **adverb phrase** as a unit, and an **adverbial** in function.',
+          'The figure labels _late_ as an adverb phrase with adverbial function in the predicate.',
       },
       { kind: 'section', eyebrow: 'inside the phrase', title: 'A preposition takes a complement' },
       {
@@ -244,14 +276,14 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'procedure',
-        title: 'Decide whether an adverbial is required',
+        title: 'Check whether this frame needs the adverbial',
         steps: [
           'Remove the whole adverbial, not just one word inside it.',
-          'Read the remaining clause by itself.',
-          'If the clause is unfinished in the intended use, the adverbial is required. If it remains complete, the adverbial is optional.',
+          'Keep the verb’s meaning and the ordinary, out-of-context reading fixed.',
+          'If the intended clause is unfinished, the adverbial is required; if the frame survives, it is optional.',
         ],
         limit:
-          'A sentence may sound less informative after removal and still be grammatically complete. Judge whether the frame survives, not whether every useful fact remains.',
+          'Less information does not mean an unfinished frame, and context can recover omitted material. _She opened the box under the bench_ remains complete without the location; _She placed the box under the bench_ does not in its ordinary placement sense. The course calls the latter a required adverbial; other grammars often call it a locative complement.',
       },
     ],
   },
@@ -261,7 +293,7 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A verb frame is the pattern of required slots built around a verb. To identify the frame, test what follows the verb instead of counting words or memorising a list of verbs.',
+        text: 'A **verb frame** is the pattern of dependents that a verb use requires in a clause. This review uses six course labels, but they produce seven clause frames because a required adverbial can complete either a _be_ use or a transitive use. Read the whole predicate and ask what each required phrase relates to.',
       },
       {
         kind: 'contrast',
@@ -269,32 +301,32 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
         through: 15,
         left: {
           sentenceId: 'fix-vg',
-          caption: '_He gave her the keys_: the to-paraphrase reveals an indirect object.',
+          caption:
+            'The diagram labels two post-verbal noun phrases as indirect object and direct object.',
         },
         right: {
           sentenceId: 'fix-vc-noun',
           caption:
-            '_The club made him treasurer_: “he became treasurer” reveals an object complement.',
+            'The diagram labels the first post-verbal noun phrase direct object and the second object complement.',
         },
       },
       {
         kind: 'procedure',
-        title: 'Read any verb frame',
+        title: 'Classify a simple verb use',
         steps: [
-          'Find the main verb and stop there. If the clause is complete, test for an intransitive use.',
-          'Mark each following noun phrase. One may be a direct object; two require another test.',
-          'Try the _to_ or _for_ paraphrase. If it works, the first noun phrase is an indirect object.',
-          'Try linking the object to the final phrase with _is_ or _became_. If it works, the final phrase is an object complement.',
-          'Remove a following adverbial. If the intended clause becomes unfinished, that phrase is required.',
-          'If the phrase after the verb describes the subject and survives a _be_ substitution, it is a subject complement.',
+          'Find the main verb, then read every phrase in its predicate.',
+          'A noun phrase directly paired with the verb can be a direct object; two adjacent noun phrases need a relationship test.',
+          'A related _to_ or _for_ version can support two objects; a natural _be_ or _become_ paraphrase can support an object complement.',
+          'Ask whether another phrase predicates something of the subject or supplies a setting the frame needs. Use removal only for that adverbial candidate.',
+          'After finding those relationships, apply the course’s separate **Vbe** label to a finite main use of _be_.',
         ],
         limit:
-          'Several tests may sound plausible at first. Keep the analysis that explains every required part without inventing an empty slot.',
+          'These checks are converging evidence for the simple active declarative clauses reviewed here. The paraphrases are lexically limited, and removal must keep the original verb sense. Passives, questions, omitted objects, particles, prepositional verbs, and clause complements need later analysis.',
       },
       {
         kind: 'rule',
-        claim: 'The verb predicts; the sentence decides.',
-        text: 'A familiar verb can enter more than one frame. Classify the use in front of you, and make each phrase earn its job with a test.',
+        claim: 'The course has six verb-use labels, not six universal kinds of English verb.',
+        text: 'A familiar verb can enter more than one frame, and a required adverbial does not add a seventh label. Classify the use in front of you by the relationships its phrases have to the verb, subject, or object.',
       },
     ],
   },

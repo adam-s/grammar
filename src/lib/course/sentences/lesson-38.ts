@@ -3,7 +3,7 @@
  *
  * `form:Interj` was taught here and used in none of the four hundred sentences
  * this set replaced — the last of the two decisions taught and never exercised.
- * *Oh, the gate opened* and *Well, the clerk waited* use it.
+ * *Oh, the gate opened* and *Wow, the clerk returned* use it.
  *
  * Every built supplement was sentence-initial with a comma, so free position —
  * the clearest evidence of what a supplement is — was never shown. The three
@@ -41,10 +41,10 @@ export const LESSON_38 = [
   interjection(
     'c38-b',
     38,
-    'Well',
+    'Wow',
     det('the', 'clerk'),
-    v('waited', 'wait', 'Vint'),
-    'The clerk stayed put, and that is how it went.',
+    v('returned', 'return', 'Vint'),
+    'The clerk came back, which surprised the speaker.',
   ),
   remark(
     'c38-c',

@@ -1,197 +1,222 @@
 # Lesson 3 — Find the main verb
 
-Researched 28 August 2026. An author's dossier, not a page for a learner. See
-[../01-introduction/README.md](../01-introduction/README.md) for why.
+Research pass expanded 29 August 2026. This is an author's dossier, not learner
+copy. It records what the live lesson and its evidence can honestly claim before
+the learner page is revised. See [the course research plan](../../course-research-and-revision.md)
+and [the authoring template](../../lesson-blog-page-template.md).
 
-**Status:** This dossier measures the corpus as it was before the conversion.
-[sentences.md](sentences.md) is now the live course text, and the learner page is
-built and reachable. No reading has been accepted by a person, which
-`npm run course:readiness` reports.
+**Status:** Research complete; learner-page revision remains. The current page,
+the ten live practice sentences, both cited fixtures, the supporting lesson
+[03a — The subject is not always the doer](../03a-doer-and-subject/README.md),
+and lessons 2 and 4 were inspected for this pass.
 
-**Page contract:** The learner-facing lesson is a static, standalone visual
-explanation under [the shared lesson contract](../../lesson/README.md). This
-dossier supplies its answer, tests, contrast, and common confusion; it is not
-learner copy or an interaction script.
+## The central generalization
 
-## What the lesson decides
+In the simple predicates used in this lesson, the **main verb** is the lexical
+verb at the centre of the predicate. In this course's tree, it is the `V` that
+heads the `VP`; the other material in that predicate is built around its
+relationship.
 
-| Decision    | In plain words                           |
-| ----------- | ---------------------------------------- |
-| `form:V`    | this word is a verb                      |
-| `func:head` | it is the word the phrase is named after |
+The lesson must keep its scope in that sentence. Its examples all have one
+tensed lexical verb and no auxiliaries, infinitives, or participles. In those
+examples, the main verb and the verb that visibly changes between simple past
+and simple present are the same word. They do **not** stay the same thing in
+every English verb group.
 
-Two ideas at once, and they are not the same idea. The first says what kind of
-word it is. The second says what it is doing where it sits. Naming the verb and
-naming the head of the verb phrase happen to land on the same word here, which
-is exactly why they are safe to teach together at this point and dangerous to
-confuse later.
+## What the learner can actually see
 
-## The tests
+The first fixture supplies the lesson's best evidence:
 
-### The tense test, as a procedure
+> The daily **walk** **tired** Maya.
 
-The best statement of it comes from the College of San Mateo writing centre, and
-it is a procedure a learner can actually run:
+_Walk_ names an activity, but it is the head noun of the subject phrase. _Tired_
+is the tensed lexical verb and the `V` head of the predicate. The contrast
+defeats the tempting rule "an action word is the verb" without asking the
+learner to know a later category.
 
-> "A useful way to find the verb(s) is to read the sentence three times:
+The second fixture adds a different trap:
+
+> The morning **run** **began** late.
+
+_Run_ is again a noun, while _began_ is an irregular past-tense verb. This
+supports two claims: an activity name is not necessarily a verb, and a past verb
+does not need an _-ed_ ending. It does **not** by itself display the internal
+relationships of a predicate beyond the `V` head and an adverbial. The fixture
+is also the visible example for lesson 14, so a revision must preserve that
+cross-lesson use or move the coverage deliberately.
+
+At lesson scope 3, the first diagram may show `S`, `NP`, `VP`, `V`, subject,
+predicate, and head. It may not explain direct objects, adjective modifiers,
+noun heads, nominals, or adverbials as though the learner can already label
+them. Those distinctions arrive in lessons 5, 8–14, and 16–24.
+
+## What a head means here
+
+_Head_ is a structural relation, not a claim that one word is the sentence's
+most important idea. A phrase is classified by the kind of head it has and the
+head determines what dependents the phrase can take. In this app's analysis, a
+`VP` is headed by a `V`, so _tired_ heads the predicate in _The daily walk tired
+Maya_. The object and any adverbials belong to the predicate because they relate
+to the event or state introduced by that verb.
+
+That last sentence is the right level of generality for lesson 3. It should not
+list objects, completion, manner, cause, possibility, duration, and location in
+one closing paragraph. The current page does exactly that, before most of those
+relations or their labels are in scope. Later lessons can make each relation
+visible with a verb that requires it or with an auxiliary chain that changes it.
+
+## The tense test: useful evidence, not the definition
+
+The live page uses this pair:
+
+> Today the daily walk **tires** Maya.
 >
-> - The first time, add the word **today** to the beginning of the sentence.
-> - The second time, add **yesterday** to the beginning of the sentence.
-> - Finally, add the word **tomorrow** to the beginning of the sentence.
->
-> Depending on what tense the sentence is written in, words in two of the three
-> sentences will change. **The words that change are the verbs.**"
+> Yesterday the daily walk **tired** Maya.
 
-The worked example is the important part, because it is the counterexample to
-the rule most learners arrive with:
+Holding the participants and the relation steady makes the inflection visible:
+_tires_ changes to _tired_; _walk_ does not. For the simple finite predicates in
+this lesson, that is a strong way to find the main verb.
 
-> _Yesterday_ hiking **was** my favorite summertime activity.
-> _Today_ hiking **is** my favorite summertime activity.
-> _Tomorrow_ hiking **will be** my favorite summertime activity.
->
-> "Although _hiking_ is an action word, _hiking_ does not change if you add the
-> words _yesterday_, _today_, and _tomorrow_. _Is_ is the verb since it changed
-> in each sentence."
+The procedure should be written narrowly:
 
-An action word that is not the verb, and a verb that names no action. One
-sentence kills "the verb is the action word" outright.
+1. Make a simple-present version and a simple-past version of the sentence.
+2. Keep the people, things, and basic relationship the same.
+3. Where one word changes form, identify that word as the tensed main verb in
+   this lesson's kind of predicate.
 
-### Two rules that clear the common traps
+The limit belongs next to the procedure, not in a later warning:
 
-From the same source:
+| What the test shows                                                                          | Where it stops working cleanly                                                                                                                                                                     |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A simple lexical verb often changes between present and past: _tires/tired_, _begins/began_. | Some verbs have identical visible forms: _put/put_, _cut/cut_. A lack of spelling change does not make them non-verbs.                                                                             |
+| In the lesson's sentences, that tensed verb is also the main lexical verb.                   | With an auxiliary, the finite word can be the auxiliary while the lexical main verb stays non-finite: _is tiring_, _will tire_, _has tired_. This course introduces that distinction in lesson 24. |
+| The contrast uses time to reveal a tense contrast.                                           | Tense and real-world time are not identical. English has present and past tense, not a distinct future-tense form; a present form can refer to tomorrow.                                           |
 
-> "The main verb of a sentence will not have _to_ before it."
-> _Jamal **rented** a stretch limo to impress his girlfriend._
+The College of San Mateo tutorial supplies a clear classroom version of the
+today/yesterday procedure and its _hiking is_ example correctly rejects "verb
+= action word." Its third step changes the sentence to tomorrow and introduces
+_will be_. That is useful for a fuller verb lesson, but it crosses this lesson's
+scope and makes an auxiliary carry the tense. Lesson 3 should retain only the
+controlled present/past contrast it can explain.
 
-> "Any verb ending in _ing_ will only be the verb of that sentence if it follows
-> a _to be_ verb."
-> _Carmen **is helping** her mother with the grocery shopping._
+## Main verb, finite verb, and verb phrase are not interchangeable
 
-Both matter later in this course. The first is lesson 34, the second lessons 35
-and 36. Neither can be demonstrated at lesson 3, because the course has not
-taught infinitives, participles or auxiliaries yet. That is a scope limit, not
-an oversight, but it means lesson 3's test is being taught with nothing for it
-to rule out.
+These labels overlap in the live examples, which makes them easy to confuse.
 
-### Finding the head
+| Term                     | What it picks out                                        | In _The daily walk tired Maya_ | What changes later                                         |
+| ------------------------ | -------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------- |
+| main verb / lexical verb | the verb with the core lexical relation                  | _tired_                        | it can be non-finite after an auxiliary: _is **tiring**_   |
+| finite verb              | the verb form marked for tense (and sometimes agreement) | _tired_                        | an auxiliary can be finite: _**is** tiring_                |
+| `VP` in this app         | the predicate, everything paired with the subject        | _tired Maya_                   | it can include auxiliaries and several layers of structure |
 
-A phrase is named after its head, so the test for the head is the test for the
-phrase. The substitution test from lesson 1 does the work: what can the whole run
-be replaced by, and which single word survives every trim.
+School and ESL materials often call _has been waiting_ a “verb phrase.” This
+app calls the entire predicate a `VP`, so the same term can name different spans
+in different sources. The learner page should use **predicate** for the whole
+run and **main verb** for the `V` it currently asks the learner to find. It does
+not need to introduce the terminology dispute on the page, but lesson 24 needs
+to connect back explicitly.
 
-## Other names for this
+There is also a genuine analysis choice. The course treats the lexical `V` as
+the `VP` head and an auxiliary as a dependent. In the _Cambridge Grammar of the
+English Language_ analysis, a finite auxiliary heads the clause and takes a
+non-finite verbal complement. The trees therefore differ once auxiliaries
+arrive. The course may retain its model, but must not present it as the only
+analysis English grammar permits.
 
-There is a genuine terminology clash here, and it is the worst one in Stage 1.
+## What common summaries get right and leave out
 
-| This app     | Elsewhere              | Note                                              |
-| ------------ | ---------------------- | ------------------------------------------------- |
-| the `V` head | simple predicate       | school grammar                                    |
-| the `V` head | main verb, finite verb | most teaching material                            |
-| `VP`         | complete predicate     | school grammar                                    |
-| `VP`         | —                      | **not** what school grammar calls a "verb phrase" |
+| Summary                                               | What it helps a beginner notice                | What it must not become                                                                   |
+| ----------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| “A verb is a doing word.”                             | Many everyday verbs describe actions.          | A definition: nouns can name actions, and verbs can name states, as _walk_ and _be_ show. |
+| “Change the time; the word that changes is the verb.” | A practical clue for simple finite predicates. | A universal test: spelling can stay the same, and auxiliaries can carry finite tense.     |
+| “The main verb is the finite verb.”                   | True of the ten simple predicates here.        | A rule for verb groups with auxiliaries or non-finite forms.                              |
+| “The main verb is the head of the predicate.”         | The course's structural analysis.              | A claim that all frameworks give auxiliaries the same status.                             |
 
-**"Verb phrase" means two different things.** In this app a `VP` is the whole
-predicate, everything except the subject. In school and ESL grammar a "verb
-phrase" is the main verb plus its auxiliaries: _has been waiting_. A learner who
-searches that term will get the second meaning and will not recognise the tree.
+The best learner-level synthesis is therefore: **Find the verb that changes in
+the simple present/past contrast. In these simple predicates, it is the main
+verb around which the predicate is built.** It tells the learner what to do,
+why the action-word shortcut fails, and where the claim ends.
 
-The app's own source comment is aware of the neighbouring problem, that "verb
-phrase" and "predicate" are two different ideas that happen to coincide. The
-clash with the school sense is not recorded anywhere and should be.
+## Practice-set audit
 
-## A disagreement about order
+The old dossier reports a corpus that no longer exists. The current
+`src/lib/course/sentences/lesson-03.ts` does substantial work:
 
-The San Mateo tutorial finds the **verb first, then the subject**:
+| Evidence in the ten live sentences | Examples                                             | What it prevents                                                            |
+| ---------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------- |
+| an activity-noun competitor        | _The drive tired them_; _The long walk exhausted us_ | “Choose the action word.”                                                   |
+| same-root noun and verb            | _Those swimmers swam quickly_                        | “Choose the word family that looks most verbal.”                            |
+| an _-ed_ adjective before the verb | _The tired visitors waited_                          | “Choose the first _-ed_ word.”                                              |
+| irregular past forms               | _flew_, _swam_, _sank_                               | “A past verb must end in _-ed_.”                                            |
+| material after the verb            | eight of ten sentences                               | “The verb is the last word.”                                                |
+| more than one noun before the verb | _A line of trucks moved slowly_                      | “Choose the noun nearest the verb” while finding the surrounding structure. |
 
-> "Once you have identified the verb, form a question using _who_ or _what_ to
-> find the subject."
+All ten still contain exactly one `V` in the accepted parse and all ten use a
+past-tense lexical verb. That is appropriate for introducing the decision, but
+it means the practice cannot test auxiliary-versus-main-verb distinctions yet.
+The page should say so rather than imply that its procedure solves every later
+case.
 
-Most teaching material does the same, and it has a real argument behind it: the
-verb is findable by a mechanical test, and the subject is then whatever answers a
-question about it. This course does the reverse. It cuts subject from predicate
-at lesson 1 and does not name the verb until lesson 3.
+## Revision brief
 
-Both orders are defensible. This course's order follows from what the app is:
-the learner builds a tree top-down, so the first decision has to be the top one.
-Worth knowing that the common order is the other one, because it is what a
-learner will meet everywhere else.
-
-## Shortcut register
-
-| Shortcut                                    | What defeats it                                          | In the course?                        |
-| ------------------------------------------- | -------------------------------------------------------- | ------------------------------------- |
-| The verb is the last word                   | a predicate with anything after the verb                 | **no** — all ten are `The N V.`       |
-| The verb is the action word                 | _Hiking **is** my favorite activity_                     | **no**                                |
-| The verb is the only word that could be one | a sentence with a participle, gerund or infinitive in it | **no** — none exists before lesson 24 |
-| The verb is the word ending in _-ed_        | an irregular past tense                                  | **yes**, thinly — 8 of 70             |
-| The verb is the second thing after _the_    | any longer subject                                       | **no**                                |
-
-Three measurements, all from the built corpus.
-
-**Lesson 3 is shorter than lesson 2.** Its ten sentences are three words, `The N
-V.`, which is lesson 1's shape exactly. Lesson 2's are four. The course goes
-backwards at the point where it introduces its first real test.
-
-**Every lesson-3 sentence has exactly one word that could possibly be the verb.**
-This is the defect. A test that discriminates needs something to discriminate
-against, and lesson 3 never gives the tense test a wrong answer to reject.
-
-**All seventy Stage 1 sentences are simple past, and 62 of the 70 verbs end in
-_-ed_.** The uniform tense is _not_ the problem, and an earlier draft of this
-dossier was wrong to say it was. The tense test does not need the corpus to vary
-in tense. The learner is the one who shifts the sentence, and shifting _The
-visitors waited_ to _Today the visitors **wait**_ identifies the verb perfectly
-well. Holding one thing still while another moves is the ordinary scaffold, and
-it is what this course does everywhere else.
-
-What the uniform tense does create is a smaller shortcut of its own: **find the
-word ending in _-ed_.** Eight verbs defeat it — _rang, swung, rose, fell, froze,
-spread_ — so the pressure exists, but 62 of 70 is thin. Across the whole course
-it is 358 of 515, or 70%.
-
-## What this should change
-
-1. **Lesson 3 needs a competitor for the verb.** Without one the tense test is
-   ceremony. The cheapest competitor available inside Stage 1 scope is a noun
-   that reads as an action, not a participle: _The visitors' **shouts**
-   carried_. Whether that is buildable is a scope question. This is the change
-   worth making; the tense of the corpus is not.
-2. **Lesson 3 should be at least as long as lesson 2.** It is currently shorter.
-3. **A few more irregular verbs in Stage 1** would put pressure on _find the -ed
-   word_, which currently fails only 8 times in 70.
-4. **Record the "verb phrase" clash** somewhere the learner can meet it, because
-   it is the one term in Stage 1 that means something else outside this app.
+1. **Keep the opening, but restrict it.** Replace “the word that changes when
+   you place the sentence in a different time” with a claim about the simple
+   present/past contrast used on this page.
+2. **Let the first diagram do the main work.** Start from _walk/tired_, state
+   that the noun names an activity while the verb carries the predicate's tense
+   in this example, and name the `V` head only after that contrast is visible.
+3. **Keep the present/past pair as the procedure's evidence.** Say that the
+   procedure is a clue for simple predicates, not a definition of a verb. Do
+   not add _tomorrow_ or teach a future tense.
+4. **Keep the irregular example, but make its job explicit.** It should defeat
+   the _-ed_ shortcut and distinguish a noun from a verb, not serve as a vague
+   extra example.
+5. **Replace the current closing paragraph.** Its inventory of relations is
+   unsupported at scope 3 and reads like a list of later topics. End instead on
+   the one established relation: in this kind of predicate, the main verb
+   organizes the predicate and the time contrast reveals it.
+6. **Do not change the practice set in this revision.** It already repairs the
+   previous one-word and verb-final shortcuts. Re-audit it when lesson 24 adds
+   auxiliaries, because that is where the lesson's controlled simplification
+   stops being enough.
 
 ## Sources
 
-Read in full on 28 August 2026:
+Consulted for this pass on 29 August 2026:
 
-- College of San Mateo Writing Center, _Introductory Tutorial: Recognizing Verbs
-  and Subjects_. The today/yesterday/tomorrow procedure, the _hiking_ worked
-  example, the two tips, and the verb-before-subject order.
+- Department for Education, _English glossary_. Its entries for _verb_,
+  _finite verb_, _tense_, _future_, _auxiliary verb_, _phrase_, and _clause_
+  support the distinctions between action meaning and word class, finite tense
+  and time reference, and heads and phrases.
+  <https://assets.publishing.service.gov.uk/media/5a7c8e4ded915d48c24108e2/English_Glossary.pdf>
+- Rodney Huddleston and Geoffrey K. Pullum, _The Cambridge Grammar of the
+  English Language_, publisher sample, chapter 2, “Syntactic overview.” The
+  relevant excerpt distinguishes lexical and auxiliary verbs by their syntax,
+  treats finite and non-finite as clause properties, and uses an
+  auxiliary-headed analysis. The chapter excerpt, rather than the complete
+  book, was consulted.
+  <https://www.cambridge.org/assets/linguistics/cgel/chap2.pdf>
+- College of San Mateo Writing Center, _Introductory Tutorial: Recognizing
+  Verbs and Subjects_. Read in full. It supplies the today/yesterday/tomorrow
+  procedure and the _hiking_ counterexample; its treatment of auxiliaries is
+  recorded above as a classroom simplification rather than adopted wholesale.
   <https://collegeofsanmateo.edu/writing/tutorials/00_PS_IntroRecognizingVerbsSubjects-final.pdf>
+- Cambridge Dictionary, _Finite and non-finite verbs_ and _Verb forms_.
+  These agree that finite forms show tense, person, and number and enumerate
+  the relevant English verb forms. The pages were accessible through their
+  indexed text but blocked direct full-page retrieval, so they are supporting
+  confirmation rather than a quotation source.
+  <https://dictionary.cambridge.org/grammar/british-grammar/finite-and-non-finite->
 
-Search summaries only, not read in full:
+## Claims removed or qualified
 
-- Grammar Monster and Twinkl on finite verbs, for the standard definition that a
-  finite verb shows tense, number and person and that the main verb is always
-  finite. Both agree; neither was opened.
-- Scaffolding in grammar instruction, from a search across Thoughtful Learning,
-  Language Arts Classroom and the _Journal of Language Teaching and Research_.
-  The relevant idea is that a structured scaffold gives the learner an example
-  and asks them to change one element in it, a tense or a word class, which is
-  the tense test exactly. It does not require the examples themselves to vary.
-  Krashen's controlled input is the older form of the same argument.
-
-## Rejected
-
-- **"A verb is a doing word" and its variants.** They are everywhere in the
-  search results, and the _hiking_ example above is a one-line refutation. Worth
-  keeping in mind only because most learners arrive holding one.
-- **Verb-tense drills.** They teach the tenses, which is a different subject.
-  This lesson uses tense as an instrument for finding a word, and never asks the
-  learner to name a tense.
-- **The verb-first ordering as a change to this course.** It is the more common
-  order and it has a real argument, but the app builds top-down and changing the
-  order would mean changing what the tree is. Recorded above as a disagreement,
-  not adopted.
+- “Main verb” and “finite verb” are no longer treated as synonyms beyond the
+  lesson's simple predicates.
+- The tense test is not a universal definition of a verb, and it does not
+  guarantee a visible spelling change.
+- “Different time” is narrowed to the simple present/past contrast; English
+  future reference is not a future tense.
+- The `VP`-head analysis is identified as the course's choice once auxiliaries
+  are in view.
+- The closing inventory of predicate relationships is deferred until examples
+  can show and the learner can name those relationships.

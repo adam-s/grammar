@@ -151,11 +151,16 @@
 
 <style>
   .lesson {
-    --measure: 40rem;
+    --measure: 37rem;
     /* Give diagrams enough room to be read as the page's main evidence on a
        desktop. The viewport cap below still keeps them full-width on phones. */
     --figure: 66rem;
     --page-pad: clamp(20px, 6vw, 72px);
+    --space-1: 8px;
+    --space-2: 16px;
+    --space-3: 24px;
+    --space-4: 40px;
+    --space-5: 64px;
 
     box-sizing: border-box;
     display: flex;
@@ -164,7 +169,7 @@
     width: 100%;
     padding: clamp(56px, 9vh, 108px) var(--page-pad) clamp(96px, 18vh, 200px);
     color: var(--ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     text-wrap: pretty;
   }
 
@@ -183,11 +188,11 @@
   /* ------------------------------------------------------------- openings */
 
   .opening {
-    margin-bottom: 8px;
+    margin-bottom: var(--space-1);
   }
 
   .eyebrow {
-    margin: 0 0 14px;
+    margin: 0 0 var(--space-2);
     color: var(--ink-faint);
     font-family: var(--font-sans);
     font-size: 12px;
@@ -198,48 +203,47 @@
 
   h1 {
     margin: 0;
-    font-size: clamp(29px, 4.4vw, 44px);
+    font-size: clamp(28px, 3vw, 36px);
     font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
   }
 
   .lede {
-    margin: 18px 0 0;
+    margin: var(--space-2) 0 0;
     color: var(--ink-muted);
-    font-size: clamp(18px, 2.1vw, 21px);
-    font-style: italic;
-    line-height: 1.55;
+    font-size: clamp(17px, 1.9vw, 19px);
+    line-height: 1.65;
   }
 
   .turn {
-    margin: clamp(48px, 7vh, 76px) 0 0;
-    padding-top: 26px;
-    border-top: 1px solid var(--border);
+    margin: var(--space-4) 0 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
   }
 
   h2 {
     margin: 0;
-    font-size: clamp(23px, 3vw, 32px);
+    font-size: clamp(21px, 2.2vw, 26px);
     font-weight: 600;
     line-height: 1.3;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
   }
 
   /* ---------------------------------------------------------------- prose */
 
   .prose {
-    margin: 20px 0 0;
+    margin: var(--space-2) 0 0;
     font-size: 17px;
-    line-height: 1.7;
+    line-height: 1.6;
   }
 
   .bridge {
-    margin: clamp(30px, 5vh, 48px) 0;
+    margin: clamp(26px, 4vh, 38px) 0;
     color: var(--ink-muted);
-    font-size: 17px;
-    font-style: italic;
-    line-height: 1.5;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
     text-align: center;
   }
 
@@ -253,6 +257,7 @@
     margin: 30px 0 6px;
     padding-left: 22px;
     border-left: 2px solid var(--border-strong);
+    font-family: var(--font-serif);
     font-size: clamp(21px, 2.6vw, 26px);
     font-weight: 500;
     line-height: 1.45;
@@ -310,21 +315,22 @@
 
     width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
     max-width: var(--figure);
-    margin: clamp(30px, 5vh, 46px) 0 0;
-    padding: 10px 0 0;
+    margin: var(--space-3) 0 0;
+    padding: 0;
     border-radius: var(--radius-lg);
     background: transparent;
     border: 0;
   }
 
   figcaption {
-    margin: 0 8px;
-    padding: 4px 0 18px;
-    color: var(--ink-muted);
-    font-family: var(--font-serif);
-    font-size: 14px;
-    font-style: italic;
-    line-height: 1.55;
+    width: min(var(--measure), calc(100% - 2 * var(--space-3)));
+    margin: 0 auto;
+    padding: 4px 0 var(--space-2);
+    color: color-mix(in oklab, var(--ink-muted) 72%, var(--ink));
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 450;
+    line-height: 1.5;
   }
 
   /* ------------------------------------------------------------- contrast */
@@ -337,21 +343,20 @@
 
     width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
     max-width: var(--figure);
-    margin: clamp(30px, 5vh, 46px) 0 0;
+    margin: var(--space-3) 0 0;
     border: 0;
     border-radius: var(--radius-lg);
     background: transparent;
   }
 
   .question {
-    margin: 0 22px;
-    padding: 20px 0 8px;
+    width: min(var(--measure), calc(100% - 2 * var(--space-3)));
+    margin: 0 auto;
+    padding: var(--space-1) 0;
     color: var(--ink);
-    font-family: var(--font-serif);
-    font-size: 17px;
-    font-style: normal;
+    font-size: 16px;
     font-weight: 600;
-    line-height: 1.45;
+    line-height: 1.5;
   }
 
   /* Stacked, not side by side. Two 55rem columns put the fit at 59%, under the
@@ -364,24 +369,35 @@
   }
 
   .side + .side {
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
+    position: relative;
+    padding-top: var(--space-1);
+  }
+
+  .side + .side::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(var(--measure), calc(100% - 2 * var(--space-3)));
+    border-top: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    content: '';
+    transform: translateX(-50%);
   }
 
   .side-caption {
-    margin: 0 22px;
-    padding: 2px 0 18px;
-    color: var(--ink-muted);
-    font-family: var(--font-serif);
-    font-size: 14px;
-    font-style: italic;
-    line-height: 1.55;
+    width: min(var(--measure), calc(100% - 2 * var(--space-3)));
+    margin: 0 auto;
+    padding: 4px 0 var(--space-2);
+    color: color-mix(in oklab, var(--ink-muted) 72%, var(--ink));
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 450;
+    line-height: 1.5;
   }
 
   @media (max-width: 640px) {
     .figure,
     .contrast {
-      margin-top: 26px;
+      margin-top: var(--space-3);
     }
 
     /* The graph uses the full phone width. Keep its words aligned with the
@@ -389,7 +405,8 @@
     .question,
     .side-caption,
     .figure figcaption {
-      margin-inline: var(--page-pad);
+      width: calc(100% - 2 * var(--page-pad));
+      margin-inline: auto;
     }
 
     .question {
@@ -398,11 +415,11 @@
     }
 
     .side + .side {
-      padding-top: 6px;
+      padding-top: var(--space-1);
     }
 
     .side-caption {
-      padding-bottom: 16px;
+      padding-bottom: var(--space-2);
     }
 
     .bridge {
@@ -413,10 +430,11 @@
   /* ------------------------------------------------------------ procedure */
 
   .procedure {
-    margin: 28px 0 0;
-    padding: 20px 24px 22px;
+    margin: var(--space-3) 0 0;
+    padding: var(--space-3);
     border-radius: var(--radius-md);
     background: var(--sunken);
+    font-family: var(--font-sans);
   }
 
   .procedure ol {
@@ -453,6 +471,7 @@
 
   .claim {
     margin: 0;
+    font-family: var(--font-sans);
     font-size: 17px;
     font-weight: 650;
     line-height: 1.6;

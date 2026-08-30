@@ -1,10 +1,10 @@
 /**
  * Lesson 31 — Relative clauses. Where the hole is, and whether anything marks it.
  *
- * All ten gaps in the built set were subject gaps and only *that* and *who*
- * appeared. The zero relative is the sharpest omission: *The book I needed
- * vanished* has no relativizer at all, is completely ordinary, and is the case
- * where the gap is hardest to see — which is what `gap` exists to teach.
+ * The built set includes six subject gaps and four object gaps. Its relative
+ * words are *that* and *who*, plus one zero relative: *The book I needed
+ * vanished* has no expressed marker. That pair keeps the object gap fixed
+ * while removing only *that*.
  *
  * It and *The book that I needed vanished* are one word apart. A learner who can
  * find the hole in the bare one has understood the machinery; one who can only

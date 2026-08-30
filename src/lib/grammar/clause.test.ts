@@ -62,7 +62,7 @@ describe('which verb governs a node', () => {
     const outerVp = Object.keys(map).find(
       (id) => map[id]!.form === 'VP' && map[id]!.span[0] === 6,
     )!;
-    assert.equal(governingVerbType(map, pp), 'Vint', 'governed by "raced"');
+    assert.equal(governingVerbType(map, pp), 'Vtr', 'governed by "raced"');
     assert.equal(governingVerbType(map, outerVp), 'Vint', 'governed by "fell"');
   });
 

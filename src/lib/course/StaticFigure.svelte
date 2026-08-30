@@ -39,6 +39,7 @@
     selection={nothing}
     interactive={false}
     fluid
+    trim
     {frameWidth}
   />
 </div>

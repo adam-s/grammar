@@ -6,9 +6,10 @@
  * The palette moves with the selection, but the taxonomy inside it must not
  * move. Its rules are therefore stability rules first.
  *
- *   1. **A group's inventory is complete and its order never changes.**
- *      All thirteen word classes, always, in the same order. What varies is
- *      each option's STATE, not its presence.
+ *   1. **A group's inventory is complete and its order stays stable while the
+ *      learner works.** All thirteen word classes are always present. The menu
+ *      presents them by their frequency in the course corpus; evidence changes
+ *      an option's STATE, not its seat.
  *
  *   2. **Which GROUPS show follows the shape of the selection**, which is the
  *      one thing the learner can see for themselves: one word asks "what is

@@ -162,7 +162,9 @@
   });
 
   $effect(() => {
-    if (interactive || !phone.matches || !pointerOn || !root) return;
+    // A guided menu is read-only, but it is still a viewport. Keep the row the
+    // demonstration is discussing in that viewport on every screen size.
+    if (interactive || !pointerOn || !root) return;
     const frame = requestAnimationFrame(() => {
       const option = Array.from(
         root?.querySelectorAll<HTMLButtonElement>('[data-option]') ?? [],
@@ -177,19 +179,21 @@
   const sections = $derived(active ? menuSections(active) : []);
 
   function choose(o: LabelOption) {
-    if (!isPickable(o)) return;
+    if (!interactive || !isPickable(o)) return;
     onpick(o);
     pointed = null;
     onhover?.(null);
   }
 
   function openGroup(id: string) {
+    if (!interactive) return;
     activeId = id;
     pointed = null;
     if (phone.matches) mobileDetail = true;
   }
 
   function point(o: LabelOption | null) {
+    if (!interactive) return;
     pointed = o;
     if (o && isPickable(o)) {
       const i = reachable.indexOf(o);
@@ -371,7 +375,6 @@
     style="left:{position.x}px;top:{position.y}px;--guided-menu-h:{placement?.h ?? 318}px"
     role="dialog"
     tabindex="-1"
-    inert={!interactive}
     aria-label="Label {panel.subject}"
   >
     <header class="context" class:wrong={verdict?.kind === 'wrong'}>
@@ -414,6 +417,8 @@
             class="category"
             class:active={g.id === active.id}
             aria-current={g.id === active.id ? 'true' : undefined}
+            aria-disabled={!interactive}
+            tabindex={interactive ? undefined : -1}
             onclick={() => openGroup(g.id)}
           >
             <span>
@@ -434,7 +439,10 @@
             class="mobile-back"
             type="button"
             aria-label="Back to label categories"
+            aria-disabled={!interactive}
+            tabindex={interactive ? undefined : -1}
             onclick={() => {
+              if (!interactive) return;
               mobileDetail = false;
               pointed = null;
             }}
@@ -458,7 +466,8 @@
                 data-option={o.key}
                 type="button"
                 aria-pressed={o.state === 'chosen'}
-                aria-disabled={!isPickable(o)}
+                aria-disabled={!interactive || !isPickable(o)}
+                tabindex={interactive ? undefined : -1}
                 onclick={() => choose(o)}
                 onpointerenter={() => {
                   if (!phone.matches) point(o);

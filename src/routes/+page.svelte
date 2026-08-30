@@ -557,7 +557,7 @@
   {/snippet}
 
   {#snippet overlay()}
-    {#if middleView === 'diagram'}
+    {#if middleView === 'diagram' && !tutorialActive}
       <div class="solution-toggle" role="group" aria-label="Diagram state" data-stage-occluder>
         <button
           type="button"

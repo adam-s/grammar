@@ -51,100 +51,63 @@ export function diagramScopes(doc: LessonDoc): { sentenceId: string; through?: n
 const INTRODUCTION: LessonDoc = {
   id: '01-introduction',
   lede:
-    'What words mean depends partly on how they relate to other words in a sentence. ' +
-    'Understanding syntax — how words take on different roles and relate to one another — ' +
-    'helps us write clearly and understand sentences better.',
+    'Syntax is the part of grammar that explains how words are related in a sentence. ' +
+    'Those relationships tell us which words form a group and what each group is doing.',
   blocks: [
-    { kind: 'hero', sentenceId: 'fix-garden-path' },
+    {
+      kind: 'diagram',
+      sentenceId: 'fix-sentence-frame',
+      through: 1,
+      caption:
+        'The diagram divides _The rain stopped_ into a subject noun phrase and a predicate verb phrase. ' +
+        'The two groups have different jobs in the sentence.',
+    },
     {
       kind: 'prose',
       text:
-        'You have studied grammar and syntax for at least 12 years, so most of ' +
-        'this will be familiar. This quick review will help jog your memory ' +
-        'about the ways words form relationships with one another.',
+        'The diagram shows a simple case: one group identifies the rain, and the other says that it stopped. ' +
+        'Syntax names this kind of relationship so that a longer sentence can be read as more than a row of words.',
     },
-
-    {
-      kind: 'credit',
-      text:
-        "I have always used Max Morenberg's _Doing Grammar_ to refresh my understanding of " +
-        'syntax. This guide draws heavily on his approach and uses coding agents to turn ' +
-        'sentence diagrams into interactive tools.',
-    },
-
     {
       kind: 'section',
       eyebrow: 'the problem',
-      title: 'Nothing is wrong with this sentence',
+      title: 'A later word can force a new grouping',
     },
     { kind: 'sentence', text: 'The horse raced past the barn fell.' },
     {
       kind: 'prose',
       text:
-        'You probably stalled at _fell_ and wondered if it was a typo. It is ' +
-        'not. Every word is common, and the sentence is well-formed English.',
+        'At first, _raced past the barn_ looks like the predicate. Then _fell_ arrives. ' +
+        'It forces a different reading: _raced past the barn_ identifies which horse, and ' +
+        '_fell_ tells what happened to that horse.',
+    },
+    {
+      kind: 'sentence',
+      text: 'The horse **that was** raced past the barn fell.',
     },
     {
       kind: 'prose',
       text:
-        'English lets us leave out _that was_ here. Put those words back, and ' +
-        'the sentence becomes easier to see:',
-    },
-    { kind: 'sentence', text: 'The horse **that was** raced past the barn fell.' },
-    {
-      kind: 'prose',
-      text: 'The horse did not race — it fell. Someone raced the horse past the barn.',
+        'The added words make the intended relationship easier to hear: someone raced the horse, ' +
+        'and the horse fell. They are a paraphrase for this sentence, not a repair rule for every ' +
+        'hard sentence.',
     },
     {
-      kind: 'prose',
-      text:
-        'You knew every word before you started. The difficulty was seeing the ' +
-        'relationships among them: which words belonged together and what role ' +
-        'each group played.',
-    },
-
-    {
-      kind: 'section',
-      eyebrow: 'the stakes',
-      title: 'One missing comma was worth five million dollars',
+      kind: 'procedure',
+      title: 'Try another reading when a sentence breaks down',
+      steps: [
+        'Mark the groups you first assumed.',
+        'Find the word that makes that reading fail.',
+        'Try a fuller paraphrase that gives each group a role in the sentence.',
+      ],
+      limit:
+        'Brackets and paraphrases support a reading; they do not guarantee that every sequence of words has one unique structure. Word order, agreement, punctuation, and context can also matter.',
     },
     {
       kind: 'prose',
       text:
-        'In 2017, dairy drivers in Maine sued for unpaid overtime. State law ' +
-        'listed the jobs that do not earn it, and the drivers delivered food ' +
-        'rather than packed it. The case turned on how the final items in that ' +
-        'list were grouped:',
-    },
-    { kind: 'sentence', text: 'packing for shipment or distribution of perishable food' },
-    { kind: 'prose', text: 'One reading grouped the words like this:' },
-    { kind: 'sentence', text: 'packing for [shipment or distribution]' },
-    {
-      kind: 'prose',
-      text:
-        'That named one kind of work: packing. Delivering is not on the list at ' +
-        'all, so the drivers would be owed overtime.',
-    },
-    { kind: 'prose', text: 'Another reading grouped them like this:' },
-    { kind: 'sentence', text: '[packing for shipment] or [distribution]' },
-    {
-      kind: 'prose',
-      text:
-        'That named two kinds of work, and delivering is the second one. The ' +
-        'drivers would be exempt, and would get nothing.',
-    },
-    {
-      kind: 'prose',
-      text:
-        'The court found that the wording did not clearly settle the question, ' +
-        "and Maine law resolves that kind of doubt in the worker's favour. It " +
-        'ruled for the drivers. The case later settled for about five million dollars.',
-    },
-    {
-      kind: 'prose',
-      text:
-        'Nobody disagreed about what the individual words meant. They disagreed ' +
-        'about which words belonged together.',
+        'Words keep their ordinary meanings, but a sentence gives them relationships. ' +
+        'The rest of the course makes those relationships visible one layer at a time.',
     },
   ],
 };
@@ -155,19 +118,59 @@ const SENTENCE_FRAME: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text: 'The **subject** names what the sentence is about. The **predicate** says something about it.',
+      text:
+        'In the ordinary statements used here, a **subject** noun phrase and a **predicate** verb phrase ' +
+        'make the clause together. The subject fills one role; the predicate says what happens, what is true, or how that subject is related to something else.',
     },
-    { kind: 'diagram', sentenceId: 'fix-sentence-frame', through: 2 },
+    {
+      kind: 'diagram',
+      sentenceId: 'fix-sentence-frame',
+      through: 2,
+      caption:
+        'The outer split places _The rain_ in the subject noun phrase and _stopped_ in the predicate verb phrase.',
+    },
+    {
+      kind: 'section',
+      eyebrow: 'the boundary',
+      title: 'A subject can contain more than one noun',
+    },
+    {
+      kind: 'contrast',
+      question: 'Where does _in the tunnel_ belong?',
+      through: 2,
+      left: {
+        sentenceId: 'fix-subject-phrase',
+        caption:
+          'Here _in the tunnel_ stays inside the subject noun phrase: it helps identify the workers.',
+      },
+      right: {
+        sentenceId: 'fix-subject-phrase-moved',
+        caption:
+          'Here the subject ends after _workers_. _In the tunnel_ is part of the predicate, so it locates the waiting.',
+      },
+    },
     {
       kind: 'prose',
-      text: 'Switch the same words around, and the meaning changes completely.',
+      text: 'The words stay almost the same, but moving the location changes the claim. In the first sentence, it distinguishes one set of workers from another. In the second, it says where the workers waited.',
     },
-    { kind: 'diagram', sentenceId: 'fix-camera-watched-guard', through: 2 },
-    { kind: 'bridge', text: '— and the other —' },
-    { kind: 'diagram', sentenceId: 'fix-guard-watched-camera', through: 2 },
+    {
+      kind: 'procedure',
+      title: 'Check a subject boundary in a simple statement',
+      steps: [
+        'Choose the opening words that may form the subject.',
+        'Replace that whole run with a suitable pronoun.',
+        'If the rest of the statement remains, the replacement supports that boundary.',
+      ],
+      limit:
+        'This procedure finds a noun-phrase boundary in the statement pattern used here. A pronoun can replace noun phrases in other positions too, and questions, commands, and fronted phrases need a different starting point.',
+    },
     {
       kind: 'prose',
-      text: 'This pattern helps words form a complete claim instead of a loose list. But it is only one common sentence pattern, not the whole story: commands, questions, fragments, and sentences with several clauses can work differently.',
+      text: 'The subject is not defined by being the first words or by doing an action. In these statements, it is the noun phrase paired with the predicate.',
+    },
+    {
+      kind: 'prose',
+      text: 'The subject identifies what the sentence is about, while the predicate says something about it. Together, they turn separate meanings into a structured message.',
     },
   ],
 };
@@ -179,16 +182,15 @@ const MAIN_VERB: LessonDoc = {
     {
       kind: 'prose',
       text:
-        'The **main verb** is the **head** of the verb phrase: the word the whole predicate is built around. ' +
-        'In the sentences used here, it is also the word that changes when you place the sentence in a different time.',
+        'In the simple predicates used here, the **main verb** is the **head**: it carries the present-or-past choice for the predicate. ' +
+        'A word can name an activity without carrying that choice.',
     },
     {
       kind: 'diagram',
       sentenceId: 'fix-main-verb-competitor',
       through: 3,
       caption:
-        '_Walk_ names an activity, but _tired_ is the word that changes for tense. ' +
-        'That makes _tired_ the verb and the head of the predicate.',
+        '_Walk_ names an activity inside the subject phrase. _Tired_ is the predicate’s verb and head.',
     },
     {
       kind: 'section',
@@ -198,16 +200,14 @@ const MAIN_VERB: LessonDoc = {
     {
       kind: 'prose',
       text:
-        'Say the same sentence about today and yesterday. Keep the people and activity the same. ' +
-        'The word that has to change is the main verb.',
+        'Say the same claim about today and yesterday while keeping the people and activity the same. ' +
+        'The predicate word that carries the change is the main verb.',
     },
     { kind: 'sentence', text: 'Today the daily walk **tires** Maya.' },
     { kind: 'sentence', text: 'Yesterday the daily walk **tired** Maya.' },
     {
       kind: 'prose',
-      text:
-        '_Walk_ stays put. _Tires_ becomes _tired_, so that is the verb. ' +
-        'The test uses tense to find the word; it does not ask you to name the tense.',
+      text: '_Walk_ stays put. _Tires_ becomes _tired_, so _tire_ is the verb. The time contrast identifies the word; it does not require a name for the tense.',
     },
     {
       kind: 'procedure',
@@ -215,10 +215,10 @@ const MAIN_VERB: LessonDoc = {
       steps: [
         'Say the sentence as true today.',
         'Say the same sentence as true yesterday.',
-        'Find the word that changes. That word is the main verb.',
+        'Find the predicate word whose form carries that contrast. That word is the main verb here.',
       ],
       limit:
-        'This lesson uses predicates with one tensed verb. Later, helping verbs and verb forms without tense will make the test produce more than one word to inspect.',
+        'This works for the simple predicates in this lesson. Some verb forms keep the same spelling in present and past, and later helping verbs and untensed verb forms require a fuller analysis.',
     },
     {
       kind: 'section',
@@ -227,9 +227,7 @@ const MAIN_VERB: LessonDoc = {
     },
     {
       kind: 'prose',
-      text:
-        'A word can name an activity without being the verb in its sentence. ' +
-        'It can also be a verb without ending in _-ed_.',
+      text: 'A word can name an activity without being the verb in its sentence. A verb can also have a past form without an _-ed_ ending.',
     },
     {
       kind: 'diagram',
@@ -240,22 +238,8 @@ const MAIN_VERB: LessonDoc = {
         'The irregular form has no _-ed_ ending.',
     },
     {
-      kind: 'section',
-      eyebrow: 'the head',
-      title: 'The predicate is larger than its verb',
-    },
-    {
       kind: 'prose',
-      text:
-        'The verb phrase is the whole predicate, while the main verb is the word at its centre. ' +
-        'In school grammar, you may know these as the **complete predicate** and **simple predicate**. ' +
-        'This course calls the central word the head because the same idea works inside other phrases too.',
-    },
-    {
-      kind: 'prose',
-      text:
-        'The previous lesson found the boundary between subject and predicate. ' +
-        'This lesson opens the predicate and finds its head. Lesson 5 will use the same idea inside a noun phrase.',
+      text: 'The two examples separate the meaning of an activity from the grammar of a verb. The main verb heads this kind of predicate because it carries the predicate’s time contrast. Later lessons add the parts that can accompany it.',
     },
   ],
 };
@@ -266,9 +250,7 @@ const NOUN_PHRASES: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text:
-        'A **noun phrase** lets a sentence treat one person, place, thing, or idea as a single unit, with as much or as little detail as needed. ' +
-        'A one-word phrase and a detailed phrase can fill the same subject slot.',
+      text: 'A **noun phrase** is a group that can fill one position in a larger sentence. It may be one word or a longer run: _they_ and _the workers in the tunnel_ can both fill the subject position.',
     },
     {
       kind: 'contrast',
@@ -292,33 +274,33 @@ const NOUN_PHRASES: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'Replace the suspected group with _they_, _she_, _he_, or _it_. If the sentence keeps the same basic claim, the words you replaced were working as one noun phrase.',
+      text: 'Replace the suspected group with _they_, _she_, _he_, or _it_. In this example, _They waited_ keeps the same basic claim. That supports treating all five original words as one noun phrase.',
     },
     { kind: 'sentence', text: '**The workers in the tunnel** waited.' },
     { kind: 'sentence', text: '**They** waited.' },
     {
       kind: 'prose',
-      text: '_They_ takes the place of all five words. Replacing only the noun _workers_ gives “The they in the tunnel waited.” That failed sentence shows that the replacement must take the original phrase as a whole.',
+      text: 'The pronoun occupies the position filled by the full run. It does not prove that every shorter replacement is impossible, but it shows that the five words can move through the larger sentence as one unit.',
     },
     {
       kind: 'procedure',
       title: 'Find a noun-phrase boundary',
       steps: [
-        'Choose the full run of words that may name one person, thing, place, or idea.',
+        'Choose the full run of words that may form one phrase.',
         'Replace the entire run with one pronoun.',
-        'Read the new sentence. If it still makes the same basic claim, the boundary holds.',
+        'Read the new sentence. If it keeps the same basic claim, the result supports that boundary.',
       ],
       limit:
-        'Replacement finds a noun phrase; it does not by itself tell you the phrase’s job. Use its place in the sentence to decide whether it is the subject or part of the predicate.',
+        'This is evidence for a phrase boundary, not a definition of noun phrase. The pronoun must fit the context, and quantified phrases may not keep the same meaning with _they_ or _it_. Replacement also does not by itself tell you the phrase’s job.',
     },
     {
       kind: 'section',
-      eyebrow: 'the shortcut',
-      title: 'A noun phrase can keep going after its noun',
+      eyebrow: 'the summary',
+      title: 'What a noun phrase is and does',
     },
     {
       kind: 'prose',
-      text: 'Do not stop automatically after _the workers_. Extra words can stay inside the same phrase when they identify which workers you mean. The test decides the boundary; the number of words does not.',
+      text: 'A noun phrase is organised around a noun or pronoun. Words inside it can help identify or count what the phrase concerns, add description, or complete the noun’s meaning. The whole phrase then enters one relationship at the next level, so one sentence can contain several noun phrases in different positions.',
     },
   ],
 };
@@ -330,8 +312,9 @@ const FIND_THE_HEAD: LessonDoc = {
     {
       kind: 'prose',
       text:
-        'The **head** of a noun phrase is the noun that the rest of the phrase is built around. ' +
-        'It controls agreement with the verb, even when another noun stands closer to that verb.',
+        'A **head** is the word that organizes the other parts of a phrase. In a noun phrase, ' +
+        'the noun heads the **nominal**, and the nominal heads the whole noun phrase. When that ' +
+        'noun phrase is the subject, the noun’s number usually determines the form of the verb.',
     },
     {
       kind: 'contrast',
@@ -345,46 +328,44 @@ const FIND_THE_HEAD: LessonDoc = {
       right: {
         sentenceId: 'fix-subject-agreement-plural',
         caption:
-          'The **keys** to the cabinet **are** missing. The head changes to plural, so the verb changes with it.',
+          'The **keys** to the cabinet **are** missing. The head noun is plural, so the verb is plural too.',
       },
     },
     {
       kind: 'prose',
-      text: 'The two sentences reverse the trap. In the first, a singular head beats a nearby plural noun. In the second, a plural head beats a nearby singular noun. The verb follows the head both times.',
+      text: 'Changing the noun nearest the verb changes nothing. The verb is singular with _key_ and plural with _keys_, because those nouns head the subject phrases.',
     },
     {
-      kind: 'diagram',
-      sentenceId: 'fix-nominal',
-      through: 5,
-      caption:
-        'In _the old red engine_, _engine_ is the noun head. _Old red engine_ is the **nominal** built around it, and _the_ reaches over that whole layer to complete the noun phrase.',
+      kind: 'section',
+      eyebrow: 'the layers',
+      title: 'Read outward from the head noun',
     },
     {
       kind: 'prose',
-      text: 'The nominal is the middle layer between a determiner and the full noun phrase. The replacement “the old red engine and the blue **one**” exposes it: _one_ replaces _old red engine_, not the determiner _the_.',
+      text: 'In the first diagram, _key_ is the noun. _Key to the cabinets_ is the nominal it heads. The determiner _the_ then combines with that nominal to form the subject noun phrase. Each layer has a head: the noun heads the nominal, and the nominal heads the noun phrase.',
     },
     {
       kind: 'section',
       eyebrow: 'the test',
-      title: 'Temporarily remove the added detail',
+      title: 'Set aside what depends on another noun',
     },
     { kind: 'sentence', text: 'The key **[to the cabinets]** is missing.' },
     { kind: 'sentence', text: 'The key is missing.' },
     {
       kind: 'prose',
-      text: 'The shorter sentence keeps the central person or thing and the verb still agrees with it. Remove _key_ instead, and “The to the cabinets is missing” collapses. The noun the phrase cannot do without is its head.',
+      text: 'Set aside _to the cabinets_, and _The key is missing_ remains. The added phrase depends on _key_; it contains another noun, but it does not organize the subject. The verb still follows the number of _key_.',
     },
     {
       kind: 'procedure',
       title: 'Choose between competing nouns',
       steps: [
         'Find the nouns inside the phrase.',
-        'Set aside details introduced by words such as _of_, _to_, _in_, or _near_.',
-        'Read the shortened phrase with the verb. The noun that remains central is the head.',
-        'When number is visible, check that the verb agrees with that noun.',
+        'Notice which words or phrases attach to each noun.',
+        'Temporarily set aside an attached modifier and read the smaller phrase.',
+        'If the noun phrase is the subject and the verb shows number, check which noun supplies that number.',
       ],
       limit:
-        'Agreement is strongest when singular and plural forms differ. With verbs such as _waited_, use the removal test because the verb form gives no number clue.',
+        'These tests are clues, not a rule for every noun phrase. Agreement helps only with subject noun phrases when the verb shows number. Removal works here because the attached phrase is a modifier.',
     },
     {
       kind: 'section',
@@ -395,6 +376,15 @@ const FIND_THE_HEAD: LessonDoc = {
       kind: 'prose',
       text: 'When the noun phrase is the subject, older grammar books call its head the **simple subject** and the whole noun phrase the **complete subject**. In “The key to the cabinets,” _key_ is the simple subject; all five words form the complete subject.',
     },
+    {
+      kind: 'section',
+      eyebrow: 'the point',
+      title: 'A head organizes its dependents',
+    },
+    {
+      kind: 'prose',
+      text: 'A noun phrase may contain several nouns, but they do not all stand at the same level. One noun heads the nominal; other nouns can occur inside phrases that depend on it. The nominal then combines with any determiner to form the noun phrase. A head is defined by these relationships, not by its position or by how important it sounds.',
+    },
   ],
 };
 
@@ -404,9 +394,7 @@ const DETERMINERS: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text:
-        'A **determiner** helps set the reference of a noun phrase: whether it is new or identifiable, which one, whose, or how many. Compare _a_ light, _that_ light, _every_ light, and _my_ light. ' +
-        'It narrows the reference of the noun instead of describing a quality of it.',
+      text: 'A **determiner** fills a position in a noun phrase and helps set its reference or range. In _a light_, _that light_, _every light_, and _my light_, the noun stays _light_, while the determiner changes how the phrase refers or quantifies.',
     },
     {
       kind: 'contrast',
@@ -423,11 +411,11 @@ const DETERMINERS: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'The noun _light_ names the same kind of thing in both sentences, and _flashed_ reports the same event. Changing only the determiner changes which light the listener should look for.',
+      text: 'The noun _light_ names the same kind of thing in both sentences, and _flashed_ reports the same event. _A_ introduces an unspecified light; _that_ directs the listener to a particular one.',
     },
     {
       kind: 'prose',
-      text: 'Different determiners make different kinds of selections: _a_ and _the_ mark a reference as new or identifiable; _this_ and _that_ point; _my_ and _your_ show a relationship; _some_, _every_, and _no_ set an amount or range. Their meanings differ, but they all do the determiner job.',
+      text: 'Articles can mark a reference as new or identifiable. Demonstratives can point, possessives can establish a relation, and words such as _some_, _every_, and _no_ can quantify. These contributions differ, but each belongs in the determiner position of the noun phrase.',
     },
     {
       kind: 'section',
@@ -439,32 +427,32 @@ const DETERMINERS: LessonDoc = {
       sentenceId: 'fix-determinative-phrase',
       through: 6,
       caption:
-        'In _almost every driver_, _almost_ changes the reach of _every_, not the kind of driver. The two words form a **determinative phrase** that does the determiner job.',
+        'The diagram groups _almost every_ as a **determinative phrase** in the determiner position. _Every_ is the determiner at the phrase’s head.',
     },
     {
       kind: 'prose',
-      text: 'This is why **determiner** and **determinative phrase** are separate menu answers. The first names a word and a function; the second names a group built around a determiner.',
+      text: 'The course uses **determiner** for the word label and **determinative phrase** for the larger group. In this example, the phrase fills the noun phrase’s determiner position.',
     },
     {
       kind: 'section',
       eyebrow: 'the distinction',
-      title: 'Pointing is different from describing',
+      title: 'A determiner and an adjective attach at different levels',
     },
     { kind: 'sentence', text: 'those red doors' },
     {
       kind: 'prose',
-      text: '_Those_ helps select the doors. _Red_ tells us a quality they have. Change _red_ to _heavy_ and you describe the same selected doors differently; change _those_ to _some_ and you select a different set. The selecting word is the determiner.',
+      text: '_Those_ helps set which doors the phrase concerns; _red_ adds a property. Both can narrow the set of doors, so “narrows the noun” does not separate the classes. In the course’s analysis, the determiner combines with the nominal as a separate dependent.',
     },
     {
       kind: 'procedure',
       title: 'Test the word before a noun',
       steps: [
-        'Keep the noun fixed and change the word you are testing.',
-        'Ask what changed: which or how many things you mean, or what those things are like.',
-        'If the word changes which or how many, label it as a determiner.',
+        'Keep the noun fixed and compare familiar determiner words such as _a_, _that_, or _every_.',
+        'Notice how their replacement changes the phrase’s reference or range.',
+        'Use that comparison as evidence for clear examples, then check the word’s place in the noun phrase.',
       ],
       limit:
-        'This meaning test separates clear examples. Later lessons add structure for harder cases, including a word that modifies a determiner rather than the noun.',
+        'Meaning alone does not classify every word before a noun: adjectives can also affect which things a phrase describes. This lesson’s simple order is evidence, not a rule that the first word before a noun is always a determiner.',
     },
     {
       kind: 'section',
@@ -483,11 +471,11 @@ const DETERMINERS: LessonDoc = {
       sentenceId: 'fix-fused-determiner',
       through: 6,
       caption:
-        'In _Most left_, _most_ selects a group as a determiner would, but no noun follows. It is **determiner and head at once**: one word doing both jobs.',
+        'In the course’s analysis of _Most left_, _most_ is **determiner and head at once**. The word supplies the quantifying contribution and heads the noun phrase.',
     },
     {
       kind: 'prose',
-      text: 'Older school grammar may call words such as _my_ and _those_ possessive or demonstrative adjectives. This course uses **determiner** because they select a reference rather than describe it. Article, demonstrative, possessive, and quantifier are useful descriptions of meaning, not extra labels in the diagram.',
+      text: 'Not every noun phrase has a determiner: _Lights flashed_ is complete without one. Grammatical traditions also draw this category differently, especially for possessives and numerals. This course labels familiar forms such as _my_ and _those_ as determiners; article, demonstrative, possessive, and quantifier describe their meanings rather than extra diagram labels.',
     },
   ],
 };
@@ -498,62 +486,62 @@ const PRONOUNS: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text:
-        'A **pronoun** is a word that can stand in for a whole noun phrase, including its determiner and modifiers—not merely its head noun. ' +
-        'That lets a speaker keep the reference clear without repeating every detail.',
+      text: 'A **pronoun** can head a noun phrase. Many pronoun-headed phrases track a participant already identified by a fuller noun phrase, so a speaker can continue referring to that participant without repeating the description.',
     },
     {
       kind: 'contrast',
-      question: 'How much does _she_ replace?',
+      question: 'How can one word fill the same subject position?',
       through: 7,
       left: {
         sentenceId: 'fix-pronoun-long-subject',
-        caption: '**The pilot near the window** is the complete subject noun phrase.',
+        caption: '**The pilot near the window** fills the subject noun-phrase position.',
       },
       right: {
         sentenceId: 'fix-pronoun-she-waved',
-        caption: '**She** replaces all five subject words and fills the same slot alone.',
+        caption: '**She** also fills the subject noun-phrase position, with a pronoun as its head.',
       },
     },
     {
       kind: 'prose',
-      text: 'The right diagram still has _NP_ above _She_. **Pron** names the kind of word; **NP** names the complete unit that word forms. That is how one word can fill the same subject slot as five.',
+      text: 'The right diagram still has _NP_ above _She_. **Pron** names the word’s form; **NP** names the unit that fills the subject position. A one-word noun phrase and a longer noun phrase can therefore have the same distribution in a clause.',
     },
     { kind: 'sentence', text: 'The pilot near the window waved. **She** smiled.' },
     {
       kind: 'prose',
-      text: 'The first sentence identifies the pilot. The pronoun carries that reference into the next sentence without making the reader process the full description again.',
+      text: 'The first sentence identifies a pilot. In the next sentence, _she_ can refer to that same person without restating that she was the pilot near the window. The pronoun preserves the reference; it does not copy the earlier description into its own meaning.',
     },
     {
       kind: 'section',
-      eyebrow: 'the evidence',
-      title: 'Partial replacement leaves a broken sentence',
+      eyebrow: 'the limit',
+      title: 'A pronoun need not be a one-word noun phrase',
     },
-    { kind: 'sentence', text: 'The **pilot** near the window waved.' },
-    { kind: 'sentence', text: 'The **she** near the window waved.' },
+    {
+      kind: 'sentence',
+      text: 'Nobody in the row complained.',
+    },
     {
       kind: 'prose',
-      text: 'The second line fails because _she_ did not replace only _pilot_. It already carries the work of “the pilot near the window,” including the words that identify which pilot. The natural replacement is simply “She waved.”',
+      text: '_Nobody_ is a pronoun, while _nobody in the row_ is the noun phrase it heads. Pronouns can take a limited range of dependents, so a bare word such as _she_ is one simple kind of pronoun-headed noun phrase, not the only kind.',
     },
     {
       kind: 'procedure',
       title: 'Use a pronoun to check a noun phrase',
       steps: [
-        'Choose the entire group that names one participant or thing.',
-        'Replace that group with a pronoun that fits the meaning.',
-        'If the sentence still works, the pronoun and the longer noun phrase fill the same structural slot.',
+        'Choose a noun phrase that identifies a participant or thing.',
+        'Replace it with a pronoun that fits the reference and position.',
+        'If the sentence still works, the pronoun-headed and fuller noun phrases fill the same structural slot.',
       ],
       limit:
-        'This lesson uses pronouns in the subject slot. Object forms such as _her_, _him_, and _them_ arrive when the course introduces objects.',
+        'This is distributional evidence, not a definition of pronoun. _I_ and _you_ need no earlier noun phrase, and some uses of _it_ have no referential antecedent. This lesson shows pronouns in the subject position; object forms arrive with objects.',
     },
     {
       kind: 'section',
-      eyebrow: 'the connection',
-      title: 'Lesson 4’s test now has a name',
+      eyebrow: 'the point',
+      title: 'Word form and phrase position answer different questions',
     },
     {
       kind: 'prose',
-      text: 'Lesson 4 found noun phrases by replacing a long run with one small word. That small word was a pronoun. The replacement works because a pronoun is not a miniature noun; it is a one-word noun phrase.',
+      text: 'Pronouns can make a long description unnecessary when the reference is clear, but that is only one of their uses. The durable distinction is structural: **Pron** says what kind of word it is, and **NP** says what kind of unit it heads or forms in the sentence.',
     },
   ],
 };

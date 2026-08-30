@@ -198,6 +198,8 @@
      * browser, and needs no measured camera to supply either.
      */
     fluid?: boolean;
+    /** Static lesson figures can remove some of the camera-safe outer pad. */
+    trim?: boolean;
     /**
      * Draw into a wider box than this sentence needs, centred.
      *
@@ -219,6 +221,7 @@
     minDepth = 0,
     interactive = true,
     fluid = false,
+    trim = false,
     frameWidth = 0,
     onpick = () => {},
     ondraft = () => {},
@@ -245,6 +248,7 @@
     const w = Math.max(size.w, frameWidth);
     return { w, h: size.h, inset: (w - size.w) / 2 };
   });
+  const trimInset = $derived(trim ? 18 : 0);
   /**
    * The arcs, placed from the same layout the tree uses. A node with no box —
    * one the layout could not place — drops its whole arc rather than half of it.
@@ -339,7 +343,7 @@
   class:fluid
   width={fluid ? undefined : size.w}
   height={fluid ? undefined : size.h}
-  viewBox="0 0 {frame.w} {frame.h}"
+  viewBox="{trimInset} {trimInset} {frame.w - trimInset * 2} {frame.h - trimInset * 2}"
   preserveAspectRatio="xMidYMid meet"
   role="group"
   aria-label="Sentence structure"
@@ -662,6 +666,15 @@
   }
   .diagram.readonly :global(.node-label text) {
     opacity: 0.9;
+  }
+  /* In a lesson figure, the grammatical analysis is evidence rather than
+     interface chrome. Give it enough weight to be read alongside the words. */
+  .diagram.readonly.fluid :global(.node-label .form) {
+    font-size: 14px;
+  }
+  .diagram.readonly.fluid :global(.node-label .qualifier) {
+    font-size: 8.25px;
+    opacity: 0.94;
   }
   .word:hover .mark {
     fill: color-mix(in oklab, var(--ink) 8%, transparent);

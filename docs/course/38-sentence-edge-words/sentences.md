@@ -20,7 +20,7 @@ rows below move one word through three positions.
 | #   | Sentence                             | The step                                            |
 | --- | ------------------------------------ | --------------------------------------------------- |
 | 1   | Oh, the gate opened.                 | **an interjection**, which the course never has     |
-| 2   | Well, the clerk waited.              | a second interjection, so the class is not one word |
+| 2   | Wow, the clerk returned.             | a second interjection, so the class is not one word |
 | 3   | Unfortunately, that ferry sank.      | an adverb doing the same job                        |
 | 4   | Surprisingly, the engine restarted.  | the plainest case, at the front                     |
 | 5   | The engine, surprisingly, restarted. | **the same word, in the middle**                    |
@@ -37,7 +37,7 @@ _The engine restarted, surprisingly_ move one word through three positions with
 nothing else changing. A supplement can go almost anywhere; an adverbial cannot,
 and that freedom is the test.
 
-**_Oh, the gate opened_ and _Well, the clerk waited_ were daggered and did not
+**_Oh, the gate opened_ and _Wow, the clerk returned_ were daggered and did not
 need to be.** No `Interj` existed anywhere in the course. `node scripts/probe-constructions.mjs` builds one clean as a
 direct supplement of the clause — not as the head of an `AdvP`, which is what
 the first attempt tried and which fails because the head of an adverb phrase

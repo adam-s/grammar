@@ -19,18 +19,18 @@ word will fail four of the ten sentences.
 
 ## Sentences
 
-| # | Sentence | What changes |
-| --- | --- | --- |
-| 1 | The rain stopped. | Repeats the smallest frame from lesson 1. |
-| 2 | Our visitors arrived early. | Adds a word after the verb. |
-| 3 | The kettle boiled on the stove. | Adds a phrase to the predicate. |
-| 4 | The shoes on my feet pinched. | Places two nouns before the verb. |
-| 5 | The hole in my shoes widened. | Makes the nearest noun the wrong choice. |
-| 6 | The crack in the ceiling spread. | Repeats the boundary with a tighter relationship. |
-| 7 | A box of tools fell downstairs. | Puts a phrase on each side of the boundary. |
-| 8 | The children in the yard shouted. | Uses a long subject with a clear meaning. |
-| 9 | The last bus left after midnight. | Returns the extra phrase to the predicate. |
-| 10 | The lock on the shed rusted. | Ends on another long subject. |
+| #   | Sentence                          | What changes                                      |
+| --- | --------------------------------- | ------------------------------------------------- |
+| 1   | The rain stopped.                 | Repeats the smallest frame from lesson 1.         |
+| 2   | Our visitors arrived early.       | Adds a word after the verb.                       |
+| 3   | The kettle boiled on the stove.   | Adds a phrase to the predicate.                   |
+| 4   | The shoes on my feet pinched.     | Places two nouns before the verb.                 |
+| 5   | The hole in my shoes widened.     | Makes the nearest noun the wrong choice.          |
+| 6   | The crack in the ceiling spread.  | Repeats the boundary with a tighter relationship. |
+| 7   | A box of tools fell downstairs.   | Puts a phrase on each side of the boundary.       |
+| 8   | The children in the yard shouted. | Uses a long subject with a clear meaning.         |
+| 9   | The last bus left after midnight. | Returns the extra phrase to the predicate.        |
+| 10  | The lock on the shed rusted.      | Ends on another long subject.                     |
 
 ## Why these sentences belong together
 

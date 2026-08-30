@@ -1,400 +1,277 @@
-# Lesson blog page template
+# Lesson page authoring template
 
-Decided 29 August 2026 after reviewing the rendered pages for lessons 01 and
-02, their author dossiers, and the shared static lesson contract.
+Updated 30 August 2026 after the research and revision passes for noun phrases
+and heads.
 
-This is an authoring brief for a coding agent. It does not replace the
-[static lesson contract](lesson/README.md), the lesson dossier, or the approved
-sentence parse. It turns those sources into a repeatable way to build a useful
-lesson page without producing forty articles with the same empty rhythm.
+This is the current authoring brief for agents revising the course. Use the
+[static lesson contract](lesson/README.md) for the division between explanation
+and practice, cumulative label scope, and rendering requirements. The lesson's
+research dossier controls its grammatical claims and page structure. This
+template replaces earlier instructions that require a fixed sequence or a
+mandatory block whether or not the research supports it. The grammar should
+control the lesson's shape. Track the work in the
+[course research plan](course-research-and-revision.md).
 
-## The job of a lesson page
+## The job of a lesson
 
-A lesson page answers one grammar question. It should work for a course learner
-and for a reader who landed on the page after searching that question.
+A lesson gives the learner one defensible way to understand a grammatical
+distinction. It should leave the learner with:
 
-The page is a static visual explanation. The sentence builder is where the
-learner tries decisions and receives feedback. Do not turn the article into a
-quiz, a tour of the interface, or a gate before practice.
+- a clear generalization;
+- a concrete example in which that generalization matters;
+- an account of the relationships shown by the example;
+- evidence the learner can use on a new sentence, when such evidence exists;
+- the limits needed to keep the claim honest.
 
-A complete page gives the reader:
+The lesson page explains. The sentence builder provides repeated decisions and
+feedback. Do not turn the page into a quiz, an interface tour, or a gate before
+practice.
 
-- a direct answer in plain language;
-- the grammatical name for the structure;
-- an example that makes the structure visible;
-- a short test or procedure the reader can reuse;
-- a contrast that defeats the most tempting wrong rule;
-- the limit of the explanation at this point in the course.
+## Research comes before learner copy
 
-Those are coverage requirements, not mandatory headings. The subject should
-determine the page's rhythm.
+Do not rewrite a lesson from its route name or its current prose. First read:
 
-## Start with the question, not the component
+1. `AGENTS.md` and the shared lesson contract;
+2. the lesson's dossier;
+3. the current learner-facing lesson;
+4. its practice sentences and the fixtures cited by its diagrams;
+5. the lessons immediately before and after it;
+6. primary or authoritative sources for the grammatical analysis.
 
-Before changing code, read the lesson's dossier and write one sentence:
+The dossier must settle the lesson's central generalization before the copy is
+revised. It should distinguish among four things that teaching materials often
+blur:
 
-> This page answers: **[the question a reader would search].**
+| Kind of claim          | Question it answers                                      |
+| ---------------------- | -------------------------------------------------------- |
+| Definition or analysis | What relationship makes this the structure it is?        |
+| Generalization         | What is normally true across the relevant constructions? |
+| Diagnostic             | What observable evidence helps identify it here?         |
+| Shortcut or mnemonic   | What is easy to remember but may fail elsewhere?         |
 
-Then write its answer in one or two plain sentences. If the agent cannot do
-that, it is not ready to choose examples or diagrams.
+Do not promote a diagnostic into a definition. Pronoun replacement, omission,
+agreement, movement, and paraphrase can provide strong evidence in the right
+construction without defining a category everywhere it occurs.
 
-The question must describe the actual distinction in the dossier. Do not infer
-it from the route name alone. A lesson may introduce no new label and still
-teach a harder decision, such as finding where a long subject ends.
+When sources disagree, record the disagreement in the dossier. The learner page
+may teach the analysis used by this course, but it must not present a framework
+choice as an uncontested fact about all English.
 
-The title should either state the answer or name the question precisely. Avoid
-generic titles such as _Overview_, _Understanding phrases_, and _A closer look
-at syntax_.
+## Find the lesson's generalization
 
-## Build an argument with examples
+Before choosing blocks or examples, write one or two sentences that state what
+the lesson ultimately says. A useful generalization names relationships, not
+just labels.
 
-The page should follow this movement:
+For example, a noun-phrase lesson should explain what can happen inside the
+phrase and how the whole phrase enters a larger structure. A lesson about heads
+should explain how one element organizes dependents at each layer. Merely
+saying that a noun phrase is “a group of words” or that a head is “the important
+word” does not state the grammatical relationship.
 
-```text
-question -> direct answer -> visible evidence -> reusable method
-         -> failed shortcut -> boundary -> practice
-```
+Test the proposed generalization against:
 
-The movement matters more than a fixed number of sections. Use only the blocks
-the topic needs.
+- every worked example;
+- the practice set;
+- obvious constructions just outside the lesson's scope;
+- the course's own diagrams and terminology.
 
-### 1. Give the direct answer
+If the sentence needs several qualifications before it survives those checks,
+narrow it. Do not hide the qualifications later in a warning box.
 
-The first paragraph answers the search question. Begin with what the structure
-does in a familiar sentence, then give it its grammatical name.
+## Control the flow of ideas
 
-Good:
+Each paragraph should create the need for the next one. The page may move from
+a generalization to a contrast, from a surprising example to an explanation,
+or from a visible pattern to its grammatical name. Use the order that makes the
+reasoning easiest to follow.
 
-> One group names what the sentence is about. The other says something about
-> it. These groups are the **subject** and **predicate**.
+The page does not need a fixed sequence of introduction, definition, test,
+misconception, exceptions, and conclusion. It does need a visible line of
+reasoning:
 
-Weak:
+1. What claim is being made?
+2. What example makes it concrete?
+3. What relationships in the example support the claim?
+4. What follows from those relationships?
 
-> In this lesson, we will explore the important roles that subjects and
-> predicates play in sentence structure.
+Put a limitation beside the claim it limits. Do not allow a reader to build the
+wrong rule for several sections and correct it at the end.
 
-The weak version postpones the answer, calls the topic important without
-showing why, and could introduce almost any grammar lesson.
+End when the lesson has reached its general result. A good close says what the
+examples establish at a higher level. It does not repeat the title, list every
+term introduced, congratulate the learner, or advertise the next lesson.
 
-### 2. Show the smallest example that proves the answer
+## Let examples carry the explanation
 
-Use a short sentence whose diagram shows the new relationship without other
-interesting problems. The prose before the figure raises one question. The
-figure answers it. Its caption states what the diagram proves.
-
-A caption such as _The rain stopped_ only names the example. A useful caption
-says _The whole subject sits on one side of the sentence frame; the predicate
-sits on the other._
-
-### 3. Make the easy rule fail
-
-After the simple example, use one controlled contrast that reveals the real
-decision. Hold the vocabulary or word order still when possible. Change one
-structural fact and say what changed in meaning or grammatical role.
-
-Useful contrasts include:
-
-- a short subject beside a subject that contains another noun;
-- the same words grouped in two ways;
-- a failed replacement beside a successful replacement;
-- the same phrase form doing two different jobs.
-
-Do not add a second example that merely repeats the first with new nouns.
-
-### 4. Give the reader a method
-
-State the shortest useful procedure the reader can run on an unfamiliar
-sentence. Steps must be observable actions, not restated definitions.
-
-A test must have something to reject. If every word except the right answer is
-obviously impossible, performing the test is ceremony. Choose an example with
-a plausible competitor, then show the evidence that separates the two. For a
-main-verb lesson, an activity noun such as _walk_ can compete with the actual
-verb; changing the sentence's time settles the choice.
-
-For example:
-
-1. Start at the beginning of the sentence and choose the whole group that may
-   be the subject.
-2. Replace that group with _it_ or _they_.
-3. Read the result with the main verb. If words are stranded, widen the group
-   and try again.
-
-Name the test's limit beside it. Pronoun replacement can find noun phrases
-inside a subject too, so it does not identify a subject unless the reader also
-tests the opening group against the main verb.
-
-### 5. Defeat one live shortcut
-
-Choose the strongest shortcut from the dossier, not a generic list of common
-mistakes. Show why the shortcut seems to work, give the approved sentence that
-breaks it, and return to the better method.
-
-One decisive counterexample teaches more than a panel of warnings.
-
-### 6. Mark the boundary of the claim
-
-Say what the explanation covers and where it stops. Keep this close to the
-claim it limits. Do not end a clear lesson with a catalogue of every exception
-in English.
-
-For an early sentence-frame lesson, one sentence is enough: the two-part frame
-describes the complete statements used here; commands and sentences with more
-than one clause require later distinctions.
-
-### 7. Hand off to practice
-
-The closing action opens practice. One line may tell the learner what decision
-to make there. Do not summarize the whole page again, congratulate the reader,
-or manufacture a cliffhanger.
-
-## Example standard
-
-Examples carry the teaching. Choose them before writing the surrounding prose.
-
-Every worked example must:
+Choose examples before polishing the prose. Every worked example must:
 
 - come from an accepted parse in the app;
-- isolate the lesson's decision;
-- use ordinary words unless an unusual word is the point;
-- be natural enough that a reader could encounter it outside a grammar book;
-- remain clear when read without the paragraph around it;
-- differ from graded practice unless the sentence is explicitly marked as a
-  demonstration and removed from assessment.
+- contain a real decision or competing analysis;
+- isolate the relationship the prose discusses;
+- use ordinary language unless an unusual expression is the point;
+- remain natural and intelligible outside the surrounding paragraph;
+- appear at a lesson scope that actually displays the labels named by the copy.
 
-Across the course, **every stable item in the label menus must have at least
-one worked lesson-blog example that makes its distinction visible**. This
-includes contextual actions such as stacking, adding a gap, and choosing an
-anchor. A menu note, a `teaches` entry, or a sentence that merely happens to
-contain the label does not count. The page must cite a parsed fixture, draw it
-at a scope that shows the label, and say in the prose or caption what that answer distinguishes.
-The menu-example coverage test is the ledger; update it when a label or its
-best example changes.
+Prefer a controlled contrast when changing one feature makes the relationship
+visible. Do not pair unrelated sentences merely to fill a contrast block.
 
-When one sentence demonstrates several menu items, the caption may name more
-than one only when the relationship among them is the point. Otherwise give
-the secondary item its own small example. Coverage must not turn one diagram
-into a glossary dump.
+An example with only one possible answer cannot teach how to choose among
+competitors. Audit the practice set for shortcuts such as “choose the only
+noun,” “choose the nearest noun,” or “stop after two words.” The learner should
+need the stated relationship, not just a repeated surface pattern.
 
-Prefer a matched pair over two unrelated examples. In a matched pair, keep
-everything still except the feature being taught. If the words, tense, length,
-and situation all change, the reader cannot tell what caused the difference.
+Prefer purpose-built teaching fixtures over revealing the complete answer to a
+graded practice sentence. Never hand-draw a diagram that can drift from the
+grammar model.
 
-Do not use an example merely because its parse already exists. If the available
-fixture cannot make the claim clearly, add and verify a purpose-built teaching
-fixture. Never hand-draw a diagram that can drift from the grader's reading.
+## Use diagrams as evidence
 
-## Visual and page format
+A diagram belongs on the page only when it makes a grammatical relationship
+easier to see than prose alone. Its caption states what the picture shows; it
+does not merely repeat the sentence.
 
-The reading column stays narrow. A figure may widen beyond it when comparison
-needs space. The page should still read in a single downward sequence.
+Every diagram must:
 
-Each figure must:
+- cite an approved fixture;
+- use the same labels and structure as the builder;
+- show only decisions available at that point in the course;
+- remain complete without animation, hover, or a tooltip;
+- have a text equivalent;
+- remain readable at desktop and narrow widths.
 
-- appear immediately after the question or claim it answers;
-- use the same labels, colors, and tree conventions as the builder;
-- show only labels taught by that point, except for the wordless opening
-  demonstration allowed by the shared contract;
-- remain complete without animation, hover, clicking, or a tooltip;
-- have a text equivalent and an evidence-bearing caption;
-- fit a narrow screen without making labels too small to read.
+Inspect the rendered diagram rather than inferring its contents from the full
+fixture. Lesson scope can prune later labels or an entire subtree. If the
+visible figure does not show the relationship named in its caption, change the
+figure, the scope, or the prose.
 
-Use side-by-side figures only when the reader must compare them. Stack them on
-narrow screens and keep each caption attached to its own figure. Similar-sized
-diagrams should share a scale. When one diagram is much shorter, let it grow
-rather than shrinking its labels below the app's readability floor. Exact scale
-is useful only while both pieces of evidence remain easy to read.
+Every stable menu item still needs one visible, parsed example somewhere in the
+course. Update the menu-example coverage ledger when the best example changes.
+Coverage is not a reason to turn one diagram into a glossary of unrelated
+labels.
 
-On a desktop, a diagram is the page's main evidence and may be about one fifth
-wider than the reading column's former figure frame. On a narrow screen, it
-must remain bounded by the viewport. Do not buy desktop restraint by making the
-labels hard to read.
+## Use diagnostics honestly
 
-The hero is optional. Use it only when a finished diagram creates a useful
-question before the explanation starts. A decorative tree under every title
-will make the whole course feel generated.
+Include a test or procedure when it gives the learner real evidence. Do not add
+one because a template expects it.
 
-## Writing rules
+A useful diagnostic:
 
-Write at a 10th-grade reading level. Assume the reader may remember the grammar
-and want a precise refresher.
+- operates on something the learner can observe;
+- distinguishes the intended answer from a plausible alternative;
+- works on the example used to teach it;
+- says what kind of evidence a successful result provides;
+- states the construction in which it applies.
 
-- Put the plain idea before its technical name.
-- Locate difficulty in the sentence, not in the reader.
-- Use short paragraphs. Let one paragraph do one job.
+Avoid instructions that merely rename intuition: “find the central word,”
+“look for the important part,” or “notice what belongs together.” Make the
+relationship concrete before asking the learner to recognize it.
+
+When no single diagnostic is reliable, teach converging evidence or explain the
+structural relation directly. A qualified method is more useful than a simple
+rule that produces false confidence.
+
+## Choose blocks by their job
+
+Use the minimum set of blocks that carries the argument.
+
+| Block     | Use it when                                                       |
+| --------- | ----------------------------------------------------------------- |
+| Prose     | one claim or inference can be stated clearly in a short paragraph |
+| Sentence  | the wording itself is the object of attention                     |
+| Diagram   | hierarchy or attachment must be visible                           |
+| Contrast  | two examples must be compared directly                            |
+| Section   | the reasoning moves to a new question                             |
+| Procedure | the learner can perform a real sequence of observable checks      |
+
+Do not add a block type for decorative variety. Do not force every lesson to
+use every existing block.
+
+## Writing
+
+Write at a 10th-grade reading level. Trust the learner's practical knowledge of
+English and introduce a term only after the underlying idea is clear.
+
+- Lead with the main idea.
+- Use concrete nouns and active verbs.
+- Let one paragraph do one job.
+- Name the words and relationships under discussion.
+- Distinguish form, function, and structural level.
 - State what changed and what follows from it.
-- Use bold only when introducing a term.
-- Prefer _is_ to inflated phrases such as _serves as_ or _plays a role in_.
-- Use an em dash only when it is clearer than a full stop, comma, or colon.
-- Read headings aloud and check that each has only the intended meaning.
+- Use bold for a term being introduced and italics for language under study.
+- Keep headings descriptive; do not use them to manufacture excitement.
 
-When one word receives two labels, explain the two decisions separately. A
-word can be a **verb** in form and the **head** in function. The labels may land
-on the same node without meaning the same thing. This form-and-function check
-applies anywhere a lesson introduces more than one decision at once.
+Delete:
+
+- “In this lesson, we will …” and other stage directions;
+- claims that a topic is important without showing a consequence;
+- definitions built from vague words such as _central_, _core_, _key_,
+  _essential_, or _built around_ when the relationships remain unexplained;
+- generic lists of three written for cadence;
+- repeated pairs such as “identify and understand” that add no distinction;
+- metaphors that could describe any grammatical topic;
+- paragraphs that enumerate possibilities without controlling their
+  relationship to the main idea;
+- conclusions that summarize the page section by section.
+
+Read the draft against [Signs of AI slop](signs-of-ai-slop.md). Smooth grammar
+is not enough; every sentence must move the explanation forward.
 
 Learner copy uses the limited inline syntax supported by `InlineText`:
 
 - `**term**` introduces or strongly marks a term;
-- `_word_` mentions a word as an object of study;
+- `_word_` mentions language as an object of study;
 - single asterisks are plain characters and must not be used for emphasis.
 
-Inspect the rendered prose after authoring it. Correct source text is not enough
-if its marker characters appear on the page.
+## Revision workflow
 
-Delete:
+Before editing:
 
-- “In this lesson, we will …”;
-- “Let’s dive in” and other stage directions;
-- claims that a concept is important before showing a consequence;
-- repeated summaries of the title;
-- rhetorical questions used only to announce the next paragraph;
-- generic three-item lists written for cadence;
-- metaphors that could fit any subject;
-- a final “Conclusion” that repeats the opening answer.
+1. Read the completed dossier and the current lesson in full.
+2. State the central generalization in one or two sentences.
+3. List the current lesson's claims and mark each **keep**, **qualify**,
+   **replace**, or **remove**.
+4. Match every proposed figure to the exact relationship it must display.
+5. Check the practice set for answers obtainable through a surface shortcut.
 
-Read the finished draft against [Signs of AI slop](signs-of-ai-slop.md). A
-template controls coverage; it must not make every page sound the same.
+While editing:
 
-## Lesson 01: Introduction
+1. Preserve the course's terminology and cumulative label scope.
+2. Keep learner copy in lesson-content data and shared presentation behavior in
+   components.
+3. Cite diagrams by fixture identifier.
+4. Add or change fixtures only when the approved parses cannot show the needed
+   evidence.
+5. Update source comments and the menu coverage ledger when the analysis or
+   cited example changes.
+6. Preserve unrelated worktree changes.
 
-### Question and answer
+Before marking the lesson verified:
 
-This page should answer:
+1. Format every changed file and run `git diff --check`.
+2. Run the course tests and type checker. Report a failed run before fixing what
+   it exposed.
+3. Read the rendered page from top to bottom at desktop width.
+4. Inspect every figure and caption together.
+5. Check the page at a narrow width when layout or figure scale changed.
+6. Read the lesson once without relying on adjacent lessons for its main claim.
+7. Confirm that the practice set still tests rather than repeats the worked
+   examples.
+8. Remove filler, repeated cadence, and claims that the evidence did not earn.
 
-> **What is sentence structure, and why can it change what words mean?**
+## Acceptance questions
 
-Its direct answer is that sentence structure is the way words form groups and
-take roles in relation to one another. The words alone do not settle a
-sentence's meaning; their relationships help settle it.
+A reviewer should be able to answer:
 
-Lesson 01 is a deliberate exception to the usual compact reference-page shape.
-It introduces the reason for studying the whole course, so it may use two
-problems instead of a term, procedure, and misconception sequence.
+- What generalization does the lesson establish?
+- Which example makes it concrete?
+- What grammatical relationships does the explanation identify?
+- Does each diagram visibly show what its caption claims?
+- What evidence can the learner use on a new sentence?
+- Where does that evidence stop applying?
+- Which shortcut does the practice set defeat?
+- Does the closing paragraph state the larger result rather than repeat the
+  route title?
 
-### What the current page gets right
-
-- The garden-path sentence makes a structural problem felt before explaining
-  it.
-- Restoring _that was_ exposes the hidden relationship with a small change.
-- The Maine overtime case gives grouping a real consequence.
-- The final sentence states the common point: both problems concern which
-  words belong together.
-
-### What to improve when the page is revised
-
-- Replace the title _Introduction_ with a title that names the page's question
-  or answer. Search readers should know what the page explains.
-- Make the first paragraph define **sentence structure** plainly. It currently
-  defines _syntax_, but the relationship between syntax and structure remains
-  implicit.
-- Give the opening diagram a visible caption or nearby line that tells the
-  reader what changes as it is built. Its accessible name does this work for a
-  screen reader, but the visible page should not rely on hidden text.
-- Keep the personal credit as a brief colophon rather than placing it between
-  the opening answer and the first problem. It interrupts the argument there.
-- Preserve both examples only while each does a different job: the first shows
-  how structure controls reading; the second shows why the distinction matters.
-
-The page does not need a general-purpose identification procedure. Its reusable
-lesson is the habit of asking two questions: which words form a group, and what
-job does that group do?
-
-## Lesson 02: Sentence frame
-
-### Question and answer
-
-This page should answer:
-
-> **What are the subject and predicate, and where does the subject end?**
-
-Its direct answer is that the subject is the whole opening group the sentence
-is about, while the predicate says something about that group. A subject can
-contain several words and even another noun, so its boundary must be tested
-rather than guessed from length or proximity to the verb.
-
-### What the current page gets right
-
-- It answers the basic subject-and-predicate question immediately.
-- The first diagram gives the frame a simple visual shape.
-- It states that the frame is a useful early pattern rather than a rule for
-  every English utterance.
-
-### What to change
-
-The current page does not yet teach the decision recorded in the lesson 02
-dossier. The dossier asks where a longer subject ends. The rendered page uses a
-short frame and then swaps the subject and object in _The camera watched the
-guard_. That demonstrates word order and participant roles, but it does not
-show a difficult subject boundary.
-
-Revise the page around this sequence:
-
-1. Use a short frame to name subject and predicate.
-2. Put a short subject beside a longer subject that contains another noun.
-3. Show a failed early cut: _They on my feet pinched._
-4. Show the successful replacement: _They pinched._
-5. Contrast a phrase inside the subject with the same phrase attached to the
-   predicate, using approved parses.
-6. State the limit of replacement and point forward to finding the head in
-   lesson 05.
-
-Use demonstration sentences that are not among lesson 02's ten graded
-sentences. The current page reveals the complete analysis of _The rain
-stopped_, which is also the first practice sentence. A learner should meet a
-fresh problem when practice begins.
-
-## Coding-agent workflow
-
-Before implementation:
-
-1. Read this document, the shared lesson contract, and the target lesson's
-   dossier in full.
-2. Write the search question and direct answer in the change description.
-3. List the claim made by every proposed figure.
-4. Confirm that each worked sentence has an approved parse and is not a graded
-   practice sentence.
-5. Choose the minimum set of lesson blocks that can carry the argument.
-
-During implementation:
-
-1. Keep learner copy in the lesson-content data and presentation rules in the
-   shared components.
-2. Cite sentence records by identifier so diagrams and grading cannot drift.
-3. Scope every explanatory diagram to labels already taught.
-4. Use a contrast block for a real comparison, not two independent diagrams
-   joined by prose.
-5. Add a new block type only when the teaching need cannot be expressed by an
-   existing one. Do not encode one lesson's wording into a shared component.
-
-Before calling the page done:
-
-1. Render it at desktop and narrow widths.
-2. Read it once without course context. The first paragraph must answer the
-   title.
-3. Check that every diagram proves the sentence immediately before it.
-4. Check that the procedure distinguishes the answer from a plausible wrong
-   candidate, works on every example, and states its limit honestly.
-5. Open practice and confirm that the worked examples have not exposed graded
-   answers.
-6. Run the lesson-content, figure, route, and course tests, then report the
-   exact result.
-7. Read the page aloud and remove filler, repeated cadence, and generic
-   transitions.
-8. If the page introduces a menu item, add its parsed example to the menu
-   coverage ledger and confirm that no item is left without one.
-
-## Acceptance test
-
-A reviewer should be able to answer these questions without guessing:
-
-- What grammar question does this page answer?
-- Where is the answer stated?
-- What does the first figure prove?
-- What can the reader do on a new sentence?
-- Which tempting shortcut does the contrast defeat?
-- Where does the method stop working?
-- Why is each example on this page rather than any other grammar page?
-
-If an answer is “the prose implies it,” revise the page. The teaching should be
-visible in the words, examples, and diagrams themselves.
+Not every lesson needs a separate block for every answer. The answers must be
+present in the reasoning, examples, diagrams, and practice set as a whole.

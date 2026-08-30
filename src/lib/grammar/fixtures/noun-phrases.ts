@@ -7,9 +7,11 @@ import { sentence } from '../entry.ts';
  * whole of *old red engine*, and the diagram has to be able to say so — which
  * it could not while the determiner and the adjectives were siblings.
  *
- * One-substitution is the test: *the old red engine and the blue one*, where
- * *one* stands in for *old red engine* without the determiner. Whatever *one*
- * can replace is a constituent, and that constituent is the nominal.
+ * The contrast *the old red engine and the blue one* motivates a layer below
+ * the determiner, but *one* is not a clean test for that layer's exact boundary.
+ * The structure records the separate relations directly: the adjectives
+ * modify *engine* inside the nominal, and the determiner combines with that
+ * nominal to form the noun phrase.
  *
  * A noun phrase with nothing to scope over — *she*, *the engine* — still has
  * no nominal. The layer appears where it does work.

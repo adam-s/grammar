@@ -8,9 +8,10 @@ import { sentence } from '../entry.ts';
  * `horse`: English lets a writer drop `that was`, and a reader who takes
  * `raced` for the main verb stalls at `fell`.
  *
- * Two verbs, two independent classifications. `raced` is intransitive inside
- * its own clause; `fell` is intransitive in the sentence. Before verb type
- * moved onto the verb, this sentence could not be stored at all.
+ * Two verbs, two separate classifications. `raced` is transitive inside its
+ * own clause, with `horse` understood as its direct object; `fell` is
+ * intransitive in the sentence. Before verb type moved onto the verb, this
+ * sentence could not be stored at all.
  */
 export const gardenPath = sentence(
   'fix-garden-path',
@@ -30,7 +31,8 @@ export const gardenPath = sentence(
                 'postmodifier',
                 [
                   n('VP', 'predicate', [
-                    w('V', 'head', 'raced', { lemma: 'race', verbType: 'Vint' }),
+                    w('V', 'head', 'raced', { lemma: 'race', verbType: 'Vtr' }),
+                    gap('NP', 'directObject'),
                     n('PP', 'adverbial', [
                       w('P', 'head', 'past'),
                       n('NP', 'complement', [
@@ -40,7 +42,7 @@ export const gardenPath = sentence(
                     ]),
                   ]),
                 ],
-                { clauseKind: 'relative', clauseType: 'SV', finiteness: 'participial' },
+                { clauseKind: 'relative', clauseType: 'SVO', finiteness: 'participial' },
               ),
             ]),
           ]),
@@ -51,7 +53,7 @@ export const gardenPath = sentence(
       {
         id: 'r1',
         status: 'canonical',
-        gloss: 'The horse that had been raced past the barn fell over.',
+        gloss: 'The horse that was raced past the barn fell.',
       },
     ),
   ],
