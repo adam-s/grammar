@@ -20,7 +20,10 @@
    * words into the free part of the stage before the menu opens.
    */
   import GraduationCap from '@lucide/svelte/icons/graduation-cap';
+  import Pause from '@lucide/svelte/icons/pause';
+  import Play from '@lucide/svelte/icons/play';
   import Square from '@lucide/svelte/icons/square';
+  import StepForward from '@lucide/svelte/icons/step-forward';
   import { onDestroy, tick } from 'svelte';
   import type { Selection } from '../grammar/options.ts';
   import { createCameraMotion } from '../workspace/camera-motion.ts';
@@ -96,7 +99,11 @@
 
   let run = $state<RunState>(IDLE);
   let banner = $state<HTMLElement | null>(null);
+  let paused = $state(false);
   let token = 0;
+  let stepBudget = 0;
+  let pausedAt: number | null = null;
+  let pausedMs = 0;
 
   const beat = $derived<TutorialBeat | null>(beats[run.index] ?? null);
   const running = $derived(run.status === 'running');
@@ -112,6 +119,51 @@
       const id = setTimeout(resolve, mine === token ? ms : 0);
       if (mine !== token) clearTimeout(id);
     });
+
+  /**
+   * Hold an explanation on screen while it is playing. Paused time does not
+   * spend the hold, and one Step press releases exactly one held moment.
+   */
+  async function pace(ms: number, mine: number) {
+    let remaining = ms;
+    let last = Date.now();
+    while (remaining > 0 && mine === token) {
+      if (paused && stepBudget > 0) {
+        stepBudget--;
+        return;
+      }
+      await sleep(Math.min(50, remaining), mine);
+      const now = Date.now();
+      if (!paused) remaining -= now - last;
+      last = now;
+    }
+  }
+
+  function setPaused(next: boolean) {
+    if (next === paused) return;
+    if (next) {
+      pausedAt = Date.now();
+    } else if (pausedAt !== null) {
+      pausedMs += Date.now() - pausedAt;
+      pausedAt = null;
+    }
+    paused = next;
+  }
+
+  function togglePlayback() {
+    stepBudget = 0;
+    setPaused(!paused);
+  }
+
+  function stepOnce() {
+    setPaused(true);
+    stepBudget++;
+  }
+
+  function activeRuntime(startedAt: number) {
+    const currentPause = pausedAt === null ? 0 : Date.now() - pausedAt;
+    return Date.now() - startedAt - pausedMs - currentPause;
+  }
 
   /**
    * Wait for the app to report something, rather than for time to pass.
@@ -182,6 +234,10 @@
 
   async function play() {
     const mine = ++token;
+    paused = false;
+    pausedAt = null;
+    pausedMs = 0;
+    stepBudget = 0;
     onstart?.();
     onpoint?.(null);
     run = begin(beats);
@@ -191,7 +247,7 @@
     const startedAt = Date.now();
 
     while (run.status === 'running' && mine === token) {
-      if (Date.now() - startedAt > RUNTIME_CAP_MS) {
+      if (activeRuntime(startedAt) > RUNTIME_CAP_MS) {
         run = fail(run, 'The tutorial ran longer than it should. Stopping.');
         break;
       }
@@ -215,7 +271,7 @@
           break;
         }
         onpoint?.(current.key);
-        await sleep(HOLD.ask, mine);
+        await pace(HOLD.ask, mine);
       } else {
         const beforeAnchor = anchorRect();
         const before = signature();
@@ -239,7 +295,7 @@
           run = fail(run, fault);
           break;
         }
-        await sleep(HOLD.answer, mine);
+        await pace(HOLD.answer, mine);
       }
 
       if (mine !== token) return;
@@ -260,6 +316,8 @@
   function halt() {
     token++;
     camera.cancel();
+    setPaused(false);
+    stepBudget = 0;
     run = stopRun(run);
     onactive?.(false);
     onpoint?.(null);
@@ -310,10 +368,41 @@
           {/if}
         {/if}
       </div>
-      <button class="halt" type="button" onclick={halt}>
-        <Square size={12} strokeWidth={2.4} aria-hidden="true" />
-        {run.status === 'failed' ? 'Close' : 'Stop'}
-      </button>
+      <div class="actions">
+        {#if run.status !== 'failed'}
+          <div class="playback" role="group" aria-label="Tutorial playback">
+            <button
+              class="transport"
+              type="button"
+              aria-label={paused ? 'Play tutorial' : 'Pause tutorial'}
+              title={paused ? 'Play' : 'Pause'}
+              aria-pressed={paused}
+              onclick={togglePlayback}
+            >
+              {#if paused}
+                <Play size={13} strokeWidth={2.2} aria-hidden="true" />
+              {:else}
+                <Pause size={13} strokeWidth={2.2} aria-hidden="true" />
+              {/if}
+              <span>{paused ? 'Play' : 'Pause'}</span>
+            </button>
+            <button
+              class="transport"
+              type="button"
+              aria-label="Advance one explanation step"
+              title="Step"
+              onclick={stepOnce}
+            >
+              <StepForward size={13} strokeWidth={2.2} aria-hidden="true" />
+              <span>Step</span>
+            </button>
+          </div>
+        {/if}
+        <button class="halt" type="button" onclick={halt}>
+          <Square size={12} strokeWidth={2.4} aria-hidden="true" />
+          {run.status === 'failed' ? 'Close' : 'Stop'}
+        </button>
+      </div>
     </div>
   </div>
 {/if}
@@ -445,6 +534,39 @@
     font-family: var(--font-sans);
     font-size: 12.5px;
   }
+  .actions {
+    display: flex;
+    flex: none;
+    gap: 8px;
+    align-items: center;
+  }
+  .playback {
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--panel) 88%, var(--sunken));
+  }
+  .transport {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    padding: 6px 9px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-muted);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .transport + .transport {
+    border-left: 1px solid var(--border);
+  }
+  .transport:hover,
+  .transport:focus-visible {
+    background: color-mix(in oklab, var(--ink) 7%, transparent);
+    color: var(--ink);
+  }
   .halt {
     display: inline-flex;
     flex: none;
@@ -478,12 +600,21 @@
       min-height: 133px;
     }
     .eyebrow {
-      padding-right: 72px;
+      padding-right: 150px;
     }
-    .halt {
+    .actions {
       position: absolute;
       top: 14px;
       right: 14px;
+    }
+    .transport span {
+      display: none;
+    }
+    .transport {
+      width: 32px;
+      height: 30px;
+      justify-content: center;
+      padding: 0;
     }
   }
 </style>

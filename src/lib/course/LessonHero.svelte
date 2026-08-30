@@ -48,8 +48,8 @@
    * `placeFloating` keeps it inside the stage — so this is breathing room
    * rather than a constraint.
    */
-  const HEADROOM = 56;
-  const FLOOR = 18;
+  const HEADROOM = 32;
+  const FLOOR = 10;
   /**
    * The figure never gets shorter than this, or taller. The floor is set by the
    * palette rather than by the tree: clipping the real palette would make this

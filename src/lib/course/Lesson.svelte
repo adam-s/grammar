@@ -27,24 +27,51 @@
   };
   let { lesson, doc, onstart }: Props = $props();
 
-  const sentenceById = (id: string) => FIXTURES.find((sentence) => sentence.id === id)!;
+  /**
+   * A page may draw a fixture or one of the course's own graded sentences —
+   * both are audited, replayed and swept by the same machinery, and citing
+   * the corpus directly keeps a lesson's figure from being a second copy of a
+   * parse that already exists.
+   */
+  const sentenceById = (id: string) =>
+    FIXTURES.find((sentence) => sentence.id === id) ??
+    COURSE_LESSONS.flatMap((lesson) => lesson.sentences).find((sentence) => sentence.id === id)!;
 
   /**
    * A page may not show a label its reader has not met, so a diagram is pruned
    * to what the course has taught by the lesson it appears in. The pruning is
    * the same `targetReading` the practice scope uses, so the picture and the
-   * question a learner is asked cannot drift apart.
+   * question a learner is asked cannot drift apart. A block that previews an
+   * untaught label says so in its `plus`, and the union is built here.
    */
-  const readingFor = (id: string, through: number | undefined) =>
-    through === undefined
-      ? undefined
-      : targetReading(canonicalReading(sentenceById(id)), scopeThrough(COURSE_LESSONS, through));
+  const readingFor = (
+    id: string,
+    through: number | undefined,
+    plus?: readonly string[],
+    readingId?: string,
+  ) => {
+    if (through === undefined) return undefined;
+    const entry = sentenceById(id);
+    const base =
+      readingId === undefined
+        ? canonicalReading(entry)
+        : entry.readings.find((reading) => reading.id === readingId)!;
+    return targetReading(
+      base,
+      new Set([...scopeThrough(COURSE_LESSONS, through), ...(plus ?? [])]),
+    );
+  };
   const number = $derived(String(lesson.number).padStart(2, '0'));
 
   /** How wide this sentence's finished diagram is, for sharing a scale. */
-  const figureWidth = (id: string, through: number | undefined): number => {
+  const figureWidth = (
+    id: string,
+    through: number | undefined,
+    plus?: readonly string[],
+    readingId?: string,
+  ): number => {
     const sentence = sentenceById(id);
-    const build = replaySentence(sentence, readingFor(id, through)).final;
+    const build = replaySentence(sentence, readingFor(id, through, plus, readingId)).final;
     return diagramSize(build.constituents, sentence.words).w;
   };
 </script>
@@ -83,7 +110,8 @@
       <figure class="figure">
         <StaticFigure
           sentence={sentenceById(block.sentenceId)}
-          reading={readingFor(block.sentenceId, block.through)}
+          reading={readingFor(block.sentenceId, block.through, block.plus, block.readingId)}
+          focus={block.focus}
         />
         {#if block.caption}
           <figcaption><InlineText text={block.caption} /></figcaption>
@@ -95,15 +123,15 @@
         <!-- Similar-sized trees share a scale. A much shorter tree stops
              absorbing empty frame before its labels become too small. -->
         <div class="pair">
-          {#each [block.left, block.right] as side (side.sentenceId)}
+          {#each [block.left, block.right] as side (side.sentenceId + (side.readingId ?? ''))}
             {@const widths = [block.left, block.right].map((s) =>
-              figureWidth(s.sentenceId, block.through),
+              figureWidth(s.sentenceId, block.through, block.plus, s.readingId),
             )}
-            {@const own = figureWidth(side.sentenceId, block.through)}
+            {@const own = figureWidth(side.sentenceId, block.through, block.plus, side.readingId)}
             <div class="side">
               <StaticFigure
                 sentence={sentenceById(side.sentenceId)}
-                reading={readingFor(side.sentenceId, block.through)}
+                reading={readingFor(side.sentenceId, block.through, block.plus, side.readingId)}
                 frameWidth={comparisonFrameWidth(own, widths)}
               />
               <p class="side-caption"><InlineText text={side.caption} /></p>
@@ -182,7 +210,10 @@
   .lesson > :global(.hero) {
     width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
     max-width: var(--figure);
-    margin: clamp(18px, 3vh, 32px) 0 clamp(20px, 3vh, 34px);
+    /* The opening already supplies its lower margin, and the prose after the
+       hero supplies its own upper margin. Keep one small gap on each side
+       instead of stacking three margins around the animation. */
+    margin: var(--space-1) 0 0;
   }
 
   /* ------------------------------------------------------------- openings */
@@ -269,6 +300,8 @@
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: baseline;
+    width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
+    max-width: var(--figure);
     margin-top: 26px;
     padding: 20px 22px;
     gap: 10px 20px;
