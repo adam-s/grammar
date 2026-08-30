@@ -244,7 +244,7 @@ describe('the snapshot is one serializable, readable object', () => {
     const d = decisionSnapshot(s.build, W, s.selection, shoes, { rejected: s.rejected });
     const adj = question(d, 'word-class').candidates.find((c) => c.action.key === 'form:Adj')!;
     assert.equal(adj.availability, 'blocked');
-    assert.match(adj.reason, /Not an adjective/);
+    assert.match(adj.reason, /is not an adjective/);
   });
 
   it('describes itself without deducing anything new', () => {

@@ -95,6 +95,12 @@
      * awaits this before its decide hold, and presses only after it.
      */
     aimMenu?: (key: string) => Promise<void>;
+    /**
+     * Something more important is under the launcher — an open palette. A
+     * coach's controls must never cover the learner's work, so the launcher
+     * yields the space until the palette closes.
+     */
+    obscured?: boolean;
   };
 
   let {
@@ -115,6 +121,7 @@
     onpoint,
     pointer = null,
     aimMenu,
+    obscured = false,
   }: Props = $props();
 
   const ws = getWorkspace();
@@ -417,7 +424,7 @@
   });
 </script>
 
-{#if run.status === 'idle' || run.status === 'stopped' || run.status === 'done'}
+{#if (run.status === 'idle' || run.status === 'stopped' || run.status === 'done') && !obscured}
   <div class="launch-home" class:first={run.status === 'idle'}>
     {#if run.status === 'idle'}
       <div class="start-here" aria-hidden="true">

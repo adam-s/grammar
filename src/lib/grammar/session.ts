@@ -83,6 +83,7 @@ import {
   type Selection,
 } from './options.ts';
 import { textOf } from './build.ts';
+import { composeVerdict, familyOf, sentenceCase, spokenVerdict, type Verdict } from './feedback.ts';
 import { ALLOWED, hypothesizes, LONG } from './rules.ts';
 import {
   CLAUSE_FUNCTIONS,
@@ -96,12 +97,11 @@ import {
   type Word,
 } from './types.ts';
 
-/** What the learner is told after a decision. */
-export interface Verdict {
-  kind: 'correct' | 'alternate' | 'wrong';
-  text: string;
-  test?: string;
-}
+/**
+ * What the learner is told after a decision. The WORDS live in feedback.ts —
+ * grading decides whether an answer holds, never how the refusal is phrased.
+ */
+export type { Verdict } from './feedback.ts';
 
 /**
  * Where the palette goes after a decision, said outright.
@@ -647,8 +647,6 @@ export function sessionChoices(
   return blockRejectedOptions(visible, live);
 }
 
-const sentenceCase = (t: string) => `${t.charAt(0).toUpperCase()}${t.slice(1).trimEnd()}.`;
-
 /**
  * What to try instead when a run cuts an established group in half.
  *
@@ -906,34 +904,37 @@ function nodeAfterForm(
 /**
  * The hint ladder: gentle once, then the reason.
  *
- * A first miss says only that the answer was wrong and shows the test, because
- * being told the answer is not the lesson. A second miss on the same question
- * gives the grader's reason, because by then guessing is what is happening.
+ * A first miss restates the learner's claim — naming the selected words and
+ * the refused label — and shows the test, because being told the answer is
+ * not the lesson. A second miss on the same question gives the grader's
+ * reason, because by then guessing is what is happening. The wording itself
+ * is `composeVerdict`'s; this function only gathers what grading knows.
  *
  * Every question goes through this. Six of the ten used to skip it and show the
  * grader's reason immediately, so how much help a learner got depended on which
  * kind of question they had got wrong.
  */
-function verdictFor(ask: Ask, misses: number): Verdict {
-  if (ask.outcome.kind === 'correct') return { kind: 'correct', text: `Yes — ${ask.praise}.` };
-  if (ask.outcome.kind === 'alternate') {
-    return {
-      kind: 'alternate',
-      text: `Also correct, but it means something else: ${ask.outcome.gloss}`,
-      test: `Here it means: ${ask.outcome.canonicalGloss}`,
-    };
-  }
-  // A refusal about the SHAPE of the selection skips the ladder. The ladder
-  // withholds the reason so the answer is not given away, and here the reason
-  // gives nothing away: the label may be exactly right and still unbuildable
-  // over these words. Saying "Not a noun phrase" first would be a guess the
-  // program has not made and cannot support.
-  if (ask.structural) {
-    return { kind: 'wrong', text: ask.outcome.reason, test: ask.outcome.test };
-  }
-  return misses === 1
-    ? { kind: 'wrong', text: `Not ${ask.refused}.`, test: ask.firstMiss }
-    : { kind: 'wrong', text: ask.outcome.reason, test: ask.outcome.test };
+function verdictFor(ask: Ask, misses: number, subject: string, option: LabelOption): Verdict {
+  const wrong = ask.outcome.kind === 'wrong' ? ask.outcome : null;
+  const alternate = ask.outcome.kind === 'alternate' ? ask.outcome : null;
+  return composeVerdict({
+    outcome: ask.outcome.kind,
+    subject,
+    misses,
+    family: familyOf(option),
+    refused: ask.refused,
+    praise: ask.praise,
+    reason: wrong?.reason,
+    test: wrong?.test,
+    firstMiss: ask.firstMiss,
+    // A refusal about the SHAPE of the selection skips the ladder. The ladder
+    // withholds the reason so the answer is not given away, and here the
+    // reason gives nothing away: the label may be exactly right and still
+    // unbuildable over these words.
+    structural: ask.structural,
+    gloss: alternate?.gloss,
+    canonicalGloss: alternate?.canonicalGloss,
+  });
 }
 
 /**
@@ -993,10 +994,10 @@ export function answer(
   const misses = wrong
     ? { ...session.misses, [decision.key]: (session.misses[decision.key] ?? 0) + 1 }
     : session.misses;
-  const verdict = verdictFor(decision, misses[decision.key] ?? 0);
+  const verdict = verdictFor(decision, misses[decision.key] ?? 0, panel.subject, offered);
 
   if (wrong) {
-    const said = [verdict.text, verdict.test].filter(Boolean).join(' ');
+    const said = spokenVerdict(verdict);
     return {
       ...session,
       verdict,

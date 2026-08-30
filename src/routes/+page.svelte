@@ -624,6 +624,7 @@
           onpoint={(key) => (tutorialPointer = key)}
           pointer={guidedPointer}
           aimMenu={(key) => panelRef?.aimPointer(key) ?? Promise.resolve()}
+          obscured={popupAnchor !== null}
         />
       {/key}
     {/if}

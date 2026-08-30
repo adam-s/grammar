@@ -341,7 +341,7 @@ describe('a wrong answer holds still', () => {
     );
     const adj = blocked.groups.flatMap((g) => g.options).find((o) => o.key === 'form:Adj')!;
     assert.equal(adj.state, 'blocked');
-    assert.match(adj.note!, /Not an adjective/);
+    assert.match(adj.note!, /is not an adjective/);
   });
 });
 

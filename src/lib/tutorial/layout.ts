@@ -1,7 +1,7 @@
 import { clampZoom, type Rect, type Size, type Viewport } from '../workspace/viewport.ts';
 
 /** The desktop palette has a fixed box; its component owns the phone sheet. */
-export const TUTORIAL_MENU = { w: 448, h: 318 } as const;
+export const TUTORIAL_MENU = { w: 448, h: 348 } as const;
 
 export type TutorialLayout = {
   /** The part of the canvas reserved for the diagram. */

@@ -11,6 +11,7 @@
   import Check from '@lucide/svelte/icons/check';
   import ChevronLeft from '@lucide/svelte/icons/chevron-left';
   import ChevronRight from '@lucide/svelte/icons/chevron-right';
+  import Repeat2 from '@lucide/svelte/icons/repeat-2';
   import X from '@lucide/svelte/icons/x';
   import { onDestroy, untrack } from 'svelte';
 
@@ -25,6 +26,7 @@
   import type { Point } from '../workspace/viewport.ts';
   import type { Rect } from '../workspace/viewport.ts';
   import { bestIndex, isPickable, openingGroup, type LabelOption, type Panel } from './options.ts';
+  import { spokenVerdict } from './feedback.ts';
   import type { NavigationResult } from './session.ts';
   import {
     GROUP_NAME,
@@ -367,7 +369,8 @@
     if (root && !root.contains(e.target as Node)) onclose?.();
   }
 
-  const POPUP = { w: 448, h: 318 };
+  // Height includes the three-line reserved feedback block in the header.
+  const POPUP = { w: 448, h: 348 };
 
   /** Choose the side with the least overflow, preferring below and above. */
   const position = $derived.by(() => {
@@ -497,7 +500,7 @@
     bind:this={root}
     class="popup"
     class:guided={!!placement}
-    style="left:{position.x}px;top:{position.y}px;--guided-menu-h:{placement?.h ?? 318}px"
+    style="left:{position.x}px;top:{position.y}px;--guided-menu-h:{placement?.h ?? 348}px"
     role="dialog"
     tabindex="-1"
     aria-label="Label {panel.subject}"
@@ -522,7 +525,7 @@
            that line also carries every note the pointer passes over and
            announcing those would be noise. -->
       <p class="sr" role="status" aria-live="polite">
-        {verdict ? [verdict.text, verdict.test].filter(Boolean).join(' ') : ''}
+        {verdict ? spokenVerdict(verdict) : ''}
       </p>
 
       {#if performed}
@@ -530,7 +533,21 @@
           <span class="eyebrow">Say it</span>{performed.text}
         </p>
       {:else}
-        <p class="information" class:status={!!verdict}>{information}</p>
+        <p class="information" class:status={!!verdict}>
+          {#if verdict}
+            <!-- Tone in shape as well as colour: a mark a reader who cannot
+                 see red from green still reads at a glance. -->
+            <span class="tone" aria-hidden="true">
+              {#if verdict.kind === 'wrong'}
+                <X size={11} strokeWidth={2.8} />
+              {:else if verdict.kind === 'correct'}
+                <Check size={11} strokeWidth={2.8} />
+              {:else}
+                <Repeat2 size={11} strokeWidth={2.5} />
+              {/if}
+            </span>
+          {/if}{information}
+        </p>
       {/if}
     </header>
 
@@ -593,6 +610,7 @@
                 type="button"
                 aria-pressed={o.state === 'chosen'}
                 aria-disabled={!interactive || !isPickable(o)}
+                aria-describedby={o.note ? `option-note-${o.key}` : undefined}
                 tabindex={interactive ? undefined : -1}
                 onclick={() => choose(o)}
                 onpointerenter={() => {
@@ -609,7 +627,13 @@
                   <span>{o.label}</span>
                 </span>
                 {#if o.state === 'chosen'}<Check size={13} strokeWidth={2.25} />{/if}
-                {#if o.note}<span class="sr">{o.note}</span>{/if}
+                <!-- The refusal reason is the row's DESCRIPTION, not part of
+                     its name: the live region announces the verdict once at
+                     grading time, and a screen reader that focuses this row
+                     later still discovers why it is blocked. A hidden element
+                     is legal aria-describedby content and never joins the
+                     accessible name. -->
+                {#if o.note}<span id="option-note-{o.key}" hidden>{o.note}</span>{/if}
               </button>
             {/each}
           {/each}
@@ -648,7 +672,11 @@
 
   .context {
     box-sizing: border-box;
-    height: 86px;
+    /* Subject (18) + question (16) + the three-line feedback reserve (46)
+       + padding. The popup constant is this plus the 230px panes and the two
+       borders: 116 + 230 + 2 = 348. The header CONTAINS its feedback block —
+       the block overflowing into the panes is the bug this number fixes. */
+    height: 116px;
     padding: 9px 10px 8px;
     border-bottom: 1px solid var(--border);
   }
@@ -724,14 +752,29 @@
   .information {
     flex: 1;
     min-width: 0;
-    height: 15px;
+    /* RESERVED, not sized-to-content: the explanation is the point of the
+       panel, so it gets three full lines that are always there. Wrapping
+       into reserved space keeps the popup's height — and therefore the menu
+       under the learner's pointer — exactly still while verdicts change.
+       The old single 15px nowrap/ellipsis line truncated every explanation
+       longer than its own width. */
+    height: 45px;
     margin: 1px 0 0;
-    overflow: hidden;
+    /* The tail mechanism for a verdict longer than its reserve: the block
+       scrolls rather than clipping. Honest — nothing is silently hidden —
+       and stable — the height never moves. The browser check asserts every
+       exercised verdict fits WITHOUT scrolling, so this engages only for
+       text nobody has authored yet. */
+    overflow-y: auto;
     color: var(--ink-faint);
-    font-size: 10px;
+    font-size: 11px;
     line-height: 15px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+  }
+  .information .tone {
+    display: inline-flex;
+    margin-right: 4px;
+    vertical-align: -1.5px;
   }
   .information.status {
     color: var(--success);
@@ -905,10 +948,12 @@
       );
     }
     .popup.guided .pane {
-      max-height: max(72px, calc(var(--guided-menu-h) - 86px));
+      max-height: max(72px, calc(var(--guided-menu-h) - 121px));
     }
     .popup.guided .context {
-      min-height: 86px;
+      /* The guided header's taller subject and question rows plus the same
+         three-line feedback reserve. */
+      min-height: 121px;
       padding: 9px 12px 8px;
     }
     .popup.guided .subject-line {
@@ -957,10 +1002,12 @@
     }
     .information {
       height: auto;
-      min-height: 20px;
+      /* Two lines reserved on the sheet; longer verdicts may grow it — a
+         bottom sheet resizing downward never moves the rows above it. */
+      min-height: 32px;
       margin: 3px 0 0;
       font-size: 11px;
-      line-height: 1.4;
+      line-height: 1.45;
       white-space: normal;
     }
     .menu-panes {

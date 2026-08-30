@@ -106,13 +106,15 @@ describe('the transaction accepts only a currently offered row', () => {
 describe('the hint ladder', () => {
   it('says only that it is wrong the first time, and why the second', () => {
     const first = pick(on(emptySession(), [0, 0]), 'form:N');
-    assert.match(first.verdict!.text, /^Not /);
+    assert.match(first.verdict!.text, /^“.+” is not a noun\.$/);
 
     const second = pick(on(first, [0, 0]), 'form:Adj');
     // Same question, same words — so this is the second miss even though it is
     // a different wrong answer.
     assert.equal(second.misses['form:word:0-0'], 2);
-    assert.doesNotMatch(second.verdict!.text, /^Not /);
+    // The second rung says MORE than the first-miss restatement: the grader's
+    // reason, not just the refused claim.
+    assert.doesNotMatch(second.verdict!.text, /^“.+” is not an adjective\.$/);
     assert.match(second.verdict!.text, /is not an adjective/);
   });
 
@@ -121,7 +123,7 @@ describe('the hint ladder', () => {
     s = pick(on(s, [1, 1]), 'form:N');
     assert.equal(s.misses['form:word:0-0'], 1);
     assert.equal(s.misses['form:word:1-1'], 1);
-    assert.match(s.verdict!.text, /^Not /, 'a different question starts gently again');
+    assert.match(s.verdict!.text, /^“.+” is not /, 'a different question starts gently again');
   });
 
   it('every kind of question uses it, not just the ones that always did', () => {
@@ -137,7 +139,7 @@ describe('the hint ladder', () => {
     // The first miss says only that it is wrong; the second gives the grader's
     // own reason. For verb type both carry the same test, because there is only
     // one test for verb type — the rung that changes is the wording.
-    assert.match(wrong.verdict!.text, /^Not intransitive\.$/);
+    assert.match(wrong.verdict!.text, /^“repaired” is not intransitive here\.$/);
     assert.equal(twice.verdict!.text, 'Not Vbe here.');
   });
 });
@@ -188,7 +190,7 @@ describe('a refusal outlives the verdict', () => {
     assert.ok(s.rejected['0-0']?.['form:N'], 'the refusal is still on record');
     // `blockRejectedOptions` is what turns that record into a blocked row; the
     // session keeps the record, the palette applies it.
-    assert.match(s.rejected['0-0']!['form:N']!, /Not a noun/);
+    assert.match(s.rejected['0-0']!['form:N']!, /is not a noun/);
   });
 });
 
@@ -252,7 +254,7 @@ describe('one question, one counter', () => {
       1,
       'the phrase question starts at one',
     );
-    assert.match(wrongPhrase.verdict!.text, /^Not /, 'so the first miss is still gentle');
+    assert.match(wrongPhrase.verdict!.text, /^“.+” is not /, 'so the first miss is still gentle');
     assert.doesNotMatch(
       wrongPhrase.verdict!.text,
       /noun phrase/,
