@@ -9,14 +9,13 @@
       /* Apply the stored theme before the first paint. Without this the page
          renders in the wrong theme for a frame and then jumps. Keep it inline
          and dependency-free — a module would arrive too late to help. Anything
-         that is not an explicit choice follows the OS, which is what
-         `readPref` does in theme.ts. */
+         With no saved choice, light is the app default. An older explicit
+         `system` preference continues to follow the OS. */
       (() => {
         try {
           const p = localStorage.getItem('grammar:theme');
           const dark =
-            p === 'dark' ||
-            (p !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+            p === 'dark' || (p === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           document.documentElement.classList.toggle('dark', dark);
           document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
         } catch {

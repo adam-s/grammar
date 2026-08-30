@@ -7,7 +7,6 @@
   import Play from '@lucide/svelte/icons/play';
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
   import ChevronRight from '@lucide/svelte/icons/chevron-right';
-  import ThemeToggle from './ThemeToggle.svelte';
   import { getWorkspace } from './workspace.svelte.ts';
   import { ZOOM_STOPS, formatZoom } from './viewport.ts';
 
@@ -46,7 +45,6 @@
     <header class="top">
       <div class="who" aria-hidden="true">A</div>
       <span class="spacer"></span>
-      <ThemeToggle />
       <button class="icon" type="button" title="Present" aria-label="Present">
         <Play size={14} strokeWidth={1.75} />
       </button>
@@ -126,12 +124,12 @@
   .navtop {
     height: var(--topbar-h);
     justify-content: space-between;
-    border-bottom: 1px solid var(--border);
+    padding-left: var(--panel-header-inline);
   }
   .navtop h1 {
-    margin: 0 0 0 4px;
-    font-size: 12px;
-    font-weight: 650;
+    margin: 0;
+    font-size: var(--panel-header-font-size);
+    font-weight: var(--panel-header-font-weight);
   }
   .tabs {
     height: 34px;

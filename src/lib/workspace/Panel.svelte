@@ -45,13 +45,13 @@
     gap: 8px;
     height: var(--topbar-h);
     flex: none;
-    padding: 0 8px 0 12px;
+    padding: 0 8px 0 var(--panel-header-inline);
   }
   h1 {
     flex: 1;
     margin: 0;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--panel-header-font-size);
+    font-weight: var(--panel-header-font-weight);
   }
   .actions {
     display: flex;

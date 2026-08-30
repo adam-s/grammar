@@ -2,10 +2,8 @@
  * Which theme is in force.
  *
  * Three preferences, two outcomes: `system` is not a third look, it is a
- * deferral to the OS. Keeping it distinct from an explicit `light` or `dark`
- * is the whole reason this is not a boolean — a learner who has chosen dark
- * should stay dark when their laptop switches at sunset, and a learner who has
- * chosen nothing should follow it.
+ * deferral to the OS. It remains a valid stored preference for existing users,
+ * while a learner who has chosen nothing starts in light mode.
  *
  * Browser-free: the resolution is a pure function of the preference and what
  * the OS reports, so it is testable without a DOM.
@@ -23,11 +21,11 @@ export const isThemePref = (v: unknown): v is ThemePref =>
   typeof v === 'string' && (THEME_PREFS as readonly string[]).includes(v);
 
 /**
- * Anything unrecognised — absent, corrupt, or from an older build — falls back
- * to following the OS rather than to a guess about what the reader wants.
+ * Anything unrecognised — absent, corrupt, or from an older build — starts in
+ * the app's light default.
  */
 export const readPref = (raw: string | null | undefined): ThemePref =>
-  isThemePref(raw) ? raw : 'system';
+  isThemePref(raw) ? raw : 'light';
 
 export const resolveTheme = (pref: ThemePref, systemPrefersDark: boolean): Theme =>
   pref === 'system' ? (systemPrefersDark ? 'dark' : 'light') : pref;

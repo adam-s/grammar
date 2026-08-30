@@ -49,9 +49,9 @@
   h2 {
     margin: 0 8px 7px;
     color: var(--ink-faint);
-    font-size: 10px;
-    font-weight: 650;
-    letter-spacing: 0.09em;
+    font-size: var(--panel-section-font-size);
+    font-weight: var(--panel-section-font-weight);
+    letter-spacing: var(--panel-section-letter-spacing);
     text-transform: uppercase;
   }
   ol {
@@ -64,7 +64,7 @@
     grid-template-columns: 2rem minmax(0, 1fr) 1.25rem;
     align-items: center;
     width: 100%;
-    min-height: 38px;
+    min-height: var(--panel-row-height);
     padding: 0 8px;
     border: 0;
     border-radius: var(--radius-sm);

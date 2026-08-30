@@ -14,7 +14,7 @@
 </script>
 
 <ul>
-  {#each sentences as sentence (sentence.id)}
+  {#each sentences as sentence, index (sentence.id)}
     <li>
       <button
         class:selected={sentence.id === selectedId}
@@ -23,6 +23,7 @@
         aria-label="{sentence.text}, open diagram"
         onclick={() => onselect(sentence.id)}
       >
+        <span class="number">{String(index + 1).padStart(2, '0')}</span>
         <span class="sentence">{sentence.text}</span>
         <ChevronRight class="chevron" size={13} strokeWidth={2} aria-hidden="true" />
       </button>
@@ -44,11 +45,12 @@
     list-style: none;
   }
   li button {
-    display: flex;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) 1.25rem;
     align-items: center;
     width: 100%;
-    padding: 7px 8px;
+    min-height: var(--panel-row-height);
+    padding: 6px 8px;
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -67,17 +69,26 @@
     background: color-mix(in oklab, var(--ink) 7%, transparent);
   }
   li button.selected {
-    background: color-mix(in oklab, var(--accent) 18%, transparent);
+    background: color-mix(in oklab, var(--accent) 17%, transparent);
+  }
+  .number {
+    align-self: center;
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-variant-numeric: tabular-nums;
   }
   .sentence {
-    flex: 1;
+    min-width: 0;
     color: var(--ink);
-    font-size: 12px;
+    font-size: 11.5px;
+    font-weight: 480;
+    line-height: 1.35;
   }
   /* The chevron carries the affordance the second line used to spell out. It
      stays faint until the row is under the pointer or holds the selection. */
   li button :global(.chevron) {
-    flex: none;
+    justify-self: center;
     color: var(--ink-faint);
     opacity: 0.55;
   }

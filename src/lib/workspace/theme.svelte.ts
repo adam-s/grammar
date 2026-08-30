@@ -22,12 +22,12 @@ import {
 const canUseDom = typeof document !== 'undefined';
 
 function stored(): ThemePref {
-  if (!canUseDom) return 'system';
+  if (!canUseDom) return 'light';
   try {
     return readPref(localStorage.getItem(THEME_KEY));
   } catch {
     // Private windows and blocked site data throw on access, not on write.
-    return 'system';
+    return 'light';
   }
 }
 

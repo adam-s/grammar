@@ -571,9 +571,9 @@
   }
 
   .edge {
-    stroke: var(--border-strong);
+    stroke: var(--diagram-edge);
     stroke-width: 0.9;
-    opacity: 0.72;
+    opacity: 0.82;
   }
 
   /* A guided run adds one claim at a time. Let the new ink settle into place
@@ -652,7 +652,7 @@
      the typographic weight and quiet the construction lines behind it. */
   .diagram.readonly .edge {
     stroke-width: 0.75;
-    opacity: 0.58;
+    opacity: 0.72;
   }
   .diagram.readonly .node .bracket {
     stroke: color-mix(in oklab, var(--hue) 58%, var(--border-strong));

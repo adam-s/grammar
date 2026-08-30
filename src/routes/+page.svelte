@@ -7,8 +7,6 @@
    * what a pick does to the structure, whether it was right — belongs to
    * `src/lib/grammar/`, which is browser-free and tested under `node --test`.
    */
-  import Tag from '@lucide/svelte/icons/tag';
-  import Layers from '@lucide/svelte/icons/layers';
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
   import { tick } from 'svelte';
@@ -17,6 +15,7 @@
   import { page } from '$app/state';
 
   import Workspace from '$lib/workspace/Workspace.svelte';
+  import ThemeToggle from '$lib/workspace/ThemeToggle.svelte';
   import type { RailItem } from '$lib/workspace/Rail.svelte';
   import { Workspace as WorkspaceState } from '$lib/workspace/workspace.svelte.ts';
 
@@ -69,8 +68,6 @@
    */
   const items: RailItem[] = [
     { id: 'lessons', label: 'Lessons', icon: BookOpen },
-    { id: 'labels', label: 'Labels', icon: Tag },
-    { id: 'layers', label: 'Layers', icon: Layers },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
   let active = $state('lessons');
@@ -514,6 +511,7 @@
   inspectorKind="navigation"
   inspectorTitle="Sentences"
   surface={middleView === 'diagram' ? 'canvas' : 'document'}
+  documentKey={lessonId}
 >
   {#snippet panel(section, closeDrawer)}
     {#if section === 'lessons'}
@@ -522,6 +520,10 @@
         {lessonId}
         onselect={(id) => selectLesson(id, closeDrawer)}
       />
+    {:else if section === 'settings'}
+      <div class="settings-panel">
+        <ThemeToggle />
+      </div>
     {:else}
       <p class="empty">
         Nothing here yet — see <code>src/routes/+page.svelte</code>.
@@ -647,36 +649,45 @@
   .inspector-stack {
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     min-height: 100%;
+    padding: 10px 16px 0;
+  }
+  .settings-panel {
+    padding: 8px 4px;
   }
   .stack-end {
     margin-top: auto;
   }
   .lesson-return {
-    display: flex;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) 1.25rem;
     align-items: center;
     width: 100%;
-    min-height: 38px;
-    gap: 8px;
+    min-height: var(--panel-row-height);
     padding: 0 8px;
     border: 0;
     border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--accent);
+    background: color-mix(in oklab, var(--accent) 10%, transparent);
+    color: var(--ink);
     font: inherit;
     font-size: 11.5px;
     font-weight: 600;
     text-align: left;
   }
   .lesson-return:hover {
-    background: color-mix(in oklab, var(--accent) 10%, transparent);
+    background: color-mix(in oklab, var(--accent) 17%, transparent);
+  }
+  .lesson-return :global(svg) {
+    justify-self: start;
+    color: var(--accent);
   }
   .list-label {
-    margin: 16px 8px 6px;
+    margin: 16px 8px 7px;
     color: var(--ink-faint);
-    font-size: 9.5px;
-    font-weight: 650;
-    letter-spacing: 0.08em;
+    font-size: var(--panel-section-font-size);
+    font-weight: var(--panel-section-font-weight);
+    letter-spacing: var(--panel-section-letter-spacing);
     text-transform: uppercase;
   }
   .empty {

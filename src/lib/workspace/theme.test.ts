@@ -10,14 +10,14 @@ describe('the theme preference', () => {
     }
   });
 
-  it('defers to the OS only when nothing was chosen', () => {
+  it('can still honor a stored system preference', () => {
     assert.equal(resolveTheme('system', true), 'dark');
     assert.equal(resolveTheme('system', false), 'light');
   });
 
-  it('falls back to following the OS, never to a guess', () => {
+  it('uses light when nothing valid was saved', () => {
     for (const junk of [null, undefined, '', 'DARK', 'auto', '{}']) {
-      assert.equal(readPref(junk), 'system');
+      assert.equal(readPref(junk), 'light');
     }
     for (const p of THEME_PREFS) assert.equal(readPref(p), p);
   });

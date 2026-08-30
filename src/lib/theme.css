@@ -15,8 +15,9 @@
   --raised: oklch(1 0 0);
   --sunken: oklch(0.97 0 0);
 
-  --border: oklch(0.91 0 0);
-  --border-strong: oklch(0.84 0 0);
+  --border: oklch(0.82 0 0);
+  --border-strong: oklch(0.7 0 0);
+  --diagram-edge: oklch(0.48 0 0);
 
   --ink: oklch(0.243 0 0);
   --ink-muted: oklch(0.5 0 0);
@@ -42,9 +43,19 @@
   /* ---- metrics -------------------------------------------------------- */
   --rail-w: 3.5rem;
   --panel-w: 17.5rem;
-  --inspector-w: 19.5rem;
+  --inspector-w: 17.5rem;
   --topbar-h: 2.75rem;
   --mobile-nav-h: 3.75rem;
+
+  /* Navigation panels share a small type and spacing hierarchy. The lesson
+     document keeps its own larger editorial hierarchy. */
+  --panel-header-inline: 0.75rem;
+  --panel-header-font-size: 0.75rem;
+  --panel-header-font-weight: 600;
+  --panel-section-font-size: 0.625rem;
+  --panel-section-font-weight: 650;
+  --panel-section-letter-spacing: 0.09em;
+  --panel-row-height: 2.375rem;
 
   --radius: 0.5rem;
   --font-sans: 'Inter var', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -86,6 +97,7 @@
 
   --border: oklch(0.375 0.004 265);
   --border-strong: oklch(0.47 0.005 265);
+  --diagram-edge: oklch(0.72 0.004 265);
 
   --ink: oklch(0.97 0 0);
   --ink-muted: oklch(0.76 0.003 265);
