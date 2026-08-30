@@ -735,6 +735,68 @@ export const determinerBare = sentence(
   'r1',
 );
 
+/* ---- the determiner and the adjective part ways — Those red doors creaked.
+ *
+ * Both words can narrow which doors are meant, so meaning alone cannot
+ * separate the classes. The structure can: *red* modifies *doors* inside the
+ * nominal, and *those* combines with that whole nominal to form the noun
+ * phrase. At lesson-6 scope the adjective's own label is still untaught, and
+ * that is the point — *red* sits visibly inside the nominal's span while the
+ * determiner stands outside it.
+ *
+ * The lesson draws only the subject of this one (`focus`), because the claim
+ * is about the inside of the phrase; the verb exists so the parse can be
+ * audited in a real sentence. `fix-determiner-my-clock` then shows the same
+ * shape doing its ordinary work in a whole sentence.
+ */
+export const determinerThoseDoors = sentence(
+  'fix-determiner-those-doors',
+  'lesson 06 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'Those'),
+            n('Nom', 'head', [w('Adj', 'premodifier', 'red'), w('N', 'head', 'doors')]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'creaked', { lemma: 'creak', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The indicated red doors creaked.' },
+    ),
+  ],
+  'r1',
+);
+
+export const determinerMyClock = sentence(
+  'fix-determiner-my-clock',
+  'lesson 06 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'My'),
+            n('Nom', 'head', [w('Adj', 'premodifier', 'old'), w('N', 'head', 'clock')]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'ticked', { lemma: 'tick', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: "The speaker's old clock ticked." },
+    ),
+  ],
+  'r1',
+);
+
 /* ---- a pronoun replaces the whole phrase — The pilot near the window waved.
  *
  * Lesson 7 needs the long phrase and its one-word replacement in the fixture
@@ -787,6 +849,86 @@ export const pronounReplacement = sentence(
         { clauseType: 'SV' },
       ),
       { id: 'r1', status: 'canonical', gloss: 'The previously identified woman waved.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------------------------------------------ lesson replacement partners.
+ *
+ * Second halves of pairs the lesson pages draw: the pronoun that stands where
+ * a five-word subject stood (lesson 4), the subject with its postmodifier set
+ * aside (lesson 5), and the comma'd appositive beside the corpus's close
+ * apposition *Our guide Arun* (lesson 22).
+ */
+
+export const theyWaited = sentence(
+  'fix-they-waited',
+  'lesson 04 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'They')]),
+          n('VP', 'predicate', [w('V', 'head', 'waited', { lemma: 'wait', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Those people waited.' },
+    ),
+  ],
+  'r1',
+);
+
+export const keyMissing = sentence(
+  'fix-key-missing',
+  'lesson 05 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'key')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'is', { lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [w('Adj', 'head', 'missing')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Nobody can find the key.' },
+    ),
+  ],
+  'r1',
+);
+
+export const guideCommas = sentence(
+  'fix-guide-commas',
+  'lesson 22 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'Our'),
+            w('N', 'head', 'guide'),
+            pt(','),
+            n('NP', 'appositive', [w('N', 'head', 'Arun', { xpos: 'NNP' })]),
+            pt(','),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'waved', { lemma: 'wave', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Our guide, who is called Arun, waved.' },
     ),
   ],
   'r1',

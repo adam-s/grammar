@@ -7,7 +7,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **to-infinitival clause** has a plain-form verb but does not carry the sentence’s primary tense or agreement. The clause’s form does not decide its outer job: after _wanted_, _to leave the engine_ is a direct object; after _too heavy_, _to lift_ completes an adjective phrase.',
+        text: 'A **to-infinitival clause** begins with _to_ followed by a plain verb, as in _to leave the engine_. It does not carry the main tense of the sentence. The complete clause can do several jobs, including direct object after _wanted_ and complement after _too heavy_.',
       },
       {
         kind: 'diagram',
@@ -21,12 +21,31 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
         eyebrow: 'one spelling, two structures',
         title: 'Watch what follows “to”',
       },
-      { kind: 'sentence', text: 'She wanted **to leave**. / She walked **to the engine**.' },
       {
-        kind: 'prose',
-        text: 'In this contrast, infinitival _to_ marks a clause whose predicate starts with a plain verb. Prepositional _to_ heads a phrase with a noun-phrase complement. That is useful evidence for these two uses of the spelling; it does not cover bare infinitivals such as _can leave_, which this course does not yet diagram.',
+        kind: 'contrast',
+        question: 'What does to introduce in each sentence?',
+        through: 34,
+        left: {
+          sentenceId: 'fix-infinitive',
+          caption: 'Infinitival _to_ marks a clause whose predicate starts with plain _leave_.',
+        },
+        right: {
+          sentenceId: 'fix-walked-to',
+          caption:
+            'Prepositional _to_ heads a phrase with the noun-phrase complement _the engine_.',
+        },
       },
       {
+        kind: 'prose',
+        text: 'Infinitival _to_ is followed by a plain verb and marks a clause. Prepositional _to_ is followed by a noun phrase and heads a prepositional phrase. Some infinitival clauses have no _to_, as in _can leave_.',
+      },
+      {
+        // PRACTICE REQUEST (remaining half): a bare infinitival clause.
+        // Blocked on the model, not on authoring: *can leave* is auxiliary
+        // plus verb, and perception or causative complements (*saw him
+        // leave*) are the object-control question README.md records as open.
+        // The overt-subject half is built: practice now includes *The shelf
+        // was too high for them to reach*.
         kind: 'procedure',
         title: 'Trace the lower predicate',
         steps: [
@@ -35,7 +54,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
           'Ask what job the complete infinitival clause has in that outer structure.',
         ],
         limit:
-          'Changing _wanted_ to _wants_ while _leave_ stays plain supports the nonfinite analysis, but other nonfinite clauses behave that way too. Some infinitival clauses have an overt or differently understood subject; the course does not model that relationship.',
+          'Changing _wanted_ to _wants_ while _leave_ stays plain supports the nonfinite analysis, but other nonfinite clauses behave that way too. An infinitival clause can name its own subject after _for_, as in _for them to reach_. When the subject is understood rather than spoken, as in _She wanted to leave_, the course does not model who is understood to do the leaving.',
       },
     ],
   },
@@ -45,7 +64,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **participial clause** has a participle as its predicate and does not carry the outer sentence’s primary tense. In the course examples, it either modifies a noun or works as a clause-level adverbial. Its _-ing_ or past-participle form does not settle that outer job.',
+        text: 'A **participial clause** is built around an _-ing_ or past-participle verb form. It does not carry the sentence’s main tense. The complete clause may modify a noun, as _standing by the gate_ modifies _the child_, or describe a circumstance of the main event.',
       },
       {
         kind: 'diagram',
@@ -56,17 +75,26 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
       },
       { kind: 'section', eyebrow: 'a noun-internal clause', title: 'Find the unspoken role' },
       {
-        kind: 'sentence',
-        text: 'The child **standing by the gate** waved. / The plan **drafted by the committee** failed.',
+        kind: 'contrast',
+        question: 'What role does each noun leave unspoken?',
+        through: 35,
+        left: {
+          sentenceId: 'c35-a',
+          caption: 'The child is understood as the one standing: an _-ing_ participial modifier.',
+        },
+        right: {
+          sentenceId: 'c35-b',
+          caption: 'The window is understood as the thing broken: a past-participial modifier.',
+        },
       },
       {
         kind: 'prose',
-        text: 'In the first phrase, the child is understood as the one standing. In the second, the plan is understood as the thing drafted. A fuller relative such as _the child who is standing_ can support an integrated noun-modifying reading, but it is a paraphrase, not a definition, and it does not describe a fronted participial adverbial.',
+        text: 'In the first phrase, the child is understood as the one standing. In the second, the window is understood as the thing broken. A fuller relative such as _the child who is standing_ can support an integrated noun-modifying reading, but it is a paraphrase, not a definition, and it does not describe a fronted participial adverbial.',
       },
       {
         kind: 'rule',
-        claim: 'The first verb-looking word may not be the main verb.',
-        text: 'First find the finite predicate that completes the outer clause. Then use the clause’s attachment and the role its predicate leaves unspoken as converging evidence. A past participle can describe an affected participant without being a finite passive; finite passive voice needs passive _be_ as well.',
+        claim: 'Find the verb that carries the sentence’s tense.',
+        text: 'A participle may appear before the main verb without completing the sentence. Find the finite predicate first, then ask what the participial clause modifies. A past participle can describe someone or something without forming a passive sentence on its own.',
       },
     ],
   },
@@ -76,7 +104,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **gerund-participial clause** is an _-ing_ clause whose whole structure fills a noun-phrase-like slot. Its head is still a verb: in _reading maps_, _reading_ takes _maps_ as its object even while the complete clause can be a subject, direct object, or complement of a preposition.',
+        text: 'An _-ing_ clause can occupy a place commonly filled by a noun phrase. In _Reading maps takes practice_, the whole clause _reading maps_ is the subject, while _reading_ remains a verb with _maps_ as its object. The course calls this a **gerund-participial clause**.',
       },
       {
         kind: 'diagram',
@@ -91,8 +119,17 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
         title: 'The same -ing words can build different structures',
       },
       {
-        kind: 'sentence',
-        text: '**Auditing the ledger** revealed an error. / The clerk **was auditing the ledger**.',
+        kind: 'contrast',
+        question: 'What job does the same -ing span do in each?',
+        through: 36,
+        left: {
+          sentenceId: 'c36-e',
+          caption: '_Auditing the ledger_ is a clause filling the subject slot.',
+        },
+        right: {
+          sentenceId: 'c36-f',
+          caption: 'The same words sit inside a progressive predicate after _was_.',
+        },
       },
       {
         kind: 'prose',
@@ -100,8 +137,8 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'rule',
-        claim: 'An -ing ending does not identify a gerund by itself.',
-        text: 'Bracket the lower verb and its dependents, then find the job of the complete span. Replacing _She apologised for arriving late_ with _She apologised for it_ supports the preposition-complement analysis here, but replacement does not turn a clause into a noun phrase or work equally well in every context.',
+        claim: 'Classify the whole _-ing_ group.',
+        text: 'First group the _-ing_ verb with the words that depend on it. Then find the place occupied by that complete group. In _She apologised for arriving late_, the clause completes the preposition _for_.',
       },
     ],
   },
@@ -111,7 +148,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'In the course’s **be-passives**, an object-bearing active relation is rearranged: an eligible active object becomes the passive subject, and passive _be_ appears with a past participle. The earlier subject may be named in a _by_-phrase or left unmentioned. Subject and agent are different relationships, so the passive subject need not be the doer.',
+        text: 'A passive sentence makes the object of the corresponding active sentence its subject. _She repaired the engine_ becomes _The engine was repaired by her_. English normally forms this passive with _be_ and a past participle. The original subject may appear in a _by_-phrase or be left unmentioned.',
       },
       {
         kind: 'contrast',
@@ -133,12 +170,22 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
         title: 'Reconstruct the active relation when it fits',
       },
       {
-        kind: 'sentence',
-        text: 'The harbour **was dredged by the contractors**. → The contractors **dredged the harbour**.',
+        kind: 'contrast',
+        question: 'Does the reconstruction preserve the relation?',
+        through: 37,
+        left: {
+          sentenceId: 'c37-d',
+          caption: '_The harbour_ is the passive subject; the _by_-phrase names the dredgers.',
+        },
+        right: {
+          sentenceId: 'c37-a',
+          caption:
+            'In the active relation, _the contractors_ is the subject and _the harbour_ the object.',
+        },
       },
       {
         kind: 'prose',
-        text: 'A matched reconstruction supports the changed subject relation. _Be_ plus a past participle is further evidence, not an automatic answer: _The gates were closed_ can describe a closing event or a continuing state. Context can favor one reading, and this course stores both; it does not force a form-only choice.',
+        text: 'The active version makes the changed relationships easy to see. Its object, _the harbour_, becomes the passive subject. The form _be_ plus a past participle is also important, though it can be ambiguous. _The gates were closed_ may report an event or describe the gates’ continuing state.',
       },
       {
         kind: 'contrast',
@@ -163,7 +210,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'An **interjection** names a word class; a **supplement** names a structural job. In _Oh, the gate opened_, _oh_ is an interjection working as a supplement. In _Unfortunately, the engine stalled_, an adverb phrase has the same outside-the-clause job. Neither fills the event’s subject, object, complement, or adverbial slot.',
+        text: 'Some expressions comment on a whole statement without filling a place inside its clause. In _Oh, the gate opened_, _oh_ stands outside the clause frame. **Interjection** names its word class, and **supplement** names this outside relationship. An adverb phrase can do the same job in _Unfortunately, the engine stalled_.',
       },
       {
         kind: 'contrast',
@@ -179,10 +226,6 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
         },
       },
       { kind: 'section', eyebrow: 'scope matters', title: 'Ask what the words contribute' },
-      {
-        kind: 'sentence',
-        text: 'Unfortunately, the engine stalled. / Yesterday, the children played.',
-      },
       {
         kind: 'prose',
         text: 'Removing either opening leaves a complete clause, so removal only shows that the material is optional. _Yesterday_ supplies the time of the playing and is an integrated adverbial. _Unfortunately_ evaluates the whole claim. Ask whether the expression helps describe the event or comments on the claim or the act of saying it.',
@@ -208,7 +251,7 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'Punctuation is evidence about how a writer presents a structure; it is not the structure itself. A comma can make a boundary or an added unit easier to see, but the words and their relationships establish the analysis.',
+        text: 'Punctuation helps a reader see how a sentence is grouped. A comma may mark a boundary, set off added information, or separate items in a list. The mark supports an analysis, but the words and their relationships determine what the groups are.',
       },
       {
         kind: 'contrast',
@@ -230,8 +273,23 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
         title: 'Let the mark direct your attention',
       },
       {
+        kind: 'contrast',
+        question: 'What do the commas change?',
+        through: 39,
+        left: {
+          sentenceId: 'fix-integrated-relative',
+          caption:
+            'Without commas, _who complained_ is integrated: it helps identify which visitors waited.',
+        },
+        right: {
+          sentenceId: 'fix-supplementary-relative',
+          caption:
+            'With commas, the same clause is supplementary: added information about visitors already identified.',
+        },
+      },
+      {
         kind: 'prose',
-        text: 'These two figures are not a controlled punctuation pair: their nouns, clauses, and main predicates differ. They show two accepted attachments, not a rule created by adding commas. In a fixed-word contrast, commas can support a supplementary reading; context still determines whether the noun phrase already identifies its referent.',
+        text: 'The words are identical; the commas support different relationships. Without them the clause sits inside the nominal and narrows the reference. With them it stands apart, commenting on a group the noun phrase has already picked out. The punctuation is evidence for that relationship, not the relationship itself.',
       },
       {
         kind: 'diagram',
@@ -258,8 +316,8 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'rule',
-        claim: 'Use punctuation after you have a grammatical question.',
-        text: 'A comma can help you locate a likely boundary, but it cannot say whether the nearby words make a list, an appositive, two clauses, or a supplement. Parse the words first; then use the mark as supporting evidence.',
+        claim: 'Let punctuation support the relationship you find.',
+        text: 'A comma can point to a likely boundary, but the same mark appears in lists, appositives, coordinated clauses, and supplements. Identify the words and their relationships, then use the punctuation to check that reading.',
       },
     ],
   },
@@ -269,14 +327,14 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A sentence diagram maps **nested relationships**. At each layer, find the unit’s head and form, then ask what the completed unit does in the next larger structure. A relative clause can modify a noun inside the subject while a nominal clause fills a verb’s object slot; both are clauses, but their outer jobs differ.',
+        text: 'A sentence diagram shows how smaller groups fit inside larger ones. Begin with the main clause, then work inward. For each phrase or clause, find its head, identify the words that belong with it, and ask what the complete group does in the next larger structure.',
       },
       {
         kind: 'diagram',
-        sentenceId: 'fix-across-the-board',
+        sentenceId: 'fix-synthesis',
         through: 40,
         caption:
-          'The fronted _what_ is linked to a direct-object gap in each coordinate clause. This figure shows one nested dependency in a question; it is not one of the final practice sentences.',
+          'One statement, several relationships: _who repaired the engine_ is a relative clause with a subject gap inside the subject nominal, and _that the belt broke_ is a nominal clause filling the direct-object slot of _knew_. The outer frame is an ordinary subject and predicate.',
       },
       {
         kind: 'section',
@@ -297,8 +355,8 @@ export const CLOSING_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'rule',
-        claim: 'A finished tree is an argument, not a picture.',
-        text: 'Its boundaries and labels make claims about relationships. A replacement or paraphrase can support one of those claims when it fits; it cannot erase a genuine ambiguity. When two complete analyses remain ordinary, recording both is the accurate result.',
+        claim: 'Every branch records a relationship.',
+        text: 'The boundaries and labels in a finished tree explain how the sentence is built. Replacement, agreement, movement, and paraphrase can support particular choices. When the sentence genuinely allows two structures, a complete analysis keeps both.',
       },
     ],
   },

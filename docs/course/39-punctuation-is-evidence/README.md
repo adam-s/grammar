@@ -83,7 +83,8 @@ show a relationship that the mark helps a reader find without claiming the mark
 has that relationship.
 
 The present page renders `fix-punctuation`, `fix-subject-relative`,
-`fix-supplementary-relative`, and `fix-exclamative-clause`. The last correctly
+`fix-integrated-relative`, `fix-supplementary-relative`, and
+`fix-exclamative-clause`. The last correctly
 separates an exclamation mark from an exclamative clause: _how fast she ran_ is
 an exclamative object clause because of its construction and meaning, while the
 final mark is compatible with other constructions. It broadens the point beyond
@@ -122,7 +123,7 @@ single 11-word pattern described by the old dossier.
 | ---------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Every comma marks a clause boundary.           | `c39-a` marks coordinates inside an NP; `c39-h` and `c39-j` mark material within an NP. | The page must make the difference explicit before asking a learner to rely on commas.                               |
 | A comma before _and_ means two clauses.        | `c39-a` has a comma before _and_ inside an object list.                                 | The clause cases need the two subject--predicate frames named, not merely pointed at.                               |
-| A comma makes a relative clause supplementary. | `c39-i`/`c39-j` show the useful pair, but only in the graded set.                       | Add a non-practice fixture pair so the page can demonstrate the contrast honestly.                                  |
+| A comma makes a relative clause supplementary. | The fixed-word fixture pair `fix-integrated-relative`/`fix-supplementary-relative` is drawn on the page. | The page must keep presenting the commas as evidence for the attachment, not as the attachment itself.              |
 | Every fronted adverbial clause has a comma.    | No live counterexample.                                                                 | State the editorial limit in the page; do not turn the practice regularity into a membership test.                  |
 | The serial comma solves an ambiguity.          | No current alternate reading or context makes `c39-a` ambiguous.                        | Treat it as a convention that can clarify some complex lists, not as a diagnostic.                                  |
 | A comma tells the reader where to pause.       | The supplementary-relative contrast has a plausible intonational counterpart.           | No fixture or practice item records sound, stress, or pausing. Do not ask learners to use imagined pauses as proof. |
@@ -151,10 +152,10 @@ sentences. Do not make that sentence the lesson's main proof.
 ## Revision direction
 
 1. Open with the central generalization and the fixed-word relative contrast.
-   Build a purpose-made integrated/supplementary fixture pair before using the
-   contrast on the page. Its caption should name the two attachments and say
-   that the commas cue the second reading; it should not claim “some” versus
-   “all.”
+   The purpose-made pair is built: `fix-integrated-relative` beside
+   `fix-supplementary-relative`, same words, different attachment. Its captions
+   name the two attachments and treat the commas as the cue for the second
+   reading; they do not claim “some” versus “all.”
 2. Keep `fix-punctuation` as a second, deliberately different case. Its caption
    should say that the comma aids reading while two clause frames and the
    coordinator establish coordination. Pair it in prose with `c39-a` so a comma

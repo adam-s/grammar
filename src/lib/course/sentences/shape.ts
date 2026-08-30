@@ -931,6 +931,12 @@ export type Inner = {
   marker?: string;
   /** Written as a `Part` rather than a `Subord`: infinitival *to* is not a subordinator. */
   infinitival?: boolean;
+  /**
+   * A subordinator BEFORE an overt subject, for the two-marker infinitival:
+   * *for anyone to lift*. The `marker` (infinitival *to*) then follows the
+   * subject instead of preceding it — the shape `fix-two-markers` proves.
+   */
+  subjectMarker?: string;
   subject?: Phrase;
   /** The subject slot is real and empty — a relative clause's, usually. */
   subjectGap?: boolean;
@@ -950,14 +956,22 @@ export const cl =
   (inner: Inner): Phrase =>
   (fn) => {
     const before: SpecNode[] = [];
-    if (inner.marker !== undefined) {
-      before.push(
-        inner.infinitival
+    const markerNode =
+      inner.marker === undefined
+        ? undefined
+        : inner.infinitival
           ? w('Part', 'marker', inner.marker, { partKind: 'infinitival' })
-          : w('Subord', 'marker', inner.marker),
-      );
+          : w('Subord', 'marker', inner.marker);
+    // The two-marker order is *for anyone to lift*: subordinator, subject,
+    // then infinitival *to*. Otherwise the one marker leads the clause.
+    if (inner.subjectMarker !== undefined) {
+      before.push(w('Subord', 'marker', inner.subjectMarker));
+      if (inner.subject) before.push(inner.subject('subject'));
+      if (markerNode) before.push(markerNode);
+    } else {
+      if (markerNode) before.push(markerNode);
+      if (inner.subject) before.push(inner.subject('subject'));
     }
-    if (inner.subject) before.push(inner.subject('subject'));
     if (inner.subjectGap) before.push(gap('NP', 'subject'));
 
     const predicate: SpecNode[] = [

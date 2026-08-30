@@ -307,20 +307,19 @@ builder remains the place where a learner acts, receives feedback, and earns
 completion.
 
 The full page contract is in
-[../lesson/README.md](../lesson/README.md). A typical page gives a direct answer,
-an annotated main diagram, a reusable identification procedure, a side-by-side
-contrast, one common confusion, several examples, and backward and forward
-connections. It does not require clicking, hovering, animation, or completing
-practice to reveal its explanation.
+[../lesson/README.md](../lesson/README.md). Every page gives a direct answer and
+visual evidence for its central relationship. Procedures, contrasts,
+confusions, extra examples, and connections appear only when the lesson's
+research gives them a real job. The explanation does not require clicking,
+hovering, animation, or completing practice.
 
 The sentences still come first and the final page comes last. The visualizations
 must come from accepted parses, so writing polished prose against sentences that
 have not been proved is writing twice.
 
-This is the target design. The current source has one earlier lesson prototype
-in `src/lib/course/lesson-content.ts`; it ends by opening a builder sentence and
-uses a shorter copy budget. It is implementation evidence, not the contract for
-the remaining pages, and it must change before the static lesson system ships.
+All forty numbered lessons now have authored static pages. Their shared data
+shape supports several kinds of explanatory block without requiring every page
+to use the same sequence.
 
 [`proposal-review.md`](proposal-review.md) is the adoption gate for the 413
 required and optional proposals. It records natural-reading review, intended
@@ -496,6 +495,13 @@ the bottom up and letting the terminology follow the work. The lesson shape here
 comes from that: one sentence, one decision at a time, and a formal test in
 place of a notional definition. The departure is that this is an assessment, so
 it may not show its working the way a textbook can.
+
+No single book supplies the learner prose's house voice. Each lesson should use
+a style representative of the references actually read for that topic:
+recurring vocabulary and ordinary explanatory patterns, with specialist
+terminology treated as an outlier unless the course needs and defines it. This
+is synthesis, not imitation. The wording, example sequence, and sentences
+remain original to the course.
 
 The previous attempt is at `~/Projects/Temp/grammar`. Its code is superseded;
 its `docs/` still holds the taxonomy analysis, the chapter shape, and the

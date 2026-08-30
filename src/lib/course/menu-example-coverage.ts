@@ -71,7 +71,7 @@ export const MENU_EXAMPLES: readonly MenuExample[] = [
   ...examples('11-the-verb-be', 'fix-vbe', ['vt:Vbe']),
   ...examples('12-two-objects', 'fix-vg', ['func:indirectObject', 'vt:Vg']),
   ...examples('13-naming-the-object', 'fix-vc', ['func:objectComplement', 'vt:Vc']),
-  ...examples('14-required-adverbials', 'fix-vbe', [
+  ...examples('14-required-adverbials', 'c14-i', [
     'form:P',
     'form:PP',
     'func:complement',

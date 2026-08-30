@@ -57,6 +57,33 @@ When sources disagree, record the disagreement in the dossier. The learner page
 may teach the analysis used by this course, but it must not present a framework
 choice as an uncontested fact about all English.
 
+## Use a style representative of the sources
+
+The references control more than factual claims. Together, they establish the
+ordinary register for explaining the topic. Before drafting learner copy, note:
+
+- the terms used by several sources;
+- the verbs they normally use to describe the grammatical relationship;
+- how directly they state definitions and qualifications;
+- how much explanation they give before and after an example;
+- which expressions occur only in a specialist paper or one formal framework.
+
+Write from the patterns that recur across that evidence. This is not a vote on
+the analysis and not an arithmetic average of sentence lengths. It means that
+the word choice, syntax, pacing, and level of formality should not feel unusual
+beside the references as a group.
+
+Separate authority from register. A technical grammar may supply the strongest
+analysis while learner-facing references supply the ordinary way to explain it.
+Do not move a specialist term into learner copy merely because it appears once
+in an authoritative source or in the dossier. Keep it only when the course uses
+the term, the distinction requires it, and the page explains it. Otherwise use
+the wording that recurs across the references.
+
+The result must remain original. Do not copy a source's sentences, preserve its
+distinctive sequence of examples, or imitate one author's voice. Draw shared
+language habits from several materials and write new prose for this course.
+
 ## Find the lesson's generalization
 
 Before choosing blocks or examples, write one or two sentences that state what
@@ -189,8 +216,9 @@ use every existing block.
 
 ## Writing
 
-Write at a 10th-grade reading level. Trust the learner's practical knowledge of
-English and introduce a term only after the underlying idea is clear.
+Write at a 10th-grade reading level and in the style recorded from the
+references. Trust the learner's practical knowledge of English and introduce a
+term only after the underlying idea is clear.
 
 - Lead with the main idea.
 - Use concrete nouns and active verbs.
@@ -228,11 +256,13 @@ Learner copy uses the limited inline syntax supported by `InlineText`:
 Before editing:
 
 1. Read the completed dossier and the current lesson in full.
-2. State the central generalization in one or two sentences.
-3. List the current lesson's claims and mark each **keep**, **qualify**,
+2. Write a short source-style note: recurring terms and explanatory habits,
+   plus any specialist wording to avoid or define.
+3. State the central generalization in one or two sentences.
+4. List the current lesson's claims and mark each **keep**, **qualify**,
    **replace**, or **remove**.
-4. Match every proposed figure to the exact relationship it must display.
-5. Check the practice set for answers obtainable through a surface shortcut.
+5. Match every proposed figure to the exact relationship it must display.
+6. Check the practice set for answers obtainable through a surface shortcut.
 
 While editing:
 
@@ -257,7 +287,9 @@ Before marking the lesson verified:
 6. Read the lesson once without relying on adjacent lessons for its main claim.
 7. Confirm that the practice set still tests rather than repeats the worked
    examples.
-8. Remove filler, repeated cadence, and claims that the evidence did not earn.
+8. Compare the prose with several references and replace unexplained wording or
+   style outliers.
+9. Remove filler, repeated cadence, and claims that the evidence did not earn.
 
 ## Acceptance questions
 
@@ -272,6 +304,8 @@ A reviewer should be able to answer:
 - Which shortcut does the practice set defeat?
 - Does the closing paragraph state the larger result rather than repeat the
   route title?
+- Would the terminology and register sound ordinary beside several references
+  actually read for this lesson?
 
 Not every lesson needs a separate block for every answer. The answers must be
 present in the reasoning, examples, diagrams, and practice set as a whole.

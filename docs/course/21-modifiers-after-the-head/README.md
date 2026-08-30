@@ -74,9 +74,11 @@ The grammar model is already broader: under a nominal it permits PPs, clauses,
 adjective phrases, adverb phrases, and NPs as postmodifiers. _The people
 responsible_ is an ordinary adjective-phrase case, and _the people who arrived_
 is a relative-clause case. Do not make this lesson a catalogue of all those
-forms. Relative clauses arrive in lesson 31 and participial clauses later; an
-unlabelled forward mention may be useful, but graded lesson-21 work should
-continue to ask only about the PP evidence it can display and explain.
+forms. Relative clauses arrive in lesson 31 and participial clauses later; the
+learner page now closes with one declared-preview figure (_The pipe that froze
+burst_, labels marked as running ahead of lessons 28–31) so "postmodifier"
+does not read as another name for PP. Graded lesson-21 work still asks only
+about the PP evidence it can display and explain.
 
 Noun complements are the important boundary. Cambridge English Grammar Today
 distinguishes a complement, as in _a feeling of hope_ or _the idea that schools

@@ -29,7 +29,7 @@ own, inside the part _to_ marks off.
 | 4   | That jury declined to accept the claim. | the shared-subject infinitive again, formal verb  |
 | 5   | She hoped to finish the survey.         | a shorter subject, same frame                     |
 | 6   | They planned to dredge that harbour.    | a plain shared-subject infinitive                 |
-| 7   | He offered to clear the path.           | a verb of offering rather than wanting            |
+| 7   | The shelf was too high for them to reach. | an infinitival clause with its own subject after _for_ |
 | 8   | The driver promised to wait outside.    | **the clause carries its own adverbial**          |
 | 9   | The council agreed to fund the repairs. | a shared subject, and an object inside the clause |
 | 10  | The box was too heavy to lift.          | **inside an adjective phrase**, not an object     |

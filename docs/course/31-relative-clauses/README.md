@@ -171,9 +171,12 @@ same simple way.
 `fix-subject-relative` is the main visual to keep. It visibly supplies the
 relative clause's `kind:relative`, postmodifier attachment, marker, and subject
 gap. Its passive matrix clause is incidental and must not become part of the
-explanation. The live object-relative practice pair supplies the necessary
-second example without revealing another graded answer only if the page uses a
-separate fixture or labels it as demonstrated.
+explanation. The subject/object contrast is now carried by a purpose-built,
+non-graded pair: `fix-gate-subject-relative` and `fix-gate-object-relative`
+hold the head noun (*gate*) and the outer frame (*opened*) fixed while the gap
+moves from the subject of *rattled* to the object of *damaged*, so no graded
+answer is revealed. The integrated/supplementary contrast stays deferred to
+lesson 39 on purpose.
 
 `fix-fronted-phrase` is valuable only as a tightly controlled _not the same
 relation_ contrast. Its `prenucleus` and indexed object gap are inside the

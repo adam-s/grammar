@@ -113,7 +113,7 @@ object and a location.
 
 | Shortcut                                      | What the live set shows                                 | What it does not yet show                                                                                          |
 | --------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| “Every post-verbal PP here is required.”      | _below the stairs_ and _on the desk_ are both required. | No optional PP control appears, so removal never rejects that answer.                                              |
+| “Every post-verbal PP here is required.”      | _under pressure_ is optional; _below the stairs_ and _on the desk_ are required. | The optional-PP control (_Those negotiations collapsed under pressure_) now lets removal reject that answer.       |
 | “The procedure always finishes in six steps.” | The short simple clauses suit the listed checks.        | No passive, question, particle, prepositional verb, clausal complement, or omitted-object case tests the boundary. |
 
 The set is a good review of the course's simple frames, not a complete inventory

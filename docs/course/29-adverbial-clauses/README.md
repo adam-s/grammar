@@ -8,10 +8,11 @@ set were inspected but not changed in this pass. This dossier describes the
 live ten-sentence practice set, not the older all-final set described by the
 previous dossier.
 
-**Page contract:** The learner-facing lesson will be a static, standalone visual
+**Page contract:** The learner-facing lesson is a static, standalone visual
 explanation under [the shared lesson contract](../../lesson/README.md). This
-dossier supplies its answer, tests, contrast, and common confusion; it is not
-learner copy or an interaction script.
+dossier records its analysis, evidence, examples, and limits; the page uses only
+the parts its generalization requires. It is not learner copy or an interaction
+script.
 
 ## What the lesson decides
 

@@ -6,7 +6,11 @@ for why.
 
 **Status:** This dossier measures the corpus as it was before the conversion. [sentences.md](sentences.md) is now the live course text, built and reachable; no reading has been accepted by a person, which `npm run course:readiness` reports.
 
-**Page contract:** The learner-facing lesson will be a static, standalone visual explanation under [the shared lesson contract](../../lesson/README.md). This dossier supplies its answer, tests, contrast, and common confusion; it is not learner copy or an interaction script.
+**Page contract:** The learner-facing lesson is a static, standalone visual
+explanation under [the shared lesson contract](../../lesson/README.md). This
+dossier records its analysis, evidence, examples, and limits; the page uses only
+the parts its generalization requires. It is not learner copy or an interaction
+script.
 
 ## What the lesson decides
 

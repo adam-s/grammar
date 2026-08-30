@@ -10,15 +10,19 @@
  * The hardest sentence in the lesson is one of the shortest, which is the whole
  * argument of docs/course/difficulty.md in one row.
  */
-import { adj, det, pp, pron, sv, sva, svc, svo, svoa, svoc, svoo, v } from './shape.ts';
+import { adj, bare, det, pp, pron, sva, svc, svo, svoa, svoc, svoo, svPlus, v } from './shape.ts';
 
 export const LESSON_15 = [
-  sv(
+  // The optional-PP control. Every other setting phrase in this set completes
+  // a required frame, so without this one the removal test never gets to say
+  // no: a learner could mark every post-verbal PP required and be right.
+  svPlus(
     'c15-a',
     15,
     det('Those', 'negotiations'),
     v('collapsed', 'collapse', 'Vint'),
-    'Those talks broke down.',
+    pp('under', bare('pressure')),
+    'Those talks broke down under strain.',
   ),
   svo(
     'c15-b',

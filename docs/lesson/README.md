@@ -17,12 +17,11 @@ The interactive work remains elsewhere:
 Separating those jobs keeps the lesson useful to two readers: someone moving
 through the course and someone who arrived directly with one grammar question.
 
-**Implementation status:** Lessons 1 through 3 are built to this contract at
-`src/lib/course/lesson-content.ts`. Each ends with a non-blocking handoff to the
-lesson's practice sentences. The word
-budgets that used to sit in `lesson-content.test.ts` are gone; what the tests
-hold now is that a page answers before it asks, cites sentences that exist, and
-draws no label the lesson has not taught.
+**Implementation status:** All forty numbered lessons have authored static
+pages and non-blocking handoffs to their practice sentences. The word budgets
+that once constrained learner copy are gone; the tests instead check that a
+page answers before it asks, cites sentences that exist, and draws no label the
+lesson has not taught or explicitly previewed.
 
 ## The search-result test
 
@@ -43,10 +42,15 @@ A page passes the test when a reader can leave with four things:
 
 - a plain-language answer;
 - one clear example;
-- a test or procedure they can reuse;
-- the difference between the topic and its most likely confusion.
+- an explanation of the relationships that make the answer true;
+- usable evidence and its limits, when the topic provides such evidence.
 
-## What every required lesson contains
+## Let the explanation choose its parts
+
+Every page answers its title and uses at least one visual to make a grammatical
+relationship visible. Beyond that, the research determines what belongs. A
+procedure, contrast, misconception, or connection is useful only when it helps
+establish the lesson's generalization. None is a compulsory section.
 
 ### Direct answer
 
@@ -57,41 +61,42 @@ names.
 Do not open with course navigation, a learning objective, a rhetorical question,
 or “In this lesson.” Search readers came for the answer.
 
-### Main visualization
+### Visual evidence
 
-Show one annotated sentence diagram that makes the central relationship visible.
+Use an annotated sentence diagram that makes the central relationship visible.
 The image is explanatory evidence, not decoration. Its caption must state what
 the reader should notice.
 
-### Identification procedure
+### Procedures and diagnostics
 
-Give the shortest useful test the reader can run on a new sentence. Write it as
-a small procedure, not a definition. If the test is conditional or disputed,
-state the limit beside it.
+Give a procedure only when the reader can observe and reuse genuine evidence.
+Write it as evidence, not a definition. If the test is conditional or disputed,
+state the limit beside it. When no useful test exists, explain the structural
+relationship directly.
 
-### Revealing contrast
+### Contrasts
 
-Hold as many words as possible still while the analysis changes. A side-by-side
-diagram should answer the question “Why are these not the same?” better than a
-paragraph could.
+Use a contrast when holding words still while the analysis changes makes the
+distinction easier to see. Do not add a side-by-side diagram merely to satisfy a
+page pattern.
 
-### Common confusion
+### Confusions and shortcuts
 
-Use the strongest live shortcut from the lesson dossier. Explain why it is
-tempting, show the sentence that defeats it, and give the better test. Do not pad
-the page with generic mistakes.
+Include a confusion when the lesson dossier identifies a live shortcut that the
+page's evidence can defeat. Explain why it is tempting and what the better
+analysis uses. Do not pad the page with generic mistakes.
 
 ### More examples
 
-Give approved examples that vary position, phrase form, or clause pattern —
-enough to show the shape is not one trick. These demonstrate breadth; the
-separate practice set provides the ten-sentence progression.
+Add approved examples when the main example would otherwise make the
+generalization look narrower than it is. The separate practice set provides the
+ten-sentence progression.
 
 ### Connections
 
-End with one short backward link and one short forward link. The backward link
-names a term the page used. The forward link names the next useful distinction.
-Neither may be required to understand the page in front of the reader.
+Link backward or forward only when another lesson resolves a question the page
+has genuinely raised. No connection may be required to understand the page in
+front of the reader.
 
 ## Visual requirements
 
@@ -130,6 +135,15 @@ one sentence's work, and that shows at any length.
 Write at a 10th-grade reading level. Assume the reader may already know the
 topic and wants a precise refresher. Locate difficulty in the sentence, not in
 the person.
+
+Write in a style representative of the materials actually read for that lesson.
+Look for the vocabulary, sentence patterns, and degree of explanation that
+recur across the references. A formal grammar may settle the analysis without
+setting the learner page's voice; a term found only in one specialist source is
+an outlier unless the course itself needs and explains it. Do not copy a
+source's sentences or imitate one author's individual style. The goal is prose
+that would sound ordinary beside several of the references, while remaining
+this course's own writing.
 
 The author dossier can be long, disputed, and heavily sourced. The lesson page
 cannot. It selects the settled answer, the best test, the strongest contrast,
@@ -173,15 +187,17 @@ graded.
 ## Authoring sequence
 
 1. Approve the sentence readings and parses.
-2. Write the likely search question.
-3. Draft the direct answer in plain language.
-4. Choose the main diagram and the revealing contrast.
-5. Write the identification procedure and its limit.
-6. Use the shortcut register to choose one common confusion.
-7. Add the approved examples that show breadth.
-8. Add backward and forward connections.
-9. Render every visual at desktop and narrow widths.
-10. Read the page as a standalone search result and as part of the course.
+2. Read the references and note their recurring vocabulary, explanatory moves,
+   and specialist outliers.
+3. State the generalization and write the likely search question.
+4. Choose the examples and diagrams that can establish that generalization.
+5. Add a procedure, contrast, confusion, or connection only when the evidence
+   gives it a real job.
+6. Draft the answer in a style representative of the sources as a group.
+7. Check the practice set for shortcuts and accidental answer patterns.
+8. Render every visual at desktop and narrow widths.
+9. Read the page beside several references, then as a standalone search result
+    and as part of the course.
 
 The sentences still come before the final prose because a visualization must be
 based on an accepted parse. The page structure can be planned earlier; its
@@ -201,13 +217,13 @@ a cumulative practice set, each doing one job.
 
 ## Sourcing, honestly
 
-Read in full for the earlier research: Language Log on grammar in schools,
-Grammar Pedagogy on subjects and predicates, Nicky Case on explorable
-explanations, Wikipedia on Reed–Kellogg diagrams, and the Form-Function Method
-article.
+Each lesson dossier records which sources were actually opened and read. Only
+those sources may support the lesson's claims or its source-based style note.
+Search snippets can locate a source but do not establish its analysis or voice.
+Record paywalls, blocked pages, excerpts, and other access limits instead of
+writing as though the full work was read.
 
-Search summaries only because the sources blocked automated reading: the UK
-National Curriculum English glossary, the UKLA primary grammar report, the
-Essentials of Linguistics chapters, Englicious, and the WAC Clearinghouse
-grammar chapter. Anything attributed to those remains second-hand and must be
-checked before it is quoted to a learner.
+Judge style from substantive explanatory passages. Abstracts, indexes, legal
+notices, and isolated search excerpts are not evidence for how the references
+normally explain the topic. Never quote or closely reproduce a source merely to
+make the lesson sound sourced.

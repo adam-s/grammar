@@ -41,6 +41,13 @@ An optional lesson is a static visual explanation under
 evidence is a pair or small set of completed diagrams. The reader compares the
 structures; there is nothing to click and no answer to submit.
 
+Its prose follows the same source-based style rule as the numbered lessons. It
+should sound representative of the references read for that topic, not like one
+technical source and not like a generic course voice applied to every subject.
+The analysis may require formal research; the explanation should use the
+ordinary wording shared across the materials unless the distinction itself
+requires a defined technical term.
+
 Two visual shapes cover the four optional lessons. The first is:
 
 > **Sentences that mean very different things and get the same tree.**

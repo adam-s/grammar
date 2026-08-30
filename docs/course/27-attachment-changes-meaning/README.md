@@ -160,15 +160,14 @@ They do **not** prove that a constructed sentence has been judged natural or
 that one reading was intended. The repository records all course sentences as
 unreviewed.
 
-The learner page currently cites `fix-ambiguous`, and that fixture stores both
-PP readings. Its grading and layout tests specifically check that the alternate
+The learner page cites `fix-ambiguous`, and that fixture stores both PP
+readings. Its grading and layout tests specifically check that the alternate
 attachment is accepted and has a different depth. `fix-coordinated-nominal`
-shows only the wide-scope reading, though the live course entries model both
-coordination readings. The fixture coverage rule confirms that the course's
-shapes occur in the fixture set; it does not make that fixture a two-reading
-coordination contrast. A revision that teaches both ambiguity types therefore
-needs either a fixture that stores both scope readings or a static comparison
-drawn from the two accepted readings of a live lesson-27 entry.
+now stores both coordination readings — wide scope as canonical and narrow
+scope as an audited alternate — and the page draws them side by side by naming
+each stored reading (`readingId`). Both scope trees on the page therefore come
+from accepted model data rather than from a hand-drawn comparison. Like every
+stored reading, the narrow alternate awaits human review.
 
 The current practice set has useful variety, but it also invites shortcuts:
 
@@ -196,9 +195,10 @@ ambiguity should retain the alternatives that its own wording leaves open.
 2. Keep `fix-ambiguous` as the main visual, but show both parents directly or
    use two small diagrams. Its current caption says that another reading exists
    while displaying only one; the contrast must be visible.
-3. Add the `c27-i` or `c27-j` scope contrast as a second visual only if both
-   readings can be drawn from accepted model data. This prevents a false claim
-   that ambiguity here always means PP attachment.
+3. The scope contrast is on the page as a second visual, drawn from the two
+   stored readings of `fix-coordinated-nominal` rather than from a graded
+   item. This prevents a false claim that ambiguity here always means PP
+   attachment.
 4. Replace “No structural test chooses the intended reading” with a qualified
    procedure: propose each boundary, use substitution or paraphrase to state
    its consequence, then consult supplied context, punctuation, or speech if

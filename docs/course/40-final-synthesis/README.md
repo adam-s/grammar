@@ -110,17 +110,15 @@ and must not present fixture coverage as practice coverage.
 
 | Fixture on the page                                         | Stored reading and visible evidence                                                                                                                  | Limit                                                                                                                                                                                                                                         |
 | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| fix-across-the-board — _What did John buy and Mary sell?_   | One fronted _what_ is indexed to two direct-object gaps, across two coordinate clauses. It is an authentic nested dependency.                        | It is not final practice. The ten entries do not practise a question, a prenucleus, shared extraction, or indexed gaps. It is a single canonical fixture, so it cannot prove a contrast or give evidence for every relation in the procedure. |
-| fix-ambiguous — _I saw the man with the telescope._         | The fixture stores a VP-adverbial reading and an NP-postmodifier reading, with different glosses. It is a sound purpose-built PP-attachment example. | The static lesson block can cite only a fixture ID; its renderer takes the canonical reading. The left diagram displays event attachment but cannot make the alternate tree visible by itself.                                                |
-| fix-coordinated-nominal — _They met the old men and women._ | The stored fixture shows the wide-scope analysis: _old_ modifies the whole coordination.                                                             | It stores only that one reading. The page's caption invites the narrow-scope alternative, but the figure cannot display it. It is not a genuine two-tree contrast until a second accepted reading or fixture can be rendered.                 |
+| fix-synthesis — _The mechanic who repaired the engine knew that the belt broke._ | A subject-gap relative inside the subject nominal and a that-marked nominal clause as direct object, in one approved demonstration fixture.          | It is a demonstration, not practice, and it shows nesting rather than every relation in the procedure. It replaced fix-across-the-board, whose question extraction the final practice never uses.                                             |
+| fix-ambiguous — _I saw the man with the telescope._         | The fixture stores a VP-adverbial reading and an NP-postmodifier reading, with different glosses. It is a sound purpose-built PP-attachment example. | A lesson block can now name a stored reading (`readingId`), so the alternate tree is renderable; lesson 27 still shows the modifier reading as bracketed prose rather than a second telescope diagram.                                        |
+| fix-coordinated-nominal — _They met the old men and women._ | The fixture now stores both scope readings: wide (canonical) and narrow (alternate). Lesson 27 draws them side by side via `readingId`.              | The narrow reading is authored and audited but, like every reading, awaits human review.                                                                                                                                                     |
 
-The final page's main figure should earn the central generalization by showing
-both kinds of nesting in one approved, non-graded example: a head with its
-dependent inside a phrase, and the completed phrase or clause doing a job in a
-larger frame. c40-j has the right architecture but is graded practice. Before
-using it as a worked figure, either mark it as demonstrated or create an
-approved fixture with the same architecture. A fixture should not introduce
-question extraction merely because it is the deepest available tree.
+The final page's main figure now does earn the central generalization:
+fix-synthesis shows a head with its dependent clause inside the subject
+nominal, and a completed nominal clause doing the direct-object job in the
+outer frame. It is a non-graded demonstration, so no practice answer is
+exposed, and it introduces no question extraction.
 
 The current contrast is not a contrast between readings of one sentence. Its
 left side is PP attachment and its right side is coordination scope. Those are

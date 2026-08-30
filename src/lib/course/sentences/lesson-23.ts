@@ -37,7 +37,11 @@ export const LESSON_23 = [
     v('testified', 'testify', 'Vint'),
     'Three witnesses gave evidence.',
   ),
-  sv('c23-b', 23, numn('Two', 'engines'), v('failed', 'fail', 'Vint'), 'Two engines gave out.'),
+  // A second head use, so *Those three remained outside* is not the lone
+  // exemplar of a number heading the phrase. The multiword numerals the
+  // dossier discusses stay out on purpose: the model has no approved internal
+  // analysis for them yet.
+  sv('c23-b', 23, numhead('The', 'two'), v('agreed', 'agree', 'Vint'), 'The two people agreed.'),
   sv(
     'c23-c',
     23,

@@ -36,6 +36,9 @@ The agent then updates only that lesson's dossier. The dossier should answer:
   working?
 - How do common teaching summaries describe the topic, and what does each one
   leave out?
+- Which vocabulary and explanatory habits recur across the references, and
+  which expressions are specialist outliers rather than representative of the
+  sources as a group?
 - Which shortcuts can a learner use to get the current exercises right without
   understanding the lesson?
 - What should change in the lesson, its diagrams, or its practice set?
@@ -49,15 +52,17 @@ coordinating agent.
 
 Revise only after the corresponding dossier has been read. A revision should:
 
-1. lead with one clear generalization;
-2. make it concrete with a contrast or diagram;
-3. explain the relationships shown by that example;
-4. give a usable diagnostic without presenting it as a universal definition;
-5. end with the larger point, not a list of labels;
-6. audit the practice sentences for shortcuts and false confidence;
-7. update fixture comments and example coverage when the lesson's evidence
+1. use a style representative of the references actually read, without copying
+   or imitating any one source;
+2. lead with one clear generalization;
+3. make it concrete with a contrast or diagram;
+4. explain the relationships shown by that example;
+5. give a usable diagnostic without presenting it as a universal definition;
+6. end with the larger point, not a list of labels;
+7. audit the practice sentences for shortcuts and false confidence;
+8. update fixture comments and example coverage when the lesson's evidence
    changes;
-8. format, run the tests and type checker, and inspect the rendered lesson from
+9. format, run the tests and type checker, and inspect the rendered lesson from
    top to bottom.
 
 The learner-facing copy lives in five shared files. Only one agent may edit a

@@ -44,7 +44,9 @@ The live practice set therefore has two constructions, not one: nine
 to-infinitival direct-object complements and one infinitival adjective
 complement. The old dossier's statement that all ten were the same, and that
 the model had no overt-subject infinitive, is false after the current fixtures
-were added.
+were added. The practice set now carries an overt lower subject of its own:
+_The shelf was too high for them to reach_ replaces one of the nine
+verb-complement rows, mirroring the fix-two-markers shape.
 
 ## Form, function, and subjects
 

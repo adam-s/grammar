@@ -25,7 +25,7 @@ then meets the label on ten unfamiliar words.
 | 1   | Most agreed.                | a determiner with no noun after it                     |
 | 2   | The bell rang.              | the commonest determiner of all, named at last         |
 | 3   | A window opened.            | the other article                                      |
-| 4   | Those dogs barked.          | a demonstrative — the slot, not the word               |
+| 4   | Those old dogs barked.      | a demonstrative — and an adjective in between          |
 | 5   | My phone buzzed loudly.     | a possessive in the same slot                          |
 | 6   | Every seat squeaked.        | a quantity in the same slot                            |
 | 7   | Guests complained.          | **no determiner at all** — the slot can be empty       |

@@ -51,35 +51,38 @@ export function diagramScopes(doc: LessonDoc): { sentenceId: string; through?: n
 const INTRODUCTION: LessonDoc = {
   id: '01-introduction',
   lede:
-    'Syntax is the part of grammar that explains how words are related in a sentence. ' +
-    'Those relationships tell us which words form a group and what each group is doing.',
+    'What words mean depends partly on how they relate to other words in a sentence. ' +
+    'Syntax describes those relationships and the roles words take in them. ' +
+    'Seeing the structure more clearly can improve both reading and writing.',
   blocks: [
-    {
-      kind: 'diagram',
-      sentenceId: 'fix-sentence-frame',
-      through: 1,
-      caption:
-        'The diagram divides _The rain stopped_ into a subject noun phrase and a predicate verb phrase. ' +
-        'The two groups have different jobs in the sentence.',
-    },
+    { kind: 'hero', sentenceId: 'fix-garden-path' },
     {
       kind: 'prose',
       text:
-        'The diagram shows a simple case: one group identifies the rain, and the other says that it stopped. ' +
-        'Syntax names this kind of relationship so that a longer sentence can be read as more than a row of words.',
+        'After at least 12 years of studying grammar and syntax, most of this will be familiar. ' +
+        'This review brings back the terms for relationships you already use when you read and write.',
+    },
+    {
+      kind: 'credit',
+      text:
+        "Max Morenberg's _Doing Grammar_ is the book I have always used to refresh my understanding of syntax. " +
+        'This guide follows much of his approach, with coding agents helping to turn sentence diagrams into interactive tools.',
     },
     {
       kind: 'section',
       eyebrow: 'the problem',
-      title: 'A later word can force a new grouping',
+      title: 'The sentence is grammatical, but difficult to read',
     },
     { kind: 'sentence', text: 'The horse raced past the barn fell.' },
     {
       kind: 'prose',
       text:
-        'At first, _raced past the barn_ looks like the predicate. Then _fell_ arrives. ' +
-        'It forces a different reading: _raced past the barn_ identifies which horse, and ' +
-        '_fell_ tells what happened to that horse.',
+        'Most readers hesitate at _fell_. Up to that point, _raced_ looks like the main verb. ' +
+        'The final word forces a second reading, but the sentence is well-formed English.',
+    },
+    {
+      kind: 'prose',
+      text: 'A fuller version makes the intended grouping easier to see:',
     },
     {
       kind: 'sentence',
@@ -88,26 +91,49 @@ const INTRODUCTION: LessonDoc = {
     {
       kind: 'prose',
       text:
-        'The added words make the intended relationship easier to hear: someone raced the horse, ' +
-        'and the horse fell. They are a paraphrase for this sentence, not a repair rule for every ' +
-        'hard sentence.',
+        'The horse did not race past the barn. Someone raced the horse, and the horse fell. ' +
+        'The words _raced past the barn_ identify which horse the sentence is about.',
     },
     {
-      kind: 'procedure',
-      title: 'Try another reading when a sentence breaks down',
-      steps: [
-        'Mark the groups you first assumed.',
-        'Find the word that makes that reading fail.',
-        'Try a fuller paraphrase that gives each group a role in the sentence.',
-      ],
-      limit:
-        'Brackets and paraphrases support a reading; they do not guarantee that every sequence of words has one unique structure. Word order, agreement, punctuation, and context can also matter.',
+      kind: 'prose',
+      text: 'You knew every word before you started. The difficulty was seeing which words belonged together and what role each group played.',
+    },
+    {
+      kind: 'section',
+      eyebrow: 'the stakes',
+      title: 'A grammar dispute led to a $5 million settlement',
     },
     {
       kind: 'prose',
       text:
-        'Words keep their ordinary meanings, but a sentence gives them relationships. ' +
-        'The rest of the course makes those relationships visible one layer at a time.',
+        'In 2017, dairy drivers in Maine sued for unpaid overtime. State law listed work that did not earn overtime, and the drivers delivered food rather than packed it. ' +
+        'The case turned in part on how the final words in this list were grouped:',
+    },
+    { kind: 'sentence', text: 'packing for shipment or distribution of perishable food' },
+    {
+      kind: 'readings',
+      rows: [
+        {
+          bracketed: 'packing for [shipment or distribution]',
+          means:
+            'This names one kind of work: packing. Delivery is not exempt, so the drivers are owed overtime.',
+        },
+        {
+          bracketed: '[packing for shipment] or [distribution]',
+          means:
+            'This names two kinds of work. Distribution is exempt, so the drivers would receive nothing.',
+        },
+      ],
+    },
+    {
+      kind: 'prose',
+      text:
+        'The missing comma did not decide the case by itself. The court considered the grammar and the rest of the law, found the wording ambiguous, and applied Maine’s rule that such uncertainty favours the worker. ' +
+        'The case later settled for about five million dollars.',
+    },
+    {
+      kind: 'prose',
+      text: 'The individual words were not in dispute. The dispute was over which words belonged together, and that difference changed what work the law covered.',
     },
   ],
 };
@@ -118,9 +144,7 @@ const SENTENCE_FRAME: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text:
-        'In the ordinary statements used here, a **subject** noun phrase and a **predicate** verb phrase ' +
-        'make the clause together. The subject fills one role; the predicate says what happens, what is true, or how that subject is related to something else.',
+      text: 'An ordinary statement has two main parts. The **subject** identifies what the statement is about. The **predicate** says what happens, what is true, or how the subject is related to something else.',
     },
     {
       kind: 'diagram',
@@ -181,9 +205,7 @@ const MAIN_VERB: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text:
-        'In the simple predicates used here, the **main verb** is the **head**: it carries the present-or-past choice for the predicate. ' +
-        'A word can name an activity without carrying that choice.',
+      text: 'The **main verb** organizes the predicate and carries its present-or-past choice. That makes it the predicate’s **head**. A word may name an activity without doing either job.',
     },
     {
       kind: 'diagram',
@@ -276,8 +298,19 @@ const NOUN_PHRASES: LessonDoc = {
       kind: 'prose',
       text: 'Replace the suspected group with _they_, _she_, _he_, or _it_. In this example, _They waited_ keeps the same basic claim. That supports treating all five original words as one noun phrase.',
     },
-    { kind: 'sentence', text: '**The workers in the tunnel** waited.' },
-    { kind: 'sentence', text: '**They** waited.' },
+    {
+      kind: 'contrast',
+      question: 'What does the pronoun stand for?',
+      through: 4,
+      left: {
+        sentenceId: 'fix-subject-phrase',
+        caption: '**The workers in the tunnel** fills the subject position as one noun phrase.',
+      },
+      right: {
+        sentenceId: 'fix-they-waited',
+        caption: '**They** fills the same position, and the claim stays the same.',
+      },
+    },
     {
       kind: 'prose',
       text: 'The pronoun occupies the position filled by the full run. It does not prove that every shorter replacement is impossible, but it shows that the five words can move through the larger sentence as one unit.',
@@ -311,10 +344,7 @@ const FIND_THE_HEAD: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text:
-        'A **head** is the word that organizes the other parts of a phrase. In a noun phrase, ' +
-        'the noun heads the **nominal**, and the nominal heads the whole noun phrase. When that ' +
-        'noun phrase is the subject, the noun’s number usually determines the form of the verb.',
+      text: 'The **head** is the word that the rest of a phrase is built around. In _the key to the cabinets_, the subject is about one key, not several cabinets. That is why the singular noun _key_ determines the singular verb _is_.',
     },
     {
       kind: 'contrast',
@@ -342,15 +372,26 @@ const FIND_THE_HEAD: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'In the first diagram, _key_ is the noun. _Key to the cabinets_ is the nominal it heads. The determiner _the_ then combines with that nominal to form the subject noun phrase. Each layer has a head: the noun heads the nominal, and the nominal heads the noun phrase.',
+      text: 'Start with the noun _key_. The phrase _to the cabinets_ depends on it, forming the nominal _key to the cabinets_. The determiner _the_ completes the noun phrase. The diagram calls _key_ the noun head and the completed nominal the head of the noun phrase.',
     },
     {
       kind: 'section',
       eyebrow: 'the test',
       title: 'Set aside what depends on another noun',
     },
-    { kind: 'sentence', text: 'The key **[to the cabinets]** is missing.' },
-    { kind: 'sentence', text: 'The key is missing.' },
+    {
+      kind: 'contrast',
+      question: 'What remains when the dependent phrase is set aside?',
+      through: 5,
+      left: {
+        sentenceId: 'fix-subject-agreement',
+        caption: '_To the cabinets_ sits inside the nominal that _key_ heads.',
+      },
+      right: {
+        sentenceId: 'fix-key-missing',
+        caption: 'With the dependent phrase set aside, _The key is missing_ still stands.',
+      },
+    },
     {
       kind: 'prose',
       text: 'Set aside _to the cabinets_, and _The key is missing_ remains. The added phrase depends on _key_; it contains another noun, but it does not organize the subject. The verb still follows the number of _key_.',
@@ -383,7 +424,7 @@ const FIND_THE_HEAD: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'A noun phrase may contain several nouns, but they do not all stand at the same level. One noun heads the nominal; other nouns can occur inside phrases that depend on it. The nominal then combines with any determiner to form the noun phrase. A head is defined by these relationships, not by its position or by how important it sounds.',
+      text: 'A noun phrase may contain several nouns, but they do not all have the same relationship to the whole phrase. One noun organizes the nominal, while the others may belong to phrases that depend on it. The head is the noun that holds those relationships together.',
     },
   ],
 };
@@ -394,7 +435,7 @@ const DETERMINERS: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text: 'A **determiner** fills a position in a noun phrase and helps set its reference or range. In _a light_, _that light_, _every light_, and _my light_, the noun stays _light_, while the determiner changes how the phrase refers or quantifies.',
+      text: 'A **determiner** helps establish which things or how many things a noun phrase refers to. The noun stays _light_ in _a light_, _that light_, _every light_, and _my light_, but the first word changes the reference.',
     },
     {
       kind: 'contrast',
@@ -415,7 +456,7 @@ const DETERMINERS: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'Articles can mark a reference as new or identifiable. Demonstratives can point, possessives can establish a relation, and words such as _some_, _every_, and _no_ can quantify. These contributions differ, but each belongs in the determiner position of the noun phrase.',
+      text: 'Different determiners make different kinds of choices. Articles can introduce something or mark it as already identifiable. Demonstratives point, possessives show a relation, and words such as _some_, _every_, and _no_ express quantity.',
     },
     {
       kind: 'section',
@@ -431,17 +472,33 @@ const DETERMINERS: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'The course uses **determiner** for the word label and **determinative phrase** for the larger group. In this example, the phrase fills the noun phrase’s determiner position.',
+      text: 'Here _almost_ modifies _every_, so the two words form a **determinative phrase**. That complete phrase occupies the determiner position before _student_.',
     },
     {
       kind: 'section',
       eyebrow: 'the distinction',
       title: 'A determiner and an adjective attach at different levels',
     },
-    { kind: 'sentence', text: 'those red doors' },
+    {
+      kind: 'diagram',
+      sentenceId: 'fix-determiner-those-doors',
+      through: 6,
+      focus: 'subject',
+      plus: ['form:Adj', 'func:premodifier'],
+      caption:
+        '_Those_ combines with the whole nominal _red doors_. Inside it, the adjective _red_ modifies the noun _doors_ — the adjective label runs ahead of its lesson so both levels are visible.',
+    },
     {
       kind: 'prose',
-      text: '_Those_ helps set which doors the phrase concerns; _red_ adds a property. Both can narrow the set of doors, so “narrows the noun” does not separate the classes. In the course’s analysis, the determiner combines with the nominal as a separate dependent.',
+      text: '_Those_ sets the reference of the whole phrase. _Red_ describes the doors inside that phrase. The diagram therefore places the determiner outside the nominal _red doors_ and the adjective inside it.',
+    },
+    {
+      kind: 'diagram',
+      sentenceId: 'fix-determiner-my-clock',
+      through: 6,
+      plus: ['form:Adj', 'func:premodifier'],
+      caption:
+        'The same shape at work in a sentence: _my_ combines with the nominal _old clock_, and the whole noun phrase is the subject of _ticked_.',
     },
     {
       kind: 'procedure',
@@ -452,7 +509,7 @@ const DETERMINERS: LessonDoc = {
         'Use that comparison as evidence for clear examples, then check the word’s place in the noun phrase.',
       ],
       limit:
-        'Meaning alone does not classify every word before a noun: adjectives can also affect which things a phrase describes. This lesson’s simple order is evidence, not a rule that the first word before a noun is always a determiner.',
+        'Meaning and position work together in these examples. An adjective may also narrow the things being discussed, and the first word before a noun is not always a determiner.',
     },
     {
       kind: 'section',
@@ -475,7 +532,7 @@ const DETERMINERS: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'Not every noun phrase has a determiner: _Lights flashed_ is complete without one. Grammatical traditions also draw this category differently, especially for possessives and numerals. This course labels familiar forms such as _my_ and _those_ as determiners; article, demonstrative, possessive, and quantifier describe their meanings rather than extra diagram labels.',
+      text: 'A noun phrase does not always need a determiner. _Lights flashed_ is complete without one, as are many phrases headed by a name or pronoun. This course labels words such as _my_ and _those_ as determiners and uses names such as article, demonstrative, possessive, and quantifier for the meanings they contribute.',
     },
   ],
 };
@@ -486,7 +543,7 @@ const PRONOUNS: LessonDoc = {
   blocks: [
     {
       kind: 'prose',
-      text: 'A **pronoun** can head a noun phrase. Many pronoun-headed phrases track a participant already identified by a fuller noun phrase, so a speaker can continue referring to that participant without repeating the description.',
+      text: 'A **pronoun** can stand at the head of a noun phrase. In _The pilot waved. She smiled_, _she_ refers to the same person without repeating the longer description.',
     },
     {
       kind: 'contrast',
@@ -503,12 +560,12 @@ const PRONOUNS: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'The right diagram still has _NP_ above _She_. **Pron** names the word’s form; **NP** names the unit that fills the subject position. A one-word noun phrase and a longer noun phrase can therefore have the same distribution in a clause.',
+      text: 'The right diagram still places _NP_ above _She_. **Pron** identifies the kind of word, while **NP** identifies the kind of phrase filling the subject position. One word and a longer phrase can therefore occupy the same place in a clause.',
     },
     { kind: 'sentence', text: 'The pilot near the window waved. **She** smiled.' },
     {
       kind: 'prose',
-      text: 'The first sentence identifies a pilot. In the next sentence, _she_ can refer to that same person without restating that she was the pilot near the window. The pronoun preserves the reference; it does not copy the earlier description into its own meaning.',
+      text: 'The first sentence identifies a pilot. In the next, _she_ points back to that person. The pronoun continues the reference without carrying the full description _the pilot near the window_ as part of its meaning.',
     },
     {
       kind: 'section',
@@ -516,8 +573,10 @@ const PRONOUNS: LessonDoc = {
       title: 'A pronoun need not be a one-word noun phrase',
     },
     {
-      kind: 'sentence',
-      text: 'Nobody in the row complained.',
+      kind: 'diagram',
+      sentenceId: 'c07-j',
+      through: 7,
+      caption: '_Nobody_ heads the whole subject noun phrase _nobody in the row_.',
     },
     {
       kind: 'prose',
@@ -529,10 +588,10 @@ const PRONOUNS: LessonDoc = {
       steps: [
         'Choose a noun phrase that identifies a participant or thing.',
         'Replace it with a pronoun that fits the reference and position.',
-        'If the sentence still works, the pronoun-headed and fuller noun phrases fill the same structural slot.',
+        'If the sentence still works, the pronoun-headed and fuller noun phrases fill the same position.',
       ],
       limit:
-        'This is distributional evidence, not a definition of pronoun. _I_ and _you_ need no earlier noun phrase, and some uses of _it_ have no referential antecedent. This lesson shows pronouns in the subject position; object forms arrive with objects.',
+        'Replacement shows that the two phrases can occupy the same position. It does not define every pronoun. _I_ and _you_ need no earlier noun phrase, and some uses of _it_ do not point back to anything.',
     },
     {
       kind: 'section',
@@ -541,7 +600,7 @@ const PRONOUNS: LessonDoc = {
     },
     {
       kind: 'prose',
-      text: 'Pronouns can make a long description unnecessary when the reference is clear, but that is only one of their uses. The durable distinction is structural: **Pron** says what kind of word it is, and **NP** says what kind of unit it heads or forms in the sentence.',
+      text: 'A pronoun often lets a speaker continue a reference without repeating a description. Its two diagram labels answer different questions. **Pron** names the kind of word, and **NP** names the complete unit it heads.',
     },
   ],
 };

@@ -10,13 +10,22 @@
  * needed: a noun phrase with the slot EMPTY. Nothing in Stage 1 showed one, so nothing said the slot was
  * optional.
  */
-import { adv, bare, det, dp, fused, phrasal, sv, svPlus, v } from './shape.ts';
+import { adjn, adv, bare, det, dp, fused, phrasal, sv, svPlus, v } from './shape.ts';
 
 export const LESSON_06 = [
   sv('c06-a', 6, fused('Most'), v('agreed', 'agree', 'Vint'), 'Nearly all of them said yes.'),
   sv('c06-b', 6, det('The', 'bell'), v('rang', 'ring', 'Vint'), 'The bell sounded.'),
   sv('c06-c', 6, det('A', 'window'), v('opened', 'open', 'Vint'), 'A window came open.'),
-  sv('c06-d', 6, det('Those', 'dogs'), v('barked', 'bark', 'Vint'), 'Those dogs made a noise.'),
+  // The one item where a determiner competes with an adjective for "the word
+  // before the noun". *Old* is out of scope here and stays unlabelled; what
+  // the learner must get right is that *Those* is the determiner anyway.
+  sv(
+    'c06-d',
+    6,
+    adjn('Those', 'old', 'dogs'),
+    v('barked', 'bark', 'Vint'),
+    'Those old dogs made a noise.',
+  ),
   svPlus(
     'c06-e',
     6,

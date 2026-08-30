@@ -7,7 +7,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A clause is **dependent** when it occupies a place inside a larger structure. In _She knew the engine stalled_, the words _the engine stalled_ make their own subject–predicate frame, but that whole frame is what _knew_ takes as its direct object.',
+        text: 'A clause can stand as the main statement or become part of a larger clause. In _She knew the engine stalled_, _the engine stalled_ has its own subject and predicate, but the whole clause fills the object position after _knew_. That makes it a **dependent clause**.',
       },
       {
         kind: 'diagram',
@@ -21,14 +21,26 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
         eyebrow: 'the relationship',
         title: 'The same words can be main or dependent',
       },
-      { kind: 'sentence', text: '**The engine stalled.** / She knew **the engine stalled**.' },
+      {
+        kind: 'contrast',
+        question: 'What happens to a clause inside another clause?',
+        through: 28,
+        left: {
+          sentenceId: 'fix-vint',
+          caption: '_The engine stalled_ stands alone as the main clause.',
+        },
+        right: {
+          sentenceId: 'fix-object-clause',
+          caption: 'The same words are embedded as the object of _knew_.',
+        },
+      },
       {
         kind: 'prose',
         text: 'The first version makes _the engine stalled_ the main clause. The second embeds those words as the object of _knew_. Replacing the embedded run with _it_—_She knew it_—supports that object boundary, but replacement does not define every dependent clause.',
       },
       {
         kind: 'prose',
-        text: '_Stalled_ carries tense, so the embedded unit is a **finite clause**. **Finite** describes the form of its predicate. **Nominal** describes the noun-phrase-like job of the whole clause. Neither term tells us by itself whether a clause is main or embedded.',
+        text: '_Stalled_ carries tense, so the inner unit is a **finite clause**. The same clause also does a noun-phrase-like job as the object of _knew_, so the course calls it **nominal**. One label describes its verb form and the other describes its place in the larger clause.',
       },
       {
         kind: 'rule',
@@ -78,7 +90,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **nominal clause** occupies a place that a noun phrase can occupy. This lesson shows three: subject, direct object, and subject complement. The larger clause assigns that job; the opening word _that_ does not.',
+        text: 'A whole clause can fill a place commonly filled by a noun phrase. In _That the ice held surprised us_, the clause _that the ice held_ is the subject. A clause used this way is called a **nominal clause**.',
       },
       {
         kind: 'contrast',
@@ -95,8 +107,17 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
       },
       { kind: 'section', eyebrow: 'the test', title: 'Replace first; classify second' },
       {
-        kind: 'sentence',
-        text: '**That storm** surprised the driver. / **That the storm arrived** surprised the driver.',
+        kind: 'contrast',
+        question: 'What is that doing in each subject?',
+        through: 30,
+        left: {
+          sentenceId: 'c30-a',
+          caption: '_That_ selects the noun _storm_: an ordinary determiner.',
+        },
+        right: {
+          sentenceId: 'c30-d',
+          caption: '_That_ marks a whole clause, and the clause is the subject.',
+        },
       },
       {
         kind: 'prose',
@@ -118,7 +139,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'prose',
-        text: 'Both constructions place substantial material after the verb, but the material has a different form and relationship in each one. That difference is why the complete structure, not the placeholder word alone, decides the analysis.',
+        text: 'Both sentences postpone important information until after the verb, but they do so differently. In the first, _it_ points forward to a clause. In the second, _there_ holds the subject position while the noun phrase _a problem_ follows the verb.',
       },
     ],
   },
@@ -128,7 +149,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **relative clause** depends on a noun phrase and contains an unspoken role whose meaning comes from that noun phrase. In _the engine that stalled_, _engine_ is understood as the subject of _stalled_.',
+        text: 'A **relative clause** adds information about a noun or noun phrase. In _the engine that stalled_, _that stalled_ identifies the engine, and _engine_ is understood as the subject of _stalled_.',
       },
       {
         kind: 'diagram',
@@ -141,7 +162,20 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
       { kind: 'sentence', text: 'the engine **that ___ stalled** → **the engine stalled**' },
       {
         kind: 'prose',
-        text: 'Restoring the noun makes the relationship visible. An object relative works differently: “the book that I needed ___” corresponds to _I needed the book_. The relative word is not automatically the subject, and restoration is evidence for these examples rather than a mechanical definition.',
+        text: 'Putting the noun into the open place shows its role inside the relative clause. The pair below holds the head noun and the outer clause still, so the position of the gap is the one visible change.',
+      },
+      {
+        kind: 'contrast',
+        question: 'Which role does the gate fill inside its relative clause?',
+        through: 31,
+        left: {
+          sentenceId: 'fix-gate-subject-relative',
+          caption: 'The gap is the subject of _rattled_: the gate is the one that rattled.',
+        },
+        right: {
+          sentenceId: 'fix-gate-object-relative',
+          caption: 'The gap is the object of _damaged_: the gate is what the storm damaged.',
+        },
       },
       {
         kind: 'section',
@@ -157,7 +191,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'prose',
-        text: 'A relative gap gets its meaning from the noun outside its clause. An interrogative gap gets its meaning from a question phrase moved to the front inside the clause. The missing slot is similar; the source of its meaning differs.',
+        text: 'In a relative clause, the understood role points back to a noun outside the clause. In an interrogative clause, it points to a question phrase at the front of the same clause. The diagrams show similar open positions with different sources.',
       },
       {
         kind: 'rule',
@@ -172,7 +206,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **comparative clause** supplies the second term of a comparison. An earlier expression sets a scale, quantity, or equality relation; the later clause completes that relation.',
+        text: 'A **comparative clause** completes a comparison by supplying its second part. In _More people came than we expected_, _more people_ sets the quantity being compared and _than we expected_ supplies the expectation it is compared with.',
       },
       {
         kind: 'diagram',
@@ -189,7 +223,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
       { kind: 'sentence', text: 'More people came than we expected **___ to come**.' },
       {
         kind: 'prose',
-        text: 'The added words make one possible understanding visible, but comparative clauses do not always have one exact spoken restoration. In the course model, the sentence-edge clause is a **postnucleus**, or tail, and its **anchor** records the link to the earlier comparative expression.',
+        text: 'The added words show one way to state what is understood after _expected_. English usually leaves those words unspoken. The course places the _than_-clause in a sentence-edge position called the **postnucleus** and records its link to the earlier comparison.',
       },
       {
         kind: 'sentence',
@@ -212,7 +246,7 @@ export const CLAUSE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: '**Clause coordination** relates clauses of equal syntactic status. Neither clause fills a role inside the other. A coordinator such as _and, but,_ or _or_ marks that relationship without becoming a third coordinate.',
+        text: '**Clause coordination** joins clauses that stand at the same level. Neither clause fills a place inside the other. A word such as _and_, _but_, or _or_ marks the connection between them.',
       },
       {
         kind: 'diagram',

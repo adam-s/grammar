@@ -18,7 +18,7 @@ checking whether the last thing was an adjective.
 
 | #   | Sentence                                    | The step                                |
 | --- | ------------------------------------------- | --------------------------------------- |
-| 1   | Those negotiations collapsed.               | intransitive                            |
+| 1   | Those negotiations collapsed under pressure.| intransitive, with an optional PP control|
 | 2   | The auditor questioned the figures.         | transitive                              |
 | 3   | The foreman gave the apprentice a warning.  | two objects                             |
 | 4   | They called her a taxi.                     | **counting stops working**              |

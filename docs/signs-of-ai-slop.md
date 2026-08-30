@@ -61,6 +61,13 @@ significance is real, say what changes because of it.
 **Vague attribution.** "Experts argue." "Studies show." "Observers have noted."
 Name the study or cut the claim.
 
+**A voice no source has.** A draft can invent polished academic wording that
+does not represent the materials behind it. One specialist source using a term
+does not make that term ordinary for the topic. Compare several references:
+keep the vocabulary and explanatory habits that recur, and define or replace
+the outliers. The lesson should sound at home beside the reference set without
+copying any one source.
+
 ## Rhythm
 
 Uniform sentence length is the clearest tell, and the hardest to see in your own

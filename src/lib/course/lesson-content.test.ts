@@ -6,7 +6,7 @@ import { canonicalReading, type Constituent, type SentenceEntry } from '../gramm
 import { COURSE_LESSONS } from './course.ts';
 import { LESSON_DOCS, citedSentenceIds, diagramScopes, lessonDoc } from './lesson-content.ts';
 import { MENU_DECISIONS, MENU_EXAMPLES } from './menu-example-coverage.ts';
-import { scopeThrough } from './scope.ts';
+import { firstTaughtIn, scopeThrough } from './scope.ts';
 
 /* There are no length budgets here, on purpose. A cap cannot tell a complete
    answer from compressed filler, and every number this file has held — 350
@@ -20,7 +20,12 @@ test('every authored lesson belongs to the course', () => {
 });
 
 test('every cited sentence is one the app can actually diagram', () => {
-  const known = new Set(FIXTURES.map((sentence) => sentence.id));
+  // Fixtures and the course's own graded sentences — both audited, replayed
+  // and swept by the same machinery, so both are citable evidence.
+  const known = new Set([
+    ...FIXTURES.map((sentence) => sentence.id),
+    ...COURSE_LESSONS.flatMap((lesson) => lesson.sentences.map((sentence) => sentence.id)),
+  ]);
   for (const doc of LESSON_DOCS) {
     for (const id of citedSentenceIds(doc)) {
       assert.ok(known.has(id), `${doc.id} cites unknown sentence ${id}`);
@@ -29,8 +34,10 @@ test('every cited sentence is one the app can actually diagram', () => {
 });
 
 /* The contract's scope rule, as a check: a page may explain in any words it
-   likes, and may not DRAW a label its reader has not been taught. Pruning is
-   `targetReading`, the same function the practice scope uses. */
+   likes, and may not DRAW a label its reader has not been taught — unless the
+   block declares the preview in `plus`, which the next test holds to labels
+   the course really does teach later. Pruning is `targetReading`, the same
+   function the practice scope uses. */
 test('no diagram shows a label the lesson has not reached', () => {
   for (const doc of LESSON_DOCS) {
     const lesson = COURSE_LESSONS.find(({ id }) => id === doc.id)!;
@@ -45,6 +52,54 @@ test('no diagram shows a label the lesson has not reached', () => {
         lesson.number,
         `${doc.id} draws ${sentenceId} at scope ${through ?? 'none'}, not ${lesson.number}`,
       );
+    }
+  }
+});
+
+/* A figure that names a reading must name one the sentence actually stores —
+   a missing id would throw at render time, in front of a learner. */
+test('every cited reading exists on its sentence', () => {
+  const entries = new Map(
+    [...FIXTURES, ...COURSE_LESSONS.flatMap((lesson) => lesson.sentences)].map((s) => [s.id, s]),
+  );
+  const check = (sentenceId: string, readingId: string | undefined, where: string) => {
+    if (readingId === undefined) return;
+    const entry = entries.get(sentenceId);
+    assert.ok(entry, `${where} cites unknown sentence ${sentenceId}`);
+    assert.ok(
+      entry.readings.some((reading) => reading.id === readingId),
+      `${where} cites reading "${readingId}", which ${sentenceId} does not store`,
+    );
+  };
+  for (const doc of LESSON_DOCS) {
+    for (const block of doc.blocks) {
+      if (block.kind === 'diagram') check(block.sentenceId, block.readingId, doc.id);
+      if (block.kind === 'contrast') {
+        check(block.left.sentenceId, block.left.readingId, doc.id);
+        check(block.right.sentenceId, block.right.readingId, doc.id);
+      }
+    }
+  }
+});
+
+/* A preview is a promise the course keeps later. An entry nothing teaches is
+   a typo; an entry the lesson already has is noise that would hide a real
+   preview among false ones. */
+test('a figure previews only decisions a later lesson teaches', () => {
+  for (const doc of LESSON_DOCS) {
+    const lesson = COURSE_LESSONS.find(({ id }) => id === doc.id)!;
+    for (const block of doc.blocks) {
+      if ((block.kind !== 'diagram' && block.kind !== 'contrast') || block.plus === undefined) {
+        continue;
+      }
+      for (const decision of block.plus) {
+        const home = firstTaughtIn(COURSE_LESSONS, decision);
+        assert.ok(home, `${doc.id} previews "${decision}", which no lesson teaches`);
+        assert.ok(
+          home.number > lesson.number,
+          `${doc.id} previews "${decision}", already in scope since lesson ${home.number}`,
+        );
+      }
     }
   }
 });
@@ -152,8 +207,12 @@ test('every stable menu item has one visible, parsed example in a lesson blog', 
       `${example.lessonId} does not visibly cite ${example.sentenceId} for ${example.decision}`,
     );
 
-    const sentence = FIXTURES.find(({ id }) => id === example.sentenceId);
-    assert.ok(sentence, `${example.decision} cites unknown fixture ${example.sentenceId}`);
+    // Fixtures and graded course sentences are equally valid examples — a
+    // page may cite either, and both carry approved parses.
+    const sentence = [...FIXTURES, ...COURSE_LESSONS.flatMap((l) => l.sentences)].find(
+      ({ id }) => id === example.sentenceId,
+    );
+    assert.ok(sentence, `${example.decision} cites unknown sentence ${example.sentenceId}`);
     assert.ok(
       demonstrates(example.decision, sentence),
       `${example.sentenceId} does not demonstrate ${example.decision}`,

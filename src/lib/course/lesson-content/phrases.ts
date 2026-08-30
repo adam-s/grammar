@@ -7,7 +7,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'Before a noun, an adjective can narrow what the noun names. In _the old red engine_, _old_ and _red_ are dependents of the head _engine_, inside the nominal. _The_ then combines with the whole nominal, not with either adjective alone. This noun-internal job is called a **premodifier**.',
+        text: 'An adjective before a noun describes the thing or helps identify which one is meant. In _the old red engine_, _old_ and _red_ both depend on _engine_. This job before the noun is called **premodifier**.',
       },
       {
         kind: 'contrast',
@@ -25,7 +25,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'prose',
-        text: 'The diagrams answer two different questions. _Adjective_ and _noun_ name forms. **Premodifier** names the relationship to the noun head. A word before a noun may be an adjective, a noun, a number, or a larger phrase, so position finds the job before it settles the form.',
+        text: 'The two diagrams separate the kind of word from the job it does. _Old_ is an adjective and _kitchen_ is a noun, but both premodify the following noun. Position can reveal the job before it reveals the word class.',
       },
       {
         kind: 'procedure',
@@ -33,7 +33,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
         steps: [
           'Find the noun head in the noun phrase.',
           'Mark each earlier dependent that narrows that noun as a premodifier.',
-          'Use its distribution and meaning to decide whether that dependent is an adjective, a noun, or another form.',
+          'Use the word’s other patterns and its meaning to decide whether it is an adjective, a noun, or another form.',
         ],
         limit:
           'A common adjective can often also follow a linking verb or take a comparative form, but neither pattern defines every adjective. The premodifier function does not identify the word class by itself.',
@@ -59,7 +59,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'prose',
-        text: 'Here _poor_ still has adjective form, but no noun is expressed, so the model records both jobs on one word. The collective meaning of _the poor_ is conventional; it does not license a rule that _the_ plus any adjective means “people who are adjective.”',
+        text: 'Here _poor_ still has adjective form, but no noun is expressed, so the model records both jobs on one word. _The poor_ has an established collective meaning. Other combinations of _the_ and an adjective do not automatically refer to a group of people.',
       },
     ],
   },
@@ -69,7 +69,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'An **adjective phrase** has an adjective as its head. The phrase may be only that head, as in _salty_, or it may include a degree modifier before the adjective or a complement after it. The head gives the phrase its form; the other material depends on that head.',
+        text: 'An **adjective phrase** is built around an adjective. It may consist of one word, as in _salty_, or include words that change its degree or complete its meaning, as in _very salty_ and _proud of it_.',
       },
       {
         kind: 'contrast',
@@ -84,7 +84,19 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
           caption: '_Proud of it_ is one adjective phrase: the PP is a complement of _proud_.',
         },
       },
-      { kind: 'sentence', text: 'She seemed **proud of it**. → She seemed **pleased**.' },
+      {
+        kind: 'contrast',
+        question: 'What fills the subject-complement slot in each?',
+        through: 17,
+        left: {
+          sentenceId: 'fix-adjective-complement',
+          caption: '_Proud of it_ is one adjective phrase: the PP completes _proud_.',
+        },
+        right: {
+          sentenceId: 'fix-vlink-pleased',
+          caption: '_Pleased_ fills the same slot as an adjective phrase of one word.',
+        },
+      },
       {
         kind: 'prose',
         text: 'The replacement occupies the same subject-complement slot. Replacing only _proud_ would leave _of it_ attached to an adjective that does not take it. That supports the boundary in this example: the prepositional phrase belongs with _proud_, not directly with _seemed_.',
@@ -94,15 +106,21 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
         eyebrow: 'one head, more material',
         title: 'A degree word stays inside the phrase too',
       },
-      { kind: 'sentence', text: 'The road became **dangerously narrow**.' },
+      {
+        kind: 'diagram',
+        sentenceId: 'c17-d',
+        through: 17,
+        caption:
+          '_Dangerously_ modifies _narrow_ inside the adjective phrase; the whole phrase is the subject complement.',
+      },
       {
         kind: 'prose',
         text: '_Dangerously_ changes the degree of _narrow_; it does not describe the becoming. The two words form an adjective phrase whose complete phrase is the subject complement. In other sentences an adjective phrase can instead premodify a noun, so its form and its larger job remain separate questions.',
       },
       {
         kind: 'rule',
-        claim: 'Follow dependencies from the adjective head.',
-        text: 'A bare adjective phrase has no extra words. A following PP can be inside one when it completes the adjective’s meaning, and a degree adverb can be inside one when it modifies the adjective. Replacement and omission are evidence for a particular boundary; they do not define every adjective phrase.',
+        claim: 'Build the phrase around the adjective.',
+        text: 'A degree word such as _very_ belongs with the adjective it modifies. A following prepositional phrase can also belong inside the adjective phrase when it completes the adjective’s meaning. Those relationships show where the phrase begins and ends.',
       },
     ],
   },
@@ -122,8 +140,17 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
           'The figure shows _very_ as a premodifier of the adverb head _quietly_; the complete adverb phrase is the adverbial of _waited_.',
       },
       {
-        kind: 'sentence',
-        text: 'The road was **surprisingly narrow**. / The clock ticked **remarkably loudly**.',
+        kind: 'contrast',
+        question: 'What does each first adverb modify?',
+        through: 18,
+        left: {
+          sentenceId: 'c18-j',
+          caption: '_Surprisingly_ modifies the adjective _narrow_: one adjective phrase.',
+        },
+        right: {
+          sentenceId: 'c18-g',
+          caption: '_Remarkably_ modifies the adverb _loudly_: one adverb phrase.',
+        },
       },
       {
         kind: 'prose',
@@ -153,7 +180,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **prepositional phrase** is headed by a preposition and includes the complement that preposition takes. A noun phrase is the common complement, but a prepositional phrase can also contain another prepositional phrase. Its form does not decide its larger job.',
+        text: 'A **prepositional phrase** begins with a preposition and includes the phrase that completes it. In _of the wood_, _of_ is the preposition and _the wood_ completes it. A prepositional phrase may also sit inside another one.',
       },
       {
         kind: 'diagram',
@@ -179,8 +206,8 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'rule',
-        claim: 'First identify the PP; then identify its parent.',
-        text: 'A PP can modify an event, sit inside a noun phrase, or complete another phrase. Lesson 20 compares those larger relationships. A preposition with an overt complement is the pattern shown here, not a definition that covers every preposition use.',
+        claim: 'After finding the phrase, find what it belongs to.',
+        text: 'A prepositional phrase can describe an event, modify a noun, or complete another phrase. Its internal form stays the same while its relationship to the larger sentence changes.',
       },
     ],
   },
@@ -190,7 +217,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: '**Form** says what kind of unit a span is and how it is built. **Function** says how that unit relates to the phrase or clause that contains it. The same words can have one form and different functions; the same function can be filled by different forms.',
+        text: '**Form** names the kind of word or phrase. **Function** names the job that unit does in a larger phrase or clause. One form can do several jobs, and one job can be filled by several forms.',
       },
       {
         kind: 'contrast',
@@ -228,8 +255,17 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
         title: 'Requiredness belongs to the verb frame',
       },
       {
-        kind: 'sentence',
-        text: 'The quartet rehearsed **in the hall**. / They put the piano **in the hall**.',
+        kind: 'contrast',
+        question: 'Can the location phrase be set aside?',
+        through: 20,
+        left: {
+          sentenceId: 'c20-a',
+          caption: 'With _rehearsed_, _in the hall_ is optional: the event is complete without it.',
+        },
+        right: {
+          sentenceId: 'c20-i',
+          caption: 'With _put_, the same phrase is required by the verb’s frame.',
+        },
       },
       {
         kind: 'prose',
@@ -237,8 +273,8 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'rule',
-        claim: 'Give each label one structural level.',
-        text: 'Ask “What is this unit?” for form, then “What contains it, and what does it do there?” for function. The two answers work together because they describe different relationships.',
+        claim: 'Ask two separate questions.',
+        text: 'First ask what kind of unit the words form. Then ask what that complete unit does in the structure that contains it. The answers describe different relationships, so a phrase needs both.',
       },
     ],
   },
@@ -248,7 +284,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **postmodifier** is a dependent after a nominal head that belongs inside the noun phrase and helps identify or describe that head. In _the key to the cabinets_, _to the cabinets_ is a PP by form and a postmodifier by function because it depends on _key_.',
+        text: 'A word or phrase after a noun can remain inside the noun phrase and describe or identify that noun. This job is called **postmodifier**. In _the key to the cabinets_, the prepositional phrase _to the cabinets_ postmodifies _key_.',
       },
       {
         kind: 'contrast',
@@ -279,9 +315,17 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
           'A PP after a noun can attach to the verb instead, and the same words can sometimes allow both readings. Removal can reveal a smaller noun phrase, but it does not settle every modifier–complement distinction.',
       },
       {
+        kind: 'diagram',
+        sentenceId: 'c31-b',
+        through: 21,
+        plus: ['form:Cl', 'form:Subord', 'func:marker', 'kind:relative', 'gap'],
+        caption:
+          '_That froze_ is a whole clause doing the postmodifier job inside the nominal headed by _pipe_. Its labels run ahead of lessons 28–31; the job it does is this lesson’s.',
+      },
+      {
         kind: 'rule',
-        claim: 'Postmodifier is a job, not another name for PP.',
-        text: 'The practice examples here use PPs after the head. Other phrase and clause forms can also narrow a noun, and later lessons introduce some of them. The course currently draws noun-internal PPs this way; grammar descriptions may separate more tightly selected noun complements.',
+        claim: 'Postmodifier names a job, not a kind of phrase.',
+        text: 'A prepositional phrase after the noun and a clause after the noun can do the same job. What makes them postmodifiers is their relationship to the noun they follow, not the kind of phrase they are.',
       },
     ],
   },
@@ -316,7 +360,19 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
         eyebrow: 'two readings in writing',
         title: 'Commas record a supplementary reading',
       },
-      { kind: 'sentence', text: 'Our guide **Arun** waved. / Our guide, **Arun**, waved.' },
+      {
+        kind: 'contrast',
+        question: 'What do the commas record?',
+        through: 22,
+        left: {
+          sentenceId: 'c22-e',
+          caption: 'Without commas, _Arun_ can help identify which guide is meant.',
+        },
+        right: {
+          sentenceId: 'fix-guide-commas',
+          caption: 'With commas, the name is added about a guide already identified.',
+        },
+      },
       {
         kind: 'prose',
         text: 'Without commas, _Arun_ can help identify which guide is meant. With commas, the name is added about a guide already identified. Both are appositive readings; punctuation supplies evidence about the intended relation, not the relation itself.',
@@ -336,7 +392,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A numerical expression can do different jobs inside a noun phrase. In this course, **Num** names its form; its relationship to the noun phrase tells us whether it is a determiner, a premodifier, or a head. Being a number does not settle the job.',
+        text: 'A number can occupy several places in a noun phrase. In _four ships_ it determines the phrase. In _the first train_ it modifies the noun. In _those three_ it heads the phrase because no following noun is expressed. The diagram uses **Num** for the number itself and a separate label for its job.',
       },
       {
         kind: 'contrast',
@@ -353,14 +409,28 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
         },
       },
       {
-        kind: 'sentence',
-        text: 'The **first two** runners finished. / **Those three** remained outside.',
+        kind: 'contrast',
+        question: 'Where does each number sit?',
+        through: 23,
+        left: {
+          sentenceId: 'c23-e',
+          caption: '_The_ determines the phrase; _first_ and _two_ sit inside the nominal.',
+        },
+        right: {
+          sentenceId: 'c23-j',
+          caption: '_Those_ determines; with no noun expressed, _three_ heads the phrase.',
+        },
       },
       {
         kind: 'prose',
         text: 'In the first phrase, _the_ already determines the noun phrase, while _first_ and _two_ sit with the noun inside its nominal. In the second, _those_ is the determiner and _three_ supplies the unspoken counted thing as the head. A missing noun alone does not prove a fused analysis; the jobs of the other words still matter.',
       },
       {
+        // PRACTICE REQUEST (remaining half): a multiword numerical expression.
+        // Blocked on a model decision, not on authoring: the dossier records
+        // that the model has no vocabulary for relations inside a multiword
+        // numeral and says to keep them out until an internal analysis is
+        // approved. The second head use (*The two agreed*) is built.
         kind: 'procedure',
         title: 'Map the number’s place in the noun phrase',
         steps: [
@@ -373,8 +443,8 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'rule',
-        claim: 'Do not make number agreement or word order do this job.',
-        text: '_One train_, _the first train_, and _those three_ show different forms and functions. The current examples use one-word numerals; they do not establish an analysis for multiword numerals such as _twenty-one_ or _two hundred_.',
+        claim: 'The number’s place determines its job.',
+        text: '_One train_, _the first train_, and _those three_ place a number in different relationships within the noun phrase. The examples use one-word numbers. Longer expressions such as _twenty-one_ require their own internal analysis.',
       },
     ],
   },
@@ -384,7 +454,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'An **auxiliary** is a verb in a verb group that carries a grammatical contrast and selects the form of the verb after it. In a chain, each helper constrains the next form while the lexical verb still names the event. The words must be read as one structured predicate, not as a row of separate main verbs.',
+        text: 'An **auxiliary verb** helps another verb express time, possibility, completion, continuation, or voice. It also determines the form that follows it. In _has been repairing_, _has_ requires _been_, and _been_ requires the _-ing_ form _repairing_.',
       },
       {
         kind: 'diagram',
@@ -395,7 +465,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'prose',
-        text: '_Has_ is the finite perfect auxiliary and selects the participle _been_. _Been_ is a progressive auxiliary and selects the _-ing_ verb _repairing_. The course treats _repairing_ as the VP head. Other grammar frameworks choose a different head in this chain, but they still recognize the selected sequence of verb forms.',
+        text: '_Has_ is the finite verb and marks the perfect. It is followed by the participle _been_. _Been_ marks the progressive and is followed by _repairing_. The course treats _repairing_, the verb naming the event, as the head of the verb phrase.',
       },
       {
         kind: 'contrast',
@@ -420,12 +490,12 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
           'Mark every helper in the chain, including a non-finite one such as _been_.',
         ],
         limit:
-          'Question inversion and _not_ after a finite helper are useful evidence in a main clause, but they do not define every auxiliary: lexical _be_ shares those behaviours. This lesson does not ask learners to classify passive _be_; passive voice arrives later.',
+          'A finite auxiliary can usually move before the subject in a question and take _not_ directly. Main-verb _be_ behaves the same way, so these patterns must be considered with the verb group as a whole.',
       },
       {
         kind: 'rule',
         claim: 'The helper’s spelling is not enough.',
-        text: '_Have, be,_ and _do_ also have lexical uses. In a verb group, the forms they select reveal the auxiliary relationship. The usual chain places a modal before perfect _have_, then progressive or passive _be_, before the lexical verb; the examples here do not display every possible combination.',
+        text: '_Have_, _be_, and _do_ can be main verbs or auxiliaries. When they are auxiliaries, the following verb form reveals the relationship. A modal comes first, followed by perfect _have_, progressive or passive _be_, and finally the verb that names the event.',
       },
     ],
   },
@@ -435,7 +505,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: 'A **verbal particle** is a dependent in a verb–particle construction. In a separable transitive construction, the direct object can follow the particle or stand between the verb and particle. That alternation shows that the small word belongs with the verb, not as the head of a phrase containing the object.',
+        text: 'A **particle** is a small word that combines with a verb, as _up_ does in _looked up the number_. With many verb–particle combinations, the object may come after the particle or between the verb and particle. We can say both _looked up the number_ and _looked the number up_.',
       },
       {
         kind: 'contrast',
@@ -454,22 +524,34 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'prose',
-        text: 'The two diagrams do not show a particle moving from one tree position to another; they show an accepted construction in two orders. A positive alternation is strong evidence for this separable construction. A failed alternation is not proof that a following word is a preposition, because some verb–particle constructions do not allow both orders.',
+        text: 'The two diagrams show the same verb–particle combination in two accepted orders. When both orders are possible, the alternation is strong evidence that the small word is a particle. Some verb–particle combinations allow only one order, so failure to move the word does not settle the question.',
       },
       {
         kind: 'section',
         eyebrow: 'the nearby confusion',
         title: 'The same spelling can head a prepositional phrase',
       },
-      { kind: 'sentence', text: 'She looked **it up**. / The children climbed **up it**.' },
+      {
+        kind: 'contrast',
+        question: 'Which up belongs to the verb?',
+        through: 25,
+        left: {
+          sentenceId: 'fix-particle-pronoun',
+          caption: 'The pronoun object comes between _looked_ and its particle _up_.',
+        },
+        right: {
+          sentenceId: 'fix-preposition-pronoun',
+          caption: '_Up_ keeps its complement beside it: a prepositional phrase.',
+        },
+      },
       {
         kind: 'prose',
         text: 'In the first sentence, a neutral personal-pronoun object normally comes between the verb and the particle. In the second, _up_ stays with its complement _it_, which supports a PP headed by _up_. The course labels the first role Part and the second P; other grammars may use a broader preposition category for both word uses.',
       },
       {
         kind: 'rule',
-        claim: 'Attachment, not dictionary familiarity, settles this course label.',
-        text: 'A transparent combination such as _pick up_ and a familiar one such as _look up_ can both contain a particle. The pronoun pattern is powerful evidence for separable transitive constructions, but focus, dialect, and constructions without an object limit it.',
+        claim: 'The surrounding pattern distinguishes the two uses.',
+        text: '_Pick up_ and _look up_ can both contain a particle even though their meanings differ. With a pronoun object, _pick it up_ and _look it up_ provide especially clear evidence. Other particle constructions may follow different patterns.',
       },
     ],
   },
@@ -479,7 +561,7 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
     blocks: [
       {
         kind: 'prose',
-        text: '**Coordination** relates two or more units of equal syntactic status. The joined units are **coordinates**; _and_, _or_, and _but_ are **coordinators**. No coordinate is the head of another. When the coordination is embedded, the whole joined unit fills one place in the larger structure.',
+        text: '**Coordination** joins two or more units that have the same place in a larger structure. The joined units are **coordinates**, and words such as _and_, _or_, and _but_ are **coordinators**. The complete coordination then works as one larger unit.',
       },
       {
         kind: 'contrast',
@@ -511,11 +593,11 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
           'Check the larger job of the joined phrase, such as subject, premodifier, object, or adverbial.',
         ],
         limit:
-          'Replacement supports the ordinary examples shown here, but it does not define every coordination. A joint meaning can make one coordinate alone change the claim, and coordination has more complex cases that this course does not model here.',
+          'Trying each coordinate separately reveals their shared position in these examples. The meaning may change because two coordinates together can describe a pair, sequence, or choice.',
       },
       {
         kind: 'prose',
-        text: 'The live examples join like phrase forms, but shared function is the deeper relation: each coordinate must be able to fill the same place. In a subject, two singular noun phrases joined by _and_ normally take a plural verb. That agreement pattern supports the analysis of this kind of subject; it does not define coordination in other positions.',
+        text: 'These examples join phrases of the same form, and each coordinate can fill the same place in the sentence. When two singular noun phrases are joined by _and_ as a subject, they normally take a plural verb. That agreement is one visible result of treating the joined phrases as a unit.',
       },
       {
         kind: 'rule',
@@ -562,17 +644,19 @@ export const PHRASE_DOCS: readonly LessonDoc[] = [
         title: 'A modifier can have different scope in a coordination',
       },
       {
-        kind: 'readings',
-        rows: [
-          {
-            bracketed: 'the [[old men] and women]',
-            means: 'Only the men are old.',
-          },
-          {
-            bracketed: 'the [old [men and women]]',
-            means: 'Both the men and the women are old.',
-          },
-        ],
+        kind: 'contrast',
+        question: 'Whom does old describe?',
+        through: 27,
+        left: {
+          sentenceId: 'fix-coordinated-nominal',
+          readingId: 'r2',
+          caption: '_Old_ sits inside the first coordinate, so only the men are old.',
+        },
+        right: {
+          sentenceId: 'fix-coordinated-nominal',
+          readingId: 'r1',
+          caption: '_Old_ sits above the coordination, so the men and the women are old.',
+        },
       },
       {
         kind: 'prose',

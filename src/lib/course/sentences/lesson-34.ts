@@ -110,20 +110,28 @@ export const LESSON_34 = [
     },
     'They meant to clear the harbour bed.',
   ),
-  svClause(
+  // The overt-subject infinitival: *for them to reach*. Mirrors the
+  // shape `fix-two-markers` proves. A BARE infinitival practice item is still
+  // missing on purpose — the model has no analysis for one (see the lesson's
+  // learner copy and dossier).
+  adjWithCl(
     'c34-g',
     34,
-    pron('He'),
-    v('offered', 'offer', 'Vtr'),
+    det('The', 'shelf'),
+    v('was', 'be', 'Vbe'),
+    'too',
+    'high',
     {
+      subjectMarker: 'for',
+      subject: pron('them'),
       marker: 'to',
       infinitival: true,
-      verb: v('clear', 'clear', 'Vtr'),
-      object: det('the', 'path'),
-      kind: 'nominal',
+      verb: v('reach', 'reach', 'Vtr'),
+      objectGap: true,
+      kind: 'comparative',
       finiteness: 'infinitival',
     },
-    'He put himself forward to free the path.',
+    'They could not reach the shelf, because of its height.',
   ),
   svClause(
     'c34-h',

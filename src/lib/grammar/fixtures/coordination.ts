@@ -187,9 +187,10 @@ export const coordinatedPhrases = sentence(
  * of a premodifier a real question. If *old* sits inside the first coordinate
  * it reaches only *men*; if it sits above the pair it reaches both.
  *
- * Only the second is drawn here. The first needs no new shape — it is an
- * ordinary premodifier inside an ordinary coordinate — and the two together are
- * the ambiguity lesson 27 was missing, having had ten sentences of one type.
+ * Both readings are stored: wide scope (both old) is canonical, and narrow
+ * scope (only the men old) is the alternate lesson 27 draws beside it. The
+ * narrow tree needs no new shape — it is an ordinary premodifier inside an
+ * ordinary coordinate.
  */
 export const coordinatedNominal = sentence(
   'fix-coordinated-nominal',
@@ -220,6 +221,33 @@ export const coordinatedNominal = sentence(
         { clauseType: 'SVO' },
       ),
       { id: 'r1', status: 'canonical', gloss: 'They met people who were old, both men and women.' },
+    ),
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'They')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'met', { lemma: 'meet', verbType: 'Vtr' }),
+            n('NP', 'directObject', [
+              w('Det', 'determiner', 'the'),
+              n('Nom', 'head', [
+                n('Nom', 'coordinate', [w('Adj', 'premodifier', 'old'), w('N', 'head', 'men')]),
+                w('Conj', 'coordinator', 'and'),
+                n('Nom', 'coordinate', [w('N', 'head', 'women')]),
+              ]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r2',
+        status: 'alternate',
+        gloss: 'They met old men, and also women of any age.',
+      },
     ),
   ],
   'r1',

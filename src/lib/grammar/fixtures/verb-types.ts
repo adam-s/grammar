@@ -168,6 +168,41 @@ export const vint = sentence(
   'r1',
 );
 
+/* --------------------------------- Vint with a trailer — She smiled at us.
+ *
+ * The failure case for "nothing comes after an intransitive verb". Something
+ * does follow *smiled* — a prepositional phrase doing the adverbial job — and
+ * no noun phrase pairs with the verb as an object. Mirrors practice sentence
+ * c08-a so the lesson's figure and its graded item tell one story.
+ */
+
+export const vintAdverbial = sentence(
+  'fix-vint-adverbial',
+  'lesson 08 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'smiled', { lemma: 'smile', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'at'),
+              n('NP', 'complement', [w('Pron', 'head', 'us')]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She looked at us with pleasure.' },
+    ),
+  ],
+  'r1',
+);
+
 /* ---------------------------------------------- Vtr — She repaired the engine. */
 
 export const vtr = sentence(
@@ -192,6 +227,36 @@ export const vtr = sentence(
         status: 'canonical',
         gloss: 'She fixed the engine.',
       },
+    ),
+  ],
+  'r1',
+);
+
+/* ----------------------------------------- Vtr, pronoun object — She repaired it.
+ *
+ * The replacement half of lesson 9's substitution pair. *It* stands where
+ * *the engine* stood — one word filling the same direct-object NP position —
+ * which is what shows the three words were one phrase all along.
+ */
+
+export const vtrPronoun = sentence(
+  'fix-vtr-pronoun',
+  'lesson 09 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('Pron', 'head', 'it')]),
+          ]),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She fixed it.' },
     ),
   ],
   'r1',
@@ -415,6 +480,141 @@ export const objectComplementNoun = sentence(
         { clauseType: 'SVOC' },
       ),
       { id: 'r1', status: 'canonical', gloss: 'The club appointed him to the post of treasurer.' },
+    ),
+  ],
+  'r1',
+);
+
+/* ------------------------------------------------ lesson paraphrase partners.
+ *
+ * Each of these is the second half of a pair a lesson page draws side by side:
+ * the *be* paraphrase that supports a subject- or object-complement analysis,
+ * the *to* version of the double-object construction, and the prepositional
+ * *to* that infinitival *to* is contrasted with. The first halves are the
+ * verb-type fixtures above.
+ */
+
+export const vlinkWas = sentence(
+  'fix-vlink-was',
+  'lesson 10 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'soup')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'was', { lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [w('Adj', 'head', 'salty')]),
+          ]),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The soup had a salty taste.' },
+    ),
+  ],
+  'r1',
+);
+
+export const vcParaphrase = sentence(
+  'fix-vc-paraphrase',
+  'lesson 13 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'He')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'is', { lemma: 'be', verbType: 'Vbe' }),
+            n('AdjP', 'subjectComplement', [w('Adj', 'head', 'reliable')]),
+          ]),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'He can be relied on.' },
+    ),
+  ],
+  'r1',
+);
+
+export const vgTo = sentence(
+  'fix-vg-to',
+  'lesson 12 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'He')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'gave', { lemma: 'give', verbType: 'Vtr' }),
+            n('NP', 'directObject', [
+              w('Det', 'determiner', 'the'),
+              w('N', 'head', 'keys', { xpos: 'NNS' }),
+            ]),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'to'),
+              n('NP', 'complement', [w('Pron', 'head', 'her')]),
+            ]),
+          ]),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'He handed her the keys.' },
+    ),
+  ],
+  'r1',
+);
+
+export const vlinkPleased = sentence(
+  'fix-vlink-pleased',
+  'lesson 17 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'seemed', { lemma: 'seem', verbType: 'Vlink' }),
+            n('AdjP', 'subjectComplement', [w('Adj', 'head', 'pleased')]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVC' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She appeared to be pleased.' },
+    ),
+  ],
+  'r1',
+);
+
+export const walkedTo = sentence(
+  'fix-walked-to',
+  'lesson 34 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'walked', { lemma: 'walk', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'to'),
+              n('NP', 'complement', [w('Det', 'determiner', 'the'), w('N', 'head', 'engine')]),
+            ]),
+          ]),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She went over to the engine.' },
     ),
   ],
   'r1',

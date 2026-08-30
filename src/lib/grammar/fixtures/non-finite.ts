@@ -288,3 +288,63 @@ export const gerundAfterPreposition = sentence(
   ],
   'r1',
 );
+
+/* ---------------- particle against preposition — She looked it up. / The children climbed up it.
+ *
+ * Lesson 25's sharpest evidence, with pronouns so nothing else varies. A
+ * neutral pronoun object comes between the verb and its particle, so *up*
+ * in the first sentence belongs to *looked*. In the second, *up* keeps its
+ * complement beside it — a prepositional phrase, with the same spelling.
+ */
+
+export const particlePronoun = sentence(
+  'fix-particle-pronoun',
+  'lesson 25 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Pron', 'head', 'She')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'looked', { lemma: 'look', verbType: 'Vtr' }),
+            n('NP', 'directObject', [w('Pron', 'head', 'it')]),
+            w('Part', 'particle', 'up', { xpos: 'RP', partKind: 'verbal' }),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'She searched for it in a reference.' },
+    ),
+  ],
+  'r1',
+);
+
+export const prepositionPronoun = sentence(
+  'fix-preposition-pronoun',
+  'lesson 25 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [w('Det', 'determiner', 'The'), w('N', 'head', 'children')]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'climbed', { lemma: 'climb', verbType: 'Vint' }),
+            n('PP', 'adverbial', [
+              w('P', 'head', 'up'),
+              n('NP', 'complement', [w('Pron', 'head', 'it')]),
+            ]),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The children went up it by climbing.' },
+    ),
+  ],
+  'r1',
+);

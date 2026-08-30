@@ -15,6 +15,13 @@ instance, it is a fact wearing a rule's clothes; write the principle instead.
 
 - Write at a 10th-grade reading level in chat, and in any copy the learner
   reads.
+- Write learner copy in a style representative of the references actually read
+  for that topic. Prefer vocabulary and explanatory habits shared across the
+  sources; do not imitate one author or import a specialist term merely to sound
+  authoritative.
+- An uncommon technical word must either be part of the course's own
+  terminology or earn its place from the references and the explanation. If
+  ordinary source language says the same thing, use it.
 - Plain language first, the term second. Introduce a name for something the
   reader already understands, never as the thing to be understood.
 - Trust what the learner already knows in practice, even when they have

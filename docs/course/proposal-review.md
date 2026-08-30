@@ -107,7 +107,7 @@ Status values:
 | 1   | Most agreed.                | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 2   | The bell rang.              | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 3   | A window opened.            | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
-| 4   | Those dogs barked.          | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
+| 4   | Those old dogs barked.      | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 5   | My phone buzzed loudly.     | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 6   | Every seat squeaked.        | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 7   | Guests complained.          | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
@@ -239,7 +239,7 @@ Status values:
 
 | #   | Sentence                                    | Natural reading      | Intended parse             | Scope reach           | Model / fixture             |
 | --- | ------------------------------------------- | -------------------- | -------------------------- | --------------------- | --------------------------- |
-| 1   | Those negotiations collapsed.               | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
+| 1   | Those negotiations collapsed under pressure. | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 2   | The auditor questioned the figures.         | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 3   | The foreman gave the apprentice a warning.  | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 4   | They called her a taxi.                     | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
@@ -360,7 +360,7 @@ Status values:
 | #   | Sentence                               | Natural reading      | Intended parse             | Scope reach           | Model / fixture             |
 | --- | -------------------------------------- | -------------------- | -------------------------- | --------------------- | --------------------------- |
 | 1   | Three witnesses testified.             | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
-| 2   | Two engines failed.                    | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
+| 2   | The two agreed.                        | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 3   | The first train arrived.               | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 4   | The second bridge collapsed.           | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 5   | The first two runners finished.        | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
@@ -530,7 +530,7 @@ Status values:
 | 4   | That jury declined to accept the claim. | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 5   | She hoped to finish the survey.         | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 6   | They planned to dredge that harbour.    | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
-| 7   | He offered to clear the path.           | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
+| 7   | The shelf was too high for them to reach. | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 8   | The driver promised to wait outside.    | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 9   | The council agreed to fund the repairs. | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |
 | 10  | The box was too heavy to lift.          | Pending human review | Step recorded; parse built | Accumulation enforced | Audits and build sweep pass |

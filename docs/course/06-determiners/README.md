@@ -201,12 +201,11 @@ watching:
 | a determiner must be followed by a noun             | _Most agreed_                            |
 | a determiner is always one word                     | the DP _almost every_ fills the function |
 
-The worked lesson supplies an adjective contrast, but the graded set contains
-no NP in which a determiner competes directly with an adjective or noun
-premodifier. A learner can still answer much of the set from position and a
-memorised inventory. A later revision should decide whether that is acceptable
-for an introductory class lesson or whether one practice item should contain a
-visible competitor at the available scope.
+The worked lesson supplies an adjective contrast, and _Those old dogs barked_
+puts one competitor into the graded set: an adjective standing between the
+determiner and the noun, unlabelled at this scope. The rest of the set is still
+answerable from position and a memorised inventory, which an introductory
+class lesson accepts.
 
 ## What the research should change
 

@@ -455,3 +455,202 @@ export const clauseSubjectComplement = sentence(
   ],
   'r1',
 );
+
+/* --------- a matched relative pair — The gate that rattled / that the storm damaged.
+ *
+ * Lesson 31's evidence. The head noun and the outer frame hold still — a gate,
+ * and it opened — so the one visible change is where the relative clause's gap
+ * sits: in the subject slot of *rattled*, or in the object slot of *damaged*.
+ */
+
+export const gateSubjectRelative = sentence(
+  'fix-gate-subject-relative',
+  'lesson 31 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'gate'),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  w('Subord', 'marker', 'that'),
+                  gap('NP', 'subject'),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'rattled', { lemma: 'rattle', verbType: 'Vint' }),
+                  ]),
+                ],
+                { clauseKind: 'relative', clauseType: 'SV' },
+              ),
+            ]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'opened', { lemma: 'open', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The gate that had been rattling came open.' },
+    ),
+  ],
+  'r1',
+);
+
+export const gateObjectRelative = sentence(
+  'fix-gate-object-relative',
+  'lesson 31 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'gate'),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  w('Subord', 'marker', 'that'),
+                  n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'storm')]),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'damaged', { lemma: 'damage', verbType: 'Vtr' }),
+                    gap('NP', 'directObject'),
+                  ]),
+                ],
+                { clauseKind: 'relative', clauseType: 'SVO' },
+              ),
+            ]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'opened', { lemma: 'open', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'The gate the storm had damaged came open.' },
+    ),
+  ],
+  'r1',
+);
+
+/* --------- the fixed-word twin of fix-supplementary-relative.
+ *
+ * Same words, no commas: the relative clause is integrated, inside the nominal
+ * that *visitors* heads, and helps identify which visitors waited. Lesson 39
+ * draws the two side by side so the commas are evidence for a relationship
+ * rather than decoration.
+ */
+
+export const integratedRelative = sentence(
+  'fix-integrated-relative',
+  'lesson 39 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'visitors'),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  w('Subord', 'marker', 'who'),
+                  gap('NP', 'subject'),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'complained', { lemma: 'complain', verbType: 'Vint' }),
+                  ]),
+                ],
+                { clauseKind: 'relative', clauseType: 'SV' },
+              ),
+            ]),
+          ]),
+          n('VP', 'predicate', [w('V', 'head', 'waited', { lemma: 'wait', verbType: 'Vint' })]),
+          pt('.'),
+        ],
+        { clauseType: 'SV' },
+      ),
+      { id: 'r1', status: 'canonical', gloss: 'Only the visitors who had complained waited.' },
+    ),
+  ],
+  'r1',
+);
+
+/* --------- the synthesis figure — a relative clause and a nominal clause at once.
+ *
+ * Lesson 40 needs one worked sentence with several relationships from the
+ * course's final stretch, built from constructions the model already proves
+ * elsewhere: a subject-gap relative inside the subject nominal, and a
+ * that-marked nominal clause as direct object. A demonstration fixture, not a
+ * graded item, so the page exposes no assessment answer.
+ */
+
+export const synthesis = sentence(
+  'fix-synthesis',
+  'lesson 40 demonstration',
+  [
+    build(
+      n(
+        'S',
+        null,
+        [
+          n('NP', 'subject', [
+            w('Det', 'determiner', 'The'),
+            n('Nom', 'head', [
+              w('N', 'head', 'mechanic'),
+              n(
+                'Cl',
+                'postmodifier',
+                [
+                  w('Subord', 'marker', 'who'),
+                  gap('NP', 'subject'),
+                  n('VP', 'predicate', [
+                    w('V', 'head', 'repaired', { lemma: 'repair', verbType: 'Vtr' }),
+                    n('NP', 'directObject', [
+                      w('Det', 'determiner', 'the'),
+                      w('N', 'head', 'engine'),
+                    ]),
+                  ]),
+                ],
+                { clauseKind: 'relative', clauseType: 'SVO' },
+              ),
+            ]),
+          ]),
+          n('VP', 'predicate', [
+            w('V', 'head', 'knew', { lemma: 'know', verbType: 'Vtr' }),
+            n(
+              'Cl',
+              'directObject',
+              [
+                w('Subord', 'marker', 'that'),
+                n('NP', 'subject', [w('Det', 'determiner', 'the'), w('N', 'head', 'belt')]),
+                n('VP', 'predicate', [
+                  w('V', 'head', 'broke', { lemma: 'break', verbType: 'Vint' }),
+                ]),
+              ],
+              { clauseKind: 'nominal', clauseType: 'SV' },
+            ),
+          ]),
+          pt('.'),
+        ],
+        { clauseType: 'SVO' },
+      ),
+      {
+        id: 'r1',
+        status: 'canonical',
+        gloss: 'The mechanic who fixed the engine knew the belt had broken.',
+      },
+    ),
+  ],
+  'r1',
+);
