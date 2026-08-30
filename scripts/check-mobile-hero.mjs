@@ -10,6 +10,10 @@
  *   npm run dev            # in one terminal
  *   node scripts/check-mobile-hero.mjs [base-url]
  *
+ * Run browser suites ONE AT A TIME. They share the dev server and a page's
+ * session; running this concurrently with check-feedback.mjs produces false
+ * navigation/session failures.
+ *
  * Exits non-zero on the first width or theme where the rendered result
  * contradicts the contract.
  */
