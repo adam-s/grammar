@@ -206,6 +206,12 @@
     max-width: var(--measure);
   }
 
+  /* A viewport takeover is exactly the child the reading measure must not
+     reach: capped to the measure it left a strip of article uncovered. */
+  .lesson > :global(.demo) {
+    max-width: none;
+  }
+
   /* The demonstration is the widest thing on the page, and it comes first. */
   .lesson > :global(.hero) {
     width: min(var(--figure), calc(100% + 2 * var(--page-pad)));

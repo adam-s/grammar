@@ -1,138 +1,122 @@
-# Review: finish the lesson-evidence pass
+# CORRECTION TASK — Mobile introduction overlay
 
-The implementation has been reviewed. Keep the completed fixture, lesson, and
-practice work. Do not rebuild it merely to make the diff smaller.
+This supersedes the previous handoff. Review the current uncommitted implementation and fix the verified mobile defects below. Preserve the new content strategy: a quiet inline poster on phones and an explicit full-screen demonstration.
 
-## Accepted work
+## Root cause of the reported broken rendering
 
-Seven requests are satisfied:
+The screenshot is not a duplicate static figure. The full-screen demonstration is open over the article, but the overlay is transparent.
 
-1. Lesson 14 now shows the controlled _opened/placed the box under the bench_
-   contrast. The noun phrase and location stay fixed while the verb and the
-   adverbial's requiredness change.
-2. Lesson 15 now includes _Those negotiations collapsed under pressure_ as an
-   optional-PP control in the ten-sentence progression.
-3. Lesson 21 now previews the relative clause _that froze_ as a non-PP
-   postmodifier and declares that its labels run ahead of the lesson.
-4. Lesson 27 now renders both readings of _the old men and women_ from the two
-   stored readings of `fix-coordinated-nominal`.
-5. Lesson 31 now has a purpose-built gate pair whose outer frame and head noun
-   stay fixed while the gap changes from subject to object.
-6. Lesson 39 now has a fixed-word integrated/supplementary relative pair. The
-   words stay fixed and the attachment changes; the prose treats commas as
-   evidence for the reading.
-7. Lesson 40 now uses the non-graded `fix-synthesis` fixture. It demonstrates a
-   relative clause inside the subject nominal and a nominal clause as the
-   direct object without exposing a practice answer.
+In `LessonHero.svelte`, `.demo` declares `background: var(--bg)`. This project has no `--bg` token, so the computed background is `rgba(0, 0, 0, 0)`. The animated tree and pointer are therefore drawn over the poster, button, and article prose beneath them. That produces the apparent second word row and the text collision in the screenshot.
 
-Two requests are partly satisfied and remain honestly blocked:
+Use an existing opaque theme token appropriate to the workspace, likely `--canvas`, and verify both light and dark themes. Do not hide the symptom with clipping or by removing the pointer.
 
-- Lesson 23 has a second clear head use, _The two agreed_. The multiword numeral
-  is still absent because the course has no approved relations for the inside
-  of a complex numeral.
-- Lesson 34 has an overt infinitival subject in _for them to reach_. A bare
-  infinitival clause is still absent because the available analyses either
-  produce an auxiliary plus plain verb or require an unresolved perception or
-  causative complement structure.
+## Second verified breakpoint defect
 
-Keep both inline `PRACTICE REQUEST` comments until those model decisions are
-made. Do not invent an internal numeral analysis or mislabel a bare complement
-just to remove a comment.
+At exactly 700×800, `.demo` has `position: fixed; inset: 0`, but its computed width is only 592 px. The lesson rule `.lesson > :global(*) { max-width: var(--measure); }` also applies to the overlay. The result is a 108 px uncovered strip and visible app chrome. At 500 px the overlay fills the width only because the viewport is narrower than that cap.
 
-## Required follow-up
+Exempt the modal overlay from the lesson reading measure, or otherwise give it a true viewport-level presentation boundary. Verify `width: 100dvw`, `height: 100dvh` (with a safe fallback where needed), no max-width, and an opaque background. It must cover the lesson, both navigation pills, and the bottom app navigation at every phone width through the inclusive 700 px breakpoint.
 
-Update the dossiers whose present-state descriptions now contradict the code:
+## The inline poster is still too large on wider phones
 
-- `docs/course/27-attachment-changes-meaning/README.md` still says
-  `fix-coordinated-nominal` shows only the wide-scope reading and says a
-  two-reading fixture still needs to be built. It now stores and renders both
-  readings.
-- `docs/course/31-relative-clauses/README.md` still says the subject/object
-  contrast needs a separate fixture. Record `fix-gate-subject-relative` and
-  `fix-gate-object-relative` as the matched, non-graded evidence now used by
-  the page. Preserve the lesson's decision to defer the
-  integrated/supplementary contrast to lesson 39.
-- `docs/course/39-punctuation-is-evidence/README.md` still says the page lacks
-  a fixed-word non-practice relative pair and instructs a future revision to
-  build one. Record `fix-integrated-relative` beside
-  `fix-supplementary-relative`, then remove the obsolete recommendation.
+The poster is structurally correct and no longer overlaps the following prose on a fresh load, but it is not compact:
 
-Search those three dossiers for nearby claims such as “currently,” “needs,”
-“only,” and “add” so the surrounding tables and revision lists agree with the
-new state. Change only claims made false by this implementation; retain genuine
-limits and research notes.
+- 320×700: poster 368 px tall; diagram 319 px
+- 390×844: poster 437 px tall; diagram 388 px
+- 500×716: poster 547 px tall; diagram 498 px
+- 700×800: poster 746 px tall; diagram 697 px
 
-After the dossier cleanup, render lessons 14, 15, 21, 23, 27, 31, 34, 39, and
-40 at desktop and narrow widths and read each lesson from top to bottom. The
-reviewer's in-app tab rendered all nine at 1280 × 720 with no document-level
-horizontal overflow, but that tab did not expose viewport resizing, so narrow
-verification is still required. Check especially the two-diagram contrasts in
-lessons 27, 31, and 39 and the wide synthesis tree in lesson 40.
+At 500–700 px, the demonstration preview consumes almost a full viewport and pushes the primary explanation too far down. Bound the poster diagram by both available width and viewport height. A useful starting constraint is approximately `min(46svh, 420px)`, but judge the rendered result rather than preserving that exact formula. Scale the whole SVG through its viewBox; do not crop the words, labels, or edges. The button should remain directly below the diagram in normal flow.
 
-## Verification already completed
+## Lifecycle and modal behavior still need work
 
-- `npm test`: 5,527 passed, 0 failed.
-- All nine affected routes loaded at 1280 × 720.
-- The lesson-40 synthesis figure rendered from the real fixture.
-- Narrow-width visual verification was not completed because the review
-  browser session did not provide a resize control. Do not report it as done
-  until you have actually rendered and read it.
+1. Opening leaves keyboard focus on the launch button behind the modal. Move focus into the demonstration, preferably to the primary Pause/Play control.
+2. Keep Tab and Shift+Tab within the two modal controls while it is open. Escape should close it.
+3. Closing correctly returns focus in the current implementation, but component destruction while open has no cleanup hook. Release every scroll lock on unmount or navigation without trying to focus a destroyed launch button.
+4. Keep the current cancellation behavior: closing while paused or moving must unmount the stage immediately and settle pending clock work without a later press.
+5. Use the project’s actual scroll container, restore every inline overflow value exactly, and verify rotation out of the phone breakpoint.
 
-When finished, append a short completion report here with the dossier sections
-changed, the desktop and narrow viewport sizes used, and the exact checks run.
+## Regression checks to add
+
+Add browser-level or component-level checks for geometry and modal state, not only unit tests of the motion utilities.
+
+- Before activation at 320, 390, 500, and 700 CSS px, there is exactly one `figure.poster svg[aria-label="Sentence structure"]`, no `.demo`, no hero pointer, and no fixed palette.
+- The poster’s SVG bottom is at or above the poster bottom, and the first prose block begins below the poster with the intended gap.
+- After activation, `.demo` has an opaque computed background and a bounding box equal to the visual viewport. Its computed `max-width` must not be the lesson measure.
+- No lesson prose, navigation pill, or bottom navigation is visible through or above the takeover.
+- Focus enters the modal, remains inside it, and returns to the launch button on close.
+- Close while moving and while paused; reopen and confirm the first decision starts cleanly.
+- Test light and dark themes and the inclusive 700 px breakpoint.
+- Keep the browser console clean.
+
+## What already works and must be preserved
+
+- A fresh phone load now mounts one static poster and no animated stage.
+- At 320, 390, 430, and 500 px, the poster is in normal flow and the following prose begins after its box.
+- The full-screen stage mounts only after activation.
+- Desktop keeps the inline autoplay presentation.
+- The practice workspace keeps its intentional mobile bottom sheet.
+- The extracted `HeroStage`, awaited choreography, shared pointer clock, moving-target tracking, and cancellation architecture are sound directions; do not fold them back into `LessonHero`.
+
+## Verification already run
+
+`npm run all` passes: lint, Svelte check, 5,542 tests, build, and sentence audit all completed successfully. The readiness command still reports 400 course readings awaiting human review; that is the existing non-failing report, not evidence that the mobile UI is correct.
+
+After fixing the defects, run `npm run all` again and visually inspect the closed poster and open takeover at 320×700, 390×844, 500×716, and 700×800. Report exact results in this file so the next reviewer can distinguish code intent from rendered evidence.
 
 ---
 
-## Completion report (implementing agent, 30 August 2026)
+## Completion report — mobile overlay corrections (implementing agent)
 
-### Dossier sections changed
+### Fixes
 
-- `27-attachment-changes-meaning/README.md` — the "Current corpus, fixtures,
-  and shortcuts" paragraph about `fix-coordinated-nominal` now records that
-  both scope readings are stored (wide canonical, narrow alternate) and drawn
-  via `readingId`; revision-direction item 3 records the scope contrast as
-  built rather than instructing it.
-- `31-relative-clauses/README.md` — the "Current practice and fixtures"
-  paragraph records `fix-gate-subject-relative` / `fix-gate-object-relative`
-  as the matched non-graded pair on the page, and keeps the
-  integrated/supplementary deferral to lesson 39.
-- `39-punctuation-is-evidence/README.md` — the rendered-fixture list adds
-  `fix-integrated-relative`; the shortcut-register row about comma-marked
-  relatives records the built fixture pair instead of asking for one; and
-  revision-direction item 1 records the pair as built.
+1. **Transparent overlay** — `.demo` now uses `background: var(--canvas)`
+   (`--bg` never existed). Computed live: `oklch(0.965 0 0)` light; dark
+   verified by the themed check run.
+2. **Reading-measure cap** — the exemption lives beside the rule that caused
+   it: `Lesson.svelte` adds `.lesson > :global(.demo) { max-width: none; }`
+   (a component-local `max-width` tied on specificity and lost on order —
+   the new browser check caught exactly that on its first run). `.demo` also
+   declares `width/height: 100dvw/100dvh` with `vw/vh` fallbacks.
+3. **Poster size** — the fluid diagram SVG is capped at
+   `max-height: min(46svh, 420px)` (plain-`420px` fallback), scaling whole
+   through its viewBox; nothing cropped, button in flow below.
+4. **Modal focus** — opening focuses Pause/Play; Tab and Shift+Tab cycle the
+   two controls only; Escape closes; closing returns focus to the launch
+   control.
+5. **Destroy cleanup** — an unmount effect releases every scroll lock
+   without touching the (gone) launch button. Scroll locks store and restore
+   exact inline overflow values; rotation out of the breakpoint closes the
+   takeover and releases locks (verified earlier this pass).
 
-No genuine limits or research notes were removed. Earlier in the pass, the
-15, 21, 34 and 40 dossiers were also updated where the implementation made
-their claims stale.
+### Regression check added
 
-### Rendering
+`scripts/check-mobile-hero.mjs` — browser-level, exits non-zero. At 320×700,
+390×844, 500×716, 700×800, light AND dark, it asserts: exactly one poster
+svg and no `.demo`/pointer/palette before activation; svg inside the poster
+box; first prose below the poster; opaque computed background; takeover box
+equal to the viewport with `max-width: none`; focus entering, staying in,
+and returning from the modal; close-while-moving leaves nothing and nothing
+resumes 900 ms later; reopen starts with zero labels; console clean.
+Current result: `CLEAN — poster and takeover verified at 4 widths, light
+and dark.`
 
-All nine lessons (14, 15, 21, 23, 27, 31, 34, 39, 40) rendered from the live
-dev server and read top to bottom at:
+### Rendered evidence (exact, from the live app)
 
-- desktop: 1280px viewport width;
-- narrow: 480px viewport width.
+| Viewport | Poster (svg) height | Takeover box | Takeover background |
+| --- | --- | --- | --- |
+| 320×700 | 368px (319px, width-bound) | 320×700@0,0 | oklch(0.965 0 0) |
+| 390×844 | 437px (388px, at the 46svh cap) | 390×844@0,0 | oklch(0.965 0 0) |
+| 500×716 | 378px (329px; was 547px) | 500×716@0,0 | oklch(0.965 0 0) |
+| 700×800 | 417px (368px; was 746px) | 700×800@0,0 | oklch(0.965 0 0) |
 
-No document-level horizontal overflow at either width. The two-diagram
-contrasts in 27, 31, and 39 are legible at 480px (trees scale into the
-column), and the lesson-40 synthesis tree fits the narrow width with its
-caption carrying the reading.
+Screenshots read at all four widths, closed and open: the poster sits in
+flow with the article continuing below it; the open takeover is opaque
+edge-to-edge (including the inclusive 700px breakpoint), covering prose,
+navigation pills, and bottom navigation, with the pointer performing on the
+bottom-sheet palette and Pause/Close visible top-right.
 
-### Checks run
+### `npm run all`
 
-- `npm test` — 5,527 pass, 0 fail (includes audits and palette-reachability
-  over the new fixtures and readings, and the new reading-citation test).
-- `npm run check` (svelte-check) — 0 errors, 0 warnings.
-- `npm run lint` (eslint + prettier) — clean.
-- `npm run course:sentences` — 44 files, 65 step claims, 3 absence claims,
-  no problems.
-- Browser build-sweeps, all CLEAN: fix-gate-subject-relative,
-  fix-gate-object-relative, fix-integrated-relative, fix-synthesis,
-  fix-coordinated-nominal (both readings replay), c15-a, c23-b, c34-g.
-
-### Still blocked, as agreed
-
-The two `PRACTICE REQUEST` comments remain in place: lesson 23's multiword
-numeral (no approved internal analysis) and lesson 34's bare infinitival
-clause (auxiliary-plus-verb or unresolved object control). No numeral analysis
-was invented and no complement was mislabelled.
+Lint, prettier, svelte-check (0 errors, 0 warnings), 5,542 tests pass,
+build clean, sentence audit clean. Browser consoles clean at every checked
+width and theme.

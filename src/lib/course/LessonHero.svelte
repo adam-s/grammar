@@ -1,238 +1,195 @@
 <script lang="ts">
   /**
-   * The wordless demonstration under a lesson title.
+   * The wordless demonstration under a lesson title — presented to fit the
+   * reader's screen.
    *
-   * It shows somebody using the app: a run of words lights up, the menu opens
-   * beside it, an option is taken, and the label lands on the diagram. Nothing
-   * explains it, because the whole point is that the interaction explains
-   * itself.
+   * On a desktop the article has room to carry the performance inline, so it
+   * autoplays there exactly as before. On a phone it must not: the palette's
+   * phone presentation is a fixed bottom sheet, and a passive demonstration
+   * that parks a half-viewport sheet over an article the reader is trying to
+   * scroll is the animation demanding attention the prose has already earned.
    *
-   * It mounts the REAL `LabelPanel`, not a picture of one. `getWorkspace()`
-   * reads from context, so this figure provides its own camera and the palette
-   * places itself against this stage exactly as it does in the workspace. What
-   * the reader watches and what the reader then does are the same component,
-   * the same option model, and the same placement rules.
-   *
-   * The panel is inert here — pointer events are off and picks go nowhere —
-   * because it is being driven rather than used.
-   *
-   * Motion runs only while the figure is on screen, and stops entirely for a
-   * reader who asked for reduced motion, who gets the finished diagram.
+   * So at the phone breakpoint the article gets a QUIET poster — the finished
+   * diagram, in normal document flow, with nothing fixed and nothing moving —
+   * and one explicit control. Only when the reader asks does the performance
+   * open, as a full-screen surface with its own Play/Pause and Close, scroll
+   * locked behind it, and everything cancelled and unmounted the moment it
+   * closes. Opening again starts from the first decision: the stage inside
+   * is a fresh mount each time.
    */
-  import { onMount } from 'svelte';
+  import Play from '@lucide/svelte/icons/play';
+  import Pause from '@lucide/svelte/icons/pause';
+  import X from '@lucide/svelte/icons/x';
 
-  import Diagram, {
-    diagramSize,
-    selectionFocusRect,
-    selectionRect,
-    drawnRect,
-  } from '../grammar/Diagram.svelte';
-  import LabelPanel from '../grammar/LabelPanel.svelte';
-  import { quizView } from '../grammar/session.ts';
-  import { optionsFor, type LabelOption } from '../grammar/options.ts';
-  import type { Selection } from '../grammar/options.ts';
-  import { emptyBuild } from '../grammar/builder.ts';
-  import type { Reading, SentenceEntry, Span } from '../grammar/types.ts';
-  import { observeStageSize } from '../workspace/stage-resize.ts';
-  import { fit, type Size } from '../workspace/viewport.ts';
-  import { Workspace, setWorkspace } from '../workspace/workspace.svelte.ts';
-  import { beatAt, duration, frameDepth, script, stateIndexFor } from './hero-script.ts';
-  import { replaySentence } from './sentence-renderer.ts';
+  import type { Reading, SentenceEntry } from '../grammar/types.ts';
+  import { PHONE_QUERY, useMediaQuery } from '../workspace/responsive.svelte.ts';
+  import HeroStage from './HeroStage.svelte';
+  import StaticFigure from './StaticFigure.svelte';
 
   /** The pruned tree, when the lesson shows only part of the parse. */
   type Props = { sentence: SentenceEntry; reading?: Reading };
   let { sentence, reading }: Props = $props();
 
+  const phone = useMediaQuery(PHONE_QUERY);
+
+  let open = $state(false);
+  let paused = $state(false);
+  let launch = $state<HTMLButtonElement | null>(null);
+  let poster = $state<HTMLElement | null>(null);
+  let playToggle = $state<HTMLButtonElement | null>(null);
+  let closeButton = $state<HTMLButtonElement | null>(null);
+  let unlock: (() => void) | null = null;
+
   /**
-   * A little air above the tree. The palette needs no reservation of its own —
-   * `placeFloating` keeps it inside the stage — so this is breathing room
-   * rather than a constraint.
+   * Freeze the surface the article scrolls in — which on a lesson page is an
+   * inner panel, not the document — so the takeover cannot lose the reader's
+   * place. Restored exactly on close.
    */
-  const HEADROOM = 32;
-  const FLOOR = 10;
-  /**
-   * The figure never gets shorter than this, or taller. The floor is set by the
-   * palette rather than by the tree: clipping the real palette would make this
-   * a picture of the app again. It allows more than the palette's declared
-   * height, because a header carrying a formal test renders taller than the
-   * constant `placeFloating` is given.
-   */
-  const MIN_H = 452;
-  const MAX_H = 620;
+  function lockScroll(): () => void {
+    const locked: { el: HTMLElement; overflow: string }[] = [];
+    const freeze = (el: HTMLElement) => {
+      locked.push({ el, overflow: el.style.overflow });
+      el.style.overflow = 'hidden';
+    };
+    for (let el = poster?.parentElement ?? null; el; el = el.parentElement) {
+      const style = getComputedStyle(el);
+      const scrolls =
+        (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
+        el.scrollHeight > el.clientHeight;
+      if (scrolls) freeze(el);
+    }
+    if (document.body.scrollHeight > document.documentElement.clientHeight) {
+      freeze(document.body);
+    }
+    return () => {
+      for (const { el, overflow } of locked) el.style.overflow = overflow;
+    };
+  }
 
-  const steps = $derived(replaySentence(sentence, reading).steps);
-  const beats = $derived(script(steps));
-  const total = $derived(duration(steps));
-  const finished = $derived(replaySentence(sentence, reading).final);
-  /** One frame for the whole loop: neither the words nor the following prose move. */
-  const depth = $derived(frameDepth(finished, sentence.words));
+  function openDemo() {
+    unlock = lockScroll();
+    paused = false;
+    open = true;
+  }
 
-  let elapsed = $state(0);
-  let running = $state(false);
-  let reduced = $state(false);
+  function closeDemo() {
+    open = false;
+    unlock?.();
+    unlock = null;
+    // The reader left off at the launch control; put them back there.
+    launch?.focus();
+  }
 
-  const beat = $derived(beatAt(beats, elapsed, total));
-  const stateIndex = $derived(beat ? stateIndexFor(beat) : steps.length - 1);
-  const step = $derived(beat ? steps[beat.step] : null);
+  function onkeydown(event: KeyboardEvent) {
+    if (!open) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeDemo();
+      return;
+    }
+    // A modal holds the keyboard: Tab cycles its two controls and nothing
+    // reaches the article behind the takeover.
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      const at = document.activeElement;
+      const next = event.shiftKey
+        ? at === playToggle
+          ? closeButton
+          : playToggle
+        : at === closeButton
+          ? playToggle
+          : closeButton;
+      next?.focus();
+    }
+  }
 
-  /** What is on the diagram now. The label lands on `commit`, never before. */
-  const build = $derived(
-    reduced ? finished : stateIndex < 0 ? emptyBuild() : (steps[stateIndex]?.state ?? emptyBuild()),
-  );
-
-  /** The palette is open while the decision is being made, and not otherwise. */
-  const menuStep = $derived(!reduced && (beat?.phase === 'open' || beat?.phase === 'aim'));
-
-  /** The selection the palette is opened on, in the palette's own terms. */
-  const panelSelection = $derived<Selection | null>(
-    !menuStep || !step
-      ? null
-      : step.kind === 'form'
-        ? { kind: 'span', span: step.span }
-        : { kind: 'node', id: step.nodeId },
-  );
-
-  /** The words the decision is about, lit on the diagram throughout the beat. */
-  const lit = $derived<Span | null>(reduced || !beat || !step ? null : step.span);
-
-  // The same projection the learner meets, not the raw structural palette.
-  // The hero's whole claim is that this IS the palette; showing evidence notes
-  // and number keys the real one no longer has would make it a picture of a
-  // product that does not exist.
-  const panel = $derived(
-    quizView(optionsFor(build, sentence.words, panelSelection ?? { kind: 'none' })),
-  );
-
-  /** Which row the pointer is resting on during `aim`. */
-  const pointerOn = $derived.by(() => {
-    if (beat?.phase !== 'aim' || !step) return null;
-    const wanted = step.choice.form ?? step.choice.func ?? step.choice.verbType;
-    const hit = panel.groups
-      .flatMap((g) => g.options)
-      .find((o: LabelOption) => (o.form ?? o.func ?? o.verbType) === wanted);
-    return hit?.key ?? null;
+  /** The modal takes the keyboard when it opens, starting at Pause/Play. */
+  $effect(() => {
+    if (open) playToggle?.focus();
   });
 
-  const anchor = $derived(
-    panelSelection
-      ? selectionRect(build.constituents, sentence.words, panelSelection, depth)
-      : null,
-  );
-  const focus = $derived(
-    panelSelection
-      ? selectionFocusRect(build.constituents, sentence.words, panelSelection, depth)
-      : null,
-  );
-  const avoid = $derived(drawnRect(build.constituents, sentence.words, depth));
-  const content = $derived(diagramSize(build.constituents, sentence.words, depth));
-
-  /** The finished frame is reserved before the first label lands. */
-  const stageH = $derived(
-    Math.min(MAX_H, Math.max(MIN_H, HEADROOM + Math.min(content.h, MAX_H - HEADROOM))),
-  );
-
-  const ws = setWorkspace(new Workspace());
-  let stage = $state<HTMLDivElement | null>(null);
-  let stageSize = $state<Size>({ w: 0, h: 0 });
-  let ready = $state(false);
-
   /**
-   * `content` is already the finished size because of `depth`, so this fits
-   * once and then holds. Fitting per frame would make the tree shrink as it
-   * grows, which reads as the picture fighting the reader.
+   * Rotating a phone to landscape leaves the phone breakpoint, which swaps
+   * this figure to its inline presentation — so the takeover must close
+   * properly on the way out, or its scroll locks outlive the surface that
+   * owned them.
    */
   $effect(() => {
-    if (stageSize.w === 0 || stageSize.h === 0) return;
-    ws.stage = stageSize;
-    // Scale to what is left under the headroom, then pin the bottom of the
-    // diagram to the floor. The word row is the one thing that must not move:
-    // the tree grows upward out of it, and a sentence that drifts while its
-    // own structure is being built is unreadable.
-    const room = { w: stageSize.w, h: Math.max(80, stageSize.h - HEADROOM) };
-    const fitted = fit(content, room, 0);
-    ws.viewport = {
-      ...fitted,
-      ty: stageSize.h - FLOOR - content.h * fitted.z,
-    };
+    if (!phone.matches && open) closeDemo();
   });
 
-  const worldStyle = $derived(
-    `width:${content.w}px;height:${content.h}px;` +
-      `transform:translate3d(${ws.viewport.tx}px,${ws.viewport.ty}px,0) scale(${ws.viewport.z})`,
-  );
-
-  onMount(() => {
-    reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const stop = stage
-      ? observeStageSize(stage, (size) => {
-          stageSize = size;
-          ready = true;
-        })
-      : undefined;
-
-    // Expensive motion runs only while the figure is on screen.
-    let seen = false;
-    const io = stage
-      ? new IntersectionObserver(
-          ([entry]) => {
-            seen = entry?.isIntersecting ?? false;
-            running = seen && !reduced;
-          },
-          { threshold: 0.15 },
-        )
-      : null;
-    if (stage && io) io.observe(stage);
-
-    let raf = 0;
-    let last = 0;
-    const tick = (now: number) => {
-      if (last && running) elapsed += now - last;
-      last = now;
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
+  /**
+   * Leaving the page with the takeover open must still release every scroll
+   * lock — and must not try to focus a launch button that no longer exists.
+   */
+  $effect(() => {
     return () => {
-      cancelAnimationFrame(raf);
-      io?.disconnect();
-      stop?.();
+      unlock?.();
+      unlock = null;
     };
   });
 </script>
 
-<figure
-  class="hero"
-  aria-label="A diagram of “{sentence.text}” being built, one decision at a time"
->
-  <div class="stage" class:ready bind:this={stage} style="height:{stageH}px">
-    <div class="world" style={worldStyle}>
-      <Diagram
-        words={sentence.words}
-        constituents={build.constituents}
-        minDepth={depth}
-        selection={lit ? { kind: 'span', span: lit } : { kind: 'none' }}
-        interactive={false}
-        onpick={() => {}}
-        ondraft={() => {}}
-      />
-    </div>
+<svelte:window {onkeydown} />
 
-    <!-- The real palette, driven. Inert: it is being demonstrated, not used. -->
-    <div class="driven" aria-hidden="true">
-      <LabelPanel
-        {panel}
-        anchor={menuStep ? anchor : null}
-        {focus}
-        {avoid}
-        {pointerOn}
-        interactive={false}
-        onpick={() => {}}
-        onclose={() => {}}
-      />
+{#if !phone.matches}
+  <figure
+    class="hero"
+    aria-label="A diagram of “{sentence.text}” being built, one decision at a time"
+  >
+    <HeroStage {sentence} {reading} mode="inline" />
+  </figure>
+{:else}
+  <figure
+    class="hero poster"
+    bind:this={poster}
+    aria-label="The finished diagram of “{sentence.text}”"
+  >
+    <StaticFigure {sentence} {reading} />
+    <button class="watch" type="button" bind:this={launch} onclick={openDemo}>
+      <Play size={13} strokeWidth={2.2} aria-hidden="true" />
+      Watch how this is built
+    </button>
+  </figure>
+
+  {#if open}
+    <div
+      class="demo"
+      role="dialog"
+      aria-modal="true"
+      aria-label="A demonstration of “{sentence.text}” being built, one decision at a time"
+    >
+      <!-- A fresh mount per open: closing cancels and discards everything,
+           so watching again always starts from the first decision. -->
+      <HeroStage {sentence} {reading} mode="overlay" {paused} />
+      <div class="demo-controls">
+        <button
+          type="button"
+          bind:this={playToggle}
+          aria-label={paused ? 'Play demonstration' : 'Pause demonstration'}
+          aria-pressed={paused}
+          onclick={() => (paused = !paused)}
+        >
+          {#if paused}
+            <Play size={14} strokeWidth={2.2} aria-hidden="true" />
+          {:else}
+            <Pause size={14} strokeWidth={2.2} aria-hidden="true" />
+          {/if}
+          <span>{paused ? 'Play' : 'Pause'}</span>
+        </button>
+        <button
+          type="button"
+          bind:this={closeButton}
+          aria-label="Close demonstration"
+          onclick={closeDemo}
+        >
+          <X size={14} strokeWidth={2.2} aria-hidden="true" />
+          <span>Close</span>
+        </button>
+      </div>
     </div>
-  </div>
-</figure>
+  {/if}
+{/if}
 
 <style>
   .hero {
@@ -240,43 +197,86 @@
     margin: 0;
   }
 
-  .stage {
+  .poster {
     position: relative;
-    /* The completed tree's height is reserved from the first frame, so this
-       never pushes the lesson copy around while the replay runs. */
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 260ms ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
   }
 
-  .stage.ready {
-    opacity: 1;
+  /* The preview is a poster, not the show: cap the diagram so the lesson's
+     first paragraph stays in reach on tall-diagram sentences. The fluid SVG
+     scales whole through its viewBox — nothing is cropped. */
+  .poster :global(svg.diagram) {
+    max-height: 420px;
+    max-height: min(46svh, 420px);
   }
 
-  .world {
-    position: absolute;
+  .watch {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 550;
+    box-shadow: 0 2px 10px oklch(0 0 0 / 14%);
+    cursor: pointer;
+  }
+  .watch:hover,
+  .watch:focus-visible {
+    border-color: var(--border-strong);
+  }
+
+  .demo {
+    position: fixed;
     top: 0;
     left: 0;
-    transform-origin: 0 0;
-    will-change: transform;
-    transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    width: 100dvw;
+    height: 100vh;
+    height: 100dvh;
+    /* The lesson column caps its children to the reading measure; a viewport
+       takeover is exactly the child that rule must not reach. */
+    max-width: none;
+    /* Opaque on purpose: a transparent takeover draws the demonstration over
+       the article it was supposed to replace. */
+    background: var(--canvas);
+  }
+  .demo :global(> .stage) {
+    flex: 1;
+    min-height: 0;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .world,
-    .stage {
-      transition: none;
-    }
-  }
-
-  /* The palette is shown, not offered: a click here must do nothing, because
-     the thing being demonstrated is what happens in the workspace. */
-  .driven {
+  .demo-controls {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
-    /* The lesson reads in serif; the workspace chrome does not. Without this
-       the demonstration would show a palette the app never renders. */
+    top: max(8px, env(safe-area-inset-top));
+    right: 8px;
+    z-index: 95;
+    display: flex;
+    gap: 8px;
+  }
+  .demo-controls button {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    min-height: 36px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--ink);
     font-family: var(--font-sans);
+    font-size: 12px;
+    box-shadow: 0 2px 10px oklch(0 0 0 / 18%);
+    cursor: pointer;
   }
 </style>
