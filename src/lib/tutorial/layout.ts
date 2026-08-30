@@ -29,7 +29,7 @@ export function tutorialLayout(stage: Size): TutorialLayout {
   // On a short phone, giving the palette every spare pixel makes the diagram
   // technically present but too small to read. The palette can scroll; the
   // diagram cannot, so reserve roughly a fifth of the stage for the graph.
-  const minimumGraphH = stage.w <= 700 ? Math.min(112, Math.max(72, stage.h * 0.22)) : 72;
+  const minimumGraphH = stage.w <= 700 ? Math.min(140, Math.max(92, stage.h * 0.28)) : 72;
   const menuW = Math.max(1, Math.min(TUTORIAL_MENU.w, stage.w - inset * 2));
   const availableMenuH = Math.max(1, stage.h - bannerBottom - toolbarGap - gap - minimumGraphH);
   const menuH = Math.min(TUTORIAL_MENU.h, availableMenuH);

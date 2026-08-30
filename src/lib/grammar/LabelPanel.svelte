@@ -15,10 +15,14 @@
   import { onDestroy, untrack } from 'svelte';
 
   import { createCameraMotion } from '../workspace/camera-motion.ts';
+  import { menuPointerTarget } from '../workspace/element-bounds.ts';
+  import type { GuidedPointer } from '../workspace/guided-pointer.svelte.ts';
+  import { HOVER_MS } from '../workspace/pointer-motion.ts';
   import { getWorkspace } from '../workspace/workspace.svelte.ts';
   import { placeFloating, screenRect } from '../workspace/floating.ts';
   import { PHONE_QUERY, useMediaQuery, useVisualViewport } from '../workspace/responsive.svelte.ts';
   import { planSelectionVisibility, usableViewport } from '../workspace/selection-visibility.ts';
+  import type { Point } from '../workspace/viewport.ts';
   import type { Rect } from '../workspace/viewport.ts';
   import { bestIndex, isPickable, openingGroup, type LabelOption, type Panel } from './options.ts';
   import type { NavigationResult } from './session.ts';
@@ -67,6 +71,13 @@
      */
     pointerOn?: string | null;
     /**
+     * The stage's one guided pointer. The panel aims it — category row, a
+     * beat of hover, then the option — and nothing else: appearing, gliding,
+     * pressing and resting are the controller's, so the same hand that swept
+     * the words arrives here instead of a second hand fading in.
+     */
+    pointer?: GuidedPointer | null;
+    /**
      * A driven panel is watched, not used. It must not claim the keyboard or
      * close on a click elsewhere, or a demonstration on a reading page would
      * swallow keystrokes meant for the page.
@@ -88,6 +99,7 @@
     verdict = null,
     navigation = null,
     pointerOn = null,
+    pointer = null,
     interactive = true,
     onpick,
     onhover,
@@ -132,9 +144,14 @@
   let mobileDetail = $state(false);
   const camera = createCameraMotion(
     () => ws.viewport,
-    (viewport) => (ws.viewport = viewport),
+    (viewport) => {
+      ws.viewport = viewport;
+    },
   );
-  onDestroy(camera.cancel);
+  onDestroy(() => {
+    camera.cancel();
+    aimToken++;
+  });
 
   const active = $derived(openingGroup(panel, activeId));
   const reachable = $derived(active?.options.filter(isPickable) ?? []);
@@ -161,18 +178,126 @@
     cursor = bestIndex(reachable);
   });
 
-  $effect(() => {
-    // A guided menu is read-only, but it is still a viewport. Keep the row the
-    // demonstration is discussing in that viewport on every screen size.
-    if (interactive || !pointerOn || !root) return;
-    const frame = requestAnimationFrame(() => {
-      const option = Array.from(
-        root?.querySelectorAll<HTMLButtonElement>('[data-option]') ?? [],
-      ).find((row) => row.dataset.option === pointerOn);
-      option?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  /** A row's aim point, in client coordinates for the shared pointer. */
+  function clientAim(el: Element): Point {
+    const r = el.getBoundingClientRect();
+    return menuPointerTarget({ x: r.left, y: r.top, w: r.width, h: r.height });
+  }
+
+  let aimToken = 0;
+
+  /**
+   * The element `find` returns, once it exists and has HELD STILL — same
+   * position and size for three consecutive frames — so the pointer never
+   * commits to a destination the panel's own motion is still deciding.
+   */
+  function settled(find: () => HTMLElement | null, mine: number): Promise<HTMLElement | null> {
+    return new Promise((resolve) => {
+      let last: { x: number; y: number; w: number; h: number } | null = null;
+      let still = 0;
+      let tries = 0;
+      const look = () => {
+        if (mine !== aimToken || !root) return resolve(null);
+        if (++tries > 90) return resolve(find());
+        const el = find();
+        if (!el) {
+          last = null;
+          still = 0;
+          return requestAnimationFrame(look);
+        }
+        const r = el.getBoundingClientRect();
+        const same =
+          last &&
+          Math.abs(r.x - last.x) < 0.5 &&
+          Math.abs(r.y - last.y) < 0.5 &&
+          Math.abs(r.width - last.w) < 0.5 &&
+          Math.abs(r.height - last.h) < 0.5;
+        still = same ? still + 1 : 0;
+        if (still >= 2) return resolve(el);
+        last = { x: r.x, y: r.y, w: r.width, h: r.height };
+        requestAnimationFrame(look);
+      };
+      requestAnimationFrame(look);
     });
-    return () => cancelAnimationFrame(frame);
-  });
+  }
+
+  /**
+   * Scroll the OPTIONS PANE itself, never ancestors: `scrollIntoView` on a
+   * row can scroll the page a lesson figure sits in, which is the panel
+   * moving the world to suit its pointer instead of the other way round.
+   */
+  function revealRow(row: HTMLElement) {
+    const pane = row.closest<HTMLElement>('.pane.secondary');
+    if (!pane) return;
+    const r = row.getBoundingClientRect();
+    const p = pane.getBoundingClientRect();
+    if (r.top < p.top) pane.scrollTop += r.top - p.top;
+    else if (r.bottom > p.bottom) pane.scrollTop += r.bottom - p.bottom;
+  }
+
+  /**
+   * Take the stage's pointer to the row for `key`, and resolve only when it
+   * has ARRIVED there. The driver awaits this, then presses, then applies
+   * the choice — so the panel exposes a completed gesture, not a timer the
+   * driver has to out-guess.
+   *
+   * The route is the one a hand performs: to the category (once the popup
+   * has settled), a beat of hover, open the group, wait for the pane and
+   * the row to settle, then on to the row. Every leg tracks its target, so
+   * a popup nudged mid-flight is followed, not missed.
+   */
+  export async function aimPointer(key: string): Promise<void> {
+    const hand = pointer;
+    if (interactive || !hand || !root) return;
+    const mine = ++aimToken;
+    const alive = () => mine === aimToken && !!root;
+    const optionRow = () =>
+      root
+        ? (Array.from(root.querySelectorAll<HTMLButtonElement>('[data-option]')).find(
+            (row) => row.dataset.option === key,
+          ) ?? null)
+        : null;
+
+    const group = panel.groups.find((candidate) =>
+      candidate.options.some((candidateOption) => candidateOption.key === key),
+    );
+    if (!group) return;
+
+    if (activeId !== group.id || !optionRow()) {
+      // A phone shows the active category as the detail-pane title; the
+      // desktop keeps the category row beside its submenu.
+      const category = await settled(
+        () =>
+          root
+            ? phone.matches
+              ? root.querySelector<HTMLElement>('.pane-title')
+              : (Array.from(root.querySelectorAll<HTMLElement>('[data-menu-group]')).find(
+                  (row) => row.dataset.menuGroup === group.id,
+                ) ?? null)
+            : null,
+        mine,
+      );
+      if (!alive() || !category) return;
+      await hand.moveToClient(() => (category.isConnected ? clientAim(category) : null));
+      if (!alive()) return;
+      await hand.clock.wait(HOVER_MS);
+      if (!alive()) return;
+      if (activeId !== group.id) {
+        activeId = group.id;
+        if (phone.matches) mobileDetail = true;
+      }
+    }
+
+    const row = await settled(optionRow, mine);
+    if (!alive() || !row) return;
+    revealRow(row);
+    const shownRow = await settled(optionRow, mine);
+    if (!alive() || !shownRow) return;
+    await hand.moveToClient(() => {
+      const el = optionRow();
+      return el ? clientAim(el) : null;
+    });
+  }
 
   // The taxonomy sections live in `panel-presentation.ts`, tested under
   // `node --test`; this component only draws them.
@@ -416,6 +541,7 @@
             type="button"
             class="category"
             class:active={g.id === active.id}
+            data-menu-group={g.id}
             aria-current={g.id === active.id ? 'true' : undefined}
             aria-disabled={!interactive}
             tabindex={interactive ? undefined : -1}
@@ -725,6 +851,9 @@
     background: color-mix(in oklab, var(--ink) 8%, transparent);
     outline: 0;
   }
+  .popup.guided .option.pointed {
+    box-shadow: inset 2px 0 var(--accent);
+  }
   .option.chosen {
     background: color-mix(in oklab, var(--accent) 15%, transparent);
     color: var(--ink);
@@ -776,7 +905,20 @@
       );
     }
     .popup.guided .pane {
-      max-height: max(72px, calc(var(--guided-menu-h) - 104px));
+      max-height: max(72px, calc(var(--guided-menu-h) - 86px));
+    }
+    .popup.guided .context {
+      min-height: 86px;
+      padding: 9px 12px 8px;
+    }
+    .popup.guided .subject-line {
+      min-height: 28px;
+    }
+    .popup.guided .suggestion-line {
+      min-height: 30px;
+    }
+    .popup.guided .information:empty {
+      display: none;
     }
     .popup.guided .mobile-back,
     .popup.guided h3 {

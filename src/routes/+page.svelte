@@ -27,6 +27,8 @@
     wordRowRect,
   } from '$lib/grammar/Diagram.svelte';
   import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
+  import { GuidedPointer } from '$lib/workspace/guided-pointer.svelte.ts';
+  import PointerLayer from '$lib/workspace/PointerLayer.svelte';
   import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
   import { answer, sessionChoices, type NavigationResult } from '$lib/grammar/session.ts';
@@ -245,6 +247,33 @@
   );
   let tutorialActive = $state(false);
   let tutorialPointer = $state<string | null>(null);
+  /** The stage's one demonstration hand, shared by the run and the palette. */
+  const guidedPointer = new GuidedPointer();
+  let panelRef = $state<{ aimPointer: (key: string) => Promise<void> } | null>(null);
+
+  /**
+   * Where the thing the tutorial is about to click is actually rendered —
+   * measured from the live DOM, so every camera move and layout change the
+   * app performs is already accounted for by the time the pointer aims.
+   */
+  function tutorialPointTarget(sel: Selection): { x: number; y: number } | null {
+    const boxes: DOMRect[] = [];
+    if (sel.kind === 'span') {
+      for (const el of document.querySelectorAll<HTMLElement>('.world [data-word]')) {
+        const i = Number(el.dataset.word);
+        if (i >= sel.span[0] && i <= sel.span[1]) boxes.push(el.getBoundingClientRect());
+      }
+    } else if (sel.kind === 'node') {
+      const el = document.querySelector(`.world [data-node="${sel.id}"]`);
+      if (el) boxes.push(el.getBoundingClientRect());
+    }
+    if (boxes.length === 0) return null;
+    const left = Math.min(...boxes.map((b) => b.left));
+    const right = Math.max(...boxes.map((b) => b.right));
+    const top = Math.min(...boxes.map((b) => b.top));
+    const bottom = Math.max(...boxes.map((b) => b.bottom));
+    return { x: (left + right) / 2, y: (top + bottom) / 2 };
+  }
   const tutorialMenu = $derived(tutorialLayout(ws.stage).menu);
 
   /** Reserve the finished tree before the first label lands. Without this the
@@ -585,6 +614,7 @@
           frameAnchor={tutorialFrameAnchor}
           anchorRect={() => wordRowRect(build.constituents, words, depthMark)}
           focusRect={(sel) => selectionFocusRect(build.constituents, words, sel, depthMark)}
+          pointTarget={tutorialPointTarget}
           select={selectAs}
           offered={offeredRow}
           pick={pickByKey}
@@ -592,11 +622,14 @@
           onstart={resetForTutorial}
           onactive={(active) => (tutorialActive = active)}
           onpoint={(key) => (tutorialPointer = key)}
+          pointer={guidedPointer}
+          aimMenu={(key) => panelRef?.aimPointer(key) ?? Promise.resolve()}
         />
       {/key}
     {/if}
     {#if !solved}
       <LabelPanel
+        bind:this={panelRef}
         panel={choices}
         {verdict}
         {navigation}
@@ -608,11 +641,13 @@
         manageCamera={!tutorialActive}
         interactive={!tutorialActive}
         pointerOn={tutorialActive ? tutorialPointer : null}
+        pointer={tutorialActive ? guidedPointer : null}
         onpick={pick}
         onhover={(o) => (preview = o?.form ?? null)}
         onclose={closePalette}
       />
     {/if}
+    <PointerLayer pointer={guidedPointer} />
   {/snippet}
 
   {#if middleView === 'lesson'}

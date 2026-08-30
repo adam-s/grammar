@@ -413,6 +413,7 @@
         class:on
         class:marquee
         class:leaf={box.isLeaf}
+        data-node={id}
         style="--hue:{hue(c.form)}"
         role={interactive ? 'button' : undefined}
         tabindex={interactive ? 0 : undefined}
@@ -505,6 +506,7 @@
       <g
         class="word"
         class:sel
+        data-word={slot.i}
         role={interactive ? 'button' : undefined}
         tabindex={interactive ? 0 : undefined}
         aria-label={words[slot.i]!.text}

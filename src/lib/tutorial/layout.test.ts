@@ -30,8 +30,8 @@ test('a short stage preserves a useful graph band', () => {
 
 test('a short phone gives the graph enough room to remain readable', () => {
   const layout = tutorialLayout({ w: 320, h: 508 });
-  assert.ok(layout.graph.h >= 110);
-  assert.ok(layout.menu.h >= 220);
+  assert.ok(layout.graph.h >= 140);
+  assert.ok(layout.menu.h >= 200);
   assert.ok(layout.graph.y + layout.graph.h < layout.menu.y);
 });
 

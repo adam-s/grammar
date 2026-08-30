@@ -25,11 +25,13 @@ export const IDLE: RunState = { index: 0, act: 'ask', status: 'idle', problem: n
 /**
  * How long a moment stays on screen, in milliseconds.
  *
- * Pacing only — never a completion signal. The answer holds longer than the
- * question because it carries a second line, and because watching the label
- * land is the part worth waiting on.
+ * Pacing only — never a completion signal, and never a container for a
+ * gesture: the run awaits the pointer's arrival and its press before these
+ * holds begin, so they buy pure reading time. The answer holds longer than
+ * the question because it carries a second line, and because watching the
+ * label land is the part worth waiting on.
  */
-export const HOLD: Record<Act, number> = { ask: 2100, answer: 2700 };
+export const HOLD: Record<Act, number> = { ask: 1500, answer: 2400 };
 
 /** Longest a postcondition may take before the run calls it a failure. */
 export const POSTCONDITION_MS = 2000;

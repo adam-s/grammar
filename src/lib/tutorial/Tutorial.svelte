@@ -27,8 +27,10 @@
   import { onDestroy, tick } from 'svelte';
   import type { Selection } from '../grammar/options.ts';
   import { createCameraMotion } from '../workspace/camera-motion.ts';
+  import type { GuidedPointer } from '../workspace/guided-pointer.svelte.ts';
+  import { PausableClock, pausableFrames } from '../workspace/pointer-clock.ts';
   import { planSelectionVisibility } from '../workspace/selection-visibility.ts';
-  import { fit, type Rect } from '../workspace/viewport.ts';
+  import { fit, type Point, type Rect } from '../workspace/viewport.ts';
   import { fitPadding } from '../workspace/stage-resize.ts';
   import { getWorkspace } from '../workspace/workspace.svelte.ts';
   import { fitTutorialFrame, pinTutorialRect, tutorialLayout } from './layout.ts';
@@ -57,6 +59,14 @@
     anchorRect: () => Rect | null;
     /** The words a decision is about, in diagram coordinates. */
     focusRect: (selection: Selection) => Rect | null;
+    /**
+     * Where exactly the thing to be clicked is RENDERED, in client
+     * coordinates — measured from the DOM, not derived from layout
+     * arithmetic. The app's own motion always wins: whatever the camera and
+     * the growing tree have done, a measurement taken after they settle is
+     * where the pointer must land.
+     */
+    pointTarget?: (selection: Selection) => Point | null;
     select: (selection: Selection) => void;
     /** What the live palette says about a row, read after selecting. */
     offered: (key: string) => { found: boolean; pickable: boolean; state?: string } | null;
@@ -72,6 +82,19 @@
     onactive?: (active: boolean) => void;
     /** Shows which real palette row the guided pointer is about to choose. */
     onpoint?: (key: string | null) => void;
+    /**
+     * The stage's one guided pointer. The run sweeps it to the words it is
+     * about to select, hands it to the palette for the menu trip, and presses
+     * it at the exact moment of the pick — so the visible click and the real
+     * one are the same event.
+     */
+    pointer?: GuidedPointer | null;
+    /**
+     * Take the pointer to the palette row for a key and resolve when it has
+     * ARRIVED — the palette's own completed gesture, not a timer. The run
+     * awaits this before its decide hold, and presses only after it.
+     */
+    aimMenu?: (key: string) => Promise<void>;
   };
 
   let {
@@ -80,6 +103,7 @@
     frameAnchor,
     anchorRect,
     focusRect,
+    pointTarget,
     select,
     offered,
     pick,
@@ -89,12 +113,31 @@
     onfinish,
     onactive,
     onpoint,
+    pointer = null,
+    aimMenu,
   }: Props = $props();
 
   const ws = getWorkspace();
+
+  /*
+   * ONE clock for everything the run owns: narration holds, camera motion,
+   * pointer glides and presses. Pause freezes that clock, so a paused
+   * tutorial is actually paused — the pointer stops mid-glide with its
+   * remaining flight intact, the camera stops mid-move, and no state
+   * advances. Resume continues each of them from exactly where they froze.
+   */
+  // The pointer instance is stable for the life of a run — the page keys
+  // this component per sentence — so capturing its clock once is the intent.
+  // svelte-ignore state_referenced_locally
+  const clock = pointer?.clock ?? new PausableClock();
+  const frames = pausableFrames(clock);
   const camera = createCameraMotion(
     () => ws.viewport,
-    (viewport) => (ws.viewport = viewport),
+    (viewport) => {
+      ws.viewport = viewport;
+    },
+    frames.frame,
+    frames.cancelFrame,
   );
 
   let run = $state<RunState>(IDLE);
@@ -114,28 +157,32 @@
 
   /* ------------------------------------------------------------ the clock */
 
-  const sleep = (ms: number, mine: number) =>
-    new Promise<void>((resolve) => {
-      const id = setTimeout(resolve, mine === token ? ms : 0);
-      if (mine !== token) clearTimeout(id);
-    });
+  /** A wait on the run's own clock: frozen while paused, cancelled by token. */
+  const sleep = async (ms: number, mine: number) => {
+    if (mine !== token) return;
+    await clock.wait(ms);
+  };
 
   /**
    * Hold an explanation on screen while it is playing. Paused time does not
-   * spend the hold, and one Step press releases exactly one held moment.
+   * spend the hold, and one Step press releases exactly one held moment:
+   * `stepOnce` lets the clock run so the gestures before the next checkpoint
+   * complete, and this checkpoint re-freezes it.
    */
   async function pace(ms: number, mine: number) {
-    let remaining = ms;
-    let last = Date.now();
-    while (remaining > 0 && mine === token) {
+    if (paused && stepBudget > 0) {
+      stepBudget--;
+      clock.pause();
+      return;
+    }
+    const until_ = clock.now() + ms;
+    while (clock.now() < until_ && mine === token) {
       if (paused && stepBudget > 0) {
         stepBudget--;
+        clock.pause();
         return;
       }
-      await sleep(Math.min(50, remaining), mine);
-      const now = Date.now();
-      if (!paused) remaining -= now - last;
-      last = now;
+      await new Promise<void>((resolve) => setTimeout(resolve, 40));
     }
   }
 
@@ -143,9 +190,14 @@
     if (next === paused) return;
     if (next) {
       pausedAt = Date.now();
-    } else if (pausedAt !== null) {
-      pausedMs += Date.now() - pausedAt;
-      pausedAt = null;
+      clock.pause();
+    } else {
+      if (pausedAt !== null) {
+        pausedMs += Date.now() - pausedAt;
+        pausedAt = null;
+      }
+      clock.resume();
+      frames.releaseHeld();
     }
     paused = next;
   }
@@ -155,9 +207,15 @@
     setPaused(!paused);
   }
 
+  /**
+   * One semantic moment: with the run paused, let the clock go so the
+   * pending gestures play out, and the next `pace` checkpoint re-freezes.
+   */
   function stepOnce() {
     setPaused(true);
     stepBudget++;
+    clock.resume();
+    frames.releaseHeld();
   }
 
   function activeRuntime(startedAt: number) {
@@ -166,15 +224,16 @@
   }
 
   /**
-   * Wait for the app to report something, rather than for time to pass.
+   * Wait for the app to report something, rather than for time to pass. The
+   * deadline runs on the demonstration's clock, so a pause cannot expire it.
    * Resolves with the reading as soon as it satisfies, or with the last
    * reading once the deadline is out.
    */
   async function until<T>(read: () => T, ok: (value: T) => boolean, mine: number): Promise<T> {
-    const deadline = Date.now() + POSTCONDITION_MS;
+    const deadline = clock.now() + POSTCONDITION_MS;
     let value = read();
-    while (!ok(value) && Date.now() < deadline && mine === token) {
-      await sleep(50, mine);
+    while (!ok(value) && clock.now() < deadline && mine === token) {
+      await new Promise<void>((resolve) => setTimeout(resolve, 50));
       await tick();
       value = read();
     }
@@ -258,6 +317,16 @@
         // anchor made both surfaces chase each other across the canvas.
         await reveal(current.select);
         if (mine !== token) return;
+        // The hand goes to the words, PRESSES, and only then does the
+        // selection appear — the same causal order a learner's own click
+        // follows. The target is a tracked getter, so a camera still
+        // settling under the flight is followed, not missed.
+        if (pointTarget?.(current.select) && pointer) {
+          await pointer.moveToClient(() => pointTarget(current.select));
+          if (mine !== token) return;
+          await pointer.press();
+          if (mine !== token) return;
+        }
         select(current.select);
         await tick();
         const seen = await until(
@@ -270,9 +339,17 @@
           run = fail(run, fault);
           break;
         }
+        // The palette reports ARRIVAL at the row; the highlight lights as
+        // the pointer lands, and the decide hold begins only then.
+        await aimMenu?.(current.key);
+        if (mine !== token) return;
         onpoint?.(current.key);
         await pace(HOLD.ask, mine);
       } else {
+        // The press IS the pick: the pointer lands (waiting out any glide
+        // still in the air), dips, and the option is taken on the release.
+        await pointer?.press();
+        if (mine !== token) return;
         const beforeAnchor = anchorRect();
         const before = signature();
         const result = pick(current.key);
@@ -303,6 +380,7 @@
     }
 
     if (mine !== token) return;
+    pointer?.rest();
     if (run.status === 'done') {
       onactive?.(false);
       onpoint?.(null);
@@ -316,6 +394,7 @@
   function halt() {
     token++;
     camera.cancel();
+    pointer?.rest();
     setPaused(false);
     stepBudget = 0;
     run = stopRun(run);
@@ -327,6 +406,12 @@
   onDestroy(() => {
     token++;
     camera.cancel();
+    pointer?.cancel();
+    // The clock is the page's, shared across runs — never cancel it, but do
+    // not leave it paused either: a stranded pause would freeze the next
+    // sentence's run and keep this run's final waits polling forever.
+    clock.resume();
+    frames.releaseHeld();
     onactive?.(false);
     onpoint?.(null);
   });
@@ -596,25 +681,28 @@
       height: 136px;
     }
     .inner {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: stretch;
+      justify-content: space-between;
       min-height: 133px;
-    }
-    .eyebrow {
-      padding-right: 150px;
+      padding: 12px 14px 13px;
     }
     .actions {
-      position: absolute;
-      top: 14px;
-      right: 14px;
+      align-self: flex-end;
     }
     .transport span {
       display: none;
     }
     .transport {
-      width: 32px;
-      height: 30px;
+      width: 34px;
+      height: 32px;
       justify-content: center;
       padding: 0;
+    }
+    .halt {
+      min-height: 32px;
     }
   }
 </style>
