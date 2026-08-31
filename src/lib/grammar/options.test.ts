@@ -6,6 +6,7 @@ import {
   roots,
   setFunction,
   setOnlyVerbType,
+  setVoice,
   wrap,
   type BuildState,
 } from './builder.ts';
@@ -416,12 +417,24 @@ describe('the live question is the one on screen', () => {
     );
   });
 
-  it('voice never interrupts: active is the answer until someone changes it', () => {
+  it('does not answer the voice question for the learner', () => {
     let s = emptyBuild();
     s = wrap(s, W, [1, 1], 'V');
     const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
+    assert.equal(group(p, 'voice')!.answered, null);
+    assert.equal(
+      group(p, 'voice')!.options.find((option) => option.voice === 'active')!.state,
+      'available',
+    );
+  });
+
+  it('records an explicit active answer', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [1, 1], 'V');
+    const id = nodeOver(s, [1, 1])!;
+    s = setVoice(s, id, 'active');
+    const p = optionsFor(s, W, { kind: 'node', id });
     assert.equal(group(p, 'voice')!.answered?.voice, 'active');
-    assert.notEqual(p.step, 'voice', 'an unasked question should not take the step');
   });
 
   it('the passive is offered but blocked until the verb has an object to move', () => {
@@ -447,13 +460,13 @@ describe('the live question is the one on screen', () => {
     assert.equal(transitive.options.find((o) => o.voice === 'passive')!.state, 'available');
   });
 
-  it('moves on again once the verb type is settled', () => {
+  it('asks for voice once the verb type is settled', () => {
     let s = emptyBuild();
     s = wrap(s, W, [1, 1], 'V');
     s = setOnlyVerbType(s, 'Vtr');
     const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [1, 1])! });
     assert.equal(group(p, 'verb-type')!.answered?.verbType, 'Vtr');
-    assert.equal(p.step, 'phrase-form');
+    assert.equal(p.step, 'voice');
   });
 
   it('skips a group that has nothing pickable in it', () => {

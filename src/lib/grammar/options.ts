@@ -665,9 +665,9 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
    * fixed even when half of it is unavailable — a learner who never sees the
    * passive row does not learn that the choice exists.
    *
-   * `active` is chosen from the start, so this group never becomes the step and
-   * never interrupts. Voice is a refinement of an answer already given, not a
-   * question every verb has to be asked.
+   * Neither row is chosen until the learner answers. An omitted voice still
+   * means active when a finished tree is read, but omission in a work in
+   * progress means this question has not been answered yet.
    */
   const voice: OptionGroup = {
     id: 'voice',
@@ -678,7 +678,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
         key: 'voice:active',
         label: 'active',
         note: 'the subject does it — “The mechanic repaired the engine”',
-        state: (c.voice === 'passive' ? 'available' : 'chosen') as OptionState,
+        state: (c.voice === 'active' ? 'chosen' : 'available') as OptionState,
         voice: 'active' as Voice,
       },
       {

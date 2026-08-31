@@ -534,8 +534,7 @@ export function setVoice(state: BuildState, id: string, voice: Voice): BuildStat
   const c = state.constituents[id];
   if (!c || c.form !== 'V') return state;
   const cs = cloneMap(state.constituents);
-  if (voice === 'active') delete cs[id]!.voice;
-  else cs[id]!.voice = voice;
+  cs[id]!.voice = voice;
   return { ...state, constituents: cs };
 }
 

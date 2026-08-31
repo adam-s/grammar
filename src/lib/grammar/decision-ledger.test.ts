@@ -182,6 +182,8 @@ describe('the nested lesson-2 subject, state by state', () => {
     pick('form:V');
     assert.equal(panel().step, 'verb-type');
     pick('vt:Vint');
+    assert.equal(panel().step, 'voice');
+    pick('voice:active');
   });
 
   it('every one-word phrase remains a hypothesis over a verb', () => {
