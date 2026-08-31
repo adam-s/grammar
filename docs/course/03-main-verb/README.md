@@ -2,8 +2,7 @@
 
 Research pass expanded 29 August 2026. This is an author's dossier, not learner
 copy. It records what the live lesson and its evidence can honestly claim before
-the learner page is revised. See [the course research plan](../../course-research-and-revision.md)
-and [the authoring template](../../lesson-blog-page-template.md).
+the learner page is revised. See [the authoring template](../../lesson-blog-page-template.md).
 
 **Status:** Research complete; learner-page revision remains. The current page,
 the ten live practice sentences, both cited fixtures, the supporting lesson

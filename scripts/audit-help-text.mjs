@@ -16,7 +16,7 @@
  *      can check; they cannot prove a hint is pedagogically right.
  *   2. `--corpus <file>`: the deduplicated corpus as markdown, grouped by
  *      kind, for a human read — which is the only audit that can judge
- *      usefulness. See docs/ for the reviewed copy.
+ *      usefulness.
  *
  *   node scripts/audit-help-text.mjs            # audit only
  *   node scripts/audit-help-text.mjs --corpus test-results/help-text.md

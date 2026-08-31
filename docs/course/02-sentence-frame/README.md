@@ -2,8 +2,7 @@
 
 Researched and expanded 29 August 2026. This is an **author's dossier**, not
 learner-facing copy. The [shared lesson contract](../../lesson/README.md)
-defines the page; the [course research plan](../../course-research-and-revision.md)
-defines this pass.
+defines the page.
 
 **Status:** Research complete. The live practice set is
 [sentences.md](sentences.md). This dossier does not approve a learner-page

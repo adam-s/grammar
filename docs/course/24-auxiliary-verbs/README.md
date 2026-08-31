@@ -1,8 +1,7 @@
 # Lesson 24 — Auxiliary verbs
 
 Research pass completed 30 August 2026. This is an author's dossier, not
-learner copy. See [the course research plan](../../course-research-and-revision.md)
-and [lesson 3](../03-main-verb/README.md).
+learner copy. See [lesson 3](../03-main-verb/README.md).
 
 **Status:** The ten sentences in
 [lesson-24.ts](../../../src/lib/course/sentences/lesson-24.ts) are live. This

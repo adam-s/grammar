@@ -9,8 +9,7 @@ and practice, cumulative label scope, and rendering requirements. The lesson's
 research dossier controls its grammatical claims and page structure. This
 template replaces earlier instructions that require a fixed sequence or a
 mandatory block whether or not the research supports it. The grammar should
-control the lesson's shape. Track the work in the
-[course research plan](course-research-and-revision.md).
+control the lesson's shape.
 
 ## The job of a lesson
 

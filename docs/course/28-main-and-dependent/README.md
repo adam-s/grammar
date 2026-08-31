@@ -1,8 +1,7 @@
 # Lesson 28 — Main and dependent clauses
 
 Researched 30 August 2026. An author's dossier. See the [shared lesson
-contract](../../lesson/README.md) and the [course research
-plan](../../course-research-and-revision.md).
+contract](../../lesson/README.md).
 
 **Status:** Research pass complete. This file records the grammatical analysis
 and the limits of the current lesson. It is not learner-facing copy.

@@ -1,8 +1,7 @@
 # Lesson 8 — Verbs that stand alone
 
 Researched 28 August 2026 and rebuilt 30 August 2026. An author's dossier, not
-learner copy. See [the course research plan](../../course-research-and-revision.md)
-and [the authoring template](../../lesson-blog-page-template.md).
+learner copy. See [the authoring template](../../lesson-blog-page-template.md).
 
 **Status:** Research complete; learner-page revision remains. The current page,
 ten live practice sentences, cited fixture, and lessons 7–10 were inspected for
