@@ -327,6 +327,19 @@
     ondraft([Math.min(anchor, i), Math.max(anchor, i)], false);
   }
 
+  /**
+   * A touch implicitly captures the pointer to the word it landed on, so the
+   * neighbours' `pointerenter` — which is how a mouse drag grows the span —
+   * never fires and a phone could only ever select one word. While a drag is
+   * live, find the word under the pointer by position instead: hit-testing
+   * does not care who holds the capture.
+   */
+  function trackDrag(e: PointerEvent) {
+    if (anchor == null) return;
+    const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-word]');
+    if (hit) move(Number((hit as SVGElement).dataset.word));
+  }
+
   function up() {
     if (anchor == null) return;
     anchor = null;
@@ -334,8 +347,9 @@
   }
 </script>
 
-<!-- Releasing outside the words still ends the drag. -->
-<svelte:window onpointerup={up} />
+<!-- Releasing outside the words still ends the drag, and a cancelled pointer
+     (the browser reclaiming the touch) must not leave a drag armed. -->
+<svelte:window onpointerup={up} onpointercancel={up} onpointermove={trackDrag} />
 
 <svg
   class="diagram"
