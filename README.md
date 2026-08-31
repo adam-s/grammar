@@ -6,7 +6,7 @@ Try it at **[adamsohn.com/grammar](https://adamsohn.com/grammar/)**.
 
 Pick a sentence, split it into its parts, and label every piece yourself.
 
-![A finished diagram of "The horse raced past the barn fell." — the sentence parses, and the tree proves it](static/og.png)
+https://github.com/user-attachments/assets/fb4ac60f-3957-4840-ba87-e54a60b2d815
 
 ## What It Does
 
