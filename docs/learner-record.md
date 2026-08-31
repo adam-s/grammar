@@ -59,9 +59,14 @@ is a separate decision.
 These are the parts worth spending effort on. Each one is a test before it is
 a feature.
 
-1. **A half-built tree never earns completion.** Completion is derived by
-   grading the restored build on load, never trusted as a stored flag.
-2. **Looking at the solution never counts as progress.**
+1. **A half-built tree never earns completion.** Grading the learner's own
+   build is the only way INTO the completion set — at the decision that
+   finishes it, and again when a restored build is re-checked on load. Once
+   earned, an id stays: finishing is history, like a miss, and starting a
+   sentence over does not rewrite the past.
+2. **Neither the solution view nor the guided run counts as progress.** One
+   shows the answer, the other performs it; only the learner's own decisions
+   record anything.
 3. **An explicit wrong answer stays in the record.** Restoring a session
    restores its misses and refusals, not just its tree.
 4. **Restoring never changes grammatical meaning.** A snapshot round-trips

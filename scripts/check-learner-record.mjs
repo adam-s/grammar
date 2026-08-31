@@ -154,12 +154,12 @@ const half = Math.max(1, Math.floor(steps.length / 2));
 
 /* 2 — the solution view earns nothing */
 {
-  await page.locator('.solution-toggle button', { hasText: 'Solved' }).click();
+  await page.getByRole('button', { name: 'Solved', exact: true }).click();
   await page.waitForTimeout(300);
   const { completed } = await driver();
   if (completed.length > 0) fail('looking at "Solved" counted as progress');
   else pass('looking at "Solved" earns nothing');
-  await page.locator('.solution-toggle button', { hasText: 'Unsolved' }).click();
+  await page.getByRole('button', { name: 'Unsolved', exact: true }).click();
   await page.waitForTimeout(200);
 }
 
