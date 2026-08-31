@@ -164,10 +164,7 @@
   <main class="bench">
     <h1>Replay bench</h1>
     <section class="loader">
-      <textarea
-        bind:value={raw}
-        rows="6"
-        placeholder="Paste a trace, or a whole progress export…"
+      <textarea bind:value={raw} rows="6" placeholder="Paste a trace, or a whole progress export…"
       ></textarea>
       <div class="row">
         <button type="button" onclick={load}>Load</button>

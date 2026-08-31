@@ -108,11 +108,11 @@ the trace is the history it needs — and its plan is `docs/undo.md`.
 - The trace obeys every invariant above; recording changes no grading and no
   completion.
 - The guided run performs in a scratch session the learner's work never
-  sees: its start and end bracket its scripted picks in the trace, and
-  stopping or finishing hands the stage back to the learner's own build,
-  untouched. The picks appear in the trace because a debugger needs to see
-  them; they still do not save a draft or earn completion — invariant 2 is
-  about progress, not visibility.
+  sees. Its start and end bracket its scripted picks in the trace, and
+  stopping, finishing, or leaving the diagram hands the stage back to the
+  learner's own build, untouched. The picks appear in the trace because a
+  debugger needs to see them; they still do not save a draft or earn
+  completion — invariant 2 is about progress, not visibility.
 - A ring buffer caps each sentence's trace — invariant 6 made concrete. A
   truncated trace is still an honest log, but it no longer replays, and the
   bench says so instead of diverging on the missing beginning.
@@ -135,10 +135,10 @@ screenshot and the browser and viewport details. The two records answer
 different questions: the trace says what the app understood; the recording
 shows what the learner saw and did.
 
-The trace is also not usage analytics. Guided and development-driven picks run
-through the same event path as learner picks, and an entry does not identify
-its source. Raw counts therefore cannot support menu ordering, mastery claims,
-or adaptive practice. Any later analytics layer must first record provenance
+The trace is also not usage analytics. Version 2 brackets a guided run, so its
+picks can be excluded, but development-driven picks are still indistinguishable
+from learner picks. Raw counts therefore cannot support menu ordering, mastery
+claims, or adaptive practice. Any later analytics layer must record provenance
 and define which sources and outcomes count; it must not reinterpret old traces
 that lack that distinction.
 
@@ -146,7 +146,9 @@ that lack that distinction.
 
 1. Keep the original export unchanged. It is the evidence, including its app
    stamp and any honest refusal or truncation.
-2. Load the trace in the dev-only replay bench and choose the matching sentence.
+2. Load the trace in a dev-only replay bench with matching trace schema and
+   course data, then choose the matching sentence. A newer bench may refuse an
+   old trace safely; that proves incompatibility, not corruption.
 3. If replay diverges, inspect the first disputed entry and the last state that
    still agreed. Later failures may be consequences of that first one.
 4. If replay agrees, compare its semantic steps with the screen recording. Look

@@ -149,6 +149,15 @@
   let paused = $state(false);
   let token = 0;
   let stepBudget = 0;
+  /** True from `onstart` until the one matching `onend`. Destruction is a
+      stop too: a parent may hide the diagram without pressing our button. */
+  let ownsStage = false;
+
+  function releaseStage() {
+    if (!ownsStage) return;
+    ownsStage = false;
+    onend?.();
+  }
 
   const beat = $derived<TutorialBeat | null>(beats[run.index] ?? null);
   const running = $derived(run.status === 'running');
@@ -385,6 +394,7 @@
     const liveGestures = host.gestures ? guardHooks(host.gestures, () => mine === token) : null;
     paused = false;
     stepBudget = 0;
+    ownsStage = true;
     onstart?.();
     onpoint?.(null);
     taught = [];
@@ -527,7 +537,7 @@
       if (mine !== token) return;
       onfinish?.();
     }
-    onend?.();
+    releaseStage();
   }
 
   function halt() {
@@ -544,7 +554,7 @@
     run = run.status === 'failed' ? { ...IDLE, status: 'stopped' } : stopRun(run);
     onactive?.(false);
     onpoint?.(null);
-    onend?.();
+    releaseStage();
   }
 
   onDestroy(() => {
@@ -561,6 +571,7 @@
     frames.dispose();
     onactive?.(false);
     onpoint?.(null);
+    releaseStage();
   });
 </script>
 

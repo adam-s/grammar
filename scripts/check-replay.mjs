@@ -78,9 +78,9 @@ const stored = await page.evaluate((key) => {
   const raw = localStorage.getItem(key);
   return raw ? JSON.parse(raw) : null;
 }, traceKey);
-if (!stored || !Array.isArray(stored.entries) || stored.entries.length < half)
+if (!stored || !Array.isArray(stored.entries) || stored.entries.length < half) {
   fail(`the session did not record itself (${stored?.entries?.length ?? 0} entries)`);
-else pass(`the session recorded itself (${stored.entries.length} moments)`);
+} else pass(`the session recorded itself (${stored.entries.length} moments)`);
 
 /* -- replay: the bench plays it back ------------------------------------ */
 await page.goto(`${base}/replay`, { waitUntil: 'networkidle' });
@@ -101,9 +101,9 @@ if (diverged > 0) {
 await page.locator('.log li button').last().click();
 await page.waitForTimeout(300);
 const benchNodes = await page.locator('.stage .node').count();
-if (benchNodes !== nodesBuilt)
+if (benchNodes !== nodesBuilt) {
   fail(`the bench's final diagram has ${benchNodes} node(s); the session built ${nodesBuilt}`);
-else pass(`the bench's final diagram matches the session (${benchNodes} nodes)`);
+} else pass(`the bench's final diagram matches the session (${benchNodes} nodes)`);
 
 // The step controls actually step.
 await page.locator('.controls button', { hasText: 'Back' }).click();
@@ -121,11 +121,16 @@ const bentSeq = await page.evaluate((key) => {
 }, traceKey);
 await page.locator('button', { hasText: 'Use this browser’s traces' }).click();
 await page.waitForTimeout(600);
-const banner = (await page.locator('.divergence').textContent().catch(() => null))?.trim();
+const banner = (
+  await page
+    .locator('.divergence')
+    .textContent()
+    .catch(() => null)
+)?.trim();
 if (!banner) fail('the bent trace raised no divergence');
-else if (!banner.includes(`step ${bentSeq}`))
+else if (!banner.includes(`step ${bentSeq}`)) {
   fail(`the divergence names the wrong step: "${banner}" (bent ${bentSeq})`);
-else pass(`the bent trace names its exact step (${bentSeq})`);
+} else pass(`the bent trace names its exact step (${bentSeq})`);
 
 await browser.close();
 if (failures.length > 0) {

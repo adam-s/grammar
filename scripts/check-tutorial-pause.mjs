@@ -86,8 +86,9 @@ if ((await launch.count()) === 0) {
     .waitForFunction(
       () => {
         const banner = document.querySelector('.banner');
-        if (banner?.textContent?.includes('The tutorial stopped'))
+        if (banner?.textContent?.includes('The tutorial stopped')) {
           return { failed: banner.textContent };
+        }
         const again = [...document.querySelectorAll('button.launch')].some((b) =>
           b.textContent?.includes('Watch it again'),
         );
@@ -127,9 +128,7 @@ if ((await launch.count()) === 0) {
     }, step);
     await page.waitForTimeout(60);
   }
-  const theirWork = await page.evaluate(() =>
-    JSON.stringify(window.__grammar.build.constituents),
-  );
+  const theirWork = await page.evaluate(() => JSON.stringify(window.__grammar.build.constituents));
   const theirNodes = Object.keys(JSON.parse(theirWork)).length;
   if (theirNodes === 0) {
     fail('the learner half-build built nothing — the scenario is broken');
@@ -145,12 +144,10 @@ if ((await launch.count()) === 0) {
     // The run takes the stage. Mid-flight, the canvas must show ITS scratch.
     await page.locator('button.launch').click();
     await page.waitForTimeout(2500);
-    const midRun = await page.evaluate(() =>
-      JSON.stringify(window.__grammar.build.constituents),
-    );
-    if (midRun === theirWork)
+    const midRun = await page.evaluate(() => JSON.stringify(window.__grammar.build.constituents));
+    if (midRun === theirWork) {
       fail('mid-run the canvas still shows the learner’s build — no scratch session');
-    else pass('the run performs in its own scratch session');
+    } else pass('the run performs in its own scratch session');
 
     // Stop it. The learner's work comes back, exactly.
     await page.locator('button.halt').click();
@@ -158,8 +155,7 @@ if ((await launch.count()) === 0) {
     const afterStop = await page.evaluate(() =>
       JSON.stringify(window.__grammar.build.constituents),
     );
-    if (afterStop !== theirWork)
-      fail('stopping the run did not hand back the learner’s work');
+    if (afterStop !== theirWork) fail('stopping the run did not hand back the learner’s work');
     else pass(`stopping the run hands back the learner’s work (${theirNodes} nodes)`);
 
     // Watch it again, to the END this time. Same restore.
@@ -168,8 +164,9 @@ if ((await launch.count()) === 0) {
       .waitForFunction(
         () => {
           const banner = document.querySelector('.banner');
-          if (banner?.textContent?.includes('The tutorial stopped'))
+          if (banner?.textContent?.includes('The tutorial stopped')) {
             return { failed: banner.textContent };
+          }
           const again = [...document.querySelectorAll('button.launch')].some((b) =>
             b.textContent?.includes('Watch it again'),
           );
@@ -187,8 +184,7 @@ if ((await launch.count()) === 0) {
       const afterFinish = await page.evaluate(() =>
         JSON.stringify(window.__grammar.build.constituents),
       );
-      if (afterFinish !== theirWork)
-        fail('finishing the run did not hand back the learner’s work');
+      if (afterFinish !== theirWork) fail('finishing the run did not hand back the learner’s work');
       else pass('finishing the run hands back the learner’s work too');
     }
 
@@ -211,12 +207,66 @@ if ((await launch.count()) === 0) {
         ends: t.entries.filter((e) => e.kind === 'runEnd').map((e) => e.outcome),
       };
     });
-    if (brackets.starts < 2 || brackets.ends.at(-1) !== 'finished')
+    if (brackets.starts < 2 || brackets.ends.at(-1) !== 'finished') {
       fail(
         `the trace does not bracket the runs (starts ${brackets.starts}, ends ${brackets.ends.join(',')})`,
       );
-    else pass('the trace brackets both runs, outcomes included');
+    } else pass('the trace brackets both runs, outcomes included');
   }
+}
+
+/* ---- leaving the stage releases the scratch, and destructive settings
+   cannot pull it out from under a live run ------------------------------- */
+{
+  await page.evaluate(() => window.__grammar.reset());
+  const steps = await page.evaluate(() => window.__grammar.plan());
+  for (const step of steps.slice(0, Math.max(2, Math.floor(steps.length / 2)))) {
+    await page.evaluate((s) => {
+      const g = window.__grammar;
+      if (s.kind === 'form') g.selectSpan(s.span);
+      else g.selectNode(s.nodeId);
+      g.pick(s.key);
+    }, step);
+  }
+  const theirWork = await page.evaluate(() => JSON.stringify(window.__grammar.build.constituents));
+  const runEndsBefore = await page.evaluate(() => {
+    const raw = localStorage.getItem(`grammar:trace:${window.__grammar.sentenceId}`);
+    const entries = raw ? JSON.parse(raw).entries : [];
+    return entries.filter((e) => e.kind === 'runEnd').length;
+  });
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+  await page.locator('button.launch').click();
+  await page.waitForTimeout(1500);
+
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  const reset = page.getByRole('button', { name: 'Reset all progress', exact: true });
+  if (!(await reset.isDisabled())) fail('reset-all remains enabled during a live run');
+  else pass('reset-all cannot discard a live run’s scratch session');
+
+  await page.locator('button.lesson-return').click();
+  await page.waitForTimeout(400);
+  const inLesson = await page.evaluate(() => window.__grammar.view === 'lesson');
+  if (!inLesson) fail('the lesson-return control did not leave the diagram');
+
+  await page.evaluate(() => window.__grammar.openSentence(window.__grammar.sentenceId));
+  await page.waitForTimeout(400);
+  const handedBack = await page.evaluate(() => JSON.stringify(window.__grammar.build.constituents));
+  if (handedBack !== theirWork) {
+    fail(
+      `leaving and reopening the same sentence changed the learner build\n    before ${theirWork}\n    after  ${handedBack}`,
+    );
+  } else pass('leaving the diagram hands back the learner’s work');
+
+  const runEnds = await page.evaluate(() => {
+    const raw = localStorage.getItem(`grammar:trace:${window.__grammar.sentenceId}`);
+    const entries = raw ? JSON.parse(raw).entries : [];
+    const ends = entries.filter((e) => e.kind === 'runEnd');
+    return { count: ends.length, outcome: ends.at(-1)?.outcome ?? null };
+  });
+  if (runEnds.count !== runEndsBefore + 1 || runEnds.outcome !== 'stopped') {
+    fail('leaving the diagram did not close its trace bracket exactly once');
+  } else pass('leaving the diagram records a stopped run');
 }
 
 await browser.close();

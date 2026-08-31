@@ -74,8 +74,9 @@ const wanted = onlyArg ? new Set(onlyArg.split(',')) : null;
 const runsWanted = [];
 for (const [lesson, sentenceId] of lessons) {
   if (wanted && !wanted.has(lesson)) continue;
-  for (let r = 0; r < repeat; r++)
+  for (let r = 0; r < repeat; r++) {
     runsWanted.push([repeat > 1 ? `${lesson}#${r + 1}` : lesson, sentenceId]);
+  }
 }
 
 for (const [lesson, sentenceId] of runsWanted) {

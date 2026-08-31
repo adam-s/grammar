@@ -154,8 +154,9 @@ test('a half-built tree never earns completion; the finished run always does', (
       const target = targetReading(canonicalReading(sentence), scope);
       const { beats } = tutorialScript(sentence, scope, target ?? undefined);
       let s = emptySession();
-      if (earnsCompletion(s.build, sentence, target))
+      if (earnsCompletion(s.build, sentence, target)) {
         problems.push(`${sentence.id}: an empty build graded as finished`);
+      }
       for (const beat of beats) {
         s = { ...s, selection: beat.select, verdict: null };
         const panel = sessionChoices(s, sentence, sentence.words, scope);
@@ -166,8 +167,9 @@ test('a half-built tree never earns completion; the finished run always does', (
         }
         s = answer(s, sentence, sentence.words, row, scope);
       }
-      if (!earnsCompletion(s.build, sentence, target))
+      if (!earnsCompletion(s.build, sentence, target)) {
         problems.push(`${sentence.id}: the finished run did not grade as finished`);
+      }
     }
   }
   assert.deepEqual(problems, [], `${problems.length} completion problem(s)`);
@@ -197,7 +199,10 @@ test('the completion set round-trips, and anything else decodes as empty', () =>
     new Set(),
     'another schema version must read as no completions, not a crash',
   );
-  assert.deepEqual(decodeCompletion(JSON.stringify({ v: COMPLETION_VERSION, ids: 'c01-1' })), new Set());
+  assert.deepEqual(
+    decodeCompletion(JSON.stringify({ v: COMPLETION_VERSION, ids: 'c01-1' })),
+    new Set(),
+  );
 });
 
 test('an empty session encodes to a snapshot that restores empty', () => {

@@ -10,6 +10,7 @@
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
   import { tick, untrack } from 'svelte';
+  import { SvelteSet } from 'svelte/reactivity';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -27,7 +28,6 @@
     wordRowRect,
   } from '$lib/grammar/Diagram.svelte';
   import LabelPanel, { type PanelHandle } from '$lib/grammar/LabelPanel.svelte';
-  import type { Verdict } from '$lib/grammar/feedback.ts';
   import {
     measureNodesRect,
     measureSelectionPoint,
@@ -184,7 +184,7 @@
    * starting a sentence over does not take one out: finishing once is history,
    * like a miss. On the server the store reads empty and this stays empty.
    */
-  let completed = $state(decodeCompletion(readKey(completionKey())));
+  const completed = new SvelteSet(decodeCompletion(readKey(completionKey())));
   /** A lesson is done when every one of its sentences is. */
   const completedLessons = $derived(
     COURSE_LESSONS.filter(
@@ -226,6 +226,10 @@
 
   /** Route a session change to whichever session is on stage. */
   function updateShown(fn: (s: Session) => Session) {
+    // A run must never fall through to the learner's session. This guard is
+    // the last line of defence if another action ever discards the scratch
+    // before the tutorial has stopped.
+    if (tutorialActive && !demo) return;
     if (demo) demo = fn(demo);
     else session = fn(session);
   }
@@ -734,7 +738,7 @@
   function recordCompletion(graded: BuildState) {
     if (completed.has(sentence.id)) return;
     if (!earnsCompletion(graded, sentence, target)) return;
-    completed = new Set(completed).add(sentence.id);
+    completed.add(sentence.id);
     writeKey(completionKey(), encodeCompletion(completed));
     traceAppend({ kind: 'complete' });
   }
@@ -750,7 +754,9 @@
     // work lives in `demo`, which persistence cannot see. A demonstration is
     // not the learner's work — it neither overwrites their draft nor earns
     // their checkmark, and there is no state it could leave behind for a
-    // later pick to record from.
+    // later pick to record from. The active-run guard refuses persistence if
+    // that structural boundary is ever broken during teardown.
+    if (tutorialActive) return;
     writeKey(snapshotKey(sentence.id), encodeSnapshot(session, words));
     recordCompletion(session.build);
   }
@@ -765,6 +771,7 @@
    * learner's own lands in the record.
    */
   function pick(o: LabelOption) {
+    if (tutorialActive && !demo) return;
     const before = shown;
     const next = answer(before, sentence, words, o, scope);
     if (demo) demo = next;
@@ -811,10 +818,14 @@
   /** Erase the whole record, snapshots and completions alike. The learner
       confirmed; a fresh `completed` makes the checkmarks agree at once. */
   function resetAllProgress() {
-    if (!confirm('Erase all saved progress? Finished sentences and drafts will be forgotten.'))
+    // Clearing the scratch while its driver is still running would let later
+    // scripted gestures fall through to the learner's fresh session.
+    if (tutorialActive) return;
+    if (!confirm('Erase all saved progress? Finished sentences and drafts will be forgotten.')) {
       return;
+    }
     clearRecord();
-    completed = new Set();
+    completed.clear();
     reset();
     // The stored traces died with the record; the in-memory one restarts so
     // nothing appended after this moment resurrects pre-reset history.
@@ -864,7 +875,9 @@
         <ThemeToggle />
         <div class="progress-actions">
           <button type="button" onclick={downloadRecord}>Export progress</button>
-          <button type="button" onclick={resetAllProgress}>Reset all progress</button>
+          <button type="button" disabled={tutorialActive} onclick={resetAllProgress}
+            >Reset all progress</button
+          >
         </div>
       </div>
     {:else}

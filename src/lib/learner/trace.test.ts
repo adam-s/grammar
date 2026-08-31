@@ -27,7 +27,10 @@ const SENTENCE = INTRO.sentences[0]!;
  * checkpoint, then each pick with its selection, key, outcome, and resulting
  * fingerprint — the honest way to manufacture a real trace.
  */
-function recordWalk(stepsWanted = Infinity, from: Session = emptySession()): {
+function recordWalk(
+  stepsWanted = Infinity,
+  from: Session = emptySession(),
+): {
   trace: Trace;
   final: Session;
 } {
@@ -101,9 +104,7 @@ test('a pick the palette no longer offers names its step too', () => {
   const victim = trace.entries.find((e) => e.kind === 'pick')!;
   const bent = {
     ...trace,
-    entries: trace.entries.map((e) =>
-      e.seq === victim.seq ? { ...e, key: 'form:NoSuchRow' } : e,
-    ),
+    entries: trace.entries.map((e) => (e.seq === victim.seq ? { ...e, key: 'form:NoSuchRow' } : e)),
   };
   const { divergence } = replayTrace(bent, SENTENCE, SCOPE);
   assert.ok(divergence && divergence.seq === victim.seq);
@@ -230,7 +231,13 @@ test('a foreign trace is refused whole, for every kind of doubt', () => {
   };
   assert.equal(decodeTrace(null, SENTENCE.words), null);
   assert.equal(decodeTrace('nonsense {', SENTENCE.words), null);
-  assert.equal(decodeTrace(bend((t) => (t['v'] = TRACE_VERSION + 1)), SENTENCE.words), null);
+  assert.equal(
+    decodeTrace(
+      bend((t) => (t['v'] = TRACE_VERSION + 1)),
+      SENTENCE.words,
+    ),
+    null,
+  );
   assert.equal(
     decodeTrace(good, COURSE_LESSONS[1]!.sentences[0]!.words),
     null,

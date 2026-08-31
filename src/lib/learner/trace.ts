@@ -89,7 +89,15 @@ export interface Trace {
 export const fingerprint = (build: BuildState): string => buildSignature(build.constituents);
 
 export function emptyTrace(sentenceId: string, words: readonly Word[], app: string): Trace {
-  return { v: TRACE_VERSION, sentenceId, words: wordHash(words), app, truncated: false, seq: 0, entries: [] };
+  return {
+    v: TRACE_VERSION,
+    sentenceId,
+    words: wordHash(words),
+    app,
+    truncated: false,
+    seq: 0,
+    entries: [],
+  };
 }
 
 /** A trace entry before its seq is stamped. (`Omit` distributed over the
@@ -226,7 +234,10 @@ export function replayTrace(
     const at = trace.entries[0]?.seq ?? 0;
     return {
       steps,
-      divergence: { seq: at, reason: 'the trace is truncated — its beginning is gone, so it cannot replay' },
+      divergence: {
+        seq: at,
+        reason: 'the trace is truncated — its beginning is gone, so it cannot replay',
+      },
     };
   }
   let s = emptySession();
@@ -237,12 +248,18 @@ export function replayTrace(
   for (const entry of trace.entries) {
     switch (entry.kind) {
       case 'open':
-        s = { ...emptySession(), build: entry.build, misses: entry.misses, rejected: entry.rejected };
+        s = {
+          ...emptySession(),
+          build: entry.build,
+          misses: entry.misses,
+          rejected: entry.rejected,
+        };
         // Navigating away kills a run without a `runEnd`; the next visit's
         // checkpoint supersedes whatever the run had going.
         held.length = 0;
-        if (fingerprint(s.build) !== entry.fp)
+        if (fingerprint(s.build) !== entry.fp) {
           return diverge(entry.seq, 'the opening checkpoint does not match its own fingerprint');
+        }
         break;
       case 'startOver':
         s = emptySession();
@@ -262,20 +279,30 @@ export function replayTrace(
         const panel = sessionChoices(s, sentence, sentence.words, scope);
         const row = panel.groups.flatMap((g) => g.options).find((o) => o.key === entry.key);
         if (!row) return diverge(entry.seq, `the palette no longer offers ${entry.key}`);
-        if (!isPickable(row))
+        if (!isPickable(row)) {
           return diverge(entry.seq, `${entry.key} is now "${row.state}", not pickable`);
+        }
         s = answer(s, sentence, sentence.words, row, scope);
         const outcome = s.verdict?.kind ?? 'correct';
-        if (outcome !== entry.outcome)
-          return diverge(entry.seq, `${entry.key} graded "${outcome}" now, "${entry.outcome}" then`);
-        if (fingerprint(s.build) !== entry.fp)
+        if (outcome !== entry.outcome) {
+          return diverge(
+            entry.seq,
+            `${entry.key} graded "${outcome}" now, "${entry.outcome}" then`,
+          );
+        }
+        if (fingerprint(s.build) !== entry.fp) {
           return diverge(entry.seq, `the diagram came out different after ${entry.key}`);
+        }
         break;
       }
       case 'edit': {
         s = applyAction(s, { kind: 'unwrap', nodeId: entry.nodeId, label: '' });
-        if (fingerprint(s.build) !== entry.fp)
-          return diverge(entry.seq, `the diagram came out different after ungrouping ${entry.nodeId}`);
+        if (fingerprint(s.build) !== entry.fp) {
+          return diverge(
+            entry.seq,
+            `the diagram came out different after ungrouping ${entry.nodeId}`,
+          );
+        }
         break;
       }
       case 'solution':
