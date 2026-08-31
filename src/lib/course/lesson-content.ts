@@ -69,6 +69,10 @@ const INTRODUCTION: LessonDoc = {
         'This guide follows much of his approach, with coding agents helping to turn sentence diagrams into interactive tools.',
     },
     {
+      kind: 'prose',
+      text: 'A central part of that approach is the distinction between form and function. A form-and-function diagram shows what each word or group of words is and what job it does in the sentence. A noun phrase, for example, may function as a subject in one sentence and an object in another. This distinction makes the sentence’s structure and meaning easier to see.',
+    },
+    {
       kind: 'section',
       eyebrow: 'the problem',
       title: 'The sentence is grammatical, but difficult to read',
