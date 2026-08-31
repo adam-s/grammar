@@ -37,7 +37,7 @@ import {
   type LicenseContext,
   type Verdict,
 } from './rules.ts';
-import { contentSpan, isPhraseForm, isPunctuation } from './types.ts';
+import { contentSpan, isPhraseForm, isPunctuation, joinWords } from './types.ts';
 import type {
   AuxKind,
   ClauseKind,
@@ -267,13 +267,13 @@ export function canWrap(state: BuildState, words: Word[], span: Span): Verdict {
     const s = state.constituents[id]!.span;
     const overlaps = span[0] <= s[1] && s[0] <= span[1];
     if (overlaps && !containsSpan(span, s) && !containsSpan(s, span)) {
-      const text = words
-        .slice(s[0], s[1] + 1)
-        .map((w) => w.text)
-        .join(' ');
+      const text = joinWords(words.slice(s[0], s[1] + 1));
       return {
         state: 'disabled',
         reason: `That would cut “${text}” in half. A group has to be taken whole.`,
+        // The refusal knows exactly which group is in the way, so it offers
+        // the repair as data instead of only describing it.
+        repair: { kind: 'unwrap', nodeId: id },
       };
     }
   }

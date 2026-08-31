@@ -9,8 +9,19 @@
  */
 import type { ClauseFunction, Form, Func, VerbType, Voice } from './types.ts';
 
+/**
+ * A structured way out of a structural refusal. A refusal that names the
+ * obstacle can also offer to remove it — "ungroup what is in the way" as a
+ * button rather than an instruction the interface cannot follow. Carried as
+ * data so the feedback composer words it and the panel renders it; the
+ * builder stays the only owner of the mutation.
+ */
+export type Repair = { kind: 'unwrap'; nodeId: string };
+
 export type Verdict =
-  { state: 'allowed' } | { state: 'disabled'; reason: string } | { state: 'hidden' };
+  | { state: 'allowed' }
+  | { state: 'disabled'; reason: string; repair?: Repair }
+  | { state: 'hidden' };
 
 export const ALLOWED: Verdict = { state: 'allowed' };
 const HIDDEN: Verdict = { state: 'hidden' };
@@ -563,8 +574,22 @@ const HEAD_NAMES: Record<string, string> = {
 };
 
 /** Plain-language names, for reasons a learner reads. */
+/**
+ * The claims, worded as English rather than as the taxonomy's hyphenated
+ * codes — for verdicts and refusals that quote them mid-sentence. “This verb
+ * is two-object” is not a sentence anyone says; “a two-object verb” is.
+ */
+export const VERB_TYPE_CLAIM: Record<VerbType, string> = {
+  Vbe: '“be”',
+  Vlink: 'a linking verb',
+  Vint: 'intransitive',
+  Vtr: 'transitive',
+  Vg: 'a two-object verb',
+  Vc: 'an object-and-complement verb',
+};
+
 export const LONG: Record<VerbType, string> = {
-  Vbe: '"be"',
+  Vbe: '“be”',
   Vlink: 'linking',
   Vint: 'intransitive',
   Vtr: 'transitive',

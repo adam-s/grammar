@@ -80,6 +80,7 @@ import {
   type Word,
   contentSpan,
 } from './types.ts';
+import { joinWords } from './types.ts';
 
 /**
  * `idle`      nothing is selected — readable, so the label set is learnable by
@@ -307,6 +308,22 @@ export interface Panel {
   suggested: number;
   /** Set when the SELECTION itself cannot be labelled, whatever the label. */
   blocked?: string;
+  /**
+   * Editing commands, rendered apart from the grammatical options. An action
+   * changes the current analysis; it does not classify the selection, so it
+   * is never a `LabelOption` and never graded. Two sources: a selected node
+   * offers to ungroup itself, and a structural refusal that knows which
+   * group is in the way offers to remove it.
+   */
+  actions?: PanelAction[];
+}
+
+/** An editing command the palette renders apart from the grammatical options. */
+export interface PanelAction {
+  kind: 'unwrap';
+  nodeId: string;
+  /** The button's whole name: the operation and the words it affects. */
+  label: string;
 }
 
 /**
@@ -363,11 +380,19 @@ export type Selection =
 
 /* ------------------------------------------------------------------ util */
 
+/**
+ * The ungroup command for one node: remove its boundary, keep what it
+ * contains. Not offered for a gap — a gap has no boundary around words, and
+ * "ungrouping" one would silently discard the slot itself.
+ */
+function unwrapAction(state: BuildState, words: Word[], id: string): PanelAction | null {
+  const c = state.constituents[id];
+  if (!c || c.gap) return null;
+  return { kind: 'unwrap', nodeId: id, label: `Ungroup ${quote(words, c.span)}` };
+}
+
 const quote = (words: Word[], span: Span): string =>
-  `“${words
-    .slice(span[0], span[1] + 1)
-    .map((w) => w.text)
-    .join(' ')}”`;
+  `“${joinWords(words.slice(span[0], span[1] + 1))}”`;
 
 /* ---------------------------------------------------------------- panels */
 
@@ -498,6 +523,13 @@ function spanPanel(
   const single = span[0] === span[1];
   const verdict = canWrap(state, words, span);
   const blocked = verdict.state === 'disabled' ? verdict.reason : undefined;
+  // A structural refusal that names its obstacle also offers the repair:
+  // the same ungroup command a selected node exposes, aimed at the group in
+  // the way. The learner still makes the grammatical decision afterwards.
+  const repair =
+    verdict.state === 'disabled' && verdict.repair
+      ? unwrapAction(state, words, verdict.repair.nodeId)
+      : null;
 
   const existing = nodeOver(state, span);
   const chosenForm = existing ? state.constituents[existing]!.form : null;
@@ -562,6 +594,7 @@ function spanPanel(
           : ''),
       groups,
       ...(blocked ? { blocked } : {}),
+      ...(repair ? { actions: [repair] } : {}),
     },
     scope,
   );
@@ -906,6 +939,11 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
   if (anchor.options.length > 0) groups.push(anchor);
   if (gaps.options.length > 0) groups.push(gaps);
 
+  // The node's own editing command: remove this boundary, keep its contents.
+  // An action, not an answer — it changes the analysis instead of
+  // classifying the selection, so it lives beside the groups, never in them.
+  const editing = unwrapAction(state, words, id);
+
   return finish(
     {
       subject,
@@ -914,6 +952,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       // thing in other words is chrome, not guidance.
       prompt: c.parent === null && !isWord ? 'Group it with its neighbours to give it a job.' : '',
       groups,
+      ...(editing ? { actions: [editing] } : {}),
     },
     scope,
   );

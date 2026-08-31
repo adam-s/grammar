@@ -2,8 +2,16 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { COURSE_LESSONS } from '../course/course.ts';
 import { ambiguous, subjectPhrase, vtr } from './fixtures.ts';
-import { optionsFor } from './options.ts';
-import { answer, emptySession, sessionChoices, sessionPanel, type Session } from './session.ts';
+import { addGap } from './builder.ts';
+import { isPickable, optionsFor } from './options.ts';
+import {
+  answer,
+  applyAction,
+  emptySession,
+  sessionChoices,
+  sessionPanel,
+  type Session,
+} from './session.ts';
 
 const W = vtr.words; // She repaired the engine
 
@@ -137,10 +145,9 @@ describe('the hint ladder', () => {
     const twice = pick({ ...wrong, verdict: null }, 'vt:Vbe');
     assert.equal(twice.misses['vt:#c1'], 2, 'same question, same node');
     // The first miss says only that it is wrong; the second gives the grader's
-    // own reason. For verb type both carry the same test, because there is only
-    // one test for verb type — the rung that changes is the wording.
+    // own reason, which names the truth — the rung that changes is the wording.
     assert.match(wrong.verdict!.text, /^“repaired” is not intransitive here\.$/);
-    assert.equal(twice.verdict!.text, 'Not Vbe here.');
+    assert.equal(twice.verdict!.text, 'This verb is not “be” — it is transitive.');
   });
 });
 
@@ -425,5 +432,145 @@ describe('what the palette says out loud', () => {
       assert.match(said.test, /^[“"A-Z]/, `${row.key} starts a sentence`);
       assert.match(said.test, /[.?]$/, `${row.key} ends one: ${said.test}`);
     }
+  });
+});
+
+describe('editing commands: ungroup', () => {
+  // Build the correct object NP in vtr — "the engine" — through real picks.
+  const withNP = (): Session => {
+    let s = pick(on(emptySession(), [2, 2]), 'form:Det');
+    s = pick(on(s, [3, 3]), 'form:N');
+    return pick(on(s, [2, 3]), 'form:NP');
+  };
+  const npIdOf = (s: Session): string =>
+    Object.keys(s.build.constituents).find((id) => s.build.constituents[id]!.form === 'NP')!;
+  const selectNode = (s: Session, id: string): Session => ({
+    ...s,
+    selection: { kind: 'node', id },
+  });
+
+  it('a selected node offers its own ungroup, named with its words', () => {
+    const s = withNP();
+    const panel = sessionPanel(s.build, W, { kind: 'node', id: npIdOf(s) }, vtr);
+    assert.equal(panel.actions?.length, 1);
+    assert.equal(panel.actions![0]!.kind, 'unwrap');
+    assert.equal(panel.actions![0]!.label, 'Ungroup “the engine”');
+  });
+
+  it('ungrouping removes exactly one boundary and keeps what it contains', () => {
+    const s = withNP();
+    const id = npIdOf(s);
+    const after = applyAction(selectNode(s, id), { kind: 'unwrap', nodeId: id, label: '' });
+    assert.equal(after.build.constituents[id], undefined, 'the wrapper is gone');
+    const forms = Object.values(after.build.constituents).map((c) => c.form);
+    assert.deepEqual(forms.sort(), ['Det', 'N'], 'the labels beneath survive');
+  });
+
+  it('a removed selection falls back to its own words, so the palette stays open', () => {
+    const s = withNP();
+    const id = npIdOf(s);
+    const after = applyAction(selectNode(s, id), { kind: 'unwrap', nodeId: id, label: '' });
+    assert.deepEqual(after.selection, { kind: 'span', span: [2, 3] });
+  });
+
+  it('a selection elsewhere is left exactly where it was', () => {
+    const s = on(withNP(), [0, 0]);
+    const after = applyAction(s, { kind: 'unwrap', nodeId: npIdOf(s), label: '' });
+    assert.deepEqual(after.selection, { kind: 'span', span: [0, 0] });
+  });
+
+  it('clears feedback about a structure that no longer exists', () => {
+    const s: Session = {
+      ...withNP(),
+      verdict: { kind: 'wrong', text: 'stale' },
+      navigation: { kind: 'close' },
+    };
+    const after = applyAction(s, { kind: 'unwrap', nodeId: npIdOf(s), label: '' });
+    assert.equal(after.verdict, null);
+    assert.equal(after.navigation, null);
+  });
+
+  it('a second press finds no node and changes nothing', () => {
+    const s = withNP();
+    const id = npIdOf(s);
+    const once = applyAction(s, { kind: 'unwrap', nodeId: id, label: '' });
+    const twice = applyAction(once, { kind: 'unwrap', nodeId: id, label: '' });
+    assert.deepEqual(twice, once);
+  });
+
+  it('ungrouping a gap is refused: the slot is not silently discarded', () => {
+    const s = withNP();
+    const withGap: Session = {
+      ...s,
+      build: addGap(s.build, npIdOf(s), 'determiner'),
+    };
+    const gapId = Object.keys(withGap.build.constituents).find(
+      (id) => withGap.build.constituents[id]!.gap,
+    )!;
+    const after = applyAction(withGap, { kind: 'unwrap', nodeId: gapId, label: '' });
+    assert.deepEqual(after.build, withGap.build);
+  });
+
+  it('an unwrapped one-child wrapper keeps its child in place', () => {
+    // The N over "engine" is a one-word wrapper around word 3.
+    const s = withNP();
+    const nId = Object.keys(s.build.constituents).find(
+      (id) => s.build.constituents[id]!.form === 'N',
+    )!;
+    const parent = s.build.constituents[nId]!.parent;
+    const after = applyAction(s, { kind: 'unwrap', nodeId: nId, label: '' });
+    assert.equal(after.build.constituents[nId], undefined);
+    assert.ok(parent && after.build.constituents[parent], 'the NP above survives');
+  });
+});
+
+describe('editing commands: the blocked-repair path', () => {
+  // *The shoes on my feet pinched.* — the recorded dead end. Building
+  // "The shoes" as an NP first makes the required Nominal unbuildable.
+  const pinched = COURSE_LESSONS.flatMap((l) => l.sentences).find((s) => s.id === 'c02-d')!;
+  const PW = pinched.words;
+
+  /** Det(The) N(shoes) NP(The shoes) — the crossing group, built directly. */
+  const cornered = (): Session => {
+    let s = pick(on(emptySession(), [0, 0]), 'form:Det', pinched);
+    s = pick(on(s, [1, 1]), 'form:N', pinched);
+    s = { ...s, selection: { kind: 'span', span: [0, 1] } };
+    const np = rowFor(s, 'form:NP', PW);
+    assert.ok(np, 'the palette offers NP over “The shoes”');
+    const after = answer(s, pinched, PW, np);
+    assert.ok(
+      Object.values(after.build.constituents).some((c) => c.form === 'NP'),
+      'the NP entered the structure',
+    );
+    return after;
+  };
+
+  it('the refusal that names the obstacle offers to remove it', () => {
+    const s = on(cornered(), [1, 4]); // "shoes on my feet"
+    const panel = sessionPanel(s.build, PW, s.selection, pinched);
+    assert.ok(panel.blocked, 'the selection is structurally blocked');
+    assert.equal(panel.actions?.length, 1);
+    assert.equal(panel.actions![0]!.label, 'Ungroup “The shoes”');
+  });
+
+  it('the repair unblocks the Nominal without restarting the sentence', () => {
+    const s = on(cornered(), [1, 4]);
+    const panel = sessionPanel(s.build, PW, s.selection, pinched);
+    const repaired = applyAction(s, panel.actions![0]!);
+    assert.deepEqual(repaired.selection, s.selection, 'the learner’s selection is kept');
+    const detStays = Object.values(repaired.build.constituents).some((c) => c.form === 'Det');
+    const nStays = Object.values(repaired.build.constituents).some((c) => c.form === 'N');
+    assert.ok(detStays && nStays, 'only the NP wrapper was removed');
+    const after = sessionPanel(repaired.build, PW, repaired.selection, pinched);
+    assert.equal(after.blocked, undefined, 'the structural error disappears');
+    assert.equal(after.actions, undefined, 'and takes its repair with it');
+    const nom = after.groups.flatMap((g) => g.options).find((o) => o.key === 'form:Nom');
+    assert.ok(nom && isPickable(nom), 'Nominal becomes available at once');
+    // The repair must not choose it: the grammatical decision stays the
+    // learner's, so the Nominal is offered, not built.
+    assert.ok(
+      !Object.values(repaired.build.constituents).some((c) => c.form === 'Nom'),
+      'nothing was built on the learner’s behalf',
+    );
   });
 });

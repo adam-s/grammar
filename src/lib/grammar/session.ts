@@ -80,11 +80,18 @@ import {
   type ChapterScope,
   type LabelOption,
   type Panel,
+  type PanelAction,
   type Selection,
 } from './options.ts';
 import { textOf } from './build.ts';
-import { composeVerdict, familyOf, sentenceCase, spokenVerdict, type Verdict } from './feedback.ts';
-import { ALLOWED, hypothesizes, LONG } from './rules.ts';
+import {
+  composeVerdict,
+  sentenceCase,
+  spokenVerdict,
+  type ClaimFamily,
+  type Verdict,
+} from './feedback.ts';
+import { ALLOWED, hypothesizes } from './rules.ts';
 import {
   CLAUSE_FUNCTIONS,
   PHRASE_INTERNAL_FUNCTIONS,
@@ -94,6 +101,7 @@ import {
   type Form,
   type Func,
   type SentenceEntry,
+  type VerbType,
   type Word,
 } from './types.ts';
 
@@ -597,10 +605,41 @@ export function sessionPanel(
  * `praise` and `refused` are the two halves of the same sentence — "Yes — that
  * is a noun" and "Not a noun." — so a decision names its subject once.
  */
+/**
+ * The verb-type claims, worded as English rather than as the taxonomy's
+ * hyphenated codes. “This verb is two-object” is not a sentence anyone says;
+ * “this verb takes two objects” is.
+ */
+const VERB_TYPE_PRAISE: Record<VerbType, string> = {
+  Vbe: 'this verb is “be”',
+  Vlink: 'this verb is linking',
+  Vint: 'this verb is intransitive',
+  Vtr: 'this verb is transitive',
+  Vg: 'this verb takes two objects',
+  Vc: 'this verb takes an object and its complement',
+};
+
+const VERB_TYPE_CLAIM: Record<VerbType, string> = {
+  Vbe: '“be”',
+  Vlink: 'a linking verb',
+  Vint: 'intransitive',
+  Vtr: 'transitive',
+  Vg: 'a two-object verb',
+  Vc: 'an object-and-complement verb',
+};
+
 interface Ask {
   /** Same question, same words: what the miss count is kept against. */
   key: string;
   outcome: Outcome;
+  /**
+   * Which kind of claim this question grades — the branch below knows, so it
+   * says. A form claim is refused outright ("is not a verb"); a contextual
+   * one is refused for THIS sentence ("is not the subject here"). The
+   * anchor and fusion questions read as form claims: their refusals name
+   * what the words are not, without a "here".
+   */
+  family: ClaimFamily;
   praise: string;
   refused: string;
   firstMiss: string;
@@ -654,6 +693,9 @@ export function sessionChoices(
  * build can take — so this says what to do rather than casting doubt on the
  * answer.
  */
+/** “a” or “an”, decided by the sound the phrase starts with — near enough. */
+const an = (phrase: string): string => (/^[aeiou]/i.test(phrase) ? `an ${phrase}` : `a ${phrase}`);
+
 const CROSSING_TEST =
   'Select the whole group, or ungroup what is in the way, and try the same label again.';
 
@@ -675,9 +717,10 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `gap:${targetKey(build, selection, words)}:${o.func}`,
+      family: 'contextual',
       outcome: gradeGap(sentence, node.span, node.form, o.func),
       praise: `nothing fills the ${label(o.func)} here`,
-      refused: `a missing ${label(o.func)}`,
+      refused: `missing ${an(label(o.func))}`,
       firstMiss: GAP_TEST,
       apply: (b) => addGap(b, id, o.func!, o.form),
     };
@@ -711,6 +754,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
       // `level` and not just the words: the word class and the one-word phrase
       // over it are different questions asked of the same letters.
       key: `form:${o.level ?? 'any'}:${targetKey(build, selection, words)}`,
+      family: 'form',
       // The level the row belongs to, so "not a noun" is answered with
       // "pronoun" rather than with "noun phrase".
       outcome,
@@ -742,6 +786,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     if (!target) return null;
     return {
       key: `anchor:${targetKey(build, selection, words)}`,
+      family: 'form',
       outcome: gradeAnchor(sentence, node.span, node.form, target.span, target.form),
       praise: `it belongs to ${o.label}`,
       refused: `part of ${o.label}`,
@@ -754,6 +799,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `fuse:${targetKey(build, selection, words)}`,
+      family: 'form',
       outcome: gradeFusion(sentence, node.span, node.form, o.fusedWith),
       praise: `it is the ${label(o.fusedWith)} and the head at once`,
       refused: 'both at once',
@@ -783,10 +829,11 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const needsFutureParent = hypothesisFor(build, id, o.func).state !== 'allowed';
     return {
       key: `func:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       outcome: gradeFunction(sentence, node.span, node.form, o.func, o.obligatory),
       praise: `it is the ${o.label}`,
       refused: `the ${o.label}`,
-      firstMiss: sentenceCase(`the ${label(o.func)} answers: ${FUNCTION_TEST[o.func]}`),
+      firstMiss: sentenceCase(FUNCTION_TEST[o.func]),
       apply: (b) =>
         future && needsFutureParent
           ? setFunctionForParent(b, id, o.func!, future.parentForm, o.obligatory ?? false, {
@@ -801,6 +848,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `voice:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       outcome: gradeVoice(sentence, at, o.voice),
       praise: o.voice === 'passive' ? 'this one is passive' : 'this one is active',
       refused: o.voice,
@@ -813,9 +861,11 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `aux:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       outcome: gradeAuxKind(sentence, at, o.auxKind),
-      praise: `this is ${auxKindName(o.auxKind)}`,
-      refused: auxKindName(o.auxKind),
+      // “a modal”, but “perfect ‘have’” — the quoted kinds carry their name.
+      praise: `this is ${o.auxKind === 'modal' ? an(auxKindName(o.auxKind)) : auxKindName(o.auxKind)}`,
+      refused: o.auxKind === 'modal' ? an(auxKindName(o.auxKind)) : auxKindName(o.auxKind),
       firstMiss: AUX_KIND_TEST,
       apply: (b) => setAuxKind(b, id, o.auxKind!),
     };
@@ -825,9 +875,10 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `part:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       outcome: gradePartKind(sentence, at, o.partKind),
-      praise: `this is ${partKindName(o.partKind)}`,
-      refused: partKindName(o.partKind),
+      praise: `this is ${o.partKind === 'verbal' ? an(partKindName(o.partKind)) : partKindName(o.partKind)}`,
+      refused: o.partKind === 'verbal' ? an(partKindName(o.partKind)) : partKindName(o.partKind),
       firstMiss: PART_KIND_TEST,
       apply: (b) => setPartKind(b, id, o.partKind!),
     };
@@ -837,9 +888,10 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `kind:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       outcome: gradeClauseKind(sentence, node.span, o.clauseKind),
-      praise: `this is ${clauseKindName(o.clauseKind)}`,
-      refused: clauseKindName(o.clauseKind),
+      praise: `this is ${an(clauseKindName(o.clauseKind))}`,
+      refused: an(clauseKindName(o.clauseKind)),
       firstMiss: CLAUSE_KIND_TEST,
       apply: (b) => setClauseKind(b, id, o.clauseKind!),
     };
@@ -849,6 +901,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `fin:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       outcome: gradeFiniteness(sentence, node.span, o.finiteness),
       praise: `this clause is ${o.finiteness}`,
       refused: o.finiteness,
@@ -861,11 +914,12 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
     const id = selection.id;
     return {
       key: `vt:${targetKey(build, selection, words)}`,
+      family: 'contextual',
       // A sentence can hold more than one verb, so this is graded against the
       // verb that was selected rather than against the sentence.
       outcome: gradeVerbType(sentence, at, o.verbType),
-      praise: `this verb is ${LONG[o.verbType]}`,
-      refused: LONG[o.verbType],
+      praise: VERB_TYPE_PRAISE[o.verbType],
+      refused: VERB_TYPE_CLAIM[o.verbType],
       firstMiss: VERB_TYPE_TEST,
       apply: (b) => setVerbType(b, id, o.verbType!),
     };
@@ -914,14 +968,14 @@ function nodeAfterForm(
  * grader's reason immediately, so how much help a learner got depended on which
  * kind of question they had got wrong.
  */
-function verdictFor(ask: Ask, misses: number, subject: string, option: LabelOption): Verdict {
+function verdictFor(ask: Ask, misses: number, subject: string): Verdict {
   const wrong = ask.outcome.kind === 'wrong' ? ask.outcome : null;
   const alternate = ask.outcome.kind === 'alternate' ? ask.outcome : null;
   return composeVerdict({
     outcome: ask.outcome.kind,
     subject,
     misses,
-    family: familyOf(option),
+    family: ask.family,
     refused: ask.refused,
     praise: ask.praise,
     reason: wrong?.reason,
@@ -935,6 +989,35 @@ function verdictFor(ask: Ask, misses: number, subject: string, option: LabelOpti
     gloss: alternate?.gloss,
     canonicalGloss: alternate?.canonicalGloss,
   });
+}
+
+/**
+ * Apply one editing command and return the session that follows.
+ *
+ * An action is not an answer: nothing is graded, no miss is counted, and no
+ * refusal is remembered. Ungrouping removes exactly one boundary and keeps
+ * everything inside it — `unwrap`'s own contract — then clears feedback that
+ * was about a structure that no longer exists. Remembered refusals stay:
+ * `sessionChoices` re-grades them against the new structure, so a row the
+ * removal made legal comes back on its own. A second press on the same
+ * command finds no node and changes nothing.
+ */
+export function applyAction(session: Session, action: PanelAction): Session {
+  if (action.kind !== 'unwrap') return session;
+  const target = session.build.constituents[action.nodeId];
+  if (!target || target.gap) return session;
+  const build = unwrap(session.build, action.nodeId);
+  // The selection survives wherever it still points at something. A selected
+  // node that was just removed falls back to its own words, so the palette
+  // stays open on the work instead of closing over it.
+  let selection: Selection = session.selection;
+  if (selection.kind === 'node' && selection.id === action.nodeId) {
+    selection = { kind: 'span', span: target.span };
+  } else if (selection.kind === 'nodes' && selection.ids.includes(action.nodeId)) {
+    const ids = selection.ids.filter((id) => id !== action.nodeId);
+    selection = ids.length > 0 ? { ...selection, ids } : { kind: 'span', span: selection.span };
+  }
+  return { ...session, build, selection, verdict: null, navigation: null };
 }
 
 /**
@@ -994,7 +1077,7 @@ export function answer(
   const misses = wrong
     ? { ...session.misses, [decision.key]: (session.misses[decision.key] ?? 0) + 1 }
     : session.misses;
-  const verdict = verdictFor(decision, misses[decision.key] ?? 0, panel.subject, offered);
+  const verdict = verdictFor(decision, misses[decision.key] ?? 0, panel.subject);
 
   if (wrong) {
     const said = spokenVerdict(verdict);
