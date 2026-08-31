@@ -661,12 +661,17 @@
 {/if}
 
 <style>
-  /* The launcher sits between the two sidebar controls, which own the corners. */
+  /* The launcher sits between the two sidebar controls, which own the corners.
+     Above the canvas, BELOW the palette (desktop popup z30, phone sheet z45):
+     when the menu rises under the pill, the menu wins — a toolbar control
+     never covers the question being asked. The run's own chrome is untouched:
+     the banner (z45) and the guided pointer (z48) exist only while the run is
+     on stage, when this launcher is not mounted at all. */
   .launch-home {
     position: absolute;
     top: 8px;
     left: 50%;
-    z-index: 45;
+    z-index: 20;
     transform: translateX(-50%);
   }
   .launch-home.first {

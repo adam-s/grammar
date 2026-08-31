@@ -141,12 +141,11 @@ if ((await launch.count()) === 0) {
     if (paletteOpen > 0 && !launcherHeld)
       fail('the launcher vanished while the palette was open');
     else if (launcherHeld) pass('the launcher holds its place while the palette is open');
-    if (!launcherHeld) {
-      // Belt and braces so the scenario can continue even if the assertion
-      // above failed: dismiss the palette and find the launcher.
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(300);
-    }
+    // The pill holds its place BUT sits under the palette — when the two
+    // overlap, the menu wins the click. Dismiss the menu the way a hand
+    // does, then launch.
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
     // The run takes the stage. Mid-flight, the canvas must show ITS scratch.
     await page.locator('button.launch').click();
     await page.waitForTimeout(2500);
