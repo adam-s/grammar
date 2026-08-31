@@ -53,6 +53,7 @@
     selectFault,
     stop as stopRun,
     type RunState,
+    type RunStatus,
   } from './run.ts';
   import type { TutorialBeat } from './script.ts';
 
@@ -103,6 +104,14 @@
      * record is. The default is the full invitation.
      */
     launcher?: { label: string; arrow: boolean; tone: 'invite' | 'quiet' };
+    /**
+     * The page renders the launch control itself — in its own toolbar row —
+     * and drives the run through the bound `play()`. This component then
+     * renders no launcher at all and reports its status through `onstatus`
+     * so the docked control can read "Watch it again" off the same state.
+     */
+    docked?: boolean;
+    onstatus?: (status: RunStatus) => void;
   };
 
   let {
@@ -119,6 +128,8 @@
     onpoint,
     onplacement,
     launcher = { label: 'Watch how it is built', arrow: true, tone: 'invite' },
+    docked = false,
+    onstatus,
   }: Props = $props();
 
   const ws = getWorkspace();
@@ -385,7 +396,12 @@
     rest: 0,
   };
 
-  async function play() {
+  /** The run's status, for the page's docked control. */
+  $effect(() => {
+    onstatus?.(run.status);
+  });
+
+  export async function play() {
     const mine = ++token;
     // Stop aborts the pointer's flight, but a gesture driver mid-await still
     // unwinds afterwards. These hooks drop every write the moment this run
@@ -579,7 +595,7 @@
      stage where the popup can land. The quiet pill is a toolbar control like
      the view toggle beside it, and a toolbar that blinks away on every click
      reads as a glitch, so it holds its place. -->
-{#if (run.status === 'idle' || run.status === 'stopped' || run.status === 'done') && !(obscured && launcher.arrow)}
+{#if !docked && (run.status === 'idle' || run.status === 'stopped' || run.status === 'done') && !(obscured && launcher.arrow)}
   <div class="launch-home" class:first={run.status === 'idle' && launcher.arrow}>
     {#if run.status === 'idle' && launcher.arrow}
       <div class="start-here" aria-hidden="true">

@@ -10,6 +10,7 @@
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
   import Undo2 from '@lucide/svelte/icons/undo-2';
+  import GraduationCap from '@lucide/svelte/icons/graduation-cap';
   import { tick, untrack } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { goto } from '$app/navigation';
@@ -440,6 +441,15 @@
     closePalette();
   }
   let panelRef = $state<PanelHandle | null>(null);
+  /**
+   * Outside the introduction the launcher is a toolbar control, so it lives
+   * in the page's own control row — grouped with Back and the view toggle —
+   * and drives the run through the component's bound `play()`. The
+   * introduction keeps the component's centre-stage invitation.
+   */
+  let tutorialRef = $state<{ play: () => Promise<void> } | null>(null);
+  let runStatus = $state<'idle' | 'running' | 'done' | 'stopped' | 'failed'>('idle');
+  const dockedLaunch = $derived(posture.tone === 'quiet' && tutorialBeats.length > 0);
 
   /**
    * The run performs in its own scratch session; the learner's work is set
@@ -987,17 +997,29 @@
     <div class="sr-only" role="status" aria-live="polite">{liveNote}</div>
     {#if middleView === 'diagram' && !tutorialActive}
       <div class="canvas-controls" data-stage-occluder>
-        {#if !solved}
+        <!-- Actions stay put on the solution view, merely disabled — a
+             control that vanishes when the view flips reads as a glitch;
+             one that dims reads as "not here, not now". -->
+        <button
+          class="undo-step"
+          type="button"
+          disabled={!canUndo || solved}
+          aria-label="Take back the last step"
+          aria-keyshortcuts="Control+Z Meta+Z"
+          title="Take back the last step (Ctrl/⌘ Z)"
+          onclick={undo}
+        >
+          <Undo2 size={14} strokeWidth={2} aria-hidden="true" />
+        </button>
+        {#if dockedLaunch}
           <button
-            class="undo-step"
+            class="launch docked"
             type="button"
-            disabled={!canUndo}
-            aria-label="Take back the last step"
-            aria-keyshortcuts="Control+Z Meta+Z"
-            title="Take back the last step (Ctrl/⌘ Z)"
-            onclick={undo}
+            disabled={solved}
+            onclick={() => void tutorialRef?.play()}
           >
-            <Undo2 size={14} strokeWidth={2} aria-hidden="true" />
+            <GraduationCap size={15} strokeWidth={1.9} aria-hidden="true" />
+            {runStatus === 'idle' ? posture.label : 'Watch it again'}
           </button>
         {/if}
         <div class="solution-toggle" role="group" aria-label="Diagram state">
@@ -1021,11 +1043,14 @@
            sentence it ran on, and must not greet the next one. -->
       {#key sentenceId}
         <Tutorial
+          bind:this={tutorialRef}
           beats={tutorialBeats}
           frame={tutorialFrame}
           frameAnchor={tutorialFrameAnchor}
           host={tutorialHost}
           launcher={{ label: posture.label, arrow: posture.arrow, tone: posture.tone }}
+          docked={dockedLaunch}
+          onstatus={(s) => (runStatus = s)}
           pointer={guidedPointer}
           obscured={popupAnchor !== null}
           onstart={startDemo}
@@ -1222,10 +1247,37 @@
     backdrop-filter: blur(10px);
     cursor: pointer;
   }
+  /* Hover echoes the toggle's accent so the row reads as one family; only
+     the toggle keeps a FILLED accent, because only it holds a state. */
   .undo-step:hover:not(:disabled) {
-    color: var(--ink);
+    color: var(--accent);
   }
   .undo-step:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .canvas-controls .launch {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+    min-height: 34px;
+    padding: 3px 13px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--panel) 94%, transparent);
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: 0 2px 10px oklch(0 0 0 / 18%);
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .canvas-controls .launch:hover:not(:disabled) {
+    color: var(--accent);
+  }
+  .canvas-controls .launch:disabled {
     opacity: 0.4;
     cursor: default;
   }

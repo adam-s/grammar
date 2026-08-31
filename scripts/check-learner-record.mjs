@@ -340,12 +340,15 @@ const half = Math.max(1, Math.floor(steps.length / 2));
     fail('the reloaded floor still offers something to take back');
   }
 
-  // No Back button on the answer.
+  // On the answer, the actions stay put and dim — vanishing controls read
+  // as a glitch; disabled ones read as "not here, not now".
   await page.getByRole('button', { name: 'Solved', exact: true }).click();
   await page.waitForTimeout(200);
-  if ((await page.locator('.undo-step').count()) > 0) {
-    fail('the Back button is offered on the solution view');
-  } else pass('the Back button hides on the solution view');
+  if ((await page.locator('.undo-step').count()) === 0) {
+    fail('the Back button vanished on the solution view');
+  } else if (!(await page.locator('.undo-step').isDisabled())) {
+    fail('the Back button stays live on the solution view');
+  } else pass('the Back button stays put, disabled, on the solution view');
   await page.getByRole('button', { name: 'Unsolved', exact: true }).click();
   await page.waitForTimeout(200);
 
