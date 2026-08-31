@@ -18,23 +18,26 @@
 
   import { GuidedPointer } from '../workspace/guided-pointer.svelte.ts';
   import PointerLayer from '../workspace/PointerLayer.svelte';
+  import { DEFAULT_TIMING, perform, type Gestures } from '../workspace/performance.ts';
+  import { prefersReducedMotion } from '../workspace/responsive.svelte.ts';
+  import { performSelection, type SelectionGestureHooks } from '../workspace/selection-gesture.ts';
   import Diagram, {
     diagramSize,
     selectionFocusRect,
     selectionRect,
     drawnRect,
   } from '../grammar/Diagram.svelte';
-  import LabelPanel from '../grammar/LabelPanel.svelte';
+  import LabelPanel, { type PanelHandle } from '../grammar/LabelPanel.svelte';
+  import { measureSelectionPoint, measureWordPoint } from '../grammar/measure.ts';
   import { quizView } from '../grammar/session.ts';
   import { optionsFor } from '../grammar/options.ts';
   import type { Selection } from '../grammar/options.ts';
   import { emptyBuild } from '../grammar/builder.ts';
   import type { Reading, SentenceEntry, Span } from '../grammar/types.ts';
   import { observeStageSize } from '../workspace/stage-resize.ts';
-  import { fit, type Point, type Size } from '../workspace/viewport.ts';
+  import { fitToFloor, worldTransform, type Point, type Size } from '../workspace/viewport.ts';
   import { Workspace, setWorkspace } from '../workspace/workspace.svelte.ts';
   import { frameDepth } from './hero-script.ts';
-  import { DEFAULT_TIMING, perform, type Gestures } from './performance.ts';
   import { replayOptionKey, replaySentence } from './sentence-renderer.ts';
 
   type Props = {
@@ -65,8 +68,9 @@
   const MIN_H = 452;
   const MAX_H = 620;
 
-  const steps = $derived(replaySentence(sentence, reading).steps);
-  const finished = $derived(replaySentence(sentence, reading).final);
+  const replay = $derived(replaySentence(sentence, reading));
+  const steps = $derived(replay.steps);
+  const finished = $derived(replay.final);
   /** One frame for the whole loop: neither the words nor the following prose move. */
   const depth = $derived(frameDepth(finished, sentence.words));
 
@@ -83,6 +87,8 @@
   let panelStep = $state(-1);
   let selection = $state<Selection | null>(null);
   let aimKey = $state<string | null>(null);
+  /** The live drag draft: the highlight that grows under the moving hand. */
+  let heroDraft = $state<Span | null>(null);
 
   /** Reduced motion still performs when the reader explicitly opened it. */
   const still = $derived(reduced && !overlay);
@@ -134,7 +140,7 @@
   let stage = $state<HTMLDivElement | null>(null);
   let stageSize = $state<Size>({ w: 0, h: 0 });
   let ready = $state(false);
-  let panelRef = $state<{ aimPointer: (key: string) => Promise<void> } | null>(null);
+  let panelRef = $state<PanelHandle | null>(null);
 
   /**
    * The one hand for the whole performance, on one pausable clock. Pausing
@@ -154,30 +160,13 @@
 
   /**
    * Where the thing step `index` clicks is RENDERED, measured from this
-   * stage's own DOM — so the fitted camera, the reserved depth, and any
-   * resize or rotation are already in the numbers, and a flight tracking
-   * this getter follows the element if the stage moves under it.
+   * stage's own world by the shared `measure.ts` helpers — so the fitted
+   * camera, the reserved depth, and any resize or rotation are already in
+   * the numbers, and a flight tracking this getter follows the element if
+   * the stage moves under it.
    */
-  const selectionPoint = (index: number): Point | null => {
-    if (!stage) return null;
-    const sel = stepSelectionOf(index);
-    const boxes: DOMRect[] = [];
-    if (sel.kind === 'span') {
-      for (const el of stage.querySelectorAll<HTMLElement>('.world [data-word]')) {
-        const at = Number(el.dataset.word);
-        if (at >= sel.span[0] && at <= sel.span[1]) boxes.push(el.getBoundingClientRect());
-      }
-    } else if (sel.kind === 'node') {
-      const el = stage.querySelector(`.world [data-node="${sel.id}"]`);
-      if (el) boxes.push(el.getBoundingClientRect());
-    }
-    if (boxes.length === 0) return null;
-    const left = Math.min(...boxes.map((b) => b.left));
-    const right = Math.max(...boxes.map((b) => b.right));
-    const top = Math.min(...boxes.map((b) => b.top));
-    const bottom = Math.max(...boxes.map((b) => b.bottom));
-    return { x: (left + right) / 2, y: (top + bottom) / 2 };
-  };
+  const selectionPoint = (index: number): Point | null =>
+    ws.world ? measureSelectionPoint(ws.world, stepSelectionOf(index)) : null;
 
   /**
    * `content` is already the finished size because of `depth`, so this fits
@@ -188,21 +177,26 @@
     if (stageSize.w === 0 || stageSize.h === 0) return;
     ws.stage = stageSize;
     // Scale to what is left under the headroom, then pin the bottom of the
-    // diagram to the floor. The word row is the one thing that must not move:
-    // the tree grows upward out of it, and a sentence that drifts while its
-    // own structure is being built is unreadable.
-    const room = { w: stageSize.w, h: Math.max(80, stageSize.h - HEADROOM) };
-    const fitted = fit(content, room, 0);
-    ws.viewport = {
-      ...fitted,
-      ty: stageSize.h - FLOOR - content.h * fitted.z,
-    };
+    // diagram to the floor — the shared `fitToFloor`. The word row is the
+    // one thing that must not move: the tree grows upward out of it, and a
+    // sentence that drifts while its own structure is being built is
+    // unreadable.
+    ws.viewport = fitToFloor(content, stageSize, HEADROOM, FLOOR);
   });
 
+  /** The one world-transform encoding, shared with the canvas. */
   const worldStyle = $derived(
-    `width:${content.w}px;height:${content.h}px;` +
-      `transform:translate3d(${ws.viewport.tx}px,${ws.viewport.ty}px,0) scale(${ws.viewport.z})`,
+    `width:${content.w}px;height:${content.h}px;${worldTransform(ws.viewport)}`,
   );
+
+  /** The world element, published so the measure helpers can scope to it. */
+  let world = $state<HTMLDivElement | null>(null);
+  $effect(() => {
+    ws.world = world;
+    return () => {
+      ws.world = null;
+    };
+  });
 
   /**
    * The one clock, following the one thing that may stop it: visibility for
@@ -215,7 +209,7 @@
   });
 
   onMount(() => {
-    reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    reduced = prefersReducedMotion();
 
     const stop = stage
       ? observeStageSize(stage, (size) => {
@@ -240,12 +234,30 @@
 
     let alive = true;
     const live = () => alive && !still;
-    const idle = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+    // The hero's diagram is inert, so the drag's growing highlight is fed
+    // through the same draft SHAPE the workspace uses — here it drives the
+    // figure's selection ring directly.
+    const heroHooks: SelectionGestureHooks = {
+      wordPoint: (i) => (ws.world ? measureWordPoint(ws.world, i) : null),
+      draft: (span) => {
+        heroDraft = span;
+      },
+      marqueeClient: () => {},
+      nodesRect: () => null,
+    };
 
     const gestures: Gestures = {
-      moveToSelection: (index) => pointer.moveToClient(() => selectionPoint(index)),
-      press: () => pointer.press(),
+      // The same dispatch the tutorial uses: which gesture a selection gets
+      // is decided once, in `performSelection`.
+      selectTarget: async (index) => {
+        await performSelection(pointer, heroHooks, stepSelectionOf(index), {
+          canDrag: true,
+          pointTarget: () => selectionPoint(index),
+        });
+      },
       applySelection: (index) => {
+        heroDraft = null;
         selection = stepSelectionOf(index);
         panelStep = index;
       },
@@ -254,7 +266,9 @@
         await panelRef?.aimPointer(key);
         aimKey = key;
       },
-      applyChoice: (index) => {
+      applyChoice: async (index) => {
+        // The press IS the commit: dip, release, and the label lands.
+        await pointer.press();
         committed = index;
       },
       closePalette: () => {
@@ -267,13 +281,16 @@
 
     void (async () => {
       // Do not begin until the stage has a size and has been seen once —
-      // a performance nobody can watch teaches nobody.
-      while (alive && (!ready || !seen)) await idle(120);
+      // a performance nobody can watch teaches nobody. The poll runs on the
+      // clock's own primitive, real-time, so a paused (unseen) clock cannot
+      // deadlock it.
+      await pointer.clock.waitUntil(() => !alive || (ready && seen));
       while (live()) {
         committed = -1;
         panelStep = -1;
         selection = null;
         aimKey = null;
+        heroDraft = null;
         await perform(steps.length, gestures, DEFAULT_TIMING, live);
         if (!live()) return;
         await pointer.clock.wait(DEFAULT_TIMING.rest);
@@ -298,12 +315,16 @@
   bind:this={stage}
   style={overlay ? '' : `height:${stageH}px`}
 >
-  <div class="world" style={worldStyle}>
+  <div class="world" style={worldStyle} bind:this={world}>
     <Diagram
       words={sentence.words}
       constituents={build.constituents}
       minDepth={depth}
-      selection={lit ? { kind: 'span', span: lit } : { kind: 'none' }}
+      selection={lit
+        ? { kind: 'span', span: lit }
+        : heroDraft
+          ? { kind: 'span', span: heroDraft }
+          : { kind: 'none' }}
       interactive={false}
       onpick={() => {}}
       ondraft={() => {}}

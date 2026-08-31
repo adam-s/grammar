@@ -21,7 +21,14 @@
   import { dragRect, isMarquee } from './marquee.ts';
   import { observeStageSize } from './stage-resize.ts';
   import { getWorkspace } from './workspace.svelte.ts';
-  import { formatZoom, gridStep, toWorld, type Point, type Rect } from './viewport.ts';
+  import {
+    formatZoom,
+    gridStep,
+    rectToWorld,
+    worldTransform,
+    type Point,
+    type Rect,
+  } from './viewport.ts';
 
   type Props = {
     /** What ⇧1 should frame. Omit and the shortcut is inert. */
@@ -54,9 +61,16 @@
       `opacity:${vp.z < 0.2 ? 0 : 1}`,
   );
 
-  const worldStyle = $derived(
-    `transform:translate3d(${vp.tx}px,${vp.ty}px,0) scale(${vp.z});--z:${vp.z}`,
-  );
+  const worldStyle = $derived(worldTransform(vp));
+
+  /** The world element, published so measurement code can scope to it. */
+  let world = $state<HTMLDivElement | null>(null);
+  $effect(() => {
+    ws.world = world;
+    return () => {
+      ws.world = null;
+    };
+  });
 
   onMount(() => {
     if (!stage) return;
@@ -122,11 +136,8 @@
     }
   }
 
-  function worldMarquee(rect: Rect): Rect {
-    const topLeft = toWorld(vp, { x: rect.x, y: rect.y });
-    const bottomRight = toWorld(vp, { x: rect.x + rect.w, y: rect.y + rect.h });
-    return dragRect(topLeft, bottomRight);
-  }
+  /** The one conversion every marquee uses — real drags and driven ones. */
+  const worldMarquee = (rect: Rect): Rect => rectToWorld(vp, rect);
 
   function onpointermove(e: PointerEvent) {
     if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
@@ -258,14 +269,15 @@
 >
   <div class="grid" style={gridStyle} aria-hidden="true"></div>
 
-  <div class="world" style={worldStyle}>
+  <div class="world" style={worldStyle} bind:this={world}>
     {@render children?.()}
   </div>
 
-  {#if marqueeBox && isMarquee(marqueeBox)}
+  {#if (marqueeBox && isMarquee(marqueeBox)) || ws.drivenMarquee}
+    {@const shownBox = marqueeBox && isMarquee(marqueeBox) ? marqueeBox : ws.drivenMarquee!}
     <div
       class="marquee"
-      style="left:{marqueeBox.x}px; top:{marqueeBox.y}px; width:{marqueeBox.w}px; height:{marqueeBox.h}px"
+      style="left:{shownBox.x}px; top:{shownBox.y}px; width:{shownBox.w}px; height:{shownBox.h}px"
       aria-hidden="true"
     ></div>
   {/if}

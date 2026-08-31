@@ -29,10 +29,26 @@ export class PausableClock {
   /** Total time spent paused, so derived clocks can subtract it. */
   #pausedTotal = 0;
   #pausedAt: number | null = null;
+  /** Frame sources holding work for a resume or cancel. */
+  #wake = new Set<() => void>();
 
   constructor(now: () => number = realNow, sleep: Sleep = realSleep) {
     this.#now = now;
     this.#sleep = sleep;
+  }
+
+  /**
+   * Run `fn` after every `resume()` and on `cancel()` — how a frame source
+   * releases the callback a pause caught, without every owner of the clock
+   * having to know which frame sources exist. Returns the unsubscribe.
+   */
+  onWake(fn: () => void): () => void {
+    this.#wake.add(fn);
+    return () => this.#wake.delete(fn);
+  }
+
+  #notifyWake(): void {
+    for (const fn of [...this.#wake]) fn();
   }
 
   get paused(): boolean {
@@ -60,6 +76,7 @@ export class PausableClock {
     this.#paused = false;
     if (this.#pausedAt !== null) this.#pausedTotal += this.#now() - this.#pausedAt;
     this.#pausedAt = null;
+    this.#notifyWake();
   }
 
   /**
@@ -72,6 +89,7 @@ export class PausableClock {
    */
   cancel(): void {
     this.#cancelled = true;
+    this.#notifyWake();
   }
 
   /**
@@ -85,13 +103,41 @@ export class PausableClock {
       await this.#sleep(Math.min(SLICE_MS, Math.max(1, until - this.now())));
     }
   }
+
+  /**
+   * Poll `ok` until it holds or `timeoutMs` of DEMONSTRATION time has
+   * passed; resolves with whether it held. The deadline runs on this clock,
+   * so a pause cannot expire it — but the polling itself is real time, so a
+   * condition that changes WHILE paused (a step control, a stage becoming
+   * visible) is still noticed. This is the one wait-for-the-app primitive;
+   * homegrown setTimeout polls next to a clock are how pause semantics
+   * fork.
+   */
+  async waitUntil(
+    ok: () => boolean | Promise<boolean>,
+    timeoutMs = Infinity,
+    intervalMs = 50,
+  ): Promise<boolean> {
+    const deadline = this.now() + timeoutMs;
+    for (;;) {
+      if (await ok()) return true;
+      if (this.#cancelled || this.now() >= deadline) return false;
+      await this.#sleep(intervalMs);
+    }
+  }
 }
 
 /**
  * A frame source that lies to its animation about time, so pausing freezes
  * the animation mid-flight instead of letting it jump to its end on resume.
  * Wraps requestAnimationFrame; while the clock is paused, callbacks are held
- * and replayed on resume with the pause subtracted from their timestamps.
+ * and replayed — automatically, when the clock resumes or is cancelled —
+ * with the pause subtracted from their timestamps. Everything animated on a
+ * demonstration runs through one of these: the "held frame" semantics live
+ * here once, never as an inline paused-check in an animation loop.
+ *
+ * `dispose()` unhooks it from the clock — required when the frame source
+ * outlives its component but shares a longer-lived clock.
  */
 export function pausableFrames(clock: PausableClock) {
   let held: FrameRequestCallback | null = null;
@@ -99,10 +145,20 @@ export function pausableFrames(clock: PausableClock) {
   let nextId = 1;
   const live = new Map<number, number>();
 
+  // A frame-less environment (node --test) still ticks, on a timeout.
+  const raf: (callback: FrameRequestCallback) => number =
+    typeof requestAnimationFrame === 'undefined'
+      ? (callback) => setTimeout(() => callback(clock.now()), 16) as unknown as number
+      : (callback) => requestAnimationFrame(callback);
+  const caf: (id: number) => void =
+    typeof cancelAnimationFrame === 'undefined'
+      ? (id) => clearTimeout(id)
+      : (id) => cancelAnimationFrame(id);
+
   const schedule = (id: number, callback: FrameRequestCallback) => {
-    const raw = requestAnimationFrame((time) => {
+    const raw = raf((time) => {
       live.delete(id);
-      if (clock.paused) {
+      if (clock.paused && !clock.cancelled) {
         held = callback;
         heldId = id;
         return;
@@ -113,6 +169,17 @@ export function pausableFrames(clock: PausableClock) {
     live.set(id, raw);
   };
 
+  const releaseHeld = (): void => {
+    if (!held) return;
+    const callback = held;
+    const id = heldId;
+    held = null;
+    heldId = 0;
+    schedule(id, callback);
+  };
+
+  const unhook = clock.onWake(releaseHeld);
+
   return {
     frame(callback: FrameRequestCallback): number {
       const id = nextId++;
@@ -121,21 +188,18 @@ export function pausableFrames(clock: PausableClock) {
     },
     cancelFrame(id: number): void {
       const raw = live.get(id);
-      if (raw !== undefined) cancelAnimationFrame(raw);
+      if (raw !== undefined) caf(raw);
       live.delete(id);
       if (heldId === id) {
         held = null;
         heldId = 0;
       }
     },
-    /** Call after `clock.resume()`: replays the callback a pause caught. */
-    releaseHeld(): void {
-      if (!held) return;
-      const callback = held;
-      const id = heldId;
+    /** Detach from the clock and drop any held frame. */
+    dispose(): void {
+      unhook();
       held = null;
       heldId = 0;
-      schedule(id, callback);
     },
   };
 }

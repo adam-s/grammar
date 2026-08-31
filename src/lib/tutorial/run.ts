@@ -8,6 +8,7 @@
  * the pick, the run stops and says which one and why. A tutorial that skipped
  * past that would be demonstrating an interaction the learner cannot repeat.
  */
+import type { Selection } from '../grammar/options.ts';
 import type { Act, TutorialBeat } from './script.ts';
 
 export type RunStatus = 'idle' | 'running' | 'done' | 'stopped' | 'failed';
@@ -83,6 +84,46 @@ export function selectFault(
   if (!offered?.found) return `The menu never offered “${beat.answer}” for ${beat.subject}.`;
   if (offered.pickable === false) {
     return `“${beat.answer}” is ${offered.state ?? 'not available'} for ${beat.subject}.`;
+  }
+  return null;
+}
+
+const describeSelection = (sel: Selection | null): string => {
+  if (!sel || sel.kind === 'none') return 'nothing';
+  if (sel.kind === 'span') return `words ${sel.span[0] + 1}–${sel.span[1] + 1}`;
+  if (sel.kind === 'node') return `one label (${sel.id})`;
+  return `the labels ${[...sel.ids].sort().join(', ')}`;
+};
+
+/**
+ * Whether a performed gesture committed the selection the script expects.
+ *
+ * The gesture drivers animate the same draft and marquee handlers the real
+ * pointer drives — which means the handlers, not the drivers, decide what got
+ * selected. This is the proof the commit matches the script. It names both
+ * selections, so a coordinate bug reads as a measurement rather than a
+ * mystery. Returns null when the commit is right.
+ */
+export function gestureFault(expected: Selection, got: Selection | null): string | null {
+  if (expected.kind === 'span') {
+    const hit =
+      got?.kind === 'span' && got.span[0] === expected.span[0] && got.span[1] === expected.span[1];
+    return hit
+      ? null
+      : `The drag selected ${describeSelection(got)}, not ${describeSelection(expected)}.`;
+  }
+  if (expected.kind === 'nodes') {
+    const hit =
+      got?.kind === 'nodes' && [...got.ids].sort().join(',') === [...expected.ids].sort().join(',');
+    return hit
+      ? null
+      : `The box took ${describeSelection(got)}, not ${describeSelection(expected)}.`;
+  }
+  if (expected.kind === 'node') {
+    const hit = got?.kind === 'node' && got.id === expected.id;
+    return hit
+      ? null
+      : `The click selected ${describeSelection(got)}, not ${describeSelection(expected)}.`;
   }
   return null;
 }

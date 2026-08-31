@@ -122,8 +122,6 @@ export const PRESS = {
   release: 240,
 } as const;
 
-export const PRESS_MS = PRESS.dip + PRESS.release;
-
 /** First appearance: fade in place — never a streak in from nowhere. */
 export const APPEAR_MS = 200;
 

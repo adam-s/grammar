@@ -23,6 +23,7 @@
 
   import type { Reading, SentenceEntry } from '../grammar/types.ts';
   import { PHONE_QUERY, useMediaQuery } from '../workspace/responsive.svelte.ts';
+  import { getWorkspace } from '../workspace/workspace.svelte.ts';
   import HeroStage from './HeroStage.svelte';
   import StaticFigure from './StaticFigure.svelte';
 
@@ -31,51 +32,28 @@
   let { sentence, reading }: Props = $props();
 
   const phone = useMediaQuery(PHONE_QUERY);
+  /**
+   * The surface the article scrolls in is the workspace's document pane, and
+   * the workspace owns it — so the takeover asks for the lock through shared
+   * state instead of walking ancestors and stomping their overflow styles.
+   */
+  const ws = getWorkspace();
 
   let open = $state(false);
   let paused = $state(false);
   let launch = $state<HTMLButtonElement | null>(null);
-  let poster = $state<HTMLElement | null>(null);
   let playToggle = $state<HTMLButtonElement | null>(null);
   let closeButton = $state<HTMLButtonElement | null>(null);
-  let unlock: (() => void) | null = null;
-
-  /**
-   * Freeze the surface the article scrolls in — which on a lesson page is an
-   * inner panel, not the document — so the takeover cannot lose the reader's
-   * place. Restored exactly on close.
-   */
-  function lockScroll(): () => void {
-    const locked: { el: HTMLElement; overflow: string }[] = [];
-    const freeze = (el: HTMLElement) => {
-      locked.push({ el, overflow: el.style.overflow });
-      el.style.overflow = 'hidden';
-    };
-    for (let el = poster?.parentElement ?? null; el; el = el.parentElement) {
-      const style = getComputedStyle(el);
-      const scrolls =
-        (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
-        el.scrollHeight > el.clientHeight;
-      if (scrolls) freeze(el);
-    }
-    if (document.body.scrollHeight > document.documentElement.clientHeight) {
-      freeze(document.body);
-    }
-    return () => {
-      for (const { el, overflow } of locked) el.style.overflow = overflow;
-    };
-  }
 
   function openDemo() {
-    unlock = lockScroll();
+    if (ws) ws.scrollLocked = true;
     paused = false;
     open = true;
   }
 
   function closeDemo() {
     open = false;
-    unlock?.();
-    unlock = null;
+    if (ws) ws.scrollLocked = false;
     // The reader left off at the launch control; put them back there.
     launch?.focus();
   }
@@ -119,13 +97,12 @@
   });
 
   /**
-   * Leaving the page with the takeover open must still release every scroll
+   * Leaving the page with the takeover open must still release the scroll
    * lock — and must not try to focus a launch button that no longer exists.
    */
   $effect(() => {
     return () => {
-      unlock?.();
-      unlock = null;
+      if (ws) ws.scrollLocked = false;
     };
   });
 </script>
@@ -140,11 +117,7 @@
     <HeroStage {sentence} {reading} mode="inline" />
   </figure>
 {:else}
-  <figure
-    class="hero poster"
-    bind:this={poster}
-    aria-label="The finished diagram of “{sentence.text}”"
-  >
+  <figure class="hero poster" aria-label="The finished diagram of “{sentence.text}”">
     <StaticFigure {sentence} {reading} />
     <button class="watch" type="button" bind:this={launch} onclick={openDemo}>
       <Play size={13} strokeWidth={2.2} aria-hidden="true" />

@@ -32,33 +32,13 @@ export interface Verdict {
 }
 
 /**
- * Which kind of claim the option makes, from the option's own fields.
- * `form` claims what the words are; everything else claims what they are
- * doing, or how this use behaves, in THIS sentence.
+ * Which kind of claim a decision makes. `form` claims what the words ARE
+ * ("is not a verb"); `contextual` claims what they are doing, or how this
+ * use behaves, in THIS sentence ("is not the subject here"). The session's
+ * `ask()` stamps it on each question it builds — it knows which branch it
+ * took, so nothing re-derives the family by sniffing option fields.
  */
-export function familyOf(option: {
-  form?: unknown;
-  func?: unknown;
-  verbType?: unknown;
-  voice?: unknown;
-  auxKind?: unknown;
-  clauseKind?: unknown;
-  finiteness?: unknown;
-  partKind?: unknown;
-}): 'form' | 'contextual' {
-  if (
-    option.func ||
-    option.verbType ||
-    option.voice ||
-    option.auxKind ||
-    option.clauseKind ||
-    option.finiteness ||
-    option.partKind
-  ) {
-    return 'contextual';
-  }
-  return 'form';
-}
+export type ClaimFamily = 'form' | 'contextual';
 
 export type FeedbackInput = {
   outcome: 'correct' | 'alternate' | 'wrong';
@@ -66,7 +46,7 @@ export type FeedbackInput = {
   subject: string;
   /** How many misses THIS question now has, counting this one. */
   misses: number;
-  family: 'form' | 'contextual';
+  family: ClaimFamily;
   /** The refused claim with its article: “a verb”, “the subject”. */
   refused?: string;
   praise?: string;

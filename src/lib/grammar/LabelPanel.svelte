@@ -16,31 +16,39 @@
   import { onDestroy, untrack } from 'svelte';
 
   import { createCameraMotion } from '../workspace/camera-motion.ts';
-  import { menuPointerTarget } from '../workspace/element-bounds.ts';
   import type { GuidedPointer } from '../workspace/guided-pointer.svelte.ts';
-  import { HOVER_MS } from '../workspace/pointer-motion.ts';
   import { getWorkspace } from '../workspace/workspace.svelte.ts';
   import { placeFloating, screenRect } from '../workspace/floating.ts';
-  import { PHONE_QUERY, useMediaQuery, useVisualViewport } from '../workspace/responsive.svelte.ts';
+  import {
+    PHONE_QUERY,
+    prefersReducedMotion,
+    useMediaQuery,
+    useVisualViewport,
+  } from '../workspace/responsive.svelte.ts';
   import { planSelectionVisibility, usableViewport } from '../workspace/selection-visibility.ts';
-  import type { Point } from '../workspace/viewport.ts';
   import type { Rect } from '../workspace/viewport.ts';
-  import { bestIndex, isPickable, openingGroup, type LabelOption, type Panel } from './options.ts';
-  import { spokenVerdict } from './feedback.ts';
+  import {
+    bestIndex,
+    isPickable,
+    openingGroup,
+    type LabelOption,
+    type Panel,
+    type PanelAction,
+  } from './options.ts';
+  import { spokenVerdict, type Verdict } from './feedback.ts';
+  import { createPanelAim } from './panel-aim.ts';
   import type { NavigationResult } from './session.ts';
   import {
     GROUP_NAME,
+    PANEL_SIZE,
     activeGroupAfterAnswer,
     menuOptionState,
     menuSections,
     shouldPerformSelectionTest,
   } from './panel-presentation.ts';
 
-  export interface Verdict {
-    kind: 'correct' | 'alternate' | 'wrong';
-    text: string;
-    test?: string;
-  }
+  /** What a demonstration holds of this panel: the completed aim gesture. */
+  export type PanelHandle = { aimPointer: (key: string) => Promise<void> };
 
   type Props = {
     panel: Panel;
@@ -88,6 +96,13 @@
     onpick: (option: LabelOption) => void;
     onhover?: (option: LabelOption | null) => void;
     onclose?: () => void;
+    /**
+     * An editing command was pressed — ungroup, today. Actions come from the
+     * panel model (`panel.actions`); they change the analysis rather than
+     * classifying the selection, so they are never graded and never rendered
+     * among the grammatical options.
+     */
+    onaction?: (action: PanelAction) => void;
   };
 
   let {
@@ -106,6 +121,7 @@
     onpick,
     onhover,
     onclose,
+    onaction,
   }: Props = $props();
 
   const ws = getWorkspace();
@@ -152,7 +168,7 @@
   );
   onDestroy(() => {
     camera.cancel();
-    aimToken++;
+    aim.cancel();
   });
 
   const active = $derived(openingGroup(panel, activeId));
@@ -180,125 +196,34 @@
     cursor = bestIndex(reachable);
   });
 
-  /** A row's aim point, in client coordinates for the shared pointer. */
-  function clientAim(el: Element): Point {
-    const r = el.getBoundingClientRect();
-    return menuPointerTarget({ x: r.left, y: r.top, w: r.width, h: r.height });
-  }
-
-  let aimToken = 0;
-
   /**
-   * The element `find` returns, once it exists and has HELD STILL — same
-   * position and size for three consecutive frames — so the pointer never
-   * commits to a destination the panel's own motion is still deciding.
+   * The demonstration's route to a row lives in `panel-aim.ts`; this
+   * component only lends it the palette's DOM and group state. A driven
+   * panel is the SAME palette — that is the point — so the host hands over
+   * live reads, never copies.
    */
-  function settled(find: () => HTMLElement | null, mine: number): Promise<HTMLElement | null> {
-    return new Promise((resolve) => {
-      let last: { x: number; y: number; w: number; h: number } | null = null;
-      let still = 0;
-      let tries = 0;
-      const look = () => {
-        if (mine !== aimToken || !root) return resolve(null);
-        if (++tries > 90) return resolve(find());
-        const el = find();
-        if (!el) {
-          last = null;
-          still = 0;
-          return requestAnimationFrame(look);
-        }
-        const r = el.getBoundingClientRect();
-        const same =
-          last &&
-          Math.abs(r.x - last.x) < 0.5 &&
-          Math.abs(r.y - last.y) < 0.5 &&
-          Math.abs(r.width - last.w) < 0.5 &&
-          Math.abs(r.height - last.h) < 0.5;
-        still = same ? still + 1 : 0;
-        if (still >= 2) return resolve(el);
-        last = { x: r.x, y: r.y, w: r.width, h: r.height };
-        requestAnimationFrame(look);
-      };
-      requestAnimationFrame(look);
-    });
-  }
-
-  /**
-   * Scroll the OPTIONS PANE itself, never ancestors: `scrollIntoView` on a
-   * row can scroll the page a lesson figure sits in, which is the panel
-   * moving the world to suit its pointer instead of the other way round.
-   */
-  function revealRow(row: HTMLElement) {
-    const pane = row.closest<HTMLElement>('.pane.secondary');
-    if (!pane) return;
-    const r = row.getBoundingClientRect();
-    const p = pane.getBoundingClientRect();
-    if (r.top < p.top) pane.scrollTop += r.top - p.top;
-    else if (r.bottom > p.bottom) pane.scrollTop += r.bottom - p.bottom;
-  }
+  const aim = createPanelAim({
+    root: () => root,
+    pointer: () => pointer,
+    phone: () => phone.matches,
+    groupFor: (key) =>
+      panel.groups.find((candidate) => candidate.options.some((o) => o.key === key))?.id ?? null,
+    activeGroup: () => activeId,
+    openGroup: (id) => {
+      activeId = id;
+      if (phone.matches) mobileDetail = true;
+    },
+  });
 
   /**
    * Take the stage's pointer to the row for `key`, and resolve only when it
    * has ARRIVED there. The driver awaits this, then presses, then applies
    * the choice — so the panel exposes a completed gesture, not a timer the
-   * driver has to out-guess.
-   *
-   * The route is the one a hand performs: to the category (once the popup
-   * has settled), a beat of hover, open the group, wait for the pane and
-   * the row to settle, then on to the row. Every leg tracks its target, so
-   * a popup nudged mid-flight is followed, not missed.
+   * driver has to out-guess. Only a driven panel may be aimed.
    */
   export async function aimPointer(key: string): Promise<void> {
-    const hand = pointer;
-    if (interactive || !hand || !root) return;
-    const mine = ++aimToken;
-    const alive = () => mine === aimToken && !!root;
-    const optionRow = () =>
-      root
-        ? (Array.from(root.querySelectorAll<HTMLButtonElement>('[data-option]')).find(
-            (row) => row.dataset.option === key,
-          ) ?? null)
-        : null;
-
-    const group = panel.groups.find((candidate) =>
-      candidate.options.some((candidateOption) => candidateOption.key === key),
-    );
-    if (!group) return;
-
-    if (activeId !== group.id || !optionRow()) {
-      // A phone shows the active category as the detail-pane title; the
-      // desktop keeps the category row beside its submenu.
-      const category = await settled(
-        () =>
-          root
-            ? phone.matches
-              ? root.querySelector<HTMLElement>('.pane-title')
-              : (Array.from(root.querySelectorAll<HTMLElement>('[data-menu-group]')).find(
-                  (row) => row.dataset.menuGroup === group.id,
-                ) ?? null)
-            : null,
-        mine,
-      );
-      if (!alive() || !category) return;
-      await hand.moveToClient(() => (category.isConnected ? clientAim(category) : null));
-      if (!alive()) return;
-      await hand.clock.wait(HOVER_MS);
-      if (!alive()) return;
-      if (activeId !== group.id) {
-        activeId = group.id;
-        if (phone.matches) mobileDetail = true;
-      }
-    }
-
-    const row = await settled(optionRow, mine);
-    if (!alive() || !row) return;
-    revealRow(row);
-    const shownRow = await settled(optionRow, mine);
-    if (!alive() || !shownRow) return;
-    await hand.moveToClient(() => {
-      const el = optionRow();
-      return el ? clientAim(el) : null;
-    });
+    if (interactive) return;
+    await aim.aim(key);
   }
 
   // The taxonomy sections live in `panel-presentation.ts`, tested under
@@ -369,15 +294,12 @@
     if (root && !root.contains(e.target as Node)) onclose?.();
   }
 
-  // Height includes the three-line reserved feedback block in the header.
-  const POPUP = { w: 448, h: 348 };
-
   /** Choose the side with the least overflow, preferring below and above. */
   const position = $derived.by(() => {
     if (placement) return placement;
     if (!anchor || ws.stage.w === 0) return { x: 0, y: 0 };
     const a = screenRect(ws.viewport, anchor);
-    return placeFloating(a, avoid ? screenRect(ws.viewport, avoid) : a, POPUP, ws.stage);
+    return placeFloating(a, avoid ? screenRect(ws.viewport, avoid) : a, PANEL_SIZE, ws.stage);
   });
 
   /**
@@ -418,6 +340,10 @@
         ? visualViewport.rect.x + visualViewport.rect.w - stageBox.left
         : stageBox.width;
       let top = 12;
+      // A cross-component contract: anything that floats over the stage's
+      // top edge declares itself with `data-stage-occluder` (the tutorial
+      // banner, the page's solution toggle) or is the shell's own `.reopen`
+      // control, and the phone camera plans beneath whatever it measures.
       for (const control of stage.querySelectorAll<HTMLElement>('.reopen, [data-stage-occluder]')) {
         const box = control.getBoundingClientRect();
         if (box.width > 0 && box.height > 0) top = Math.max(top, box.bottom - stageBox.top + 12);
@@ -440,7 +366,7 @@
       if (!plan.changed) return;
       camera.moveTo(plan.viewport, {
         duration: 200,
-        immediate: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        immediate: prefersReducedMotion(),
       });
     });
     return () => cancelAnimationFrame(frame);
@@ -463,9 +389,10 @@
     // phrase would be preserved.
     if (panel.prompt) return panel.prompt;
     if (detail?.note) return detail.note;
-    // The question is already on the line above, so repeating it here would
+    // Nothing urgent to say: the reserved block stays, honestly empty. The
+    // question is already on the line above, so repeating it here would
     // print it twice, one grey copy under another.
-    return panel.prompt;
+    return '';
   });
 
   /**
@@ -500,7 +427,8 @@
     bind:this={root}
     class="popup"
     class:guided={!!placement}
-    style="left:{position.x}px;top:{position.y}px;--guided-menu-h:{placement?.h ?? 348}px"
+    style="left:{position.x}px;top:{position.y}px;--panel-w:{PANEL_SIZE.w}px;--guided-menu-h:{placement?.h ??
+      PANEL_SIZE.h}px"
     role="dialog"
     tabindex="-1"
     aria-label="Label {panel.subject}"
@@ -637,6 +565,23 @@
               </button>
             {/each}
           {/each}
+
+          <!-- Editing commands, BELOW the grammatical choices and visibly
+               apart from them: ungrouping changes the current analysis, it
+               does not classify the selection, so it must never read as one
+               more label. The button's name carries the affected words, so a
+               screen reader hears exactly what will be removed. A driven
+               (demonstrated) panel offers no editing. -->
+          {#if interactive && (panel.actions?.length ?? 0) > 0}
+            <div class="structure">
+              <h3>Edit structure</h3>
+              {#each panel.actions! as action (action.nodeId)}
+                <button class="structure-action" type="button" onclick={() => onaction?.(action)}>
+                  {action.label}
+                </button>
+              {/each}
+            </div>
+          {/if}
         </div>
       </div>
     </div>
@@ -647,7 +592,9 @@
   .popup {
     position: absolute;
     z-index: 30;
-    width: 448px;
+    /* PANEL_SIZE.w, passed down as a custom property so the number exists
+       once, in panel-presentation.ts, beside the height arithmetic. */
+    width: var(--panel-w);
     overflow: hidden;
     border: 1px solid var(--border-strong);
     border-radius: 8px;
@@ -673,8 +620,8 @@
   .context {
     box-sizing: border-box;
     /* Subject (18) + question (16) + the three-line feedback reserve (46)
-       + padding. The popup constant is this plus the 230px panes and the two
-       borders: 116 + 230 + 2 = 348. The header CONTAINS its feedback block —
+       + padding — the header half of PANEL_SIZE.h in panel-presentation.ts,
+       which documents the whole sum. The header CONTAINS its feedback block —
        the block overflowing into the panes is the bug this number fixes. */
     height: 116px;
     padding: 9px 10px 8px;
@@ -722,19 +669,6 @@
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-  }
-  .suggestion {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 2px 7px 2px 4px;
-    border: 1px solid color-mix(in oklab, var(--accent) 55%, var(--border));
-    border-radius: 999px;
-    background: color-mix(in oklab, var(--accent) 14%, transparent);
-    color: var(--ink);
-    font: inherit;
-    font-size: 10.5px;
-    font-weight: 600;
   }
   .question {
     color: var(--ink-muted);
@@ -911,6 +845,32 @@
   .option.untaught {
     opacity: 0.48;
   }
+
+  /* Quiet and separate: an editing command must not read as one more label. */
+  .structure {
+    margin-top: 6px;
+    padding-top: 2px;
+    border-top: 1px solid var(--border);
+  }
+  .structure-action {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 28px;
+    padding: 4px 10px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 11px;
+    text-align: left;
+  }
+  .structure-action:hover,
+  .structure-action:focus-visible {
+    background: color-mix(in oklab, var(--ink) 8%, transparent);
+    color: var(--ink);
+    outline: 0;
+  }
   .sr {
     position: absolute;
     width: 1px;
@@ -994,12 +954,6 @@
       overscroll-behavior-x: contain;
       touch-action: pan-x;
     }
-    .suggestion {
-      min-height: 44px;
-      padding: 4px 12px 4px 6px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
     .information {
       height: auto;
       /* Two lines reserved on the sheet; longer verdicts may grow it — a
@@ -1066,6 +1020,11 @@
       font-size: 10px;
     }
     .option {
+      min-height: 48px;
+      padding: 7px 12px;
+      font-size: 13px;
+    }
+    .structure-action {
       min-height: 48px;
       padding: 7px 12px;
       font-size: 13px;

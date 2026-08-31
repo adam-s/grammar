@@ -3,6 +3,25 @@ import { onMount } from 'svelte';
 export { COMPACT_WORKSPACE_QUERY, PHONE_QUERY } from './breakpoints.ts';
 
 /**
+ * Whether this device can perform precision drag gestures — the multi-word
+ * drag and the marquee need a fine pointer. This is a POINTER capability,
+ * not a viewport width: a touch drag pans or pins to its first word however
+ * wide the screen is, and a narrow window with a mouse still drags. The one
+ * question every layer asks the same way — the canvas, the page, and the
+ * tutorial's choice of demonstrable gestures. Use with `useMediaQuery`.
+ */
+export const DRAG_QUERY = '(any-pointer: fine)';
+
+/**
+ * Whether the reader asked for less motion — the ONE reading of the media
+ * query, so the policy of who may override it (a demonstration the reader
+ * explicitly opened may perform with travel collapsed) stays a decision
+ * about this value, never a second measurement.
+ */
+export const prefersReducedMotion = (): boolean =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/**
  * A small SSR-safe reactive wrapper around matchMedia. Components share the
  * breakpoint without each inventing lifecycle and listener cleanup.
  */

@@ -1,7 +1,5 @@
+import { PANEL_SIZE } from '../grammar/panel-presentation.ts';
 import { clampZoom, type Rect, type Size, type Viewport } from '../workspace/viewport.ts';
-
-/** The desktop palette has a fixed box; its component owns the phone sheet. */
-export const TUTORIAL_MENU = { w: 448, h: 348 } as const;
 
 export type TutorialLayout = {
   /** The part of the canvas reserved for the diagram. */
@@ -17,10 +15,15 @@ export type TutorialLayout = {
  * The explanation occupies the top edge. The graph gets the band below it,
  * centred across the stage, and the palette gets a fixed band underneath. The
  * bottom gap leaves the canvas toolbar uncovered.
+ *
+ * `measuredBannerBottom` is the banner's real rendered bottom edge, in stage
+ * coordinates. The banner sizes itself to its words — a long question grows
+ * it — so a caller that can measure passes the truth and the graph band
+ * starts below it; the default matches the banner's resting height.
  */
-export function tutorialLayout(stage: Size): TutorialLayout {
+export function tutorialLayout(stage: Size, measuredBannerBottom?: number): TutorialLayout {
   const inset = stage.w <= 700 ? 12 : 16;
-  const bannerBottom = stage.w <= 700 ? 146 : 116;
+  const bannerBottom = measuredBannerBottom ?? (stage.w <= 700 ? 146 : 116);
   // The phone toolbar is hidden while its bottom sheet is open, and the app's
   // bottom navigation already sits outside the measured stage. Only its inset
   // remains. Desktop keeps room for the visible canvas toolbar.
@@ -30,9 +33,9 @@ export function tutorialLayout(stage: Size): TutorialLayout {
   // technically present but too small to read. The palette can scroll; the
   // diagram cannot, so reserve roughly a fifth of the stage for the graph.
   const minimumGraphH = stage.w <= 700 ? Math.min(140, Math.max(92, stage.h * 0.28)) : 72;
-  const menuW = Math.max(1, Math.min(TUTORIAL_MENU.w, stage.w - inset * 2));
+  const menuW = Math.max(1, Math.min(PANEL_SIZE.w, stage.w - inset * 2));
   const availableMenuH = Math.max(1, stage.h - bannerBottom - toolbarGap - gap - minimumGraphH);
-  const menuH = Math.min(TUTORIAL_MENU.h, availableMenuH);
+  const menuH = Math.min(PANEL_SIZE.h, availableMenuH);
   const menuY = Math.max(bannerBottom + minimumGraphH + gap, stage.h - toolbarGap - menuH);
 
   return {

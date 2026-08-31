@@ -28,7 +28,7 @@
       class="pointer"
       class:appearing={pointer.phase === 'appearing'}
       class:resting={pointer.phase === 'resting'}
-      class:dip={pointer.phase === 'dip'}
+      class:dip={pointer.phase === 'dip' || pointer.held}
       class:release={pointer.phase === 'release'}
       style="transform: translate({pointer.x}px, {pointer.y}px)"
     >

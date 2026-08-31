@@ -26,20 +26,38 @@
     drawnRect,
     wordRowRect,
   } from '$lib/grammar/Diagram.svelte';
-  import LabelPanel, { type Verdict } from '$lib/grammar/LabelPanel.svelte';
+  import LabelPanel, { type PanelHandle } from '$lib/grammar/LabelPanel.svelte';
+  import type { Verdict } from '$lib/grammar/feedback.ts';
+  import {
+    measureNodesRect,
+    measureSelectionPoint,
+    measureWordPoint,
+  } from '$lib/grammar/measure.ts';
   import { GuidedPointer } from '$lib/workspace/guided-pointer.svelte.ts';
   import PointerLayer from '$lib/workspace/PointerLayer.svelte';
+  import { DRAG_QUERY, useMediaQuery } from '$lib/workspace/responsive.svelte.ts';
+  import type { SelectionGestureHooks } from '$lib/workspace/selection-gesture.ts';
   import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
-  import { answer, sessionChoices, type NavigationResult } from '$lib/grammar/session.ts';
+  import {
+    answer,
+    applyAction,
+    sessionChoices,
+    type NavigationResult,
+  } from '$lib/grammar/session.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
 
-  import { isPickable, type LabelOption, type Selection } from '$lib/grammar/options.ts';
+  import {
+    isPickable,
+    type LabelOption,
+    type PanelAction,
+    type Selection,
+  } from '$lib/grammar/options.ts';
   import { canonicalReading, contentSpan } from '$lib/grammar/types.ts';
   import { READABLE_ZOOM_FLOOR } from '$lib/grammar/node-label.ts';
   import type { Form, Span } from '$lib/grammar/types.ts';
-  import type { Rect } from '$lib/workspace/viewport.ts';
+  import { rectToWorld, type Rect } from '$lib/workspace/viewport.ts';
   import { replayOptionKey, replaySentence } from '$lib/course/sentence-renderer.ts';
   import {
     COURSE_LESSONS,
@@ -55,8 +73,7 @@
     scopeThrough,
     targetReading,
   } from '$lib/course';
-  import { Tutorial, buildSignature, tutorialScript } from '$lib/tutorial';
-  import { tutorialLayout } from '$lib/tutorial/layout.ts';
+  import { Tutorial, buildSignature, tutorialScript, type TutorialHost } from '$lib/tutorial';
 
   const ws = new WorkspaceState();
   // The workspace does not know what it is drawing. This is the one place that
@@ -239,42 +256,76 @@
     owner?.number === 1 ? tutorialScript(sentence, scope, target ?? undefined).beats : [],
   );
   const tutorialBuild = $derived(replaySentence(sentence, target ?? undefined).final);
-  const tutorialNaturalDepth = $derived(layout(tutorialBuild.constituents, words).maxDepth);
-  const tutorialDepth = $derived(tutorialNaturalDepth);
+  const tutorialDepth = $derived(layout(tutorialBuild.constituents, words).maxDepth);
   const tutorialFrame = $derived(diagramSize(tutorialBuild.constituents, words, tutorialDepth));
   const tutorialFrameAnchor = $derived(
     wordRowRect(tutorialBuild.constituents, words, tutorialDepth),
   );
   let tutorialActive = $state(false);
   let tutorialPointer = $state<string | null>(null);
+  /** The palette's guided home, computed and reported by the run itself. */
+  let tutorialMenu = $state<Rect | null>(null);
   /** The stage's one demonstration hand, shared by the run and the palette. */
   const guidedPointer = new GuidedPointer();
-  let panelRef = $state<{ aimPointer: (key: string) => Promise<void> } | null>(null);
+  /** A pointer capability, not a viewport width — see DRAG_QUERY. */
+  const dragCapable = useMediaQuery(DRAG_QUERY);
 
   /**
-   * Where the thing the tutorial is about to click is actually rendered —
-   * measured from the live DOM, so every camera move and layout change the
-   * app performs is already accounted for by the time the pointer aims.
+   * The tutorial's selection gestures, wired to the SAME handlers the real
+   * pointer drives: `ondraft` grows the word highlight and commits the span;
+   * `onmarquee` lights the swept labels and commits the group. What the
+   * learner watches is the app's own interaction, performed for them.
+   * Measurements scope to the canvas's own world element (`ws.world`) and
+   * go through the shared `measure.ts` helpers, so the page knows nothing
+   * about the diagram's markup.
    */
-  function tutorialPointTarget(sel: Selection): { x: number; y: number } | null {
-    const boxes: DOMRect[] = [];
-    if (sel.kind === 'span') {
-      for (const el of document.querySelectorAll<HTMLElement>('.world [data-word]')) {
-        const i = Number(el.dataset.word);
-        if (i >= sel.span[0] && i <= sel.span[1]) boxes.push(el.getBoundingClientRect());
-      }
-    } else if (sel.kind === 'node') {
-      const el = document.querySelector(`.world [data-node="${sel.id}"]`);
-      if (el) boxes.push(el.getBoundingClientRect());
-    }
-    if (boxes.length === 0) return null;
-    const left = Math.min(...boxes.map((b) => b.left));
-    const right = Math.max(...boxes.map((b) => b.right));
-    const top = Math.min(...boxes.map((b) => b.top));
-    const bottom = Math.max(...boxes.map((b) => b.bottom));
-    return { x: (left + right) / 2, y: (top + bottom) / 2 };
+  const stageClientBox = () => guidedPointer.layer?.getBoundingClientRect() ?? null;
+  /**
+   * A real pointerdown anywhere outside the palette dismisses it — the
+   * palette listens to the window. A driven gesture makes no real
+   * pointerdown, so its press must dismiss the palette itself, or the last
+   * answer's popup floats over the sweep it should have yielded to.
+   */
+  function dismissForGesture() {
+    if (selection.kind !== 'none' || verdict) closePalette();
   }
-  const tutorialMenu = $derived(tutorialLayout(ws.stage).menu);
+  const tutorialGestures: SelectionGestureHooks = {
+    wordPoint: (i) => (ws.world ? measureWordPoint(ws.world, i) : null),
+    nodesRect: (ids) => (ws.world ? measureNodesRect(ws.world, ids) : null),
+    draft: (span, done) => {
+      if (!done) dismissForGesture();
+      ondraft(span, done);
+    },
+    marqueeClient: (rect, done) => {
+      if (!done) dismissForGesture();
+      const stage = stageClientBox();
+      const local =
+        rect && stage
+          ? { x: rect.x - stage.left, y: rect.y - stage.top, w: rect.w, h: rect.h }
+          : null;
+      // The demonstration's visible box, drawn by the canvas through the
+      // same element as a real drag.
+      ws.drivenMarquee = local && !done ? local : null;
+      // The committing rect converts through the SAME arithmetic as a real
+      // marquee: stage coordinates through `rectToWorld`.
+      onmarquee(local ? rectToWorld(ws.viewport, local) : null, done);
+    },
+  };
+
+  /**
+   * A halted run must leave no half-drawn gesture behind — and no half-asked
+   * question either. The selection and its menu were the demonstration's
+   * hand at work, not the learner's; when the demonstration leaves the
+   * stage, they leave with it. The built diagram stays: that progress is
+   * real.
+   */
+  function cancelTutorialGesture() {
+    ws.drivenMarquee = null;
+    draft = null;
+    marqueeIds = [];
+    closePalette();
+  }
+  let panelRef = $state<PanelHandle | null>(null);
 
   /** Reserve the finished tree before the first label lands. Without this the
       words move down one row at a time while the tutorial is trying to teach
@@ -324,6 +375,29 @@
     pick(hit);
     return { ok: true };
   }
+
+  /**
+   * Everything the guided run needs from this page, in one object. Each
+   * member reads live state at call time, so the object itself is built
+   * once. `canDrag` is a getter because the media query answers after
+   * mount.
+   */
+  const tutorialHost: TutorialHost = {
+    anchorRect: () => wordRowRect(build.constituents, words, depthMark),
+    focusRect: (sel) => selectionFocusRect(build.constituents, words, sel, depthMark),
+    pointTarget: (sel) => (ws.world ? measureSelectionPoint(ws.world, sel) : null),
+    select: selectAs,
+    selected: () => selection,
+    offered: offeredRow,
+    pick: pickByKey,
+    signature: () => buildSignature(build.constituents),
+    gestures: tutorialGestures,
+    get canDrag() {
+      return dragCapable.matches;
+    },
+    aimMenu: (key) => panelRef?.aimPointer(key) ?? Promise.resolve(),
+    cancelGesture: cancelTutorialGesture,
+  };
 
   /**
    * Handle for `scripts/snapshot.mjs` to drive this page.
@@ -388,12 +462,7 @@
         selection = { kind: 'node', id };
       },
       /** Click an option by key, through the same handler the palette uses. */
-      pick: (key: string) => {
-        const hit = choices.groups.flatMap((g) => g.options).find((o) => o.key === key);
-        if (!hit) return { ok: false, reason: `no option ${key}` };
-        pick(hit);
-        return { ok: true };
-      },
+      pick: pickByKey,
       /**
        * The ordered decisions that build this sentence, as selections and
        * option keys. It comes from the answer, which is exactly why it is only
@@ -524,6 +593,20 @@
     if (next.build !== before) grew();
     if (next.selection.kind === 'none') preview = null;
   }
+
+  /**
+   * One editing command, handled by the same transaction module as answers —
+   * but never graded: ungrouping changes the analysis, it is not a claim
+   * about the words. The palette stays open; `sessionChoices` re-grades any
+   * remembered refusals against the new structure on its own.
+   */
+  function act(action: PanelAction) {
+    const next = applyAction({ build, selection, verdict, misses, rejected, navigation }, action);
+    build = next.build;
+    selection = next.selection;
+    verdict = next.verdict;
+    navigation = next.navigation;
+  }
 </script>
 
 <svelte:head>
@@ -612,19 +695,13 @@
           beats={tutorialBeats}
           frame={tutorialFrame}
           frameAnchor={tutorialFrameAnchor}
-          anchorRect={() => wordRowRect(build.constituents, words, depthMark)}
-          focusRect={(sel) => selectionFocusRect(build.constituents, words, sel, depthMark)}
-          pointTarget={tutorialPointTarget}
-          select={selectAs}
-          offered={offeredRow}
-          pick={pickByKey}
-          signature={() => buildSignature(build.constituents)}
+          host={tutorialHost}
+          pointer={guidedPointer}
+          obscured={popupAnchor !== null}
           onstart={resetForTutorial}
           onactive={(active) => (tutorialActive = active)}
           onpoint={(key) => (tutorialPointer = key)}
-          pointer={guidedPointer}
-          aimMenu={(key) => panelRef?.aimPointer(key) ?? Promise.resolve()}
-          obscured={popupAnchor !== null}
+          onplacement={(menu) => (tutorialMenu = menu)}
         />
       {/key}
     {/if}
@@ -646,6 +723,7 @@
         onpick={pick}
         onhover={(o) => (preview = o?.form ?? null)}
         onclose={closePalette}
+        onaction={act}
       />
     {/if}
     <PointerLayer pointer={guidedPointer} />
@@ -659,9 +737,16 @@
     {/if}
   {:else}
     <div class="board" style="left:0; top:0; width:{frame.w}px; height:{frame.h}px">
+      <!-- The picture must reserve the same depth the geometry assumes.
+           `depthMark` is the page's one depth — popup anchors, camera rects,
+           and the marquee hit-test all measure at it — and a render that
+           defaulted to the natural depth painted the labels rows above every
+           calculation whenever the mark exceeded what was built, as it does
+           for a whole tutorial run. -->
       <Diagram
         {words}
         constituents={visibleBuild.constituents}
+        minDepth={visibleDepth}
         {marqueeIds}
         selection={visibleSelection}
         {draft}

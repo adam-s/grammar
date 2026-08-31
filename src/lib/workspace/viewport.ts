@@ -51,6 +51,27 @@ export const toWorld = (vp: Viewport, p: Point): Point => ({
   y: (p.y - vp.ty) / vp.z,
 });
 
+/**
+ * A stage-space rect in world units. Every marquee — the learner's real drag
+ * and the tutorial's driven one — converts through here, so the box that is
+ * drawn and the box that selects can never use two different arithmetics.
+ */
+export const rectToWorld = (vp: Viewport, r: Rect): Rect => ({
+  ...toWorld(vp, r),
+  w: r.w / vp.z,
+  h: r.h / vp.z,
+});
+
+/**
+ * The world element's inline style for a viewport — the ONE encoding of the
+ * screen = world * z + t convention as CSS. Every stage that renders a world
+ * (the canvas, the lesson hero) uses this string, so a change to the
+ * transform contract cannot reach one surface and miss another. `--z` rides
+ * along for children that counter-scale against the zoom.
+ */
+export const worldTransform = (vp: Viewport): string =>
+  `transform:translate3d(${vp.tx}px,${vp.ty}px,0) scale(${vp.z});--z:${vp.z}`;
+
 /** Move the content by (dx, dy) screen pixels. */
 export const panBy = (vp: Viewport, dx: number, dy: number): Viewport => ({
   ...vp,
@@ -99,6 +120,18 @@ export function fit(rect: Rect, view: Size, padding = 64): Viewport {
   const h = Math.max(1, view.h - padding * 2);
   const z = clampZoom(Math.min(w / Math.max(1, rect.w), h / Math.max(1, rect.h)));
   return centerOn(rect, view, z);
+}
+
+/**
+ * Fit `content` into a stage under `headroom` px of air, then pin its bottom
+ * `floor` px above the stage's bottom edge. What a performing stage wants:
+ * the word row is the one thing that must not move — the tree grows upward
+ * out of it — so the bottom is pinned rather than the centre.
+ */
+export function fitToFloor(content: Rect, stage: Size, headroom: number, floor: number): Viewport {
+  const room = { w: stage.w, h: Math.max(80, stage.h - headroom) };
+  const fitted = fit(content, room, 0);
+  return { ...fitted, ty: stage.h - floor - content.h * fitted.z };
 }
 
 /** The smallest rect containing all of them. Empty input gives a zero rect. */

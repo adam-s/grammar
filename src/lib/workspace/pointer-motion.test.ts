@@ -4,7 +4,6 @@ import test from 'node:test';
 import {
   APPEAR_MS,
   PRESS,
-  PRESS_MS,
   arcHeight,
   easeInOutCubic,
   glide,
@@ -56,8 +55,8 @@ test('a zero-length glide is legal and stays put', () => {
   assert.deepEqual(g.at(g.duration / 2), { x: 50, y: 50 });
 });
 
-test('the press is its two phases, and appearance is never zero', () => {
-  assert.equal(PRESS_MS, PRESS.dip + PRESS.release);
+test('the press has both phases, and appearance is never zero', () => {
+  assert.ok(PRESS.dip > 0 && PRESS.release > 0);
   assert.ok(APPEAR_MS > 0);
 });
 

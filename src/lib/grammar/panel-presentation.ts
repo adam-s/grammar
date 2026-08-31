@@ -2,6 +2,16 @@ import type { LabelOption, OptionGroup, OptionState } from './options.ts';
 import type { NavigationResult } from './session.ts';
 
 /**
+ * The desktop palette's fixed box: the 116px header (subject + question +
+ * the three-line feedback reserve) over the 230px panes, plus two borders.
+ * The ONE copy of these numbers — the component's own CSS, the floating
+ * placement, and the guided layout that reserves the palette's band all
+ * derive from here, so a padding change cannot desynchronise layout math
+ * from rendered pixels.
+ */
+export const PANEL_SIZE = { w: 448, h: 348 } as const;
+
+/**
  * Which group the palette shows after a decision — obeying the transaction,
  * not reconstructing it.
  *

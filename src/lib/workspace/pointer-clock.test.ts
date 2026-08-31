@@ -100,3 +100,63 @@ test('a cancelled clock never blocks again', async () => {
   clock.pause();
   await clock.wait(60_000);
 });
+
+test('waitUntil resolves true the moment the condition holds', async () => {
+  const { clock, at } = crank();
+  let flag = false;
+  const held = clock.waitUntil(() => {
+    if (at() >= 150) flag = true;
+    return flag;
+  });
+  assert.equal(await held, true);
+});
+
+test('waitUntil times out on DEMONSTRATION time, so a pause cannot expire it', async () => {
+  let t = 0;
+  let polls = 0;
+  const clock = new PausableClock(
+    () => t,
+    async (ms) => {
+      polls += 1;
+      // The user pauses for 10s of real time partway through the poll.
+      if (polls === 2) {
+        clock.pause();
+        t += 10_000;
+        clock.resume();
+      }
+      t += ms;
+    },
+  );
+  const held = await clock.waitUntil(() => false, 200, 50);
+  assert.equal(held, false, 'the deadline is honest');
+  assert.ok(t >= 10_000, 'real time included the pause without expiring the deadline early');
+});
+
+test('waitUntil keeps polling while paused, so a step control is still noticed', async () => {
+  let t = 0;
+  const clock = new PausableClock(
+    () => t,
+    async (ms) => {
+      t += ms;
+    },
+  );
+  clock.pause();
+  let stepped = false;
+  const held = clock.waitUntil(() => stepped);
+  // Demonstration time is frozen, but the poll runs on real time.
+  stepped = true;
+  assert.equal(await held, true);
+});
+
+test('a resume or cancel wakes registered frame sources exactly once each', () => {
+  const clock = new PausableClock();
+  const wakes: string[] = [];
+  const off = clock.onWake(() => wakes.push('a'));
+  clock.onWake(() => wakes.push('b'));
+  clock.pause();
+  clock.resume();
+  assert.deepEqual(wakes, ['a', 'b']);
+  off();
+  clock.cancel();
+  assert.deepEqual(wakes, ['a', 'b', 'b'], 'unsubscribed sources are not woken');
+});

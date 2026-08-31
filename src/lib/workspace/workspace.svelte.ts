@@ -31,6 +31,27 @@ export class Workspace {
   selection = $state<string[]>([]);
   /** The stage's pixel size, kept current by a ResizeObserver. */
   stage = $state<Size>({ w: 0, h: 0 });
+  /**
+   * The world element the stage renders, bound by whichever surface owns it
+   * (the canvas, a hero stage). Measurement code scopes its DOM queries to
+   * this instead of knowing the surface's markup by class name.
+   */
+  world = $state<HTMLElement | null>(null);
+  /**
+   * A marquee performed FOR the learner by the guided demonstration, stage
+   * coordinates, while it sweeps. The canvas draws it through the same box
+   * element as a real drag, because it is demonstrating that box — so the
+   * fact lives here, where both the demonstration and the canvas already
+   * meet, instead of being threaded through the shell as a prop.
+   */
+  drivenMarquee = $state<Rect | null>(null);
+  /**
+   * Freeze the document surface's scroll — set by an overlay that takes the
+   * screen, obeyed by the shell that owns the scroller. The owner of the
+   * scroller owns the lock; nothing walks the DOM stomping ancestors'
+   * overflow styles.
+   */
+  scrollLocked = $state(false);
 
   /** True while the pointer should grab the canvas instead of its contents. */
   get panning(): boolean {

@@ -1,16 +1,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { fitTutorialFrame, pinTutorialRect, TUTORIAL_MENU, tutorialLayout } from './layout.ts';
+import { PANEL_SIZE } from '../grammar/panel-presentation.ts';
+import { fitTutorialFrame, pinTutorialRect, tutorialLayout } from './layout.ts';
 
 test('the graph is centred above a centred menu', () => {
   const layout = tutorialLayout({ w: 792, h: 900 });
   assert.equal(layout.graph.x + layout.graph.w / 2, 396);
   assert.equal(layout.menu.x + layout.menu.w / 2, 396);
   assert.ok(layout.graph.y + layout.graph.h < layout.menu.y);
-  assert.deepEqual(
-    { w: layout.menu.w, h: layout.menu.h },
-    { w: TUTORIAL_MENU.w, h: TUTORIAL_MENU.h },
-  );
+  assert.deepEqual({ w: layout.menu.w, h: layout.menu.h }, { w: PANEL_SIZE.w, h: PANEL_SIZE.h });
 });
 
 test('a narrow stage keeps both bands on screen', () => {
@@ -62,4 +60,12 @@ test('pinning cancels a word-row move in world space', () => {
     ),
     { tx: 20, ty: -51, z: 1.5 },
   );
+});
+
+test('a measured banner bottom pushes the graph band down, never under the words', () => {
+  const resting = tutorialLayout({ w: 1000, h: 800 }).graph;
+  const grown = tutorialLayout({ w: 1000, h: 800 }, 220).graph;
+  assert.equal(resting.y, 116);
+  assert.equal(grown.y, 220, 'the band starts below the measured banner');
+  assert.ok(grown.h < resting.h, 'a taller banner costs the band its extra height');
 });

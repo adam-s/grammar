@@ -155,7 +155,16 @@
       <Toolbar {content} />
       {@render overlay?.()}
     {:else}
-      <div class="document" role="region" aria-label="Lesson" bind:this={documentElement}>
+      <!-- `locked` obeys `ws.scrollLocked`: a full-screen overlay somewhere in
+           this document asked the scroller to hold still, and the shell that
+           owns the scroller is the one that can honour that. -->
+      <div
+        class="document"
+        class:locked={ws.scrollLocked}
+        role="region"
+        aria-label="Lesson"
+        bind:this={documentElement}
+      >
         {@render children?.()}
       </div>
     {/if}
@@ -224,6 +233,9 @@
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
+  }
+  .document.locked {
+    overflow-y: hidden;
   }
   .reopen {
     position: absolute;

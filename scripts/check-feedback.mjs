@@ -23,14 +23,14 @@
  */
 import { chromium } from 'playwright';
 import { COURSE_LESSONS } from '../src/lib/course/course.ts';
-import { TUTORIAL_MENU } from '../src/lib/tutorial/layout.ts';
+import { PANEL_SIZE } from '../src/lib/grammar/panel-presentation.ts';
 
 const base = process.argv[2] ?? 'http://localhost:5199';
 const failures = [];
 const fail = (where, what) => failures.push(`${where}: ${what}`);
 
 /** The one authored popup size; the DOM must agree with it. */
-const POPUP = TUTORIAL_MENU;
+const POPUP = PANEL_SIZE;
 
 const browser = await chromium.launch();
 

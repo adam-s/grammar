@@ -12,13 +12,16 @@ import {
   centerOn,
   clampZoom,
   fit,
+  fitToFloor,
   formatZoom,
   gridStep,
   hit,
   nextStop,
   panBy,
+  rectToWorld,
   toScreen,
   toWorld,
+  worldTransform,
   zoomBy,
   zoomTo,
   type Viewport,
@@ -149,4 +152,32 @@ test('and still shows the whole tree when it fits', () => {
   // A short sentence on a desktop is well above the floor, so nothing changes.
   const small = { x: 0, y: 0, w: 300, h: 200 };
   assert.ok(fit(small, { w: 1440, h: 900 }, 96).z >= READABLE_ZOOM_FLOOR);
+});
+
+test('a stage rect converts to world exactly as its corner points do', () => {
+  const rect = { x: 100, y: 60, w: 70, h: 35 };
+  const world = rectToWorld(VP, rect);
+  const topLeft = toWorld(VP, rect);
+  const bottomRight = toWorld(VP, { x: rect.x + rect.w, y: rect.y + rect.h });
+  close(world.x, topLeft.x);
+  close(world.y, topLeft.y);
+  close(world.x + world.w, bottomRight.x);
+  close(world.y + world.h, bottomRight.y);
+});
+
+test('the world transform string carries the translation, the scale, and --z', () => {
+  assert.equal(
+    worldTransform({ tx: 12.5, ty: -3, z: 0.8 }),
+    'transform:translate3d(12.5px,-3px,0) scale(0.8);--z:0.8',
+  );
+});
+
+test('fitToFloor pins the content bottom a floor above the stage bottom', () => {
+  const content = { x: 0, y: 0, w: 400, h: 200 };
+  const stage = { w: 800, h: 600 };
+  const vp = fitToFloor(content, stage, 32, 10);
+  // The bottom edge of the content, on screen, sits exactly floor px up.
+  close(content.h * vp.z + vp.ty, stage.h - 10);
+  // The fit respected the headroom: the content is no taller than the room.
+  assert.ok(content.h * vp.z <= stage.h - 32 + 1e-9);
 });

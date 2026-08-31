@@ -4,9 +4,11 @@
    *
    * It drives the real builder through the same handlers a pointer calls, so
    * what it shows is the interaction rather than a picture of one. The parts
-   * worth arguing about are elsewhere: `script.ts` works out the decisions and
-   * the words, `run.ts` owns the walk and the failure rule. This file is the
-   * clock, the camera, and the banner.
+   * worth arguing about are elsewhere: `script.ts` works out the decisions
+   * and the words, `run.ts` owns the run state and the failure wording, and
+   * the walk itself is `perform()` in `workspace/performance.ts` — the same
+   * sequencer the lesson hero replays on. This file is the clock, the
+   * camera, the banner, and the fault checks the sequencer calls back into.
    *
    * Two rules it exists to keep:
    *
@@ -28,20 +30,24 @@
   import type { Selection } from '../grammar/options.ts';
   import { createCameraMotion } from '../workspace/camera-motion.ts';
   import type { GuidedPointer } from '../workspace/guided-pointer.svelte.ts';
+  import { perform, type Gestures, type Timing } from '../workspace/performance.ts';
   import { PausableClock, pausableFrames } from '../workspace/pointer-clock.ts';
+  import { prefersReducedMotion } from '../workspace/responsive.svelte.ts';
+  import { gestureKind, guardHooks, performSelection } from '../workspace/selection-gesture.ts';
   import { planSelectionVisibility } from '../workspace/selection-visibility.ts';
-  import { fit, type Point, type Rect } from '../workspace/viewport.ts';
+  import { fit, type Rect } from '../workspace/viewport.ts';
   import { fitPadding } from '../workspace/stage-resize.ts';
   import { getWorkspace } from '../workspace/workspace.svelte.ts';
+  import type { TutorialHost } from './host.ts';
   import { fitTutorialFrame, pinTutorialRect, tutorialLayout } from './layout.ts';
   import {
     HOLD,
     IDLE,
     POSTCONDITION_MS,
     RUNTIME_CAP_MS,
-    advance,
     begin,
     fail,
+    gestureFault,
     pickFault,
     progress,
     selectFault,
@@ -56,23 +62,21 @@
     frame: Rect;
     /** The finished word row and its changing live counterpart. */
     frameAnchor: Rect | null;
-    anchorRect: () => Rect | null;
-    /** The words a decision is about, in diagram coordinates. */
-    focusRect: (selection: Selection) => Rect | null;
+    /** Everything the run needs from the page it drives. See `host.ts`. */
+    host: TutorialHost;
     /**
-     * Where exactly the thing to be clicked is RENDERED, in client
-     * coordinates — measured from the DOM, not derived from layout
-     * arithmetic. The app's own motion always wins: whatever the camera and
-     * the growing tree have done, a measurement taken after they settle is
-     * where the pointer must land.
+     * The stage's one guided pointer. The run sweeps it to the words it is
+     * about to select, hands it to the palette for the menu trip, and presses
+     * it at the exact moment of the pick — so the visible click and the real
+     * one are the same event.
      */
-    pointTarget?: (selection: Selection) => Point | null;
-    select: (selection: Selection) => void;
-    /** What the live palette says about a row, read after selecting. */
-    offered: (key: string) => { found: boolean; pickable: boolean; state?: string } | null;
-    pick: (key: string) => { ok: boolean; reason?: string };
-    /** What is on the diagram, so a pick that changed nothing is caught. */
-    signature: () => string;
+    pointer?: GuidedPointer | null;
+    /**
+     * Something more important is under the launcher — an open palette. A
+     * coach's controls must never cover the learner's work, so the launcher
+     * yields the space until the palette closes.
+     */
+    obscured?: boolean;
     onstart?: () => void;
     onend?: () => void;
     /** The run reached the end. Separate from `onend` so a stopped or failed
@@ -83,45 +87,29 @@
     /** Shows which real palette row the guided pointer is about to choose. */
     onpoint?: (key: string | null) => void;
     /**
-     * The stage's one guided pointer. The run sweeps it to the words it is
-     * about to select, hands it to the palette for the menu trip, and presses
-     * it at the exact moment of the pick — so the visible click and the real
-     * one are the same event.
+     * The palette's finished screen-space home, computed HERE — the run
+     * measures its own banner and does the layout — and handed to the page
+     * ready to use, null when the banner leaves. The banner sizes itself to
+     * its words, so a long question pushes the palette down with the graph
+     * band; the page stores the result instead of re-deriving it from a raw
+     * measurement.
      */
-    pointer?: GuidedPointer | null;
-    /**
-     * Take the pointer to the palette row for a key and resolve when it has
-     * ARRIVED — the palette's own completed gesture, not a timer. The run
-     * awaits this before its decide hold, and presses only after it.
-     */
-    aimMenu?: (key: string) => Promise<void>;
-    /**
-     * Something more important is under the launcher — an open palette. A
-     * coach's controls must never cover the learner's work, so the launcher
-     * yields the space until the palette closes.
-     */
-    obscured?: boolean;
+    onplacement?: (menu: Rect | null) => void;
   };
 
   let {
     beats,
     frame,
     frameAnchor,
-    anchorRect,
-    focusRect,
-    pointTarget,
-    select,
-    offered,
-    pick,
-    signature,
+    host,
+    pointer = null,
+    obscured = false,
     onstart,
     onend,
     onfinish,
     onactive,
     onpoint,
-    pointer = null,
-    aimMenu,
-    obscured = false,
+    onplacement,
   }: Props = $props();
 
   const ws = getWorkspace();
@@ -152,15 +140,34 @@
   let paused = $state(false);
   let token = 0;
   let stepBudget = 0;
-  let pausedAt: number | null = null;
-  let pausedMs = 0;
 
   const beat = $derived<TutorialBeat | null>(beats[run.index] ?? null);
   const running = $derived(run.status === 'running');
   const bar = $derived(progress(run, beats));
 
-  const reduced = () =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /*
+   * Each gesture is captioned the FIRST time it appears and then trusted:
+   * "Click a word" on every later decision would be the tutorial talking
+   * over itself. The hint rides the step line, so it costs no layout.
+   */
+  const GESTURE_HINT: Record<string, string> = {
+    click: 'Click a word',
+    drag: 'Drag across the words',
+    node: 'Click a label',
+    marquee: 'Drag a box around the labels',
+    'drag-untouchable': 'Selected together — on a computer, drag across the words',
+    'marquee-untouchable': 'Selected together — on a computer, drag a box around the labels',
+  };
+  let taught: string[] = [];
+  let gestureHint = $state<string | null>(null);
+  function teach(kind: string) {
+    if (taught.includes(kind)) {
+      gestureHint = null;
+      return;
+    }
+    taught.push(kind);
+    gestureHint = GESTURE_HINT[kind] ?? null;
+  }
 
   /* ------------------------------------------------------------ the clock */
 
@@ -174,38 +181,32 @@
    * Hold an explanation on screen while it is playing. Paused time does not
    * spend the hold, and one Step press releases exactly one held moment:
    * `stepOnce` lets the clock run so the gestures before the next checkpoint
-   * complete, and this checkpoint re-freezes it.
+   * complete, and this checkpoint re-freezes it. The polling primitive is
+   * the clock's own `waitUntil`, so pause semantics are decided in one
+   * place; only the step-budget rule is this run's.
    */
   async function pace(ms: number, mine: number) {
-    if (paused && stepBudget > 0) {
-      stepBudget--;
-      clock.pause();
-      return;
-    }
     const until_ = clock.now() + ms;
-    while (clock.now() < until_ && mine === token) {
-      if (paused && stepBudget > 0) {
-        stepBudget--;
-        clock.pause();
-        return;
-      }
-      await new Promise<void>((resolve) => setTimeout(resolve, 40));
-    }
+    await clock.waitUntil(
+      () => {
+        if (mine !== token) return true;
+        if (paused && stepBudget > 0) {
+          stepBudget--;
+          clock.pause();
+          return true;
+        }
+        return clock.now() >= until_;
+      },
+      Infinity,
+      40,
+    );
   }
 
   function setPaused(next: boolean) {
     if (next === paused) return;
-    if (next) {
-      pausedAt = Date.now();
-      clock.pause();
-    } else {
-      if (pausedAt !== null) {
-        pausedMs += Date.now() - pausedAt;
-        pausedAt = null;
-      }
-      clock.resume();
-      frames.releaseHeld();
-    }
+    // Held animation frames are replayed by the clock's own wake handling.
+    if (next) clock.pause();
+    else clock.resume();
     paused = next;
   }
 
@@ -222,12 +223,6 @@
     setPaused(true);
     stepBudget++;
     clock.resume();
-    frames.releaseHeld();
-  }
-
-  function activeRuntime(startedAt: number) {
-    const currentPause = pausedAt === null ? 0 : Date.now() - pausedAt;
-    return Date.now() - startedAt - pausedMs - currentPause;
   }
 
   /**
@@ -237,13 +232,13 @@
    * reading once the deadline is out.
    */
   async function until<T>(read: () => T, ok: (value: T) => boolean, mine: number): Promise<T> {
-    const deadline = clock.now() + POSTCONDITION_MS;
     let value = read();
-    while (!ok(value) && clock.now() < deadline && mine === token) {
-      await new Promise<void>((resolve) => setTimeout(resolve, 50));
+    await clock.waitUntil(async () => {
+      if (mine !== token || ok(value)) return true;
       await tick();
       value = read();
-    }
+      return ok(value);
+    }, POSTCONDITION_MS);
     return value;
   }
 
@@ -253,25 +248,76 @@
    * The graph owns the upper band for the whole run. The palette owns the band
    * under it, so neither surface has to chase the other around the canvas.
    */
-  function graphBand(): Rect | null {
+  /** The banner's real bottom edge in stage space: measured, never assumed. */
+  function measuredBannerBottom(): number | null {
+    if (!banner) return null;
+    const stage = banner.closest<HTMLElement>('main');
+    if (!stage) return null;
+    return banner.getBoundingClientRect().bottom - stage.getBoundingClientRect().top + 8;
+  }
+
+  /** Both bands from the one measurement, or null before the banner exists. */
+  function layoutNow(): { graph: Rect; menu: Rect } | null {
     if (!banner) return null;
     const stage = banner.closest<HTMLElement>('main');
     if (!stage) return null;
     const stageBox = stage.getBoundingClientRect();
-    return tutorialLayout({ w: stageBox.width, h: stageBox.height }).graph;
+    const bannerBottom = measuredBannerBottom() ?? undefined;
+    return tutorialLayout({ w: stageBox.width, h: stageBox.height }, bannerBottom);
   }
+
+  const graphBand = (): Rect | null => layoutNow()?.graph ?? null;
+
+  /** Sub-pixel measurement noise must not re-lay-out the palette. */
+  let reportedMenu: Rect | null = null;
+  function reportPlacement(menu: Rect | null) {
+    const near = (a: number, b: number) => Math.abs(a - b) < 1;
+    if (
+      menu === null
+        ? reportedMenu === null
+        : reportedMenu !== null &&
+          near(menu.x, reportedMenu.x) &&
+          near(menu.y, reportedMenu.y) &&
+          near(menu.w, reportedMenu.w) &&
+          near(menu.h, reportedMenu.h)
+    ) {
+      return;
+    }
+    reportedMenu = menu;
+    onplacement?.(menu);
+  }
+
+  // One truth for everything under the banner: the same measurement drives
+  // this run's graph band and the palette placement handed to the page — a
+  // long question pushes BOTH down together.
+  //
+  // Every report happens INSIDE the observer's own (async) callback — the
+  // observer always delivers once on observe, so nothing is missed. The
+  // effect's setup must not call the handler itself: the handler reads the
+  // state it writes, and a setup-time call makes this effect depend on it —
+  // then cleanup's null and setup's value re-trigger each other forever, and
+  // the wedged flush takes the whole run down with it.
+  $effect(() => {
+    if (!banner || !onplacement) return;
+    const observer = new ResizeObserver(() => reportPlacement(layoutNow()?.menu ?? null));
+    observer.observe(banner);
+    return () => {
+      observer.disconnect();
+      reportPlacement(null);
+    };
+  });
 
   /** Frame the finished graph once, before a menu appears. */
   async function frameRun() {
     const safe = graphBand();
     if (!safe) return;
     let viewport = fitTutorialFrame(frame, safe);
-    const currentAnchor = anchorRect();
+    const currentAnchor = host.anchorRect();
     if (currentAnchor && frameAnchor) {
       viewport = pinTutorialRect(viewport, currentAnchor, frameAnchor);
     }
-    camera.moveTo(viewport, { duration: 320, immediate: reduced() });
-    await sleep(reduced() ? 0 : 340, token);
+    camera.moveTo(viewport, { duration: 320, immediate: prefersReducedMotion() });
+    await sleep(prefersReducedMotion() ? 0 : 340, token);
   }
 
   /** Once the teaching surfaces leave, give the completed graph the canvas. */
@@ -280,114 +326,182 @@
     if (mine !== token || !ws.stageReady) return;
     camera.moveTo(fit(frame, ws.stage, fitPadding(ws.stage)), {
       duration: 320,
-      immediate: reduced(),
+      immediate: prefersReducedMotion(),
     });
-    await sleep(reduced() ? 0 : 340, mine);
+    await sleep(prefersReducedMotion() ? 0 : 340, mine);
   }
 
   /** Reveal within the same upper band without changing the established zoom. */
   async function reveal(selection: Selection) {
-    const target = focusRect(selection);
+    const target = host.focusRect(selection);
     const safe = graphBand();
     if (!target || !safe) return;
     const plan = planSelectionVisibility({ ...ws.viewport }, target, safe, 'reveal');
     if (!plan.changed) return;
-    camera.moveTo(plan.viewport, { duration: 240, immediate: reduced() });
-    await sleep(reduced() ? 0 : 260, token);
+    camera.moveTo(plan.viewport, { duration: 240, immediate: prefersReducedMotion() });
+    await sleep(prefersReducedMotion() ? 0 : 260, token);
   }
 
   /* -------------------------------------------------------------- the run */
 
+  /**
+   * The tutorial's pacing between completed gestures, expressed as the
+   * shared sequencer's Timing. The two nonzero holds are the run's only
+   * step checkpoints, exactly as before: `open` and `between` are zero
+   * because `reveal` and the next gesture carry that pacing themselves.
+   */
+  const TUTORIAL_TIMING: Timing = {
+    open: 0,
+    decide: HOLD.ask,
+    commit: HOLD.answer,
+    between: 0,
+    rest: 0,
+  };
+
   async function play() {
     const mine = ++token;
+    // Stop aborts the pointer's flight, but a gesture driver mid-await still
+    // unwinds afterwards. These hooks drop every write the moment this run
+    // is no longer the live one, so nothing can select, draft, or open a
+    // menu after the learner pressed Stop.
+    const liveGestures = host.gestures ? guardHooks(host.gestures, () => mine === token) : null;
     paused = false;
-    pausedAt = null;
-    pausedMs = 0;
     stepBudget = 0;
     onstart?.();
     onpoint?.(null);
+    taught = [];
+    gestureHint = null;
     run = begin(beats);
     onactive?.(true);
     await tick();
     await frameRun();
-    const startedAt = Date.now();
+    const startedAt = clock.now();
 
-    while (run.status === 'running' && mine === token) {
-      if (activeRuntime(startedAt) > RUNTIME_CAP_MS) {
-        run = fail(run, 'The tutorial ran longer than it should. Stopping.');
-        break;
+    let capped = false;
+    const alive = () => {
+      if (mine !== token || run.status !== 'running') return false;
+      if (clock.now() - startedAt > RUNTIME_CAP_MS) {
+        capped = true;
+        return false;
       }
-      const current = beats[run.index]!;
+      return true;
+    };
 
-      if (run.act === 'ask') {
+    // Facts each verify reads after its step's gesture. Step-scoped: the
+    // sequencer finishes one decision before it begins the next.
+    let committedByGesture = false;
+    let signatureBefore = '';
+    let pickResult: { ok: boolean; reason?: string } = { ok: false };
+
+    /**
+     * The run's side of the shared choreography. `perform` owns the order —
+     * gesture, verify, aim, press-and-land, verify, pacing — and these
+     * gestures own only what is the tutorial's: the real page handlers, the
+     * fault checks, the camera pins, and the banner's run state.
+     */
+    const gestures: Gestures = {
+      selectTarget: async (index) => {
+        const current = beats[index]!;
+        run = { index, act: 'ask', status: 'running', problem: null };
+        committedByGesture = false;
         // Move the graph first. Opening a contextual menu and then moving its
         // anchor made both surfaces chase each other across the canvas.
         await reveal(current.select);
-        if (mine !== token) return;
-        // The hand goes to the words, PRESSES, and only then does the
-        // selection appear — the same causal order a learner's own click
-        // follows. The target is a tracked getter, so a camera still
-        // settling under the flight is followed, not missed.
-        if (pointTarget?.(current.select) && pointer) {
-          await pointer.moveToClient(() => pointTarget(current.select));
-          if (mine !== token) return;
+        if (!alive()) return;
+        // The hand PERFORMS the selection — the same gesture a learner's own
+        // hand makes, dispatched by the same `performSelection` the lesson
+        // hero uses. The gesture drives the page's real draft/marquee
+        // handlers, so the committed selection is the handlers' own work;
+        // only gestures the device truly supports are performed.
+        const sel = current.select;
+        if (pointer && liveGestures) {
+          teach(gestureKind(sel, host.canDrag) ?? 'click');
+          committedByGesture = await performSelection(pointer, liveGestures, sel, {
+            canDrag: host.canDrag,
+            pointTarget: () => host.pointTarget(sel),
+          });
+        } else if (pointer && host.pointTarget(sel)) {
+          await pointer.moveToClient(() => host.pointTarget(sel));
+          if (!alive()) return;
           await pointer.press();
-          if (mine !== token) return;
         }
-        select(current.select);
+        if (!alive()) return;
+        if (!committedByGesture) host.select(sel);
         await tick();
+      },
+      applySelection: () => {},
+      verifySelection: async (index) => {
+        const current = beats[index]!;
+        if (committedByGesture) {
+          // The gesture drove the page's own draft/marquee handlers — so the
+          // handlers, not the drivers, decided what got selected. Prove the
+          // commit matches the script before going on.
+          const got = await until(
+            () => host.selected(),
+            (g) => !gestureFault(current.select, g),
+            mine,
+          );
+          const fault = gestureFault(current.select, got);
+          if (fault) return fault;
+        }
         const seen = await until(
-          () => offered(current.key),
+          () => host.offered(current.key),
           (o) => !!o?.found && o.pickable,
           mine,
         );
-        const fault = selectFault(current, seen);
-        if (fault) {
-          run = fail(run, fault);
-          break;
-        }
+        return selectFault(current, seen);
+      },
+      aimOption: async (index) => {
         // The palette reports ARRIVAL at the row; the highlight lights as
         // the pointer lands, and the decide hold begins only then.
-        await aimMenu?.(current.key);
-        if (mine !== token) return;
-        onpoint?.(current.key);
-        await pace(HOLD.ask, mine);
-      } else {
+        await host.aimMenu(beats[index]!.key);
+        if (!alive()) return;
+        onpoint?.(beats[index]!.key);
+      },
+      applyChoice: async (index) => {
+        const current = beats[index]!;
+        gestureHint = null;
+        run = { ...run, act: 'answer' };
         // The press IS the pick: the pointer lands (waiting out any glide
         // still in the air), dips, and the option is taken on the release.
         await pointer?.press();
-        if (mine !== token) return;
-        const beforeAnchor = anchorRect();
-        const before = signature();
-        const result = pick(current.key);
+        if (!alive()) return;
+        const beforeAnchor = host.anchorRect();
+        signatureBefore = host.signature();
+        pickResult = host.pick(current.key);
         onpoint?.(null);
         await tick();
-        const afterAnchor = anchorRect();
+        const afterAnchor = host.anchorRect();
         if (beforeAnchor && afterAnchor) {
           // Adding the first childless phrase creates one extra diagram row.
           // Cancel that world-space change before the browser paints it, so
           // the words stay put while the new label appears above them.
           ws.viewport = pinTutorialRect(ws.viewport, afterAnchor, beforeAnchor);
         }
+      },
+      verifyChoice: async (index) => {
+        const current = beats[index]!;
         const after = await until(
-          () => signature(),
-          (now) => now !== before,
+          () => host.signature(),
+          (now) => now !== signatureBefore,
           mine,
         );
-        const fault = pickFault(current, result, after !== before);
-        if (fault) {
-          run = fail(run, fault);
-          break;
-        }
-        await pace(HOLD.answer, mine);
-      }
+        return pickFault(current, pickResult, after !== signatureBefore);
+      },
+      closePalette: () => {},
+      hold: (ms) => (ms > 0 ? pace(ms, mine) : Promise.resolve()),
+    };
 
-      if (mine !== token) return;
-      run = advance(run, beats);
-    }
+    const fault = await perform(beats.length, gestures, TUTORIAL_TIMING, alive);
 
     if (mine !== token) return;
+    if (fault) run = fail(run, fault);
+    else if (capped) run = fail(run, 'The tutorial ran longer than it should. Stopping.');
+    else if (run.status === 'running') run = { ...run, status: 'done' };
+
     pointer?.rest();
+    host.cancelGesture();
+    gestureHint = null;
     if (run.status === 'done') {
       onactive?.(false);
       onpoint?.(null);
@@ -402,9 +516,14 @@
     token++;
     camera.cancel();
     pointer?.rest();
+    host.cancelGesture();
+    gestureHint = null;
     setPaused(false);
     stepBudget = 0;
-    run = stopRun(run);
+    // Close on a failure DISMISSES it: the learner has read the problem and
+    // asked to move on, so the launcher must come back. `stopRun` keeps its
+    // no-overwrite rule for races; this is an explicit dismissal, not a race.
+    run = run.status === 'failed' ? { ...IDLE, status: 'stopped' } : stopRun(run);
     onactive?.(false);
     onpoint?.(null);
     onend?.();
@@ -414,11 +533,14 @@
     token++;
     camera.cancel();
     pointer?.cancel();
+    host.cancelGesture();
     // The clock is the page's, shared across runs — never cancel it, but do
     // not leave it paused either: a stranded pause would freeze the next
     // sentence's run and keep this run's final waits polling forever.
+    // Resuming also releases any frame a pause was holding.
     clock.resume();
-    frames.releaseHeld();
+    // This component's frame source must not stay hooked to the shared clock.
+    frames.dispose();
     onactive?.(false);
     onpoint?.(null);
   });
@@ -443,6 +565,9 @@
 {/if}
 
 {#if running || run.status === 'failed'}
+  <!-- `data-stage-occluder` declares this banner to the palette's phone
+       camera planner (LabelPanel), which plans its safe area beneath
+       whatever carries the attribute. -->
   <div class="banner" bind:this={banner} data-stage-occluder role="status" aria-live="polite">
     <div class="bar" aria-hidden="true"><span style="width:{bar * 100}%"></span></div>
     <div class="inner">
@@ -451,7 +576,10 @@
           <p class="eyebrow">The tutorial stopped</p>
           <p class="big">{run.problem}</p>
         {:else if beat}
-          <p class="eyebrow">Step {run.index + 1} of {beats.length}</p>
+          <p class="eyebrow">
+            Step {run.index + 1} of {beats.length}{#if run.act === 'ask' && gestureHint}
+              <span class="gesture">· {gestureHint}</span>{/if}
+          </p>
           {#if run.act === 'ask'}
             <p class="big">{beat.question}</p>
           {:else}
@@ -566,6 +694,11 @@
     border-color: var(--border-strong);
   }
 
+  /* Sized by its words: the explanation is the point of the run, so the box
+     grows to hold every word rather than clipping the third line. It is also
+     its own container — the stage's center pane can be narrow on a wide
+     screen (sidebars, browser zoom), so compactness follows the banner's own
+     width, never the viewport's. */
   .banner {
     position: absolute;
     top: 8px;
@@ -573,11 +706,12 @@
     left: 44px;
     z-index: 45;
     overflow: hidden;
-    height: 108px;
+    min-height: 108px;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--panel);
     box-shadow: 0 6px 24px oklch(0 0 0 / 22%);
+    container-type: inline-size;
   }
   .bar {
     height: 2px;
@@ -609,6 +743,11 @@
     font-weight: 650;
     letter-spacing: 0.07em;
     text-transform: uppercase;
+  }
+  .eyebrow .gesture {
+    color: var(--accent);
+    text-transform: none;
+    letter-spacing: 0.02em;
   }
   /* The explanation is the point of the run, so it is the biggest thing on the
      canvas while the run is going. */
@@ -678,15 +817,7 @@
     border-color: var(--border-strong);
   }
 
-  @media (max-width: 700px) {
-    .launch-home.first {
-      top: 96px;
-    }
-    .banner {
-      right: 8px;
-      left: 8px;
-      height: 136px;
-    }
+  @container (max-width: 560px) {
     .inner {
       display: flex;
       flex-direction: column;
@@ -710,6 +841,16 @@
     }
     .halt {
       min-height: 32px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .launch-home.first {
+      top: 96px;
+    }
+    .banner {
+      right: 8px;
+      left: 8px;
     }
   }
 </style>

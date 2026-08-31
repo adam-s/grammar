@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { composeVerdict, familyOf, sentenceCase, spokenVerdict } from './feedback.ts';
+import { composeVerdict, sentenceCase, spokenVerdict } from './feedback.ts';
 
 test('a first miss names the words and the claim, and withholds the answer', () => {
   const v = composeVerdict({
@@ -53,15 +53,6 @@ test('a contextual claim is refused for THIS sentence, a form claim outright', (
     firstMiss: 'An adverb tells how.',
   });
   assert.equal(form.text, '“Birds” is not an adverb.');
-});
-
-test('familyOf reads the claim from the option itself', () => {
-  assert.equal(familyOf({ form: 'N' }), 'form');
-  assert.equal(familyOf({ func: 'subject' }), 'contextual');
-  assert.equal(familyOf({ verbType: 'Vtr' }), 'contextual');
-  assert.equal(familyOf({ voice: 'passive' }), 'contextual');
-  assert.equal(familyOf({ auxKind: 'modal' }), 'contextual');
-  assert.equal(familyOf({}), 'form');
 });
 
 test('a structural refusal skips the ladder and keeps its own words', () => {

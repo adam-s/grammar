@@ -1,7 +1,19 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import type { Selection } from '../grammar/options.ts';
 import type { TutorialBeat } from './script.ts';
-import { HOLD, IDLE, advance, begin, fail, pickFault, progress, selectFault, stop } from './run.ts';
+import {
+  HOLD,
+  IDLE,
+  advance,
+  begin,
+  fail,
+  gestureFault,
+  pickFault,
+  progress,
+  selectFault,
+  stop,
+} from './run.ts';
 
 const beat = (index: number): TutorialBeat => ({
   index,
@@ -84,4 +96,38 @@ test('progress runs from the first moment to a full bar at the end', () => {
 
 test('the answer is held longer than the question, because it says more', () => {
   assert.ok(HOLD.answer > HOLD.ask);
+});
+
+/*
+ * The gesture boundary: a performed drag or marquee is only believed when the
+ * page's handlers committed the selection the script named. These are the
+ * cases the marquee bug shipped through — the sweep looked right while the
+ * commit was empty.
+ */
+test('a gesture that committed the expected span is no fault', () => {
+  assert.equal(gestureFault({ kind: 'span', span: [1, 4] }, { kind: 'span', span: [1, 4] }), null);
+});
+
+test('a gesture that committed nothing is named as nothing', () => {
+  assert.match(gestureFault({ kind: 'span', span: [1, 4] }, { kind: 'none' })!, /nothing/);
+  assert.match(gestureFault({ kind: 'nodes', ids: ['c1', 'c2'], span: [0, 4] }, null)!, /nothing/);
+});
+
+test('a marquee is judged by its ids, in any order', () => {
+  const want: Selection = { kind: 'nodes', ids: ['c1', 'c2'], span: [0, 4] };
+  assert.equal(gestureFault(want, { kind: 'nodes', ids: ['c2', 'c1'], span: [0, 4] }), null);
+  const wrong = gestureFault(want, { kind: 'nodes', ids: ['c1'], span: [0, 0] });
+  assert.match(wrong!, /c1/);
+  assert.match(wrong!, /not the labels c1, c2/);
+});
+
+test('a marquee that collapsed to a span or a lone node is a fault', () => {
+  const want: Selection = { kind: 'nodes', ids: ['c1', 'c2'], span: [0, 4] };
+  assert.match(gestureFault(want, { kind: 'span', span: [0, 4] })!, /words 1–5/);
+  assert.match(gestureFault(want, { kind: 'node', id: 'c1' })!, /c1/);
+});
+
+test('a node click is judged by its id', () => {
+  assert.equal(gestureFault({ kind: 'node', id: 'c3' }, { kind: 'node', id: 'c3' }), null);
+  assert.match(gestureFault({ kind: 'node', id: 'c3' }, { kind: 'node', id: 'c1' })!, /c1/);
 });
