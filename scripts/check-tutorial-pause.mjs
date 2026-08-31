@@ -133,12 +133,18 @@ if ((await launch.count()) === 0) {
   if (theirNodes === 0) {
     fail('the learner half-build built nothing — the scenario is broken');
   } else {
-    // The last pick left the palette open, and the launcher yields to it.
-    // Dismiss the palette the way a hand does, then launch.
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(300);
-    if ((await page.locator('button.launch').count()) === 0) {
-      await page.mouse.click(640, 780);
+    // The last pick left the palette open. The toolbar launcher must hold
+    // its place regardless — a control that blinks away on every click reads
+    // as a glitch (only the arrowed invitation yields to the palette).
+    const paletteOpen = await page.locator('.popup').count();
+    const launcherHeld = await page.locator('button.launch').isVisible().catch(() => false);
+    if (paletteOpen > 0 && !launcherHeld)
+      fail('the launcher vanished while the palette was open');
+    else if (launcherHeld) pass('the launcher holds its place while the palette is open');
+    if (!launcherHeld) {
+      // Belt and braces so the scenario can continue even if the assertion
+      // above failed: dismiss the palette and find the launcher.
+      await page.keyboard.press('Escape');
       await page.waitForTimeout(300);
     }
     // The run takes the stage. Mid-flight, the canvas must show ITS scratch.

@@ -575,7 +575,11 @@
   });
 </script>
 
-{#if (run.status === 'idle' || run.status === 'stopped' || run.status === 'done') && !obscured}
+<!-- Only the arrowed invitation yields to an open palette: it hangs centre
+     stage where the popup can land. The quiet pill is a toolbar control like
+     the view toggle beside it, and a toolbar that blinks away on every click
+     reads as a glitch, so it holds its place. -->
+{#if (run.status === 'idle' || run.status === 'stopped' || run.status === 'done') && !(obscured && launcher.arrow)}
   <div class="launch-home" class:first={run.status === 'idle' && launcher.arrow}>
     {#if run.status === 'idle' && launcher.arrow}
       <div class="start-here" aria-hidden="true">
