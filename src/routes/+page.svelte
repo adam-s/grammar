@@ -100,6 +100,7 @@
     emptyTrace,
     encodeTrace,
     fingerprint,
+    undoDepthOf,
     undoTarget,
     type Trace,
     type TraceMoment,
@@ -741,16 +742,19 @@
   }
 
   /**
-   * Whether the Back control has anything to take back — `undoTarget` is
-   * both the answer and the preview, computed by replaying the trace
-   * (measured at ~70ms even cap-full, and traces are per sentence). Hidden
-   * rather than disabled where undo has no meaning: on the solution view
-   * and while the guided run owns the canvas.
+   * Whether the Back control has anything to take back. `undoDepthOf` walks
+   * the recorded fingerprints only — microseconds where a full replay costs
+   * milliseconds — because this is asked after every recorded moment. It
+   * trusts the recording; the press itself still goes through `undoTarget`,
+   * which verifies everything and quietly refuses if the recording lies.
    */
   const canUndo = $derived.by(() => {
     void traceSeq;
-    return trace !== null && !demo && undoTarget(trace, sentence, scope) !== null;
+    return trace !== null && !demo && undoDepthOf(trace) > 0;
   });
+
+  /** What the screen reader is told when the diagram changes under it. */
+  let liveNote = $state('');
 
   /**
    * Take back the last step. The trace's undo rules decide what that means
@@ -759,7 +763,7 @@
    * normal save path runs, so the snapshot follows and completion is
    * re-graded — and kept, because finishing is history.
    */
-  function undo() {
+  async function undo() {
     if (!trace || demo || tutorialActive || solved) return;
     const target = undoTarget(trace, sentence, scope);
     if (!target) return;
@@ -769,6 +773,12 @@
     preview = null;
     marqueeIds = [];
     recordDecision();
+    // The diagram just changed with no verdict to say so; the live region
+    // is how a screen reader hears it. Cleared first so a repeated undo
+    // re-announces instead of reading as the same unchanged text.
+    liveNote = '';
+    await tick();
+    liveNote = 'Took back the last step.';
   }
 
   /** The platform's take-it-back keystroke, on the diagram only. */
@@ -972,6 +982,9 @@
   {/snippet}
 
   {#snippet overlay()}
+    <!-- Present from the start so assistive tech is already listening when
+         the first announcement lands. -->
+    <div class="sr-only" role="status" aria-live="polite">{liveNote}</div>
     {#if middleView === 'diagram' && !tutorialActive}
       <div class="canvas-controls" data-stage-occluder>
         {#if !solved}
@@ -980,7 +993,8 @@
             type="button"
             disabled={!canUndo}
             aria-label="Take back the last step"
-            title="Take back the last step"
+            aria-keyshortcuts="Control+Z Meta+Z"
+            title="Take back the last step (Ctrl/⌘ Z)"
             onclick={undo}
           >
             <Undo2 size={14} strokeWidth={2} aria-hidden="true" />
@@ -1175,6 +1189,15 @@
     pointer-events: none;
   }
 
+  /* Visually silent, audible to assistive tech. */
+  .sr-only {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   /* The canvas's top-right controls: Back, then the view toggle. The row is
      positioned; its members just sit in it, cut from the same cloth. */
   .canvas-controls {
@@ -1189,7 +1212,7 @@
   .undo-step {
     display: grid;
     place-items: center;
-    width: 36px;
+    width: 40px;
     padding: 0;
     border: 1px solid var(--border);
     border-radius: 999px;

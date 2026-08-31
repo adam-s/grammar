@@ -361,6 +361,60 @@ export function undoTarget(
   return applyUndo(state) ? state.s : null;
 }
 
+/**
+ * How many steps the learner could take back, WITHOUT re-grading anything —
+ * the Back button's enabled-state, asked after every recorded moment, so it
+ * must cost microseconds where a full replay costs milliseconds.
+ *
+ * It walks the same history rules as replay but over the RECORDED
+ * fingerprints alone: no palette, no grading. Trusting the recording is
+ * safe here because enabling the button is the only stake — the press
+ * itself still computes through `undoTarget`, which verifies everything and
+ * quietly refuses if the recording lies. An agreement test walks both
+ * functions over every trace shape and holds them to the same answer.
+ */
+export function undoDepthOf(trace: Trace): number {
+  const from = resumePoint(trace);
+  if (from < 0) return 0;
+  const EMPTY = fingerprint(emptySession().build);
+  const fps: string[] = [EMPTY];
+  let runDepth = 0;
+  const top = () => fps[fps.length - 1]!;
+  for (const entry of trace.entries.slice(from)) {
+    switch (entry.kind) {
+      case 'open':
+        runDepth = 0;
+        if (entry.fp !== top()) {
+          fps.length = 0;
+          fps.push(entry.fp);
+        }
+        break;
+      case 'startOver':
+        fps.length = 0;
+        fps.push(EMPTY);
+        break;
+      case 'runStart':
+        runDepth += 1;
+        break;
+      case 'runEnd':
+        runDepth = Math.max(0, runDepth - 1);
+        break;
+      case 'pick':
+      case 'edit':
+        if (runDepth === 0 && entry.fp !== top()) fps.push(entry.fp);
+        break;
+      case 'undo':
+        if (runDepth === 0 && fps.length >= 2) fps.pop();
+        break;
+      case 'select':
+      case 'solution':
+      case 'complete':
+        break;
+    }
+  }
+  return fps.length - 1;
+}
+
 /** The replay loop itself, with its final state — `replayTrace` publishes
     the result; `undoTarget` needs where the walk stood when it ended. */
 function walk(

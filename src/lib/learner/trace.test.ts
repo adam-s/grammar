@@ -2,7 +2,13 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { COURSE_LESSONS } from '../course/course.ts';
 import { scopeThrough, targetReading } from '../course/scope.ts';
-import { answer, emptySession, sessionChoices, type Session } from '../grammar/session.ts';
+import {
+  answer,
+  applyAction,
+  emptySession,
+  sessionChoices,
+  type Session,
+} from '../grammar/session.ts';
 import { canonicalReading } from '../grammar/types.ts';
 import { isPickable } from '../grammar/options.ts';
 import { tutorialScript } from '../tutorial/script.ts';
@@ -15,6 +21,7 @@ import {
   encodeTrace,
   fingerprint,
   replayTrace,
+  undoDepthOf,
   undoTarget,
   type Trace,
 } from './trace.ts';
@@ -382,6 +389,78 @@ test('a bent undo fingerprint names its step — the final event cannot drift si
   assert.equal(divergence.seq, trace.entries.at(-1)!.seq);
   assert.match(divergence.reason, /undo landed/);
   assert.ok(states.length > 0);
+});
+
+test('an ungroup is an undo target like any pick', () => {
+  const { trace: walked, final } = recordWalk();
+  const grouped = Object.entries(final.build.constituents).find(
+    ([, c]) => !c.gap && c.parent !== null,
+  );
+  assert.ok(grouped, 'the walk built nothing ungroupable');
+  const [nodeId] = grouped;
+  const edited = applyAction(final, { kind: 'unwrap', nodeId, label: '' });
+  assert.notEqual(fingerprint(edited.build), fingerprint(final.build));
+  let trace = appendEntry(walked, { kind: 'edit', nodeId, fp: fingerprint(edited.build) });
+  trace = appendEntry(trace, { kind: 'undo', fp: fingerprint(final.build) });
+  const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
+  assert.equal(
+    fingerprint(steps.at(-1)!.session.build),
+    fingerprint(final.build),
+    'undo did not take back the ungroup',
+  );
+});
+
+test('the fast depth check agrees with real replay on every trace shape', () => {
+  // undoDepthOf trusts recorded fingerprints so the button can ask cheaply;
+  // this is the agreement that keeps that trust honest. Build every shape
+  // the suite knows: plain walks, wrong answers, runs, reload checkpoints,
+  // unearned checkpoints, startOver floors, undos, truncation.
+  const shapes: Trace[] = [];
+  const half = recordWalk(3);
+  shapes.push(recordWalk().trace);
+  shapes.push(half.trace);
+  {
+    let t = appendEntry(half.trace, { kind: 'runStart' });
+    for (const e of recordWalk().trace.entries) {
+      if (e.kind === 'pick') t = appendEntry(t, { ...e });
+    }
+    t = appendEntry(t, { kind: 'runEnd', outcome: 'finished' });
+    t = appendEntry(t, { kind: 'undo', fp: fingerprint(half.states.at(-2)!.build) });
+    shapes.push(t);
+  }
+  {
+    let t = appendEntry(half.trace, {
+      kind: 'open',
+      build: half.final.build,
+      misses: half.final.misses,
+      rejected: half.final.rejected,
+      fp: fingerprint(half.final.build),
+    });
+    t = appendEntry(t, { kind: 'undo', fp: fingerprint(half.states.at(-2)!.build) });
+    shapes.push(t);
+  }
+  {
+    let t = appendEntry(half.trace, { kind: 'startOver' });
+    t = appendEntry(t, { kind: 'undo', fp: fingerprint(emptySession().build) });
+    shapes.push(t);
+  }
+  {
+    const played = recordWalk();
+    let t = { ...played.trace, truncated: true, entries: played.trace.entries.slice(1) };
+    t = appendEntry(t, { kind: 'startOver' });
+    for (const e of recordWalk(2).trace.entries.slice(1)) t = appendEntry(t, { ...e });
+    shapes.push(t);
+  }
+  for (const [i, t] of shapes.entries()) {
+    const real = replayTrace(t, SENTENCE, SCOPE);
+    assert.equal(real.divergence, null, `shape ${i} diverged: ${real.divergence?.reason}`);
+    assert.equal(
+      undoDepthOf(t),
+      real.undoDepth,
+      `shape ${i}: the fast check and real replay disagree`,
+    );
+  }
 });
 
 test('a wrong answer is not an undo target — only builds step back', () => {

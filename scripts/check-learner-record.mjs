@@ -310,6 +310,15 @@ const half = Math.max(1, Math.floor(steps.length / 2));
     fail('undo rolled back misses or refusals');
   } else pass('undo keeps the misses and refusals');
 
+  // The change is announced to assistive tech, and the keystroke advertised.
+  const announced = (await page.locator('.sr-only[role="status"]').textContent())?.trim();
+  if (announced !== 'Took back the last step.') {
+    fail(`undo went unannounced to assistive tech ("${announced}")`);
+  } else pass('undo announces itself to assistive tech');
+  const shortcut = await page.locator('.undo-step').getAttribute('aria-keyshortcuts');
+  if (!shortcut?.includes('Z')) fail('the undo keystroke is not advertised');
+  else pass('the undo keystroke is advertised');
+
   // The platform keystroke takes back the remaining step, to the floor.
   await page.keyboard.press('ControlOrMeta+z');
   await page.waitForTimeout(200);

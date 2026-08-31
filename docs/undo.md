@@ -66,8 +66,18 @@ remains is the button itself.
   cap-full trace still replays and still undoes — just not past what
   survived.
 - **The cost is measured, not guessed.** A cap-full thousand-entry trace
-  replays in ~70ms, so the page recomputes by replaying its own trace on
-  every undo — one source of truth, no parallel stack to drift.
+  replays in ~70ms, so the press recomputes by replaying the trace — one
+  source of truth. The button's ENABLED state is asked far more often than
+  the press, so it walks the recorded fingerprints alone in microseconds
+  (`undoDepthOf`); it trusts the recording, the press verifies it, and an
+  agreement test holds the two to the same answer on every trace shape.
+- **The change is audible, and the keystroke is advertised.** Undo announces
+  "Took back the last step." through a live region — the diagram changes
+  with no verdict to say so — and the control carries the shortcut in its
+  tooltip and `aria-keyshortcuts`.
+- **Removal is instant because removal is instant everywhere.** The house
+  diagram draws and removes nodes without transitions — ungroup included —
+  so undo matching it is consistency, not a missing animation.
 - **Undo verifies itself like everything else.** The entry records the
   fingerprint of the build it landed on — `undoTarget` computes it before
   the append — so if undo's own rules ever change, old recordings diverge
