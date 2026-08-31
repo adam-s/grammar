@@ -51,6 +51,7 @@ export function diagramScopes(doc: LessonDoc): { sentenceId: string; through?: n
 const INTRODUCTION: LessonDoc = {
   id: '01-introduction',
   lede:
+    'Improve your grammar with sentence diagrams, not LLMs. ' +
     'What words mean depends partly on how they relate to other words in a sentence. ' +
     'Syntax describes those relationships and the roles words take in them. ' +
     'Seeing the structure more clearly can improve both reading and writing.',

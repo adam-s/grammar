@@ -1,6 +1,6 @@
 # Grammar
 
-Grammar is a web app for learning to build sentence diagrams — with helpful assistance.
+**Improve your grammar with sentence diagrams, not LLMs.**
 
 Try it at **[adamsohn.com/grammar](https://adamsohn.com/grammar/)**.
 
