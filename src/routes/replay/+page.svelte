@@ -98,7 +98,9 @@
   );
   const scope = $derived(owner ? scopeThrough(COURSE_LESSONS, owner.number) : undefined);
   const replay = $derived(
-    trace && sentence ? replayTrace(trace, sentence, scope) : { steps: [], divergence: null },
+    trace && sentence
+      ? replayTrace(trace, sentence, scope)
+      : { steps: [], divergence: null, skipped: 0, undoDepth: 0 },
   );
   const step = $derived(replay.steps[Math.min(at, replay.steps.length - 1)] ?? null);
   const frame = $derived(
@@ -148,6 +150,8 @@
         return 'the guided run took the stage (work set aside)';
       case 'runEnd':
         return `the guided run ${entry.outcome === 'finished' ? 'finished' : 'stopped'} — work restored`;
+      case 'undo':
+        return 'took back the last step';
     }
   }
 </script>
@@ -187,6 +191,12 @@
           {trace.entries.length} moment(s) · app {trace.app}
           {#if owner}· lesson {owner.number}{/if}
         </p>
+        {#if replay.skipped > 0}
+          <p class="stamp">
+            {replay.skipped} earlier moment(s) predate the oldest surviving checkpoint and are
+            listed in the trace but cannot replay.
+          </p>
+        {/if}
       </section>
 
       {#if replay.divergence}

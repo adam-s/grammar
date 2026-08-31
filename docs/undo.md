@@ -1,10 +1,11 @@
 # Undo
 
-This is the working plan for a Back button. It is unbuilt; the decisions are
-made. The event trace (`docs/learner-record.md`) already records every moment
-of a session and replays it through the app's own transaction, so undo is not
-a new history mechanism — it is one new kind of moment in a history that
-already exists.
+This is the working plan for a Back button. The mechanism is built and
+tested; the button is not yet drawn. The event trace
+(`docs/learner-record.md`) records every moment of a session and replays it
+through the app's own transaction, so undo is not a new history mechanism —
+it is one new kind of moment in a history that already exists, and that
+moment's rules now live in the trace module with the rest.
 
 ## The core decision: undo is an event, not an eraser
 
@@ -35,22 +36,47 @@ pick that earned completion leaves a check beside a build that is no longer
 complete. Consistent, but it is the one place a learner might blink; if it
 confuses in practice, the answer is copy, not a mutable checkmark.
 
+## The settled edges
+
+Each of these was once a gap; each is now a rule with a test in the trace
+suite. The machinery is BUILT — the `undo` entry kind, its replay semantics,
+and the `undoDepth` the button will read all live in the trace module. What
+remains is the button itself.
+
+- **Only the learner's timeline steps back.** Replay keeps a history of the
+  learner's distinct builds. A guided run's picks land on its scratch and
+  never enter that history, so undo pressed after a run takes back the
+  learner's last step before it — the run is skipped whole.
+- **A wrong answer is not a target.** It changed the misses, not the build;
+  undo steps over it and the miss stays, like every refusal.
+- **`startOver` is the floor.** Starting over clears the history; undo
+  cannot cross it. Un-starting-over remains a confirm step, not a keystroke.
+- **Reloads are crossed only when earned.** An `open` checkpoint that
+  restores the build already current CONTINUES the history, so undo reaches
+  into the previous visit exactly as far as the trace does. A checkpoint
+  embedding work the recorded steps never produced (another tab, a fresh
+  trace beside an old snapshot) RESETS the history instead — undo may only
+  take back steps somebody actually took, never leap a restored draft to
+  empty.
+- **Undo lands closed.** The build steps back; the selection clears and the
+  verdict with it — the feedback belonged to a decision no longer on the
+  board.
+- **Truncation floors at the oldest surviving checkpoint.** Replay resumes
+  there (and reports how many earlier moments could not replay), so a
+  cap-full trace still replays and still undoes — just not past what
+  survived.
+- **The cost is measured, not guessed.** A cap-full thousand-entry trace
+  replays in ~70ms, so the page recomputes by replaying its own trace on
+  every undo — one source of truth, no parallel stack to drift.
+
 ## Shape
 
-- **The pure rule lives in the trace module**: an `undo` entry kind and its
-  replay case — "the session before the last build-changing entry, with the
-  CURRENT misses and refusals kept." Tested under `node --test` like every
-  other rule.
-- **The page computes the target state by replaying its own trace.** One
-  source of truth; no parallel history stack to drift. If a long trace ever
-  makes that slow, an in-memory stack is an optimization that must agree
-  with replay — and a test enforces the agreement.
 - **After undo, the normal save path runs**: snapshot written, trace
   appended, completion re-graded (and kept). Nothing new to invent.
 - **UI**: a small Back control near the view toggle, plus the platform's
-  undo keystroke. Disabled when there is nothing to take back; absent while
-  the guided run owns the canvas and in the solution view. It reads as "take
-  back my last step," never as a browser back button.
+  undo keystroke. Enabled exactly when replay's `undoDepth` is above zero;
+  absent while the guided run owns the canvas and in the solution view. It
+  reads as "take back my last step," never as a browser back button.
 
 ## Out of scope, on purpose
 

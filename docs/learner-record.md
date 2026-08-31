@@ -114,8 +114,9 @@ the trace is the history it needs — and its plan is `docs/undo.md`.
   debugger needs to see them; they still do not save a draft or earn
   completion — invariant 2 is about progress, not visibility.
 - A ring buffer caps each sentence's trace — invariant 6 made concrete. A
-  truncated trace is still an honest log, but it no longer replays, and the
-  bench says so instead of diverging on the missing beginning.
+  truncated trace resumes replay at its oldest surviving checkpoint; the
+  bench counts the earlier moments that cannot replay, and only a truncated
+  trace with no checkpoint left refuses outright.
 - Sentence ids, never text; local until exported; a trace that fails its
   version, hash, or shape checks is refused whole, like a snapshot.
 
