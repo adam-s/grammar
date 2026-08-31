@@ -80,11 +80,32 @@ export const VERB_TYPE_NAME: Record<VerbType, string> = {
  * transitive — and without it on the node a passive reads as a transitive verb
  * that lost its object, which is the confusion the mark exists to prevent.
  */
-export const verbTypeMark = (type: VerbType, voice: Voice = 'active'): string =>
-  voice === 'passive' ? `${VERB_TYPE_MARK[type]} pass` : VERB_TYPE_MARK[type];
+/**
+ * `explicitVoice` says the voice was ANSWERED, not assumed — an answered
+ * "active" marks `act`, while the default stays silent, so a claimed voice
+ * never looks identical to a question nobody has answered. `type` may be
+ * null: voice can be answered before the verb's type is.
+ */
+export const verbTypeMark = (
+  type: VerbType | null,
+  voice: Voice = 'active',
+  explicitVoice = false,
+): string =>
+  [type ? VERB_TYPE_MARK[type] : '', voice === 'passive' ? 'pass' : explicitVoice ? 'act' : '']
+    .filter(Boolean)
+    .join(' ');
 
-export const verbTypeName = (type: VerbType, voice: Voice = 'active'): string =>
-  voice === 'passive' ? `passive ${VERB_TYPE_NAME[type]}` : VERB_TYPE_NAME[type];
+export const verbTypeName = (
+  type: VerbType | null,
+  voice: Voice = 'active',
+  explicitVoice = false,
+): string =>
+  [
+    voice === 'passive' ? 'passive' : explicitVoice ? 'active' : '',
+    type ? VERB_TYPE_NAME[type] : '',
+  ]
+    .filter(Boolean)
+    .join(' ') || 'verb';
 
 /**
  * Compact marks for the two kinds of `Part`.
@@ -165,17 +186,33 @@ export const CLAUSE_KIND_NAME: Record<ClauseKind, string> = {
  * may stand alone: a clause known to be infinitival and not yet known to be
  * nominal should say the half it knows rather than nothing.
  */
+/**
+ * `explicit` says the finiteness was ANSWERED, not assumed. A finished tree
+ * reads an omitted finiteness as finite, so the default earns no mark — but
+ * an answer the learner gave must leave visible evidence, the way a verb
+ * type does, or a correct "finite" looks like a click that did nothing.
+ */
 export const clauseKindMark = (
   kind: ClauseKind | null,
   finiteness: Finiteness = 'finite',
+  explicit = false,
 ): string =>
-  [kind ? CLAUSE_KIND_MARK[kind] : '', FINITENESS_MARK[finiteness]].filter(Boolean).join(' ');
+  [
+    kind ? CLAUSE_KIND_MARK[kind] : '',
+    explicit && finiteness === 'finite' ? 'fin' : FINITENESS_MARK[finiteness],
+  ]
+    .filter(Boolean)
+    .join(' ');
 
 export const clauseKindName = (
   kind: ClauseKind | null,
   finiteness: Finiteness = 'finite',
+  explicit = false,
 ): string =>
-  [finiteness === 'finite' ? '' : FINITENESS_NAME[finiteness], kind ? CLAUSE_KIND_NAME[kind] : '']
+  [
+    finiteness === 'finite' ? (explicit ? 'finite' : '') : FINITENESS_NAME[finiteness],
+    kind ? CLAUSE_KIND_NAME[kind] : '',
+  ]
     .filter(Boolean)
     .join(' ') || 'clause';
 

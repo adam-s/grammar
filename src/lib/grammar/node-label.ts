@@ -147,21 +147,30 @@ export function nodeLabelParts(value: NodeLabelValue): NodeLabelParts {
       : null;
   const voice = value.voice ?? 'active';
   const finiteness = value.finiteness ?? 'finite';
+  // An ANSWERED default marks; an assumed one stays silent. The model stores
+  // "finite" and "active" only when somebody claimed them, so the label can
+  // tell an answer from a question nobody has reached — and it must: a
+  // correct answer that draws nothing reads as a click that did nothing
+  // (the stored-but-not-shown twin of the chosen-but-not-stored defect).
+  const saidVoice = value.voice != null;
+  const saidFiniteness = value.finiteness != null;
   const subtypeMark =
-    value.form === 'V' && value.verbType
-      ? verbTypeMark(value.verbType, voice)
-      : value.form === 'Cl' && (value.clauseKind || finiteness !== 'finite')
-        ? clauseKindMark(value.clauseKind ?? null, finiteness)
+    value.form === 'V' && (value.verbType || saidVoice)
+      ? verbTypeMark(value.verbType ?? null, voice, saidVoice)
+      : (value.form === 'Cl' || value.form === 'S') &&
+          (value.clauseKind || saidFiniteness || finiteness !== 'finite')
+        ? clauseKindMark(value.clauseKind ?? null, finiteness, saidFiniteness)
         : value.form === 'Part' && value.partKind
           ? partKindMark(value.partKind)
           : value.form === 'Aux' && value.auxKind
             ? auxKindMark(value.auxKind)
             : null;
   const subtypeName =
-    value.form === 'V' && value.verbType
-      ? verbTypeName(value.verbType, voice)
-      : value.form === 'Cl' && (value.clauseKind || finiteness !== 'finite')
-        ? clauseKindName(value.clauseKind ?? null, finiteness)
+    value.form === 'V' && (value.verbType || saidVoice)
+      ? verbTypeName(value.verbType ?? null, voice, saidVoice)
+      : (value.form === 'Cl' || value.form === 'S') &&
+          (value.clauseKind || saidFiniteness || finiteness !== 'finite')
+        ? clauseKindName(value.clauseKind ?? null, finiteness, saidFiniteness)
         : value.form === 'Part' && value.partKind
           ? partKindName(value.partKind)
           : value.form === 'Aux' && value.auxKind
