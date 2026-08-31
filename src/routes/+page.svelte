@@ -178,17 +178,6 @@
     ).map((l) => l.id),
   );
   /**
-   * What the empty canvas says first. Evidence-driven, not lesson-driven:
-   * a first finish anywhere quiets the launcher and moves "Start here" to
-   * the words — see `launchPosture` for the table.
-   */
-  const posture = $derived(
-    launchPosture({
-      finishedAny: completed.size > 0,
-      canvasEmpty: Object.keys(build.constituents).length === 0,
-    }),
-  );
-  /**
    * The answer is a view, not a mutation. A learner can inspect the finished
    * diagram and return to exactly the work they had before opening it.
    */
@@ -299,6 +288,18 @@
   const scope = $derived(owner ? scopeThrough(COURSE_LESSONS, owner.number) : undefined);
   /** The part of the answer this lesson actually asks for. */
   const target = $derived(scope ? targetReading(canonicalReading(sentence), scope) : null);
+  /**
+   * What the empty canvas says first. The introduction is the one lesson
+   * where watching is the way in and earns the full invitation; everywhere
+   * else the launcher is a quiet toolbar control and "Start here" points at
+   * the words — see `launchPosture` for the table.
+   */
+  const posture = $derived(
+    launchPosture({
+      introduction: owner?.number === 1,
+      canvasEmpty: Object.keys(build.constituents).length === 0,
+    }),
+  );
   /**
    * The builder is an exploration surface, not the course gate. Show every
    * valid label here so a learner can keep analysing a sentence after the

@@ -184,9 +184,30 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   const keys = await storedKeys();
   if (!keys.includes(DONE_KEY)) fail('no completion record was stored');
   const label = (await page.locator('button.launch').textContent())?.trim();
-  if (label !== 'See one built')
-    fail(`a finish should quiet the launcher — it says "${label}"`);
-  else pass('the first finish quiets the launcher to "See one built"');
+  if (label !== 'Watch how it is built')
+    fail(`the introduction must keep its invitation — it says "${label}"`);
+  else pass('the introduction keeps its invitation');
+
+  // A later lesson is a different posture: quiet toolbar control, arrow at
+  // the words. Visit one, read it, come back.
+  const laterId = await page.evaluate(() => {
+    const g = window.__grammar;
+    const id = g.sentenceIds.find((x) => x.startsWith('c') && !x.startsWith('c01'));
+    g.openSentence(id);
+    return id;
+  });
+  await page.waitForTimeout(400);
+  const laterLabel = (await page.locator('button.launch').textContent())?.trim();
+  const laterWords = await page.locator('.words-start').count();
+  const laterLauncher = await page.locator('.start-here').count();
+  if (laterLabel !== 'Step through' || laterWords === 0 || laterLauncher > 0)
+    fail(
+      `a later lesson (${laterId}) should say "Step through" with the arrow at the words ` +
+        `(got "${laterLabel}", words ${laterWords}, launcher ${laterLauncher})`,
+    );
+  else pass('a later lesson gets "Step through" and the arrow at the words');
+  await page.evaluate((id) => window.__grammar.openSentence(id), sentenceId);
+  await page.waitForTimeout(400);
 }
 
 /* 4 — completion and the finished build survive a reload */
@@ -209,11 +230,10 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   const { nodes, completed } = await driver();
   if (nodes !== 0) fail('start over left nodes on the diagram');
   else pass('start over clears the diagram');
-  const wordsArrow = await page.locator('.words-start').count();
   const launcherArrow = await page.locator('.start-here').count();
-  if (wordsArrow === 0 || launcherArrow > 0)
-    fail(`an experienced empty canvas should point at the words (words ${wordsArrow}, launcher ${launcherArrow})`);
-  else pass('an experienced learner’s "Start here" points at the words');
+  if (launcherArrow === 0)
+    fail('the introduction’s emptied canvas should re-point "Start here" at the launcher');
+  else pass('the emptied introduction re-points "Start here" at the launcher');
   if (!completed.includes(sentenceId)) fail('start over erased the completion — history died');
   else pass('start over keeps the completion');
   const keys = await storedKeys();

@@ -711,15 +711,15 @@
     color: var(--ink);
     border-color: var(--border-strong);
   }
-  /* Quiet help, not an invitation: same pill, less of it. */
+  /* A toolbar control, not an invitation: flush with the top row and cut
+     from the same cloth as the view toggle beside it. */
   .launch.quiet {
-    padding: 5px 11px;
-    color: var(--ink-faint);
+    min-height: 34px;
+    padding: 3px 13px;
+    background: color-mix(in oklab, var(--panel) 94%, transparent);
     font-size: 11px;
-    box-shadow: none;
-  }
-  .launch.quiet:hover {
-    color: var(--ink);
+    font-weight: 600;
+    backdrop-filter: blur(10px);
   }
 
   /* Sized by its words: the explanation is the point of the run, so the box
