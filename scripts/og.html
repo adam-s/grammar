@@ -69,10 +69,26 @@
         line-height: 1.4;
         color: #6f6f70;
       }
-      .url {
+      .footer {
         margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .tagline {
+        font-size: 18px;
+        font-weight: 570;
+        letter-spacing: 0.002em;
+        white-space: nowrap;
+        color: #4a4a4b;
+      }
+      .tagline em {
+        font-style: normal;
+        color: #0079d1;
+      }
+      .url {
         font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
-        font-size: 21px;
+        font-size: 18px;
         color: #8f8f90;
       }
       .card {
@@ -114,8 +130,11 @@
         <div class="name">grammar</div>
       </div>
       <h1>The horse raced past the&nbsp;barn fell.</h1>
-      <div class="sub">Improve your grammar with<br />sentence diagrams, not LLMs.</div>
-      <div class="url">adamsohn.com/grammar</div>
+      <div class="sub">Yes, that&rsquo;s a sentence.<br />Learn to diagram it yourself.</div>
+      <div class="footer">
+        <div class="tagline">Improve your grammar with sentence diagrams, <em>not LLMs.</em></div>
+        <div class="url">adamsohn.com/grammar</div>
+      </div>
     </div>
     <div class="card"><img src="og-diagram.png" onload="window.__done = true" /></div>
   </body>
