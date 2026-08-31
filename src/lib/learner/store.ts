@@ -12,6 +12,7 @@ const PREFIX = 'grammar:';
 const COMPLETION_KEY = `${PREFIX}done`;
 
 export const snapshotKey = (sentenceId: string): string => `${PREFIX}session:${sentenceId}`;
+export const traceKey = (sentenceId: string): string => `${PREFIX}trace:${sentenceId}`;
 export const completionKey = (): string => COMPLETION_KEY;
 
 function storage(): Storage | null {

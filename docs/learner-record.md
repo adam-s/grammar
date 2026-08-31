@@ -69,50 +69,44 @@ rule is pure, in the browser sweep where only real storage can prove it.
 6. **Storage never grows without bound.** Snapshots are small and bounded by
    the sentence count; anything append-only gets a cap first.
 
-## Next: the event trace
+## The event trace
 
 The snapshot says where the learner ended up. The trace says how they got
 there — and that is debug material: a bug report that replays itself instead
-of "I clicked the verb and something disappeared."
+of "I clicked the verb and something disappeared." This layer shipped too:
+the pure rules live beside the record in `src/lib/learner/`, the replay
+bench at the dev-only `/replay` route, and the on-screen proof in
+`scripts/check-replay.mjs`.
 
-**What gets recorded.** Semantic moments, never pixels: sentence opened,
-selection made, row picked, answer accepted or refused, structure edited,
-solution opened, sentence completed. Each entry carries a sequence number,
-the sentence id, the decision's key, and a fingerprint of the resulting
-build. The trace is stamped once with its schema version and the app and
-course-content versions, so a replay knows exactly which world it happened
-in.
+**What is recorded.** Semantic moments, never pixels: sentence opened,
+selection made, row picked and what the grader said, structure edited,
+solution opened, a fresh start, a finish. Each state-changing entry carries
+a fingerprint of the build it produced. Opening a sentence embeds the
+restored session core as a checkpoint — a reload restores state no walk from
+empty could reach, and without the checkpoint every session spanning a
+reload would replay as a false divergence. The trace is stamped with its
+schema version, the sentence's word hash, and the app's build stamp, so a
+replay knows which world it happened in.
 
-**What it powers, in order of value:**
+**What it powers:** the progress export carries the traces beside the
+snapshots, so a bug report reproduces itself; the replay bench loads one and
+walks it through the same pure transaction the app runs — the one place
+step-forward, step-back, and play belong — and a divergence names the first
+step where the recording and today's code part ways. Undo would be the third
+use; the trace is the history it needs, but undo stays its own decision.
 
-1. **Reproducible bug reports.** "Report a problem" exports the trace beside
-   the snapshot the export already carries.
-2. **A debug route** (dev-only, like the existing driver) that loads a trace
-   and replays it through the same pure transaction the app runs — this is
-   where step-forward, step-back, and play belong. Replay compares each
-   entry's fingerprint against what the transaction actually produces, and a
-   divergence names the first step where reality and recording part ways.
-3. **Undo, later, if wanted** — the trace is the history undo needs, but undo
-   remains its own decision.
+**Boundaries:**
 
-**Boundaries, inherited and new:**
-
-- The trace obeys every invariant above; recording it changes no grading and
-  no completion.
+- The trace obeys every invariant above; recording changes no grading and no
+  completion.
 - The guided run and the solution view appear IN the trace (a debugger needs
   to see them) but still earn nothing — invariant 2 is about progress, not
   visibility.
-- A ring buffer caps each sentence's trace; the cap is invariant 6 made
-  concrete, and pan, zoom, and hover never enter the trace at all.
+- A ring buffer caps each sentence's trace — invariant 6 made concrete. A
+  truncated trace is still an honest log, but it no longer replays, and the
+  bench says so instead of diverging on the missing beginning.
 - Sentence ids, never text; local until exported; a trace that fails its
-  version or fingerprint checks is refused whole, like a snapshot.
-
-**Stages, in the shipped layer's mold:** the pure trace module first (codec,
-cap, fingerprint — `node --test`); recording wired beside the existing save
-so every path that persists a snapshot appends its entry; the export grown to
-include it; the debug route; then browser evidence in the sweep — record a
-session, export it, replay it, and watch a deliberately tampered trace name
-its divergence.
+  version, hash, or shape checks is refused whole, like a snapshot.
 
 ## Still out of scope, on purpose
 

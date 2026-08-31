@@ -42,6 +42,7 @@
   import {
     answer,
     applyAction,
+    emptySession,
     sessionChoices,
     type NavigationResult,
   } from '$lib/grammar/session.ts';
@@ -89,8 +90,19 @@
     readKey,
     removeKey,
     snapshotKey,
+    traceKey,
     writeKey,
   } from '$lib/learner/store.ts';
+  import {
+    appendEntry,
+    decodeTrace,
+    emptyTrace,
+    encodeTrace,
+    fingerprint,
+    type Trace,
+    type TraceMoment,
+  } from '$lib/learner/trace.ts';
+  import { version } from '$app/environment';
 
   const ws = new WorkspaceState();
   // The workspace does not know what it is drawing. This is the one place that
@@ -222,6 +234,7 @@
   async function showSolution(next: boolean) {
     if (solved === next) return;
     solved = next;
+    traceAppend({ kind: 'solution', shown: next });
     closePalette();
     draft = null;
     marqueeIds = [];
@@ -246,6 +259,21 @@
     // on, and re-earning completion reads state of its own.
     const restored = decodeSnapshot(readKey(snapshotKey(sentence.id)), nextWords);
     const restoredDepth = restored ? layout(restored.build.constituents, nextWords).maxDepth : 0;
+    // The trace changes sentence with the page, and its opening entry is a
+    // CHECKPOINT embedding whatever the restore produced — the one state a
+    // replay could never reach by walking from empty. It must exist before
+    // anything can append (re-earned completion appends).
+    trace =
+      decodeTrace(readKey(traceKey(sentence.id)), nextWords) ??
+      emptyTrace(sentence.id, nextWords, version);
+    const opened = restored ?? emptySession();
+    traceAppend({
+      kind: 'open',
+      build: opened.build,
+      misses: opened.misses,
+      rejected: opened.rejected,
+      fp: fingerprint(opened.build),
+    });
     if (restored) {
       untrack(() => {
         build = restored.build;
@@ -398,6 +426,7 @@
       words move down one row at a time while the tutorial is trying to teach
       what appeared above them. */
   function resetForTutorial() {
+    traceAppend({ kind: 'startOver' });
     reset();
     depthMark = tutorialDepth;
   }
@@ -557,7 +586,13 @@
           nodeId: step.choice.stack ? step.selectNodeId : step.nodeId,
           key: replayOptionKey(step.choice),
         })),
-      reset,
+      // The driver's reset is a real state change; the trace records it like
+      // any other fresh start, or a sweep's trace would silently stop
+      // replaying at the point the driver wiped the canvas.
+      reset: () => {
+        traceAppend({ kind: 'startOver' });
+        reset();
+      },
     };
     return () => {
       delete w['__grammar'];
@@ -579,6 +614,7 @@
     // "edit this exact node." Keeping those gestures distinct is what lets a
     // learner draw the outside first, then add structure beneath it.
     selection = { kind: 'span', span: grammatical };
+    traceSelect(selection);
   }
 
   function onmarquee(rect: Rect | null, done: boolean) {
@@ -607,6 +643,7 @@
           : hit.span
             ? { kind: 'nodes', ids: hit.ids, span: hit.span }
             : { kind: 'none' };
+    traceSelect(selection);
   }
 
   function grew() {
@@ -646,6 +683,26 @@
   }
 
   /**
+   * The open sentence's event trace. A PLAIN variable on purpose: nothing
+   * renders it, and keeping it out of the reactive graph means appending can
+   * never re-run an effect. The sentence-change effect swaps it; every
+   * append writes through to storage, so the stored trace is never more than
+   * one moment behind. Unlike the snapshot, the trace records the guided run
+   * and the solution view too — a debugger needs to SEE them even though
+   * they earn nothing.
+   */
+  let trace: Trace | null = null;
+  function traceAppend(entry: TraceMoment) {
+    if (!trace) return;
+    trace = appendEntry(trace, entry);
+    writeKey(traceKey(trace.sentenceId), encodeTrace(trace));
+  }
+  /** A committed learner selection, worth a line in the story. */
+  function traceSelect(sel: Selection) {
+    if (sel.kind !== 'none') traceAppend({ kind: 'select', selection: sel });
+  }
+
+  /**
    * Add this sentence to the completion set — if its build earns it. The
    * grade runs against the learner's own build, so the solution view (which
    * never touches `build`) can never earn anything, and a half-built tree is
@@ -656,6 +713,7 @@
     if (!earnsCompletion(graded, sentence, target)) return;
     completed = new Set(completed).add(sentence.id);
     writeKey(completionKey(), encodeCompletion(completed));
+    traceAppend({ kind: 'complete' });
   }
 
   /**
@@ -688,6 +746,7 @@
    */
   function pick(o: LabelOption) {
     const before = build;
+    const asked = selection;
     const next = answer(
       { build, selection, verdict, misses, rejected, navigation },
       sentence,
@@ -703,6 +762,13 @@
     navigation = next.navigation;
     if (next.build !== before) grew();
     if (next.selection.kind === 'none') preview = null;
+    traceAppend({
+      kind: 'pick',
+      selection: asked,
+      key: o.key,
+      outcome: next.verdict?.kind ?? 'correct',
+      fp: fingerprint(next.build),
+    });
     recordDecision();
   }
 
@@ -718,6 +784,7 @@
     selection = next.selection;
     verdict = next.verdict;
     navigation = next.navigation;
+    traceAppend({ kind: 'edit', nodeId: action.nodeId, fp: fingerprint(next.build) });
     // An edit can newly finish a sentence — ungrouping one wrong extra layer
     // may leave exactly the target — so it saves and grades like an answer.
     recordDecision();
@@ -730,6 +797,7 @@
    */
   function startOver() {
     removeKey(snapshotKey(sentence.id));
+    traceAppend({ kind: 'startOver' });
     reset();
   }
 
@@ -741,6 +809,10 @@
     clearRecord();
     completed = new Set();
     reset();
+    // The stored traces died with the record; the in-memory one restarts so
+    // nothing appended after this moment resurrects pre-reset history.
+    trace = emptyTrace(sentence.id, words, version);
+    traceAppend({ kind: 'startOver' });
   }
 
   /** Hand the learner their record as a file. It carries builds, misses and
@@ -920,6 +992,7 @@
           if (solved || tutorialActive) return;
           clearFeedback();
           selection = s;
+          traceSelect(s);
         }}
         {ondraft}
       />
