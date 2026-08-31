@@ -921,11 +921,7 @@
           frame={tutorialFrame}
           frameAnchor={tutorialFrameAnchor}
           host={tutorialHost}
-          launcher={{
-            label: posture.label,
-            arrow: posture.arrow === 'launcher',
-            tone: posture.tone,
-          }}
+          launcher={{ label: posture.label, arrow: posture.arrow, tone: posture.tone }}
           pointer={guidedPointer}
           obscured={popupAnchor !== null}
           onstart={resetForTutorial}
@@ -996,25 +992,6 @@
         }}
         {ondraft}
       />
-      {#if posture.arrow === 'words' && !solved && !tutorialActive}
-        <!-- The experienced learner's "Start here": at the words, where the
-             work begins — not at the demonstration. Page-owned because the
-             first move is not always the tutorial's to claim. -->
-        {@const row = wordRowRect(build.constituents, words, depthMark)}
-        {#if row}
-          <div
-            class="words-start"
-            style="left:{row.x}px; top:{row.y + row.h + 10}px"
-            aria-hidden="true"
-          >
-            <span>Start here — drag across a few words</span>
-            <svg viewBox="0 0 76 32" role="presentation">
-              <path d="M2 27 C 27 31, 49 28, 59 7" />
-              <path d="M51 13 L 60 5 L 64 16" />
-            </svg>
-          </div>
-        {/if}
-      {/if}
     </div>
   {/if}
 </Workspace>
@@ -1032,35 +1009,6 @@
   }
   .settings-panel {
     padding: 8px 4px;
-  }
-  /* World-space, so it frames and zooms with the words it points at. */
-  .words-start {
-    display: flex;
-    position: absolute;
-    gap: 10px;
-    align-items: flex-end;
-    color: var(--accent);
-    pointer-events: none;
-  }
-  .words-start span {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    font-style: italic;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-    transform: rotate(-2deg);
-  }
-  .words-start svg {
-    flex: none;
-    width: 76px;
-    height: 32px;
-    overflow: visible;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
   }
   .progress-actions {
     display: flex;

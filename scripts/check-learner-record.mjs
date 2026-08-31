@@ -198,14 +198,13 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   });
   await page.waitForTimeout(400);
   const laterLabel = (await page.locator('button.launch').textContent())?.trim();
-  const laterWords = await page.locator('.words-start').count();
   const laterLauncher = await page.locator('.start-here').count();
-  if (laterLabel !== 'Step through' || laterWords === 0 || laterLauncher > 0)
+  if (laterLabel !== 'Step through' || laterLauncher > 0)
     fail(
-      `a later lesson (${laterId}) should say "Step through" with the arrow at the words ` +
-        `(got "${laterLabel}", words ${laterWords}, launcher ${laterLauncher})`,
+      `a later lesson (${laterId}) should say "Step through" with no arrow ` +
+        `(got "${laterLabel}", launcher arrow ${laterLauncher})`,
     );
-  else pass('a later lesson gets "Step through" and the arrow at the words');
+  else pass('a later lesson gets "Step through" and no arrow');
   await page.evaluate((id) => window.__grammar.openSentence(id), sentenceId);
   await page.waitForTimeout(400);
 }

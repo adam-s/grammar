@@ -7,17 +7,16 @@
  * pointing at it. On every later lesson the run is a tool, not a doorway:
  * the launcher sits flush with the top toolbar, styled like the view toggle
  * beside it, and reads "Step through" — what it does, one step at a time.
- * "Start here" moves to the words, where the work actually begins, and any
- * arrow over a diagram that already holds work is noise: the learner has
- * started; stop telling them where to.
+ * No arrow anywhere else: a returning learner does not need the canvas to
+ * point, and any arrow over a diagram that already holds work is noise.
  *
  * Pure on purpose: facts in, posture out, every row of the table testable
  * under `node --test`. Components render this; they never decide it.
  */
 
 export interface LaunchPosture {
-  /** Where "Start here" points: at the launcher, at the words, or nowhere. */
-  arrow: 'launcher' | 'words' | null;
+  /** Whether "Start here" hangs on the launcher. It points nowhere else. */
+  arrow: boolean;
   /** The launcher's idle label. (After a run it says "Watch it again".) */
   label: string;
   /** How the launcher presents: the invitation, or a quiet toolbar control. */
@@ -33,14 +32,10 @@ export function launchPosture(facts: {
   const { introduction, canvasEmpty } = facts;
   if (introduction) {
     return {
-      arrow: canvasEmpty ? 'launcher' : null,
+      arrow: canvasEmpty,
       label: 'Watch how it is built',
       tone: 'invite',
     };
   }
-  return {
-    arrow: canvasEmpty ? 'words' : null,
-    label: 'Step through',
-    tone: 'quiet',
-  };
+  return { arrow: false, label: 'Step through', tone: 'quiet' };
 }
