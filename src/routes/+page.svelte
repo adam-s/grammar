@@ -9,7 +9,7 @@
    */
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
-  import { tick } from 'svelte';
+  import { tick, untrack } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -37,7 +37,7 @@
   import PointerLayer from '$lib/workspace/PointerLayer.svelte';
   import { DRAG_QUERY, useMediaQuery } from '$lib/workspace/responsive.svelte.ts';
   import type { SelectionGestureHooks } from '$lib/workspace/selection-gesture.ts';
-  import { emptyBuild, nodeOver } from '$lib/grammar/builder.ts';
+  import { emptyBuild, nodeOver, type BuildState } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
   import {
     answer,
@@ -74,6 +74,22 @@
     targetReading,
   } from '$lib/course';
   import { Tutorial, buildSignature, tutorialScript, type TutorialHost } from '$lib/tutorial';
+  import {
+    decodeCompletion,
+    decodeSnapshot,
+    earnsCompletion,
+    encodeCompletion,
+    encodeSnapshot,
+  } from '$lib/learner/record.ts';
+  import {
+    clearRecord,
+    completionKey,
+    exportRecord,
+    readKey,
+    removeKey,
+    snapshotKey,
+    writeKey,
+  } from '$lib/learner/store.ts';
 
   const ws = new WorkspaceState();
   // The workspace does not know what it is drawing. This is the one place that
@@ -148,6 +164,19 @@
       back, so undoing one step does not re-flow everything the learner built. */
   let depthMark = $state(0);
   /**
+   * Sentences finished, ever — the durable half of the learner record. Ids go
+   * in only through `earnsCompletion`'s grade of the learner's own build, and
+   * starting a sentence over does not take one out: finishing once is history,
+   * like a miss. On the server the store reads empty and this stays empty.
+   */
+  let completed = $state(decodeCompletion(readKey(completionKey())));
+  /** A lesson is done when every one of its sentences is. */
+  const completedLessons = $derived(
+    COURSE_LESSONS.filter(
+      (l) => l.sentences.length > 0 && l.sentences.every((s) => completed.has(s.id)),
+    ).map((l) => l.id),
+  );
+  /**
    * The answer is a view, not a mutation. A learner can inspect the finished
    * diagram and return to exactly the work they had before opening it.
    */
@@ -204,10 +233,34 @@
   $effect(() => {
     const nextSentenceId = sentenceId;
     const nextWords = sentence.words;
-    const nextFrame = diagramSize(emptyBuild().constituents, nextWords, 0);
     let cancelled = false;
 
     reset();
+
+    // Unfinished work comes back before the first paint the learner can act
+    // on. `decodeSnapshot` refuses whole on any doubt — another schema
+    // version, edited words, a build that fails its own checks — and null
+    // simply means the fresh start `reset()` already made. The whole restore
+    // is untracked: it WRITES the session state this effect must not depend
+    // on, and re-earning completion reads state of its own.
+    const restored = decodeSnapshot(readKey(snapshotKey(sentence.id)), nextWords);
+    const restoredDepth = restored ? layout(restored.build.constituents, nextWords).maxDepth : 0;
+    if (restored) {
+      untrack(() => {
+        build = restored.build;
+        misses = restored.misses;
+        rejected = restored.rejected;
+        depthMark = restoredDepth;
+        // Completion is re-earned from the restored build, not read back
+        // from a flag — the stored set only ever grows through a real grade.
+        recordCompletion(restored.build);
+      });
+    }
+    const nextFrame = diagramSize(
+      restored?.build.constituents ?? emptyBuild().constituents,
+      nextWords,
+      restoredDepth,
+    );
 
     // A new sentence is a new document, so discard the previous camera
     // position and frame the newly rendered words from their own bounds.
@@ -453,6 +506,16 @@
       get verdict() {
         return verdict;
       },
+      /** Sentence ids finished so far, for the learner-record sweep. */
+      get completed() {
+        return [...completed];
+      },
+      get misses() {
+        return misses;
+      },
+      get rejected() {
+        return rejected;
+      },
       openSentence: (id: string) => openSentence(id),
       selectSpan: (span: Span) => {
         clearFeedback();
@@ -570,6 +633,40 @@
   }
 
   /**
+   * Add this sentence to the completion set — if its build earns it. The
+   * grade runs against the learner's own build, so the solution view (which
+   * never touches `build`) can never earn anything, and a half-built tree is
+   * missing facts and never passes.
+   */
+  function recordCompletion(graded: BuildState) {
+    if (completed.has(sentence.id)) return;
+    if (!earnsCompletion(graded, sentence, target)) return;
+    completed = new Set(completed).add(sentence.id);
+    writeKey(completionKey(), encodeCompletion(completed));
+  }
+
+  /**
+   * Persist the learner record after a decision lands. Every path that
+   * changes the session ends here, so the stored snapshot is never more than
+   * one decision behind the screen — a reload comes back to this exact work,
+   * misses and refusals included.
+   */
+  function recordDecision() {
+    // The guided run drives these same handlers, but a demonstration is not
+    // the learner's work: it must neither overwrite their draft nor earn
+    // their checkmark — watching the answer built is the solution view's
+    // neighbour, and neither counts as progress. (A learner who picks on the
+    // demonstration-built tree AFTER the run does record from there; the
+    // grade still runs against what is genuinely on screen.)
+    if (tutorialActive) return;
+    writeKey(
+      snapshotKey(sentence.id),
+      encodeSnapshot({ build, selection, verdict, misses, rejected, navigation }, words),
+    );
+    recordCompletion(build);
+  }
+
+  /**
    * One decision, handled by `session.ts`.
    *
    * Grading, the miss ladder, refusals and where the selection lands are the
@@ -593,6 +690,7 @@
     navigation = next.navigation;
     if (next.build !== before) grew();
     if (next.selection.kind === 'none') preview = null;
+    recordDecision();
   }
 
   /**
@@ -607,6 +705,41 @@
     selection = next.selection;
     verdict = next.verdict;
     navigation = next.navigation;
+    // An edit can newly finish a sentence — ungrouping one wrong extra layer
+    // may leave exactly the target — so it saves and grades like an answer.
+    recordDecision();
+  }
+
+  /**
+   * "Start over": the draft dies, the history does not. The snapshot is
+   * dropped so a reload starts clean too, but a completion once earned stays
+   * — finishing is a fact about the past, like a miss.
+   */
+  function startOver() {
+    removeKey(snapshotKey(sentence.id));
+    reset();
+  }
+
+  /** Erase the whole record, snapshots and completions alike. The learner
+      confirmed; a fresh `completed` makes the checkmarks agree at once. */
+  function resetAllProgress() {
+    if (!confirm('Erase all saved progress? Finished sentences and drafts will be forgotten.'))
+      return;
+    clearRecord();
+    completed = new Set();
+    reset();
+  }
+
+  /** Hand the learner their record as a file. It carries builds, misses and
+      refusals — which is exactly what makes it a reproducible bug report. */
+  function downloadRecord() {
+    const blob = new Blob([exportRecord()], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'grammar-progress.json';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 </script>
 
@@ -631,11 +764,16 @@
       <CourseContents
         stages={COURSE_STAGES}
         {lessonId}
+        completed={completedLessons}
         onselect={(id) => selectLesson(id, closeDrawer)}
       />
     {:else if section === 'settings'}
       <div class="settings-panel">
         <ThemeToggle />
+        <div class="progress-actions">
+          <button type="button" onclick={downloadRecord}>Export progress</button>
+          <button type="button" onclick={resetAllProgress}>Reset all progress</button>
+        </div>
       </div>
     {:else}
       <p class="empty">
@@ -658,8 +796,9 @@
       <LessonSentenceList
         sentences={lessonSentences}
         selectedId={middleView === 'diagram' ? sentenceId : null}
+        completed={[...completed]}
         onselect={(id) => openSentence(id, closeDrawer)}
-        onreset={reset}
+        onreset={startOver}
       />
       <div class="stack-end">
         <LessonNav
@@ -777,6 +916,29 @@
   }
   .settings-panel {
     padding: 8px 4px;
+  }
+  .progress-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 0 4px;
+  }
+  .progress-actions button {
+    display: block;
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 11px;
+    text-align: left;
+  }
+  .progress-actions button:hover {
+    background: color-mix(in oklab, var(--ink) 7%, transparent);
+    color: var(--ink);
   }
   .stack-end {
     margin-top: auto;

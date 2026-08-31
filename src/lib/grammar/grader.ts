@@ -575,6 +575,18 @@ export function expectedForms(sentence: SentenceEntry, span: Span): Form[] {
   return [...out];
 }
 
+/**
+ * Does this build say exactly what the reading says — no facts missing, none
+ * extra — under any structure the reading accepts as equivalent? A lesson's
+ * completion check grades against the lesson's trimmed target with this, so
+ * every tree the grader would accept earns completion and nothing weaker does.
+ */
+export function matchesReading(build: BuildState, reading: Reading): boolean {
+  return analysesOf(reading).some(
+    (constituents) => compare(build, { ...reading, constituents }).length === 0,
+  );
+}
+
 /** Is the whole build right? Used once a learner says they are done. */
 export function gradeBuild(
   build: BuildState,

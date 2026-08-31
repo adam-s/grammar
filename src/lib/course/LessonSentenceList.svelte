@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Check from '@lucide/svelte/icons/check';
   import ChevronRight from '@lucide/svelte/icons/chevron-right';
   import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
   import type { SentenceEntry } from '../grammar/types.ts';
@@ -6,11 +7,13 @@
   type Props = {
     sentences: SentenceEntry[];
     selectedId?: string | null;
+    /** Sentence ids the learner has finished; they wear a check at rest. */
+    completed?: string[];
     onselect: (sentenceId: string) => void;
     onreset?: () => void;
   };
 
-  let { sentences, selectedId = null, onselect, onreset }: Props = $props();
+  let { sentences, selectedId = null, completed = [], onselect, onreset }: Props = $props();
 </script>
 
 <ul>
@@ -18,13 +21,19 @@
     <li>
       <button
         class:selected={sentence.id === selectedId}
+        class:done={completed.includes(sentence.id)}
         type="button"
         aria-current={sentence.id === selectedId ? 'true' : undefined}
-        aria-label="{sentence.text}, open diagram"
+        aria-label="{sentence.text}, open diagram{completed.includes(sentence.id)
+          ? ', finished'
+          : ''}"
         onclick={() => onselect(sentence.id)}
       >
         <span class="number">{String(index + 1).padStart(2, '0')}</span>
         <span class="sentence">{sentence.text}</span>
+        <!-- A finished sentence wears its check at rest; the pointer brings
+             the chevron back, because the row still opens the diagram. -->
+        <Check class="check" size={13} strokeWidth={2.25} aria-hidden="true" />
         <ChevronRight class="chevron" size={13} strokeWidth={2} aria-hidden="true" />
       </button>
     </li>
@@ -86,9 +95,16 @@
     line-height: 1.35;
   }
   /* The chevron carries the affordance the second line used to spell out. It
-     stays faint until the row is under the pointer or holds the selection. */
-  li button :global(.chevron) {
+     stays faint until the row is under the pointer or holds the selection.
+     The check shares its cell: a finished row rests on the check, and the
+     pointer swaps the chevron back in, because the row still opens. */
+  li button :global(.chevron),
+  li button :global(.check) {
+    grid-column: 3;
+    grid-row: 1;
     justify-self: center;
+  }
+  li button :global(.chevron) {
     color: var(--ink-faint);
     opacity: 0.55;
   }
@@ -97,6 +113,16 @@
   li button.selected :global(.chevron) {
     color: var(--ink-muted);
     opacity: 1;
+  }
+  li button :global(.check) {
+    color: var(--success);
+    opacity: 0;
+  }
+  li button.done:not(:hover):not(:focus-visible) :global(.check) {
+    opacity: 1;
+  }
+  li button.done:not(:hover):not(:focus-visible) :global(.chevron) {
+    opacity: 0;
   }
   .reset {
     display: flex;
