@@ -249,7 +249,25 @@ export function buildSignature(constituents: ConstituentMap): string {
     .sort()
     .map((id) => {
       const c = constituents[id]!;
-      return `${id}:${c.form}/${c.function ?? ''}/${c.verbType ?? ''}/${c.voice ?? ''}`;
+      // EVERY field a decision can write, or the field's step reads as
+      // "changed nothing" and the run stops on a pick that landed. Voice was
+      // in this list and finiteness was not, which held exactly as long as
+      // the tutorial only ran the introduction.
+      return [
+        id,
+        c.form,
+        c.function ?? '',
+        c.verbType ?? '',
+        c.voice ?? '',
+        c.finiteness ?? '',
+        c.clauseKind ?? '',
+        c.auxKind ?? '',
+        c.partKind ?? '',
+        // Anchoring writes a paired index on the tail and its anchor.
+        c.index ?? '',
+        c.fusedWith ?? '',
+        c.obligatory ? '!' : '',
+      ].join('/');
     })
     .join('|');
 }

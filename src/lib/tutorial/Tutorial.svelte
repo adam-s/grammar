@@ -349,11 +349,20 @@
    * shared sequencer's Timing. The two nonzero holds are the run's only
    * step checkpoints, exactly as before: `open` and `between` are zero
    * because `reveal` and the next gesture carry that pacing themselves.
+   *
+   * `?fast-run` collapses the reading holds so the browser sweep can prove
+   * forty lessons of runs in minutes instead of hours. Development only —
+   * like the `__grammar` driver, the build is the boundary — and pacing
+   * only: completion still comes from the app reporting, never from time.
    */
+  const fastRun =
+    import.meta.env.DEV &&
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).has('fast-run');
   const TUTORIAL_TIMING: Timing = {
     open: 0,
-    decide: HOLD.ask,
-    commit: HOLD.answer,
+    decide: fastRun ? 40 : HOLD.ask,
+    commit: fastRun ? 40 : HOLD.answer,
     between: 0,
     rest: 0,
   };

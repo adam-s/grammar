@@ -6,7 +6,9 @@ import { scopeThrough, targetReading } from '../course/scope.ts';
 import { emptyBuild, wrap } from '../grammar/builder.ts';
 import { isPickable, optionsFor } from '../grammar/options.ts';
 import { canonicalReading } from '../grammar/types.ts';
+import { answer, emptySession, sessionChoices } from '../grammar/session.ts';
 import {
+  buildSignature,
   optionKey,
   questionFor,
   selectionFor,
@@ -190,4 +192,53 @@ test('the opening lesson moves from plain evidence to the grammatical name', () 
 
 test('copy outside the opening five decisions still comes from the palette', () => {
   assert.equal(teachingCopy('form:PP', '“through the evening”'), null);
+});
+
+/**
+ * The widening proof: EVERY lesson's every sentence has a run the palette
+ * will actually take, end to end, through the same transaction the runner
+ * drives — the row is offered and pickable, the pick is not refused, and
+ * the diagram's signature changes, which is exactly what the live run
+ * requires before it calls a step done. The page's gate widens only as far
+ * as this proves.
+ */
+test('every lesson has a provable end-to-end run for every sentence', () => {
+  const problems: string[] = [];
+  for (const lesson of COURSE_LESSONS) {
+    const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+    for (const sentence of lesson.sentences) {
+      const only = targetReading(canonicalReading(sentence), scope) ?? undefined;
+      const { beats } = tutorialScript(sentence, scope, only);
+      if (beats.length === 0) {
+        problems.push(`${lesson.id}/${sentence.id}: no beats`);
+        continue;
+      }
+      let s = emptySession();
+      for (const beat of beats) {
+        const at = `${lesson.id}/${sentence.id} step ${beat.index} (${beat.key})`;
+        s = { ...s, selection: beat.select, verdict: null };
+        const panel = sessionChoices(s, sentence, sentence.words, scope);
+        const row = panel.groups.flatMap((g) => g.options).find((o) => o.key === beat.key);
+        if (!row) {
+          problems.push(`${at}: the palette never offers the row`);
+          break;
+        }
+        if (!isPickable(row)) {
+          problems.push(`${at}: the row is "${row.state}"`);
+          break;
+        }
+        const before = buildSignature(s.build.constituents);
+        s = answer(s, sentence, sentence.words, row, scope);
+        if (s.verdict?.kind === 'wrong') {
+          problems.push(`${at}: refused — ${s.verdict.text}`);
+          break;
+        }
+        if (buildSignature(s.build.constituents) === before) {
+          problems.push(`${at}: the pick changed nothing on the diagram`);
+          break;
+        }
+      }
+    }
+  }
+  assert.deepEqual(problems, [], `${problems.length} unprovable run(s)`);
 });

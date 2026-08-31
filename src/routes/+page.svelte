@@ -247,13 +247,14 @@
   /**
    * The guided run for this sentence, or nothing where there is not one.
    *
-   * Held to the introduction because that is the lesson whose runs have been
-   * checked end to end — `src/lib/tutorial/script.test.ts` proves every
-   * decision it names is a row the palette offers and will take. Widening this
-   * is a one-line change once the same is proved of the rest.
+   * Every course sentence has one: `src/lib/tutorial/script.test.ts` walks
+   * all 40 lessons' runs through the real transaction and proves every
+   * decision is a row the palette offers, takes, and records. A sentence
+   * without a course owner has no lesson scope to run under, so it has no
+   * run.
    */
   const tutorialBeats = $derived(
-    owner?.number === 1 ? tutorialScript(sentence, scope, target ?? undefined).beats : [],
+    owner ? tutorialScript(sentence, scope, target ?? undefined).beats : [],
   );
   const tutorialBuild = $derived(replaySentence(sentence, target ?? undefined).final);
   const tutorialDepth = $derived(layout(tutorialBuild.constituents, words).maxDepth);
