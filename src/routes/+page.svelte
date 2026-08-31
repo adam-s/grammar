@@ -10,6 +10,7 @@
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
   import Github from '@lucide/svelte/icons/github';
+  import Globe from '@lucide/svelte/icons/globe';
   import Undo2 from '@lucide/svelte/icons/undo-2';
   import GraduationCap from '@lucide/svelte/icons/graduation-cap';
   import { tick, untrack } from 'svelte';
@@ -127,6 +128,12 @@
       label: 'GitHub',
       icon: Github,
       href: 'https://github.com/adam-s/grammar',
+    },
+    {
+      id: 'site',
+      label: 'Adam Sohn',
+      icon: Globe,
+      href: 'https://adamsohn.com',
     },
   ];
   let active = $state('lessons');

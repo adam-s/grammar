@@ -72,6 +72,9 @@
   a.item {
     cursor: pointer;
   }
+  .item span {
+    white-space: nowrap;
+  }
   .item:hover {
     background: color-mix(in oklab, var(--ink) 7%, transparent);
     color: var(--ink-muted);
