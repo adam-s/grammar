@@ -74,7 +74,8 @@ const wanted = onlyArg ? new Set(onlyArg.split(',')) : null;
 const runsWanted = [];
 for (const [lesson, sentenceId] of lessons) {
   if (wanted && !wanted.has(lesson)) continue;
-  for (let r = 0; r < repeat; r++) runsWanted.push([repeat > 1 ? `${lesson}#${r + 1}` : lesson, sentenceId]);
+  for (let r = 0; r < repeat; r++)
+    runsWanted.push([repeat > 1 ? `${lesson}#${r + 1}` : lesson, sentenceId]);
 }
 
 for (const [lesson, sentenceId] of runsWanted) {
@@ -96,25 +97,25 @@ for (const [lesson, sentenceId] of runsWanted) {
     }
     await launch.click();
 
-  // Completion is the launcher returning as "Watch it again"; failure is the
-  // banner saying the run stopped. Cap generously — a long lesson still has
-  // dozens of real gestures to perform.
-  const outcome = await page
-    .waitForFunction(
-      () => {
-        const banner = document.querySelector('.banner');
-        const failed = banner?.textContent?.includes('The tutorial stopped');
-        if (failed) return { failed: banner.textContent };
-        const again = [...document.querySelectorAll('button.launch')].some((b) =>
-          b.textContent?.includes('Watch it again'),
-        );
-        return !banner && again ? { done: true } : false;
-      },
-      null,
-      { timeout: 240000, polling: 250 },
-    )
-    .then((h) => h.jsonValue())
-    .catch(() => ({ timeout: true }));
+    // Completion is the launcher returning as "Watch it again"; failure is the
+    // banner saying the run stopped. Cap generously — a long lesson still has
+    // dozens of real gestures to perform.
+    const outcome = await page
+      .waitForFunction(
+        () => {
+          const banner = document.querySelector('.banner');
+          const failed = banner?.textContent?.includes('The tutorial stopped');
+          if (failed) return { failed: banner.textContent };
+          const again = [...document.querySelectorAll('button.launch')].some((b) =>
+            b.textContent?.includes('Watch it again'),
+          );
+          return !banner && again ? { done: true } : false;
+        },
+        null,
+        { timeout: 240000, polling: 250 },
+      )
+      .then((h) => h.jsonValue())
+      .catch(() => ({ timeout: true }));
 
     if (outcome.failed) {
       fail(`${where}: run failed on screen — ${outcome.failed.slice(0, 160)}`);
