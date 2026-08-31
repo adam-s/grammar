@@ -92,8 +92,8 @@ replay knows which world it happened in.
 snapshots, so a bug report reproduces itself; the replay bench loads one and
 walks it through the same pure transaction the app runs — the one place
 step-forward, step-back, and play belong — and a divergence names the first
-step where the recording and today's code part ways. Undo would be the third
-use; the trace is the history it needs, but undo stays its own decision.
+step where the recording and today's code part ways. Undo is the third use —
+the trace is the history it needs — and its plan is `docs/undo.md`.
 
 **Boundaries:**
 
