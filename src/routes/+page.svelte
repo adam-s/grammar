@@ -9,6 +9,7 @@
    */
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
+  import Undo2 from '@lucide/svelte/icons/undo-2';
   import { tick, untrack } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { goto } from '$app/navigation';
@@ -99,6 +100,7 @@
     emptyTrace,
     encodeTrace,
     fingerprint,
+    undoTarget,
     type Trace,
     type TraceMoment,
   } from '$lib/learner/trace.ts';
@@ -274,30 +276,35 @@
     // on, and re-earning completion reads state of its own.
     const restored = decodeSnapshot(readKey(snapshotKey(sentence.id)), nextWords);
     const restoredDepth = restored ? layout(restored.build.constituents, nextWords).maxDepth : 0;
-    // The trace changes sentence with the page, and its opening entry is a
-    // CHECKPOINT embedding whatever the restore produced — the one state a
-    // replay could never reach by walking from empty. It must exist before
-    // anything can append (re-earned completion appends).
-    trace =
-      decodeTrace(readKey(traceKey(sentence.id)), nextWords) ??
-      emptyTrace(sentence.id, nextWords, version);
-    const opened = restored ?? emptySession();
-    traceAppend({
-      kind: 'open',
-      build: opened.build,
-      misses: opened.misses,
-      rejected: opened.rejected,
-      fp: fingerprint(opened.build),
-    });
-    if (restored) {
-      untrack(() => {
+    // The restore and the trace's opening checkpoint run UNTRACKED: this
+    // block writes session state and appends to the trace, and the only
+    // dependencies this effect may have are the sentence itself — anything
+    // read in here (completion checks, the palette's own grading) is state
+    // of its own that must not re-run the reset.
+    untrack(() => {
+      // The trace changes sentence with the page, and its opening entry is
+      // a CHECKPOINT embedding whatever the restore produced — the one
+      // state a replay could never reach by walking from empty. It must
+      // exist before anything can append (re-earned completion appends).
+      trace =
+        decodeTrace(readKey(traceKey(sentence.id)), nextWords) ??
+        emptyTrace(sentence.id, nextWords, version);
+      const opened = restored ?? emptySession();
+      traceAppend({
+        kind: 'open',
+        build: opened.build,
+        misses: opened.misses,
+        rejected: opened.rejected,
+        fp: fingerprint(opened.build),
+      });
+      if (restored) {
         session = restored;
         depthMark = restoredDepth;
         // Completion is re-earned from the restored build, not read back
         // from a flag — the stored set only ever grows through a real grade.
         recordCompletion(restored.build);
-      });
-    }
+      }
+    });
     const nextFrame = diagramSize(
       restored?.build.constituents ?? emptyBuild().constituents,
       nextWords,
@@ -719,14 +726,59 @@
    * they earn nothing.
    */
   let trace: Trace | null = null;
+  /** Bumped on every append so `canUndo` — the one reader the plain `trace`
+      variable has — knows to look again. */
+  let traceSeq = $state(0);
   function traceAppend(entry: TraceMoment) {
     if (!trace) return;
     trace = appendEntry(trace, entry);
+    traceSeq += 1;
     writeKey(traceKey(trace.sentenceId), encodeTrace(trace));
   }
   /** A committed learner selection, worth a line in the story. */
   function traceSelect(sel: Selection) {
     if (sel.kind !== 'none') traceAppend({ kind: 'select', selection: sel });
+  }
+
+  /**
+   * Whether the Back control has anything to take back — `undoTarget` is
+   * both the answer and the preview, computed by replaying the trace
+   * (measured at ~70ms even cap-full, and traces are per sentence). Hidden
+   * rather than disabled where undo has no meaning: on the solution view
+   * and while the guided run owns the canvas.
+   */
+  const canUndo = $derived.by(() => {
+    void traceSeq;
+    return trace !== null && !demo && undoTarget(trace, sentence, scope) !== null;
+  });
+
+  /**
+   * Take back the last step. The trace's undo rules decide what that means
+   * (runs skipped whole, wrong answers stepped over, startOver the floor);
+   * the entry records the fingerprint of the build it lands on; then the
+   * normal save path runs, so the snapshot follows and completion is
+   * re-graded — and kept, because finishing is history.
+   */
+  function undo() {
+    if (!trace || demo || tutorialActive || solved) return;
+    const target = undoTarget(trace, sentence, scope);
+    if (!target) return;
+    traceAppend({ kind: 'undo', fp: fingerprint(target.build) });
+    session = target;
+    draft = null;
+    preview = null;
+    marqueeIds = [];
+    recordDecision();
+  }
+
+  /** The platform's take-it-back keystroke, on the diagram only. */
+  function onkeydown(e: KeyboardEvent) {
+    if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey || e.key !== 'z') return;
+    if (middleView !== 'diagram' || tutorialActive || solved) return;
+    const t = e.target as HTMLElement | null;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    e.preventDefault();
+    undo();
   }
 
   /**
@@ -848,6 +900,8 @@
   }
 </script>
 
+<svelte:window {onkeydown} />
+
 <svelte:head>
   <title>{lesson.title} · Grammar</title>
 </svelte:head>
@@ -919,19 +973,33 @@
 
   {#snippet overlay()}
     {#if middleView === 'diagram' && !tutorialActive}
-      <div class="solution-toggle" role="group" aria-label="Diagram state" data-stage-occluder>
-        <button
-          type="button"
-          class:active={!solved}
-          aria-pressed={!solved}
-          onclick={() => showSolution(false)}>Unsolved</button
-        >
-        <button
-          type="button"
-          class:active={solved}
-          aria-pressed={solved}
-          onclick={() => showSolution(true)}>Solved</button
-        >
+      <div class="canvas-controls" data-stage-occluder>
+        {#if !solved}
+          <button
+            class="undo-step"
+            type="button"
+            disabled={!canUndo}
+            aria-label="Take back the last step"
+            title="Take back the last step"
+            onclick={undo}
+          >
+            <Undo2 size={14} strokeWidth={2} aria-hidden="true" />
+          </button>
+        {/if}
+        <div class="solution-toggle" role="group" aria-label="Diagram state">
+          <button
+            type="button"
+            class:active={!solved}
+            aria-pressed={!solved}
+            onclick={() => showSolution(false)}>Unsolved</button
+          >
+          <button
+            type="button"
+            class:active={solved}
+            aria-pressed={solved}
+            onclick={() => showSolution(true)}>Solved</button
+          >
+        </div>
       </div>
     {/if}
     {#if middleView === 'diagram' && !solved && tutorialBeats.length > 0}
@@ -1107,11 +1175,38 @@
     pointer-events: none;
   }
 
-  .solution-toggle {
+  /* The canvas's top-right controls: Back, then the view toggle. The row is
+     positioned; its members just sit in it, cut from the same cloth. */
+  .canvas-controls {
+    display: flex;
     position: absolute;
     top: 8px;
     right: 44px;
     z-index: 46;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .undo-step {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--panel) 94%, transparent);
+    color: var(--ink-muted);
+    box-shadow: 0 2px 10px oklch(0 0 0 / 18%);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+  }
+  .undo-step:hover:not(:disabled) {
+    color: var(--ink);
+  }
+  .undo-step:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .solution-toggle {
     display: flex;
     gap: 2px;
     padding: 3px;
@@ -1142,7 +1237,7 @@
   }
 
   @media (max-width: 700px) {
-    .solution-toggle {
+    .canvas-controls {
       top: max(60px, calc(env(safe-area-inset-top) + 60px));
       right: 8px;
     }

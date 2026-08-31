@@ -78,6 +78,10 @@ if ((await launch.count()) === 0) {
   if (resetVisible) fail('"Start this sentence again" is offered while the run is on stage');
   else pass('start-over steps aside while the run is on stage');
 
+  if ((await page.locator('.undo-step').count()) > 0) {
+    fail('the Back button is offered while the run owns the canvas');
+  } else pass('the Back button steps aside while the run is on stage');
+
   await page.locator('button[aria-label="Play tutorial"]').click();
 
   // The run must now reach its own end: launcher back as "Watch it again",

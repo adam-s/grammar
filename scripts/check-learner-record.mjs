@@ -275,6 +275,75 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   }
 }
 
+/* 6.5 — the Back button: steps back one build, keeps the judgment history,
+   persists through a reload, floors honestly, and hides on the solution */
+{
+  await page.evaluate(() => window.__grammar.reset());
+  if (!(await play(steps, 0, 1))) process.exit(1);
+  const one = await driver();
+  if (!(await play(steps, 1, 2))) process.exit(1);
+  // A deliberate wrong answer on top, so undo has judgment history to keep.
+  await page.evaluate((s) => {
+    const g = window.__grammar;
+    if (s.kind === 'form') g.selectSpan(s.span);
+    else g.selectNode(s.nodeId);
+    const group = g.panel.groups.find((x) => x.options.some((o) => o.key === s.key));
+    const sibling = group?.options.find(
+      (o) => o.key !== s.key && ['available', 'suggested'].includes(o.state),
+    );
+    if (sibling) g.pick(sibling.key);
+  }, steps[2]);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(200);
+  const before = await driver();
+
+  await page.locator('.undo-step').click();
+  await page.waitForTimeout(200);
+  const after = await driver();
+  if (JSON.stringify(after.build) !== JSON.stringify(one.build)) {
+    fail('undo did not land on the previous build');
+  } else pass('the Back button takes back exactly one step');
+  if (
+    JSON.stringify(after.misses) !== JSON.stringify(before.misses) ||
+    JSON.stringify(after.rejected) !== JSON.stringify(before.rejected)
+  ) {
+    fail('undo rolled back misses or refusals');
+  } else pass('undo keeps the misses and refusals');
+
+  // The platform keystroke takes back the remaining step, to the floor.
+  await page.keyboard.press('ControlOrMeta+z');
+  await page.waitForTimeout(200);
+  const floored = await driver();
+  if (floored.nodes !== 0) fail('the keystroke did not undo to the empty canvas');
+  else pass('the undo keystroke works');
+  const disabled = await page.locator('.undo-step').isDisabled();
+  if (!disabled) fail('the Back button stays enabled with nothing to take back');
+  else pass('the Back button disables at the floor');
+
+  // Undo persists: the snapshot followed it, and a reload agrees.
+  await boot();
+  await page.evaluate((id) => window.__grammar.openSentence(id), sentenceId);
+  await page.waitForTimeout(400);
+  const reloaded = await driver();
+  if (reloaded.nodes !== 0) fail('a reload resurrected what undo took back');
+  else pass('undo persists through a reload');
+  if (!(await page.locator('.undo-step').isDisabled())) {
+    fail('the reloaded floor still offers something to take back');
+  }
+
+  // No Back button on the answer.
+  await page.getByRole('button', { name: 'Solved', exact: true }).click();
+  await page.waitForTimeout(200);
+  if ((await page.locator('.undo-step').count()) > 0) {
+    fail('the Back button is offered on the solution view');
+  } else pass('the Back button hides on the solution view');
+  await page.getByRole('button', { name: 'Unsolved', exact: true }).click();
+  await page.waitForTimeout(200);
+
+  // Leave real progress behind for the export and reset scenario.
+  if (!(await play(steps, 0, half))) process.exit(1);
+}
+
 /* 7 — the record owns its keys and nothing else: the export leaves the
    theme at home, and reset erases the record while the theme stands */
 {
