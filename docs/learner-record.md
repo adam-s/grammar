@@ -33,11 +33,11 @@ the learner exports it. The export still contains learning history: builds,
 choices, misses, refused answers, and completion. Treat it as private learner
 data even though it does not contain an account name or the sentence wording.
 
-The current storage shell has one known ownership bug. It enumerates every
-`grammar:` key, so a progress export includes the theme preference and "Reset
-all progress" clears it. Theme is a product setting, not learner progress. The
-record needs its own namespace or one shared owned-key predicate, with tests
-that prove export and reset leave unrelated settings alone.
+Ownership is one shared predicate: the record owns exactly its snapshots,
+traces, and completion set — never everything under the app's prefix. The
+theme preference lives beside the record at `grammar:theme` and is a product
+setting, not progress: the export leaves it at home and "Reset all progress"
+leaves it standing, with tests at both levels proving so.
 
 ## What the learner sees
 

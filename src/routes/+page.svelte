@@ -828,9 +828,11 @@
     completed.clear();
     reset();
     // The stored traces died with the record; the in-memory one restarts so
-    // nothing appended after this moment resurrects pre-reset history.
+    // nothing appended after this moment resurrects pre-reset history. No
+    // entry is written HERE: "erase everything" must leave storage holding
+    // nothing of the record's, and the empty trace IS the fresh start — the
+    // next real moment writes it.
     trace = emptyTrace(sentence.id, words, version);
-    traceAppend({ kind: 'startOver' });
   }
 
   /** Hand the learner their record as a file. It carries builds, misses and

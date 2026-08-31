@@ -9,11 +9,24 @@
  * can experience is the app forgetting — never the app breaking.
  */
 const PREFIX = 'grammar:';
+const SNAPSHOT_PREFIX = `${PREFIX}session:`;
+const TRACE_PREFIX = `${PREFIX}trace:`;
 const COMPLETION_KEY = `${PREFIX}done`;
 
-export const snapshotKey = (sentenceId: string): string => `${PREFIX}session:${sentenceId}`;
-export const traceKey = (sentenceId: string): string => `${PREFIX}trace:${sentenceId}`;
+export const snapshotKey = (sentenceId: string): string => `${SNAPSHOT_PREFIX}${sentenceId}`;
+export const traceKey = (sentenceId: string): string => `${TRACE_PREFIX}${sentenceId}`;
 export const completionKey = (): string => COMPLETION_KEY;
+
+/**
+ * Whether a storage key belongs to the learner record — the ONE definition
+ * of ownership, shared by export and erase. The record owns exactly its
+ * snapshots, traces, and completion set; it does not own everything under
+ * the app's prefix. The theme preference lives at `grammar:theme`, and a
+ * prefix-wide sweep exported it as learner data and erased it on "Reset all
+ * progress" — a product setting deleted by a promise about progress.
+ */
+export const ownsKey = (key: string): boolean =>
+  key.startsWith(SNAPSHOT_PREFIX) || key.startsWith(TRACE_PREFIX) || key === COMPLETION_KEY;
 
 function storage(): Storage | null {
   try {
@@ -54,7 +67,7 @@ function ownKeys(): string[] {
   const out: string[] = [];
   for (let i = 0; i < s.length; i++) {
     const key = s.key(i);
-    if (key?.startsWith(PREFIX)) out.push(key);
+    if (key && ownsKey(key)) out.push(key);
   }
   return out;
 }

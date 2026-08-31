@@ -84,7 +84,10 @@ const driver = () =>
 
 const storedKeys = () =>
   page.evaluate(
-    ([prefix, done]) => Object.keys(localStorage).filter((k) => k.startsWith(prefix) || k === done),
+    ([prefix, done]) =>
+      Object.keys(localStorage).filter(
+        (k) => k.startsWith(prefix) || k.startsWith('grammar:trace:') || k === done,
+      ),
     [SNAPSHOT_PREFIX, DONE_KEY],
   );
 
@@ -272,10 +275,30 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   }
 }
 
-/* 7 — reset all progress erases everything, durably */
+/* 7 — the record owns its keys and nothing else: the export leaves the
+   theme at home, and reset erases the record while the theme stands */
 {
+  await page.evaluate(() => localStorage.setItem('grammar:theme', 'dark'));
   await page.locator('button[aria-label="Settings"], button:has-text("Settings")').first().click();
   await page.waitForTimeout(300);
+
+  const downloadWaiter = page.waitForEvent('download', { timeout: 15000 }).catch(() => null);
+  await page.locator('button', { hasText: 'Export progress' }).click();
+  const download = await downloadWaiter;
+  if (!download) {
+    fail('Export progress produced no download');
+  } else {
+    const file = await download.path();
+    const { readFileSync } = await import('node:fs');
+    const exported = JSON.parse(readFileSync(file, 'utf8'));
+    const exportedKeys = Object.keys(exported.record ?? {});
+    if (exportedKeys.some((k) => k === 'grammar:theme'))
+      fail('the export carried the theme preference out of the browser');
+    else if (!exportedKeys.some((k) => k.startsWith('grammar:session:')))
+      fail('the export carried no snapshots — nothing to debug with');
+    else pass('the export carries the record and leaves the theme at home');
+  }
+
   await page.locator('button', { hasText: 'Reset all progress' }).click();
   await page.waitForTimeout(300);
   const { completed, nodes } = await driver();
@@ -284,6 +307,9 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   const keys = await storedKeys();
   if (keys.length > 0) fail(`reset all left keys behind: ${keys.join(', ')}`);
   else pass('reset all empties the record');
+  const theme = await page.evaluate(() => localStorage.getItem('grammar:theme'));
+  if (theme !== 'dark') fail('reset all erased the theme — a promise about progress took a setting');
+  else pass('reset all leaves the theme standing');
 
   await boot();
   const after = await page.evaluate(() => window.__grammar.completed);
