@@ -8,7 +8,7 @@ export const site = {
   /* Where the app lives, no trailing slash. */
   origin: 'https://adamsohn.com/grammar',
   name: 'Grammar',
-  description: 'Build sentence diagrams — and find out if you really know how.',
+  description: 'Improve your grammar with sentence diagrams, not LLMs.',
   /* Rendered by scripts/og.mjs from scripts/og.html into static/og.png;
      the diagram inside it is a real app capture from scripts/og-capture.mjs. */
   image: { path: '/og.png', width: 2400, height: 1260 },
