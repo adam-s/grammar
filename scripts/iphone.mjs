@@ -88,6 +88,59 @@ console.log('chromium · iPhone 14 · touch drag');
   await browser.close();
 }
 
+/* ------------- Chromium: touch drag over existing structure → NP */
+
+console.log('chromium · iPhone 14 · Det + Nom by touch');
+{
+  const browser = await chromium.launch({ headless: true });
+  const ctx = await browser.newContext({ ...devices['iPhone 14'], defaultBrowserType: undefined });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/lessons/05-find-the-head`, { waitUntil: 'networkidle', timeout: 30_000 });
+  await page.waitForFunction(() => window.__grammar, null, { timeout: 20_000 });
+  await page.evaluate(() => window.__grammar.openSentence('c05-b'));
+  await page.waitForTimeout(600);
+  // Build until the Nom exists, then stop: the learner now faces Det + Nom.
+  const built = await page.evaluate(() => {
+    const g = window.__grammar;
+    for (const s of g.plan()) {
+      if (s.kind === 'form') g.selectSpan(s.span);
+      else g.selectNode(s.nodeId);
+      const out = g.pick(s.key);
+      if (!out.ok) return out.reason;
+      if (Object.values(g.build.constituents).some((c) => c.form === 'Nom')) return null;
+    }
+    return 'the plan never built a Nom';
+  });
+  if (built) bad('Det + Nom setup', built);
+  else {
+    await page.evaluate(() => window.__grammar.selectSpan([0, 0]));
+    await page.waitForTimeout(300);
+    const from = center(await page.locator('[data-word="0"]').boundingBox());
+    const to = center(await page.locator('[data-word="2"]').boundingBox());
+    const cdp = await ctx.newCDPSession(page);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [from] });
+    for (let i = 1; i <= 8; i++) {
+      const x = from.x + ((to.x - from.x) * i) / 8;
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: from.y }] });
+      await page.waitForTimeout(30);
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await page.waitForTimeout(400);
+    const sel = await selection(page);
+    const np = await page.evaluate(
+      () =>
+        window.__grammar.panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:NP')
+          ?.state ?? 'absent',
+    );
+    if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 2)
+      ok('drag over Det + Nom selects the whole span');
+    else bad('drag over Det + Nom', `selection is ${JSON.stringify(sel)}`);
+    if (np === 'available' || np === 'suggested') ok(`NP is ${np} for the span`);
+    else bad('NP offered for Det + Nom', `form:NP is ${np}`);
+  }
+  await browser.close();
+}
+
 /* --------------------------------- Chromium: mouse drag still works */
 
 console.log('chromium · desktop · mouse drag');
