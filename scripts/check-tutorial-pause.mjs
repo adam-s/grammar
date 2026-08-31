@@ -138,9 +138,9 @@ if ((await launch.count()) === 0) {
     // as a glitch (only the arrowed invitation yields to the palette).
     const paletteOpen = await page.locator('.popup').count();
     const launcherHeld = await page.locator('button.launch').isVisible().catch(() => false);
-    if (paletteOpen > 0 && !launcherHeld)
+    if (paletteOpen > 0 && !launcherHeld) {
       fail('the launcher vanished while the palette was open');
-    else if (launcherHeld) pass('the launcher holds its place while the palette is open');
+    } else if (launcherHeld) pass('the launcher holds its place while the palette is open');
     // The pill holds its place BUT sits under the palette — when the two
     // overlap, the menu wins the click. Dismiss the menu the way a hand
     // does, then launch.

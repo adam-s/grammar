@@ -193,8 +193,8 @@
         </p>
         {#if replay.skipped > 0}
           <p class="stamp">
-            {replay.skipped} earlier moment(s) predate the oldest surviving checkpoint and are
-            listed in the trace but cannot replay.
+            {replay.skipped} earlier moment(s) predate the oldest surviving checkpoint and are listed
+            in the trace but cannot replay.
           </p>
         {/if}
       </section>

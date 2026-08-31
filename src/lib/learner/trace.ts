@@ -82,9 +82,12 @@ export type TraceEntry =
    * The learner took back their last step. An EVENT, never an eraser: the
    * entries it takes back stay in the trace, replay pops the learner's
    * build history exactly as the app did, and the diary keeps the honest
-   * shape of the session — including the taking-back itself.
+   * shape of the session — including the taking-back itself. Like every
+   * state-changing entry it records the fingerprint of the build it
+   * produced, so a later change to undo's own rules cannot silently replay
+   * to a different diagram.
    */
-  | { seq: number; kind: 'undo' };
+  | { seq: number; kind: 'undo'; fp: string };
 
 export interface Trace {
   v: number;
@@ -179,8 +182,9 @@ function soundEntry(e: unknown, words: readonly Word[]): e is TraceEntry {
     case 'startOver':
     case 'complete':
     case 'runStart':
-    case 'undo':
       return true;
+    case 'undo':
+      return typeof e['fp'] === 'string';
     case 'runEnd':
       return e['outcome'] === 'finished' || e['outcome'] === 'stopped';
     default:
@@ -297,20 +301,27 @@ function remember(state: ReplayState) {
  * state; the misses and refusals stay, because a wrong answer is history
  * and undo must not launder it; the selection lands closed, because the
  * feedback belonged to a decision that is no longer on the board. A no-op
- * with nothing to take back, and a no-op while a run's scratch is on stage
- * — the Back button is absent in both states, and replay tolerates what
- * the page should never write.
+ * (returning false) with nothing to take back, and while a run's scratch is
+ * on stage — the Back button is absent in both states, and replay tolerates
+ * what the page should never write.
+ *
+ * The restored build keeps the CURRENT id counter, never the older one: ids
+ * are never reused (the builder's own invariant), and rewinding `seq` would
+ * let a node built after the undo inherit a dead node's id — and with it,
+ * anything keyed to that id.
  */
-function applyUndo(state: ReplayState) {
-  if (inRun(state) || state.history.length < 2) return;
+function applyUndo(state: ReplayState): boolean {
+  if (inRun(state) || state.history.length < 2) return false;
   state.history.pop();
+  const prev = state.history[state.history.length - 1]!;
   state.s = {
     ...state.s,
-    build: state.history[state.history.length - 1]!,
+    build: { constituents: prev.constituents, seq: Math.max(state.s.build.seq, prev.seq) },
     selection: { kind: 'none' },
     verdict: null,
     navigation: null,
   };
+  return true;
 }
 
 /**
@@ -330,28 +341,56 @@ export function replayTrace(
   sentence: SentenceEntry,
   scope?: ChapterScope,
 ): ReplayResult {
+  return walk(trace, sentence, scope).result;
+}
+
+/**
+ * What one more undo would produce — the Back button's question, asked
+ * BEFORE the entry is appended so the entry can record the fingerprint of
+ * the build it lands on. Null when there is nothing to take back: depth
+ * zero, a run's scratch on stage, or a trace that diverges or cannot
+ * replay.
+ */
+export function undoTarget(
+  trace: Trace,
+  sentence: SentenceEntry,
+  scope?: ChapterScope,
+): Session | null {
+  const { result, state } = walk(trace, sentence, scope);
+  if (!state || result.divergence) return null;
+  return applyUndo(state) ? state.s : null;
+}
+
+/** The replay loop itself, with its final state — `replayTrace` publishes
+    the result; `undoTarget` needs where the walk stood when it ended. */
+function walk(
+  trace: Trace,
+  sentence: SentenceEntry,
+  scope?: ChapterScope,
+): { result: ReplayResult; state: ReplayState | null } {
   const steps: ReplayStep[] = [];
   const from = resumePoint(trace);
   if (from < 0) {
     return {
-      steps,
-      skipped: trace.entries.length,
-      undoDepth: 0,
-      divergence: {
-        seq: trace.entries[0]?.seq ?? 0,
-        reason:
-          'the trace is truncated and no checkpoint survived — there is nothing to replay from',
+      state: null,
+      result: {
+        steps,
+        skipped: trace.entries.length,
+        undoDepth: 0,
+        divergence: {
+          seq: trace.entries[0]?.seq ?? 0,
+          reason:
+            'the trace is truncated and no checkpoint survived — there is nothing to replay from',
+        },
       },
     };
   }
 
   const state: ReplayState = { s: emptySession(), held: [], history: [emptySession().build] };
   const depth = () => state.history.length - 1;
-  const done = (divergence: Divergence | null): ReplayResult => ({
-    steps,
-    divergence,
-    skipped: from,
-    undoDepth: depth(),
+  const done = (divergence: Divergence | null) => ({
+    state,
+    result: { steps, divergence, skipped: from, undoDepth: depth() },
   });
 
   for (const entry of trace.entries.slice(from)) {
@@ -412,6 +451,13 @@ function applyEntry(
       return null;
     case 'undo':
       applyUndo(state);
+      // Undo is the one entry whose semantics live entirely in this module,
+      // and often the trace's last word — without this check, a change to
+      // its own rules could replay every recording to a different diagram
+      // and no divergence would ever say so.
+      if (fingerprint(state.s.build) !== entry.fp) {
+        return { seq: entry.seq, reason: 'undo landed on a different build than it recorded' };
+      }
       return null;
     case 'select':
       state.s = { ...state.s, selection: entry.selection, verdict: null, navigation: null };
@@ -427,7 +473,10 @@ function applyEntry(
       state.s = answer(state.s, sentence, sentence.words, row, scope);
       const outcome = state.s.verdict?.kind ?? 'correct';
       if (outcome !== entry.outcome) {
-        return { seq: entry.seq, reason: `${entry.key} graded "${outcome}" now, "${entry.outcome}" then` };
+        return {
+          seq: entry.seq,
+          reason: `${entry.key} graded "${outcome}" now, "${entry.outcome}" then`,
+        };
       }
       if (fingerprint(state.s.build) !== entry.fp) {
         return { seq: entry.seq, reason: `the diagram came out different after ${entry.key}` };

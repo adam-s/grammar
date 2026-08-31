@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { clearRecord, completionKey, exportRecord, ownsKey, snapshotKey, traceKey } from './store.ts';
+import {
+  clearRecord,
+  completionKey,
+  exportRecord,
+  ownsKey,
+  snapshotKey,
+  traceKey,
+} from './store.ts';
 
 /**
  * A minimal Storage for node. The shell reads it at call time, so tests may

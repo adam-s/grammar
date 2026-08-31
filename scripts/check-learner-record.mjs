@@ -292,11 +292,11 @@ const half = Math.max(1, Math.floor(steps.length / 2));
     const { readFileSync } = await import('node:fs');
     const exported = JSON.parse(readFileSync(file, 'utf8'));
     const exportedKeys = Object.keys(exported.record ?? {});
-    if (exportedKeys.some((k) => k === 'grammar:theme'))
+    if (exportedKeys.some((k) => k === 'grammar:theme')) {
       fail('the export carried the theme preference out of the browser');
-    else if (!exportedKeys.some((k) => k.startsWith('grammar:session:')))
+    } else if (!exportedKeys.some((k) => k.startsWith('grammar:session:'))) {
       fail('the export carried no snapshots — nothing to debug with');
-    else pass('the export carries the record and leaves the theme at home');
+    } else pass('the export carries the record and leaves the theme at home');
   }
 
   await page.locator('button', { hasText: 'Reset all progress' }).click();

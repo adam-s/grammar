@@ -15,6 +15,7 @@ import {
   encodeTrace,
   fingerprint,
   replayTrace,
+  undoTarget,
   type Trace,
 } from './trace.ts';
 
@@ -257,7 +258,7 @@ test('undo pops one distinct build; misses and refusals stay; the palette lands 
   })();
   const before = states.at(-1)!;
   const prior = states.at(-2)!;
-  const trace = appendEntry(walked, { kind: 'undo' });
+  const trace = appendEntry(walked, { kind: 'undo', fp: fingerprint(prior.build) });
   const { steps, divergence, undoDepth } = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
   const after = steps.at(-1)!.session;
@@ -278,7 +279,7 @@ test('undo skips a guided run whole and takes back the learner’s own last step
     if (e.kind === 'pick') trace = appendEntry(trace, { ...e });
   }
   trace = appendEntry(trace, { kind: 'runEnd', outcome: 'finished' });
-  trace = appendEntry(trace, { kind: 'undo' });
+  trace = appendEntry(trace, { kind: 'undo', fp: fingerprint(half.states.at(-2)!.build) });
   const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
   assert.equal(
@@ -291,7 +292,8 @@ test('undo skips a guided run whole and takes back the learner’s own last step
 test('startOver is undo’s floor', () => {
   let trace = recordWalk(3).trace;
   trace = appendEntry(trace, { kind: 'startOver' });
-  trace = appendEntry(trace, { kind: 'undo' });
+  // Nothing to take back: the recorded fp is the empty build it stays on.
+  trace = appendEntry(trace, { kind: 'undo', fp: fingerprint(emptySession().build) });
   const { steps, divergence, undoDepth } = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(divergence, null);
   assert.equal(Object.keys(steps.at(-1)!.session.build.constituents).length, 0);
@@ -307,7 +309,7 @@ test('undo reaches through a reload when the checkpoint continues the work', () 
     rejected: half.final.rejected,
     fp: fingerprint(half.final.build),
   });
-  trace = appendEntry(trace, { kind: 'undo' });
+  trace = appendEntry(trace, { kind: 'undo', fp: fingerprint(half.states.at(-2)!.build) });
   const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
   assert.equal(
@@ -332,7 +334,7 @@ test('a checkpoint the recorded steps never produced resets the history', () => 
   });
   const before = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(before.undoDepth, 0, 'unearned history to step back through');
-  trace = appendEntry(trace, { kind: 'undo' });
+  trace = appendEntry(trace, { kind: 'undo', fp: fingerprint(rich.build) });
   const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(divergence, null);
   assert.equal(
@@ -342,8 +344,48 @@ test('a checkpoint the recorded steps never produced resets the history', () => 
   );
 });
 
+test('undo never rewinds the id counter — a dead node’s id stays dead', () => {
+  // The builder's invariant: ids are never reused. Restoring the older
+  // build must keep the HIGHEST seq reached, or the next node built after
+  // an undo inherits the undone node's id — and anything keyed to it.
+  const { trace: walked, states } = recordWalk(3);
+  const before = states.at(-1)!;
+  const prior = states.at(-2)!;
+  const trace = appendEntry(walked, { kind: 'undo', fp: fingerprint(prior.build) });
+  const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
+  const after = steps.at(-1)!.session;
+  assert.equal(after.build.seq, before.build.seq, 'undo rewound the id counter');
+  assert.ok(after.build.seq > prior.build.seq, 'the scenario never advanced the counter');
+});
+
+test('undoTarget answers the button: the state one more undo would produce', () => {
+  const { trace, states } = recordWalk(3);
+  const target = undoTarget(trace, SENTENCE, SCOPE);
+  assert.ok(target, 'three picks left nothing to take back');
+  assert.equal(fingerprint(target.build), fingerprint(states.at(-2)!.build));
+  // Appending an undo stamped with that fingerprint replays clean to it.
+  const appended = appendEntry(trace, { kind: 'undo', fp: fingerprint(target.build) });
+  const { steps, divergence } = replayTrace(appended, SENTENCE, SCOPE);
+  assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
+  assert.equal(fingerprint(steps.at(-1)!.session.build), fingerprint(target.build));
+  // At the floor there is no target, and the button knows to disable.
+  const floored = appendEntry(trace, { kind: 'startOver' });
+  assert.equal(undoTarget(floored, SENTENCE, SCOPE), null);
+});
+
+test('a bent undo fingerprint names its step — the final event cannot drift silently', () => {
+  const { trace: walked, states } = recordWalk(3);
+  const trace = appendEntry(walked, { kind: 'undo', fp: 'not-where-it-landed' });
+  const { divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.ok(divergence, 'a bent undo replayed clean');
+  assert.equal(divergence.seq, trace.entries.at(-1)!.seq);
+  assert.match(divergence.reason, /undo landed/);
+  assert.ok(states.length > 0);
+});
+
 test('a wrong answer is not an undo target — only builds step back', () => {
-  const { trace: walked, final } = recordWalk(2);
+  const { trace: walked, final, states } = recordWalk(2);
   // A deliberate wrong answer after the second pick: misses move, build
   // does not, so undo still targets the second pick's build.
   const beat = tutorialScript(
@@ -365,7 +407,9 @@ test('a wrong answer is not an undo target — only builds step back', () => {
     outcome: s.verdict?.kind ?? 'correct',
     fp: fingerprint(s.build),
   });
-  trace = appendEntry(trace, { kind: 'undo' });
+  // The wrong answer changed no build, so undo steps over it to the FIRST
+  // pick's build — and that is the fingerprint the entry records.
+  trace = appendEntry(trace, { kind: 'undo', fp: fingerprint(states[0]!.build) });
   const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
   assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
   const after = steps.at(-1)!.session;
@@ -390,10 +434,7 @@ test('replaying a cap-full trace stays affordable', () => {
   const { divergence, skipped } = replayTrace(trace, SENTENCE, SCOPE);
   const took = performance.now() - started;
   assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
-  assert.ok(
-    skipped === 0 || trace.truncated,
-    'skipping happened on an untruncated trace',
-  );
+  assert.ok(skipped === 0 || trace.truncated, 'skipping happened on an untruncated trace');
   assert.ok(took < 3000, `a cap-full replay took ${Math.round(took)}ms`);
   console.log(`    cap-full replay: ${trace.entries.length} entries in ${Math.round(took)}ms`);
 });

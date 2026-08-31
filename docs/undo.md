@@ -68,6 +68,13 @@ remains is the button itself.
 - **The cost is measured, not guessed.** A cap-full thousand-entry trace
   replays in ~70ms, so the page recomputes by replaying its own trace on
   every undo — one source of truth, no parallel stack to drift.
+- **Undo verifies itself like everything else.** The entry records the
+  fingerprint of the build it landed on — `undoTarget` computes it before
+  the append — so if undo's own rules ever change, old recordings diverge
+  at the undo instead of silently replaying to a different diagram.
+- **Undo never rewinds the id counter.** The restored build keeps the
+  highest node id reached, honouring the builder's ids-are-never-reused
+  invariant: a node built after an undo can never inherit a dead node's id.
 
 ## Shape
 
