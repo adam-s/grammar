@@ -9,6 +9,7 @@
    */
   import Settings from '@lucide/svelte/icons/settings';
   import BookOpen from '@lucide/svelte/icons/book-open';
+  import Github from '@lucide/svelte/icons/github';
   import Undo2 from '@lucide/svelte/icons/undo-2';
   import GraduationCap from '@lucide/svelte/icons/graduation-cap';
   import { tick, untrack } from 'svelte';
@@ -121,6 +122,12 @@
   const items: RailItem[] = [
     { id: 'lessons', label: 'Lessons', icon: BookOpen },
     { id: 'settings', label: 'Settings', icon: Settings },
+    {
+      id: 'github',
+      label: 'GitHub',
+      icon: Github,
+      href: 'https://github.com/adam-s/grammar',
+    },
   ];
   let active = $state('lessons');
 

@@ -5,6 +5,7 @@
     id: string;
     label: string;
     icon: Component;
+    href?: string;
   }
 </script>
 
@@ -22,16 +23,23 @@
 <nav class="rail" aria-label="Sections">
   {#each items as item (item.id)}
     {@const on = active === item.id}
-    <button
-      class="item"
-      class:on
-      type="button"
-      aria-current={on ? 'page' : undefined}
-      onclick={() => select(item.id)}
-    >
-      <item.icon size={18} strokeWidth={1.5} aria-hidden="true" />
-      <span>{item.label}</span>
-    </button>
+    {#if item.href}
+      <a class="item" href={item.href} target="_blank" rel="external noreferrer">
+        <item.icon size={18} strokeWidth={1.5} aria-hidden="true" />
+        <span>{item.label}</span>
+      </a>
+    {:else}
+      <button
+        class="item"
+        class:on
+        type="button"
+        aria-current={on ? 'page' : undefined}
+        onclick={() => select(item.id)}
+      >
+        <item.icon size={18} strokeWidth={1.5} aria-hidden="true" />
+        <span>{item.label}</span>
+      </button>
+    {/if}
   {/each}
 </nav>
 
@@ -58,7 +66,11 @@
     font: inherit;
     font-size: 9px;
     letter-spacing: 0.01em;
+    text-decoration: none;
     cursor: default;
+  }
+  a.item {
+    cursor: pointer;
   }
   .item:hover {
     background: color-mix(in oklab, var(--ink) 7%, transparent);

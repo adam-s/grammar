@@ -1,21 +1,14 @@
-<!-- The diagram as the app draws it: colored constituent underlines with
-     thin branches fanning down to the word row, on the dark canvas — S over
-     NP and VP over the words, in the diagram's own label colors. Sized for
-     a 16px tab icon. -->
+<!-- The branch pair — the ∧ every diagram is built from, a parent splitting
+     into its two children — in the accent blue on the dark canvas. One bold
+     stroke so it stays legible at 16px. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#232326" />
-  <!-- branches first, so the bars sit over them -->
+  <rect width="32" height="32" rx="7" fill="#1f2021" />
   <path
-    d="M16 8.5 9.5 16M16 8.5l6.5 7.5M9.5 18.5 7.5 24M9.5 18.5l2 5.5M22.5 18.5l-2 5.5M22.5 18.5l2 5.5"
-    stroke="#82828a"
-    stroke-width="1.1"
+    d="M8 23 16 9.5 24 23"
+    fill="none"
+    stroke="#21a0f9"
+    stroke-width="3.6"
     stroke-linecap="round"
+    stroke-linejoin="round"
   />
-  <!-- S -->
-  <path d="M6.5 8.5h19" stroke="#c98c9c" stroke-width="2.4" stroke-linecap="round" />
-  <!-- NP and VP -->
-  <path d="M5 18.5h9" stroke="#5f9ee7" stroke-width="2.4" stroke-linecap="round" />
-  <path d="M18 18.5h9" stroke="#7cab63" stroke-width="2.4" stroke-linecap="round" />
-  <!-- the words -->
-  <path d="M5.5 26.5h8M18.5 26.5h8" stroke="#f2f2f2" stroke-width="2.4" stroke-linecap="round" />
 </svg>
