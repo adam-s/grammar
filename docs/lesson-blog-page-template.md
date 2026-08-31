@@ -1,7 +1,7 @@
 # Lesson page authoring template
 
-Updated 30 August 2026 after the research and revision passes for noun phrases
-and heads.
+Updated 31 August 2026 after the research and revision passes for noun phrases
+and heads, and the learner-record review.
 
 This is the current authoring brief for agents revising the course. Use the
 [static lesson contract](lesson/README.md) for the division between explanation
@@ -151,6 +151,25 @@ Prefer purpose-built teaching fixtures over revealing the complete answer to a
 graded practice sentence. Never hand-draw a diagram that can drift from the
 grammar model.
 
+## Preserve honest exercise identity
+
+A practice sentence id is more than a code reference. It connects saved work,
+completion, and a replay trace to the exercise the learner encountered. Reusing
+an id therefore makes a claim: finishing the old exercise still counts as
+finishing this one.
+
+Keep the id when revising surrounding prose, captions, or diagrams without
+changing the learner's task. Give the exercise a new id when its words,
+required decisions, or accepted analysis change enough that an old checkmark
+would no longer be earned honestly. A small correction may keep the id, but a
+word-list change will intentionally invalidate its saved draft and trace. Do
+not bypass that refusal to preserve stale work.
+
+A trace can show where old and new grammar behavior part ways. It cannot decide
+whether the new analysis is correct or whether the lesson explains it well.
+Settle those questions from the dossier, sources, fixtures, and rendered page;
+then use replay to verify the interaction.
+
 ## Use diagrams as evidence
 
 A diagram belongs on the page only when it makes a grammatical relationship
@@ -262,6 +281,8 @@ Before editing:
    **replace**, or **remove**.
 5. Match every proposed figure to the exact relationship it must display.
 6. Check the practice set for answers obtainable through a surface shortcut.
+7. Mark each proposed practice change as copy-only, a correction to the same
+   exercise, or a materially new exercise. Decide its identity before editing.
 
 While editing:
 
@@ -273,7 +294,9 @@ While editing:
    evidence.
 5. Update source comments and the menu coverage ledger when the analysis or
    cited example changes.
-6. Preserve unrelated worktree changes.
+6. Preserve a practice sentence id only while its saved completion still makes
+   an honest claim about the revised exercise.
+7. Preserve unrelated worktree changes.
 
 Before marking the lesson verified:
 
@@ -289,6 +312,9 @@ Before marking the lesson verified:
 8. Compare the prose with several references and replace unexplained wording or
    style outliers.
 9. Remove filler, repeated cadence, and claims that the evidence did not earn.
+10. When practice words, accepted parses, or ids changed, test both a fresh
+    attempt and saved learner data. Confirm that restore, refusal, completion,
+    and replay tell the truth about the change.
 
 ## Acceptance questions
 
@@ -305,6 +331,10 @@ A reviewer should be able to answer:
   route title?
 - Would the terminology and register sound ordinary beside several references
   actually read for this lesson?
+- Does each practice id still name the same task, or should the revision start
+  a new learner record?
+- If saved work or a replay is refused, is that refusal the intended result of
+  a real content change?
 
 Not every lesson needs a separate block for every answer. The answers must be
 present in the reasoning, examples, diagrams, and practice set as a whole.

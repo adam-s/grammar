@@ -144,6 +144,10 @@
         return 'started over';
       case 'complete':
         return 'finished the sentence';
+      case 'runStart':
+        return 'the guided run took the stage (work set aside)';
+      case 'runEnd':
+        return `the guided run ${entry.outcome === 'finished' ? 'finished' : 'stopped'} — work restored`;
     }
   }
 </script>

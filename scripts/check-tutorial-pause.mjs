@@ -111,6 +111,114 @@ if ((await launch.count()) === 0) {
   else pass('start-over returns when the run is done');
 }
 
+/* ---- the sandbox: a run performs in its own session and hands back the
+   learner's work, on stop AND on finish ---------------------------------- */
+{
+  // The learner builds half the sentence with their own (driven) hands.
+  await page.evaluate(() => window.__grammar.reset());
+  const steps = await page.evaluate(() => window.__grammar.plan());
+  const half = Math.max(2, Math.floor(steps.length / 2));
+  for (const step of steps.slice(0, half)) {
+    await page.evaluate((s) => {
+      const g = window.__grammar;
+      if (s.kind === 'form') g.selectSpan(s.span);
+      else g.selectNode(s.nodeId);
+      g.pick(s.key);
+    }, step);
+    await page.waitForTimeout(60);
+  }
+  const theirWork = await page.evaluate(() =>
+    JSON.stringify(window.__grammar.build.constituents),
+  );
+  const theirNodes = Object.keys(JSON.parse(theirWork)).length;
+  if (theirNodes === 0) {
+    fail('the learner half-build built nothing — the scenario is broken');
+  } else {
+    // The last pick left the palette open, and the launcher yields to it.
+    // Dismiss the palette the way a hand does, then launch.
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    if ((await page.locator('button.launch').count()) === 0) {
+      await page.mouse.click(640, 780);
+      await page.waitForTimeout(300);
+    }
+    // The run takes the stage. Mid-flight, the canvas must show ITS scratch.
+    await page.locator('button.launch').click();
+    await page.waitForTimeout(2500);
+    const midRun = await page.evaluate(() =>
+      JSON.stringify(window.__grammar.build.constituents),
+    );
+    if (midRun === theirWork)
+      fail('mid-run the canvas still shows the learner’s build — no scratch session');
+    else pass('the run performs in its own scratch session');
+
+    // Stop it. The learner's work comes back, exactly.
+    await page.locator('button.halt').click();
+    await page.waitForTimeout(400);
+    const afterStop = await page.evaluate(() =>
+      JSON.stringify(window.__grammar.build.constituents),
+    );
+    if (afterStop !== theirWork)
+      fail('stopping the run did not hand back the learner’s work');
+    else pass(`stopping the run hands back the learner’s work (${theirNodes} nodes)`);
+
+    // Watch it again, to the END this time. Same restore.
+    await page.locator('button.launch').click();
+    const outcome = await page
+      .waitForFunction(
+        () => {
+          const banner = document.querySelector('.banner');
+          if (banner?.textContent?.includes('The tutorial stopped'))
+            return { failed: banner.textContent };
+          const again = [...document.querySelectorAll('button.launch')].some((b) =>
+            b.textContent?.includes('Watch it again'),
+          );
+          return !banner && again ? { done: true } : false;
+        },
+        null,
+        { timeout: 240000, polling: 250 },
+      )
+      .then((h) => h.jsonValue())
+      .catch(() => ({ timeout: true }));
+    if (!outcome.done) {
+      fail('the run from a half-built draft did not complete');
+    } else {
+      await page.waitForTimeout(400);
+      const afterFinish = await page.evaluate(() =>
+        JSON.stringify(window.__grammar.build.constituents),
+      );
+      if (afterFinish !== theirWork)
+        fail('finishing the run did not hand back the learner’s work');
+      else pass('finishing the run hands back the learner’s work too');
+    }
+
+    // Through it all, the stored snapshot never saw the demonstration.
+    const snapshot = await page.evaluate(() => {
+      const key = `grammar:session:${window.__grammar.sentenceId}`;
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.stringify(JSON.parse(raw).build.constituents) : null;
+    });
+    if (snapshot !== theirWork) fail('the stored snapshot moved during the demonstration');
+    else pass('the snapshot never saw the demonstration');
+
+    // And the trace tells the story with brackets, not a fresh-start lie.
+    const brackets = await page.evaluate(() => {
+      const key = `grammar:trace:${window.__grammar.sentenceId}`;
+      const t = JSON.parse(localStorage.getItem(key) ?? '{"entries":[]}');
+      const kinds = t.entries.map((e) => e.kind);
+      return {
+        starts: kinds.filter((k) => k === 'runStart').length,
+        ends: t.entries.filter((e) => e.kind === 'runEnd').map((e) => e.outcome),
+      };
+    });
+    if (brackets.starts < 2 || brackets.ends.at(-1) !== 'finished')
+      fail(
+        `the trace does not bracket the runs (starts ${brackets.starts}, ends ${brackets.ends.join(',')})`,
+      );
+    else pass('the trace brackets both runs, outcomes included');
+  }
+}
+
 await browser.close();
 if (failures.length > 0) {
   console.error(`FAIL — ${failures.length} problem(s)`);

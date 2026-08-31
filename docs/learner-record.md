@@ -3,15 +3,14 @@
 The app remembers. A half-built diagram survives a reload with its misses and
 refused answers; finished sentences wear checkmarks that outlive almost any
 refactor; "Start over", "Reset all progress", and a JSON export give the
-learner the keys. The first layer of this plan shipped — the pure rules live
-in `src/lib/learner/`, the on-screen proof in
-`scripts/check-learner-record.mjs` — and this document now describes what
-holds, then plans the next layer: the event trace.
+learner the keys. The snapshot, completion set, and event trace have shipped.
+Their pure rules live in `src/lib/learner/`; the browser proofs live in
+`scripts/check-learner-record.mjs` and `scripts/check-replay.mjs`.
 
-The guiding choice was **snapshot first, history later**. The session state is
-a small plain object and every change to it goes through one pure transaction,
-so the snapshot closed the reload gap without foreclosing anything. The trace
-layers on top; nothing below it moves.
+The guiding choice was **snapshot first, history second**. The session state is
+a small plain object and every change to it goes through one pure transaction.
+The snapshot restores the latest state; the trace layers a replayable account
+over it without becoming a second grading system.
 
 ## What is stored
 
@@ -30,7 +29,15 @@ a schema version and a hash of the sentence's word list. A stale version
 discards the draft and starts fresh — no migration code. An edited sentence
 no longer matches its hash, and only that one snapshot is discarded. Sentence
 ids are stored, never sentence text, and nothing leaves the browser unless
-the learner exports it.
+the learner exports it. The export still contains learning history: builds,
+choices, misses, refused answers, and completion. Treat it as private learner
+data even though it does not contain an account name or the sentence wording.
+
+The current storage shell has one known ownership bug. It enumerates every
+`grammar:` key, so a progress export includes the theme preference and "Reset
+all progress" clears it. Theme is a product setting, not learner progress. The
+record needs its own namespace or one shared owned-key predicate, with tests
+that prove export and reset leave unrelated settings alone.
 
 ## What the learner sees
 
@@ -42,7 +49,7 @@ record as JSON — and because the snapshot includes the refused answers and
 misses, that dump is already a useful bug report.
 
 No step-forward, step-back, or play controls on the learner's own homework.
-Those belong to the debug route the trace layer adds, and to nothing else. If
+Those belong to the dev-only replay route, and to nothing else. If
 learners ever need history, that feature is called undo, and it is a separate
 decision.
 
@@ -58,7 +65,8 @@ rule is pure, in the browser sweep where only real storage can prove it.
    sentence over does not rewrite the past.
 2. **Neither the solution view nor the guided run counts as progress.** One
    shows the answer, the other performs it; only the learner's own decisions
-   record anything.
+   save a draft or earn completion. The trace may still record both for
+   debugging.
 3. **An explicit wrong answer stays in the record.** Restoring a session
    restores its misses and refusals, not just its tree.
 4. **Restoring never changes grammatical meaning.** A snapshot round-trips
@@ -99,14 +107,53 @@ the trace is the history it needs — and its plan is `docs/undo.md`.
 
 - The trace obeys every invariant above; recording changes no grading and no
   completion.
-- The guided run and the solution view appear IN the trace (a debugger needs
-  to see them) but still earn nothing — invariant 2 is about progress, not
-  visibility.
+- The guided run performs in a scratch session the learner's work never
+  sees: its start and end bracket its scripted picks in the trace, and
+  stopping or finishing hands the stage back to the learner's own build,
+  untouched. The picks appear in the trace because a debugger needs to see
+  them; they still do not save a draft or earn completion — invariant 2 is
+  about progress, not visibility.
 - A ring buffer caps each sentence's trace — invariant 6 made concrete. A
   truncated trace is still an honest log, but it no longer replays, and the
   bench says so instead of diverging on the missing beginning.
 - Sentence ids, never text; local until exported; a trace that fails its
   version, hash, or shape checks is refused whole, like a snapshot.
+
+## What a recording can prove
+
+A successful replay proves that today's grammar transaction can walk the same
+semantic path and produce the same build fingerprints and grading outcomes. A
+divergence identifies the first recorded decision where today's code disagrees
+with the recording. That narrows a state or grammar bug to one step; it does
+not, by itself, explain why the code changed.
+
+The trace deliberately does not record pointer coordinates, camera position,
+viewport size, timing, animation, or painted pixels. A replay with no
+divergence therefore does not disprove a layout, focus, drag, or hit-target
+bug. For those reports, use the exported record beside a screen recording or
+screenshot and the browser and viewport details. The two records answer
+different questions: the trace says what the app understood; the recording
+shows what the learner saw and did.
+
+The trace is also not usage analytics. Guided and development-driven picks run
+through the same event path as learner picks, and an entry does not identify
+its source. Raw counts therefore cannot support menu ordering, mastery claims,
+or adaptive practice. Any later analytics layer must first record provenance
+and define which sources and outcomes count; it must not reinterpret old traces
+that lack that distinction.
+
+## Debugging from an export
+
+1. Keep the original export unchanged. It is the evidence, including its app
+   stamp and any honest refusal or truncation.
+2. Load the trace in the dev-only replay bench and choose the matching sentence.
+3. If replay diverges, inspect the first disputed entry and the last state that
+   still agreed. Later failures may be consequences of that first one.
+4. If replay agrees, compare its semantic steps with the screen recording. Look
+   next at geometry, focus, camera movement, and pointer handling rather than
+   changing the grammar transaction.
+5. Reproduce a fix with a new trace. Do not edit the old export until it passes;
+   that would replace the report instead of explaining it.
 
 ## Still out of scope, on purpose
 

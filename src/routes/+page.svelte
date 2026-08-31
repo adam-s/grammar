@@ -44,7 +44,7 @@
     applyAction,
     emptySession,
     sessionChoices,
-    type NavigationResult,
+    type Session,
   } from '$lib/grammar/session.ts';
   import { layout } from '$lib/grammar/layout.ts';
   import { nodesInMarquee } from '$lib/grammar/marquee-selection.ts';
@@ -149,33 +149,35 @@
   );
   const words = $derived(sentence.words);
 
-  let build = $state(emptyBuild());
-  let selection = $state<Selection>({ kind: 'none' });
+  /**
+   * The learner's own session: build, selection, verdict, misses, refusals,
+   * navigation — one object, because `answer` and `applyAction` take and
+   * return exactly this shape, and because the guided run needs to set it
+   * aside WHOLE. (Its `misses` climb a ladder on purpose: a first wrong
+   * answer restates the claim so the learner can watch their own test fail;
+   * the truth arrives on the second miss, when it has been earned.)
+   */
+  let session = $state<Session>(emptySession());
+  /**
+   * The demonstration's scratch session, or null when no run is on stage.
+   * The run performs into THIS; the learner's session is never touched by a
+   * run — not reset at its start, not left holding its tree at its end.
+   * Stop or finish discards the scratch, and the learner's work is simply
+   * shown again, exactly as they left it.
+   */
+  let demo = $state<Session | null>(null);
+  /** What the canvas and palette work on: the run's scratch while a run is
+      on stage, the learner's session otherwise. */
+  const shown = $derived(demo ?? session);
   let draft = $state<Span | null>(null);
   let preview = $state<Form | null>(null);
   let marqueeIds = $state<string[]>([]);
-  let verdict = $state<Verdict | null>(null);
-  /** The last decision's movement instruction; cleared when the selection moves. */
-  let navigation = $state<NavigationResult | null>(null);
-  /** Wrong choices are remembered for the exact target that disproved them. */
-  let rejected = $state<Record<string, Record<string, string>>>({});
-  /**
-   * Misses per span, so a first wrong answer does not hand over the right one.
-   *
-   * `gradeForm` names the truth in its reason — "«are» is not a number, it is a
-   * verb" — and even its formal test is the test for the RIGHT answer, which
-   * ends "then it is a verb". Both teach well when someone is stuck and undo the
-   * exercise when they are guessing.
-   *
-   * So a first miss restates what was just claimed and lets the learner see it
-   * does not fit: "Not a number. A number counts or orders: three, first."
-   * Applying your own test and watching it fail is the skill. The truth arrives
-   * on the second miss, when it has been earned.
-   */
-  let misses = $state<Record<string, number>>({});
   /** High-water mark: the picture grows as the tree deepens, and never shrinks
-      back, so undoing one step does not re-flow everything the learner built. */
+      back, so undoing one step does not re-flow everything the learner built.
+      One per session, so a tall demonstration never inflates the learner's. */
   let depthMark = $state(0);
+  let demoDepth = $state(0);
+  const markDepth = $derived(demo ? demoDepth : depthMark);
   /**
    * Sentences finished, ever — the durable half of the learner record. Ids go
    * in only through `earnsCompletion`'s grade of the learner's own build, and
@@ -195,39 +197,48 @@
    */
   let solved = $state(false);
   const solvedBuild = $derived(replaySentence(sentence).final);
-  const visibleBuild = $derived(solved ? solvedBuild : build);
+  const visibleBuild = $derived(solved ? solvedBuild : shown.build);
   const visibleDepth = $derived(
-    solved ? layout(solvedBuild.constituents, words).maxDepth : depthMark,
+    solved ? layout(solvedBuild.constituents, words).maxDepth : markDepth,
   );
-  const visibleSelection = $derived<Selection>(solved ? { kind: 'none' } : selection);
+  const visibleSelection = $derived<Selection>(solved ? { kind: 'none' } : shown.selection);
 
   const frame = $derived(diagramSize(visibleBuild.constituents, words, visibleDepth));
-  const popupAnchor = $derived(selectionRect(build.constituents, words, selection, depthMark));
-  const popupFocus = $derived(selectionFocusRect(build.constituents, words, selection, depthMark));
-  const popupAvoid = $derived(drawnRect(build.constituents, words, depthMark));
+  const popupAnchor = $derived(
+    selectionRect(shown.build.constituents, words, shown.selection, markDepth),
+  );
+  const popupFocus = $derived(
+    selectionFocusRect(shown.build.constituents, words, shown.selection, markDepth),
+  );
+  const popupAvoid = $derived(drawnRect(shown.build.constituents, words, markDepth));
   const fitSelection = $derived.by(() => {
+    const sel = shown.selection;
     const span =
-      selection.kind === 'span'
-        ? selection.span
-        : selection.kind === 'node'
-          ? build.constituents[selection.id]?.span
-          : selection.kind === 'nodes'
-            ? selection.span
+      sel.kind === 'span'
+        ? sel.span
+        : sel.kind === 'node'
+          ? shown.build.constituents[sel.id]?.span
+          : sel.kind === 'nodes'
+            ? sel.span
             : null;
     return !!span && span[1] > span[0];
   });
 
+  /** Route a session change to whichever session is on stage. */
+  function updateShown(fn: (s: Session) => Session) {
+    if (demo) demo = fn(demo);
+    else session = fn(session);
+  }
+
   function reset() {
     solved = false;
-    build = emptyBuild();
-    selection = { kind: 'none' };
+    session = emptySession();
+    demo = null;
+    demoDepth = 0;
     draft = null;
     preview = null;
     marqueeIds = [];
-    clearFeedback();
     depthMark = 0;
-    misses = {};
-    rejected = {};
   }
 
   /** Swap what the canvas shows without replacing the learner's build. */
@@ -276,9 +287,7 @@
     });
     if (restored) {
       untrack(() => {
-        build = restored.build;
-        misses = restored.misses;
-        rejected = restored.rejected;
+        session = restored;
         depthMark = restoredDepth;
         // Completion is re-earned from the restored build, not read back
         // from a flag — the stored set only ever grows through a real grade.
@@ -325,7 +334,7 @@
   const posture = $derived(
     launchPosture({
       introduction: owner?.number === 1,
-      canvasEmpty: Object.keys(build.constituents).length === 0,
+      canvasEmpty: Object.keys(session.build.constituents).length === 0,
     }),
   );
   /**
@@ -334,9 +343,7 @@
    * lesson's required work ends. `answer` still receives `scope` below, so
    * later labels never become requirements for completing an early lesson.
    */
-  const choices = $derived(
-    sessionChoices({ build, selection, verdict, misses, rejected, navigation }, sentence, words),
-  );
+  const choices = $derived(sessionChoices(shown, sentence, words));
 
   /**
    * The guided run for this sentence, or nothing where there is not one.
@@ -382,7 +389,7 @@
    * answer's popup floats over the sweep it should have yielded to.
    */
   function dismissForGesture() {
-    if (selection.kind !== 'none' || verdict) closePalette();
+    if (shown.selection.kind !== 'none' || shown.verdict) closePalette();
   }
   const tutorialGestures: SelectionGestureHooks = {
     wordPoint: (i) => (ws.world ? measureWordPoint(ws.world, i) : null),
@@ -422,13 +429,29 @@
   }
   let panelRef = $state<PanelHandle | null>(null);
 
-  /** Reserve the finished tree before the first label lands. Without this the
-      words move down one row at a time while the tutorial is trying to teach
-      what appeared above them. */
-  function resetForTutorial() {
-    traceAppend({ kind: 'startOver' });
-    reset();
-    depthMark = tutorialDepth;
+  /**
+   * The run performs in its own scratch session; the learner's work is set
+   * aside untouched, and comes back the moment the demonstration leaves the
+   * stage — stopped or finished, no difference. `demoDepth` reserves the
+   * finished tree's rows up front, or the words would move down one row at a
+   * time while the run is teaching what appeared above them; being the
+   * scratch's own mark, it dies with the scratch instead of inflating the
+   * learner's layout.
+   */
+  let demoOutcome: 'finished' | 'stopped' = 'stopped';
+  function startDemo() {
+    demo = emptySession();
+    demoDepth = tutorialDepth;
+    demoOutcome = 'stopped';
+    traceAppend({ kind: 'runStart' });
+  }
+  function endDemo() {
+    if (!demo) return;
+    demo = null;
+    demoDepth = 0;
+    traceAppend({ kind: 'runEnd', outcome: demoOutcome });
+    // The learner's own work is back on stage; frame it where they left it.
+    void tick().then(() => ws.zoomToFit(frame));
   }
 
   /**
@@ -441,20 +464,26 @@
    * learner has moved on from.
    */
   function clearFeedback() {
-    verdict = null;
-    navigation = null;
+    updateShown((s) =>
+      s.verdict === null && s.navigation === null ? s : { ...s, verdict: null, navigation: null },
+    );
+  }
+
+  /** Move the on-stage selection, clearing the feedback that belonged to
+      the previous one — both halves of one gesture, whoever's hand it is. */
+  function selectShown(next: Selection) {
+    updateShown((s) => ({ ...s, selection: next, verdict: null, navigation: null }));
   }
 
   /** Replay names an existing node when its next decision belongs to that
       node. Live word-row gestures remain spans so they can build underneath. */
   function selectAs(next: Selection) {
-    clearFeedback();
     if (next.kind !== 'span') {
-      selection = next;
+      selectShown(next);
       return;
     }
-    const node = nodeOver(build, next.span);
-    selection = node ? { kind: 'node', id: node } : next;
+    const node = nodeOver(shown.build, next.span);
+    selectShown(node ? { kind: 'node', id: node } : next);
   }
 
   /** What the live palette says about one row, for the tutorial's postcondition. */
@@ -479,14 +508,14 @@
    * mount.
    */
   const tutorialHost: TutorialHost = {
-    anchorRect: () => wordRowRect(build.constituents, words, depthMark),
-    focusRect: (sel) => selectionFocusRect(build.constituents, words, sel, depthMark),
+    anchorRect: () => wordRowRect(shown.build.constituents, words, markDepth),
+    focusRect: (sel) => selectionFocusRect(shown.build.constituents, words, sel, markDepth),
     pointTarget: (sel) => (ws.world ? measureSelectionPoint(ws.world, sel) : null),
     select: selectAs,
-    selected: () => selection,
+    selected: () => shown.selection,
     offered: offeredRow,
     pick: pickByKey,
-    signature: () => buildSignature(build.constituents),
+    signature: () => buildSignature(shown.build.constituents),
     gestures: tutorialGestures,
     get canDrag() {
       return dragCapable.matches;
@@ -537,36 +566,30 @@
         return words.map((x) => x.text);
       },
       get selection() {
-        return selection;
+        return shown.selection;
       },
       get build() {
-        return { constituents: build.constituents, seq: build.seq };
+        return { constituents: shown.build.constituents, seq: shown.build.seq };
       },
       get panel() {
         return choices;
       },
       get verdict() {
-        return verdict;
+        return shown.verdict;
       },
       /** Sentence ids finished so far, for the learner-record sweep. */
       get completed() {
         return [...completed];
       },
       get misses() {
-        return misses;
+        return shown.misses;
       },
       get rejected() {
-        return rejected;
+        return shown.rejected;
       },
       openSentence: (id: string) => openSentence(id),
-      selectSpan: (span: Span) => {
-        clearFeedback();
-        selection = { kind: 'span', span };
-      },
-      selectNode: (id: string) => {
-        clearFeedback();
-        selection = { kind: 'node', id };
-      },
+      selectSpan: (span: Span) => selectShown({ kind: 'span', span }),
+      selectNode: (id: string) => selectShown({ kind: 'node', id }),
       /** Click an option by key, through the same handler the palette uses. */
       pick: pickByKey,
       /**
@@ -613,47 +636,47 @@
     // The word row always means "build from these words." A node label means
     // "edit this exact node." Keeping those gestures distinct is what lets a
     // learner draw the outside first, then add structure beneath it.
-    selection = { kind: 'span', span: grammatical };
-    traceSelect(selection);
+    selectShown({ kind: 'span', span: grammatical });
+    traceSelect(shown.selection);
   }
 
   function onmarquee(rect: Rect | null, done: boolean) {
     if (solved) return;
     if (!rect) {
       marqueeIds = [];
-      if (done) selection = { kind: 'none' };
+      if (done) selectShown({ kind: 'none' });
       return;
     }
 
-    const hit = nodesInMarquee(build.constituents, words, rect, depthMark);
+    const hit = nodesInMarquee(shown.build.constituents, words, rect, markDepth);
     marqueeIds = hit.ids;
     if (!done) return;
 
     marqueeIds = [];
-    clearFeedback();
     preview = null;
-    selection =
+    selectShown(
       hit.ids.length === 0 && hit.span
         ? { kind: 'span', span: hit.span }
         : hit.ids.length === 1 &&
             hit.span &&
-            build.constituents[hit.ids[0]!]?.span[0] === hit.span[0] &&
-            build.constituents[hit.ids[0]!]?.span[1] === hit.span[1]
+            shown.build.constituents[hit.ids[0]!]?.span[0] === hit.span[0] &&
+            shown.build.constituents[hit.ids[0]!]?.span[1] === hit.span[1]
           ? { kind: 'node', id: hit.ids[0]! }
           : hit.span
             ? { kind: 'nodes', ids: hit.ids, span: hit.span }
-            : { kind: 'none' };
-    traceSelect(selection);
+            : { kind: 'none' },
+    );
+    traceSelect(shown.selection);
   }
 
   function grew() {
-    depthMark = Math.max(depthMark, layout(build.constituents, words).maxDepth);
+    if (demo) demoDepth = Math.max(demoDepth, layout(demo.build.constituents, words).maxDepth);
+    else depthMark = Math.max(depthMark, layout(session.build.constituents, words).maxDepth);
   }
 
   function closePalette() {
-    selection = { kind: 'none' };
+    selectShown({ kind: 'none' });
     preview = null;
-    clearFeedback();
   }
 
   let previousRouteLessonId = $state('');
@@ -723,18 +746,13 @@
    * misses and refusals included.
    */
   function recordDecision() {
-    // The guided run drives these same handlers, but a demonstration is not
-    // the learner's work: it must neither overwrite their draft nor earn
-    // their checkmark — watching the answer built is the solution view's
-    // neighbour, and neither counts as progress. (A learner who picks on the
-    // demonstration-built tree AFTER the run does record from there; the
-    // grade still runs against what is genuinely on screen.)
-    if (tutorialActive) return;
-    writeKey(
-      snapshotKey(sentence.id),
-      encodeSnapshot({ build, selection, verdict, misses, rejected, navigation }, words),
-    );
-    recordCompletion(build);
+    // Structurally learner-only: this reads `session`, and the guided run's
+    // work lives in `demo`, which persistence cannot see. A demonstration is
+    // not the learner's work — it neither overwrites their draft nor earns
+    // their checkmark, and there is no state it could leave behind for a
+    // later pick to record from.
+    writeKey(snapshotKey(sentence.id), encodeSnapshot(session, words));
+    recordCompletion(session.build);
   }
 
   /**
@@ -743,33 +761,24 @@
    * Grading, the miss ladder, refusals and where the selection lands are the
    * same transaction whatever kind of question was asked, and they are testable
    * only outside a component — so they live there and this is the glue.
+   * The transaction runs on whichever session is on stage; only the
+   * learner's own lands in the record.
    */
   function pick(o: LabelOption) {
-    const before = build;
-    const asked = selection;
-    const next = answer(
-      { build, selection, verdict, misses, rejected, navigation },
-      sentence,
-      words,
-      o,
-      scope,
-    );
-    build = next.build;
-    selection = next.selection;
-    verdict = next.verdict;
-    misses = next.misses;
-    rejected = next.rejected;
-    navigation = next.navigation;
-    if (next.build !== before) grew();
+    const before = shown;
+    const next = answer(before, sentence, words, o, scope);
+    if (demo) demo = next;
+    else session = next;
+    if (next.build !== before.build) grew();
     if (next.selection.kind === 'none') preview = null;
     traceAppend({
       kind: 'pick',
-      selection: asked,
+      selection: before.selection,
       key: o.key,
       outcome: next.verdict?.kind ?? 'correct',
       fp: fingerprint(next.build),
     });
-    recordDecision();
+    if (!demo) recordDecision();
   }
 
   /**
@@ -779,15 +788,13 @@
    * remembered refusals against the new structure on its own.
    */
   function act(action: PanelAction) {
-    const next = applyAction({ build, selection, verdict, misses, rejected, navigation }, action);
-    build = next.build;
-    selection = next.selection;
-    verdict = next.verdict;
-    navigation = next.navigation;
+    const next = applyAction(shown, action);
+    if (demo) demo = next;
+    else session = next;
     traceAppend({ kind: 'edit', nodeId: action.nodeId, fp: fingerprint(next.build) });
     // An edit can newly finish a sentence — ungrouping one wrong extra layer
     // may leave exactly the target — so it saves and grades like an answer.
-    recordDecision();
+    if (!demo) recordDecision();
   }
 
   /**
@@ -924,7 +931,9 @@
           launcher={{ label: posture.label, arrow: posture.arrow, tone: posture.tone }}
           pointer={guidedPointer}
           obscured={popupAnchor !== null}
-          onstart={resetForTutorial}
+          onstart={startDemo}
+          onend={endDemo}
+          onfinish={() => (demoOutcome = 'finished')}
           onactive={(active) => (tutorialActive = active)}
           onpoint={(key) => (tutorialPointer = key)}
           onplacement={(menu) => (tutorialMenu = menu)}
@@ -935,8 +944,8 @@
       <LabelPanel
         bind:this={panelRef}
         panel={choices}
-        {verdict}
-        {navigation}
+        verdict={shown.verdict}
+        navigation={shown.navigation}
         anchor={popupAnchor}
         focus={popupFocus}
         fit={fitSelection}
@@ -986,8 +995,7 @@
         interactive={!solved && !tutorialActive}
         onpick={(s) => {
           if (solved || tutorialActive) return;
-          clearFeedback();
-          selection = s;
+          selectShown(s);
           traceSelect(s);
         }}
         {ondraft}

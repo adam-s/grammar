@@ -36,7 +36,7 @@ import type { SentenceEntry, Word } from '../grammar/types.ts';
 import { buildSignature } from '../tutorial/script.ts';
 import { soundBuild, wordHash } from './record.ts';
 
-export const TRACE_VERSION = 1;
+export const TRACE_VERSION = 2;
 /** Entries kept per sentence. Old ones fall off the front, marked honestly. */
 export const TRACE_CAP = 1000;
 
@@ -60,7 +60,17 @@ export type TraceEntry =
   | { seq: number; kind: 'edit'; nodeId: string; fp: string }
   | { seq: number; kind: 'solution'; shown: boolean }
   | { seq: number; kind: 'startOver' }
-  | { seq: number; kind: 'complete' };
+  | { seq: number; kind: 'complete' }
+  /**
+   * The guided run's brackets. The demonstration performs in a SCRATCH
+   * session the learner's work never sees: `runStart` sets the learner's
+   * session aside and the run's picks land on a fresh one; `runEnd` discards
+   * the scratch and the set-aside session is simply shown again. Replay does
+   * exactly the same, so the picks between the brackets verify like any
+   * others and the learner's next pick verifies against THEIR build.
+   */
+  | { seq: number; kind: 'runStart' }
+  | { seq: number; kind: 'runEnd'; outcome: 'finished' | 'stopped' };
 
 export interface Trace {
   v: number;
@@ -146,7 +156,10 @@ function soundEntry(e: unknown, words: readonly Word[]): e is TraceEntry {
       return typeof e['shown'] === 'boolean';
     case 'startOver':
     case 'complete':
+    case 'runStart':
       return true;
+    case 'runEnd':
+      return e['outcome'] === 'finished' || e['outcome'] === 'stopped';
     default:
       return false;
   }
@@ -217,17 +230,29 @@ export function replayTrace(
     };
   }
   let s = emptySession();
+  /** Sessions set aside by an open `runStart`, restored by its `runEnd`. */
+  const held: Session[] = [];
   const diverge = (seq: number, reason: string) => ({ steps, divergence: { seq, reason } });
 
   for (const entry of trace.entries) {
     switch (entry.kind) {
       case 'open':
         s = { ...emptySession(), build: entry.build, misses: entry.misses, rejected: entry.rejected };
+        // Navigating away kills a run without a `runEnd`; the next visit's
+        // checkpoint supersedes whatever the run had going.
+        held.length = 0;
         if (fingerprint(s.build) !== entry.fp)
           return diverge(entry.seq, 'the opening checkpoint does not match its own fingerprint');
         break;
       case 'startOver':
         s = emptySession();
+        break;
+      case 'runStart':
+        held.push(s);
+        s = emptySession();
+        break;
+      case 'runEnd':
+        s = held.pop() ?? s;
         break;
       case 'select':
         s = { ...s, selection: entry.selection, verdict: null, navigation: null };

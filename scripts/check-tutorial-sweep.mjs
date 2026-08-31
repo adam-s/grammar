@@ -160,11 +160,16 @@ for (const [lesson, sentenceId] of runsWanted) {
         .catch(() => {});
       break;
     }
-    const built = await page.evaluate(
+    // The run performs in its own scratch session and hands the stage back
+    // when it ends, so the canvas after a run holds the LEARNER's build —
+    // empty on a fresh sweep. Wait out the teardown beat so the count reads
+    // the handed-back canvas, not the scratch mid-discard.
+    await page.waitForTimeout(500);
+    const handedBack = await page.evaluate(
       () => Object.values(window.__grammar.build.constituents).length,
     );
     console.log(
-      `  ${where}: completed in ${Math.round((Date.now() - started) / 1000)}s, ${built} nodes built${attempt > 1 ? ' (after a reload retry)' : ''}`,
+      `  ${where}: completed in ${Math.round((Date.now() - started) / 1000)}s, stage handed back (${handedBack} learner nodes)${attempt > 1 ? ' (after a reload retry)' : ''}`,
     );
     done = true;
     await page.waitForTimeout(300);

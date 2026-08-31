@@ -110,6 +110,95 @@ test('a pick the palette no longer offers names its step too', () => {
   assert.match(divergence.reason, /no longer offers/);
 });
 
+test('the guided run performs in a scratch session and hands back the learner’s work', () => {
+  // The learner builds half the sentence; the run takes the stage, performs
+  // the WHOLE walk in its scratch; the run ends. The learner's next state
+  // must be their half-built work, untouched — recorded exactly as the page
+  // records it, then proved by replay.
+  const half = recordWalk(3);
+  let trace = appendEntry(half.trace, { kind: 'runStart' });
+
+  // The demonstration's picks, on a fresh scratch session.
+  const target = targetReading(canonicalReading(SENTENCE), SCOPE);
+  const { beats } = tutorialScript(SENTENCE, SCOPE, target ?? undefined);
+  let scratch = emptySession();
+  for (const beat of beats) {
+    scratch = { ...scratch, selection: beat.select, verdict: null };
+    const panel = sessionChoices(scratch, SENTENCE, SENTENCE.words, SCOPE);
+    const row = panel.groups.flatMap((g) => g.options).find((o) => o.key === beat.key)!;
+    scratch = answer(scratch, SENTENCE, SENTENCE.words, row, SCOPE);
+    trace = appendEntry(trace, {
+      kind: 'pick',
+      selection: beat.select,
+      key: beat.key,
+      outcome: scratch.verdict?.kind ?? 'correct',
+      fp: fingerprint(scratch.build),
+    });
+  }
+  trace = appendEntry(trace, { kind: 'runEnd', outcome: 'finished' });
+
+  const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
+  const after = steps.at(-1)!.session;
+  assert.equal(
+    fingerprint(after.build),
+    fingerprint(half.final.build),
+    'the run did not hand back the learner’s own build',
+  );
+  assert.deepEqual(after.misses, half.final.misses);
+});
+
+test('a learner pick after a run replays against THEIR build, not the demo’s', () => {
+  // Half a build, a full demonstration, then one more learner pick — the
+  // real continuation the sandbox exists to protect. If runEnd failed to
+  // restore, this pick's row would not even be offered.
+  const half = recordWalk(3);
+  let trace = appendEntry(half.trace, { kind: 'runStart' });
+  trace = appendEntry(trace, { kind: 'runEnd', outcome: 'stopped' });
+
+  const target = targetReading(canonicalReading(SENTENCE), SCOPE);
+  const { beats } = tutorialScript(SENTENCE, SCOPE, target ?? undefined);
+  const beat = beats[3]!;
+  let s: Session = { ...half.final, selection: beat.select, verdict: null };
+  const panel = sessionChoices(s, SENTENCE, SENTENCE.words, SCOPE);
+  const row = panel.groups.flatMap((g) => g.options).find((o) => o.key === beat.key)!;
+  s = answer(s, SENTENCE, SENTENCE.words, row, SCOPE);
+  trace = appendEntry(trace, {
+    kind: 'pick',
+    selection: beat.select,
+    key: beat.key,
+    outcome: s.verdict?.kind ?? 'correct',
+    fp: fingerprint(s.build),
+  });
+
+  const { divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
+});
+
+test('a run killed by navigation leaves no ghost: the next open supersedes it', () => {
+  // Switching sentences destroys a run without a runEnd. The next visit's
+  // open checkpoint must stand on its own.
+  const half = recordWalk(2);
+  let trace = appendEntry(half.trace, { kind: 'runStart' });
+  trace = appendEntry(trace, {
+    kind: 'open',
+    build: half.final.build,
+    misses: half.final.misses,
+    rejected: half.final.rejected,
+    fp: fingerprint(half.final.build),
+  });
+  const { steps, divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.equal(divergence, null, `diverged: ${divergence?.reason}`);
+  assert.equal(fingerprint(steps.at(-1)!.session.build), fingerprint(half.final.build));
+});
+
+test('a runEnd with no open run is a no-op, never a crash', () => {
+  let trace = emptyTrace(SENTENCE.id, SENTENCE.words, 'test');
+  trace = appendEntry(trace, { kind: 'runEnd', outcome: 'stopped' });
+  const { divergence } = replayTrace(trace, SENTENCE, SCOPE);
+  assert.equal(divergence, null);
+});
+
 test('startOver mid-trace resets the replay to empty and carries on', () => {
   let { trace } = recordWalk(2);
   trace = appendEntry(trace, { kind: 'startOver' });
