@@ -34,6 +34,21 @@ const corpusPath = (() => {
   return at >= 0 ? process.argv[at + 1] : null;
 })();
 
+/** Random walks per sentence, off the canonical path. 0 disables. */
+const walks = Number(process.argv.find((a) => a.startsWith('--walks='))?.split('=')[1] ?? 0);
+
+/** Deterministic PRNG, so a failing walk can be re-run exactly. */
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 /** kind -> text -> { count, example } */
 const corpus = new Map();
 let situations = 0;
@@ -55,6 +70,76 @@ const fresh = (build, selection) => ({
   rejected: {},
   navigation: null,
 });
+
+/**
+ * Everything one situation can show a learner, harvested: the panel's own
+ * copy, a first attempt at every pickable row, and a true second miss.
+ */
+function harvest(session, sentence, words, scope, where) {
+  situations += 1;
+  let panel;
+  try {
+    panel = sessionChoices(session, sentence, words, scope);
+  } catch (error) {
+    put('ENUMERATION ERROR', `${where}: ${error.message}`, where);
+    return;
+  }
+  put('panel prompt', panel.prompt, where);
+  put('panel blocked', panel.blocked, where);
+  if (panel.singledOut) put(`say it (${panel.singledOut.kind})`, panel.singledOut.text, where);
+  for (const action of panel.actions ?? []) put('action label', action.label, where);
+  for (const group of panel.groups) {
+    if (group.roleReason) put('group reason', group.roleReason, where);
+    for (const option of group.options) {
+      if (option.note) put(`note (${option.state})`, option.note, `${where}, ${option.key}`);
+    }
+  }
+  const rows = panel.groups.flatMap((g) => g.options).filter(isPickable);
+  const firsts = rows.map((row) => ({
+    row,
+    after: answer(session, sentence, words, row, scope),
+  }));
+  // Which rung a wrong answer landed on is the SESSION's fact, not the
+  // verdict's: a walk arrives carrying earlier misses, and its first wrong
+  // answer here may rightly be the second rung for that question.
+  const rungOf = (after) => {
+    for (const [key, count] of Object.entries(after.misses)) {
+      if (count !== (session.misses[key] ?? 0)) return Math.min(count, 2);
+    }
+    return 1;
+  };
+  for (const { row, after } of firsts) {
+    const v = after.verdict;
+    if (!v) continue;
+    const at = `${where}, picked ${row.label}`;
+    const kind = v.kind === 'wrong' ? `miss ${rungOf(after)}` : v.kind;
+    put(`${kind} text`, v.text, at);
+    put(`${kind} test`, v.test, at);
+  }
+  // A second miss on each wrong row, reached the way a learner reaches it:
+  // a DIFFERENT wrong answer to the SAME question first — misses are
+  // counted per question, so the other wrong answer must come from the same
+  // group or the second pick is still a first miss.
+  const wrongs = firsts.filter((f) => f.after.verdict?.kind === 'wrong');
+  const groupOf = (key) => panel.groups.find((g) => g.options.some((o) => o.key === key))?.id;
+  for (const { row } of wrongs) {
+    const other = wrongs.find(
+      (f) => f.row.key !== row.key && groupOf(f.row.key) === groupOf(row.key),
+    );
+    if (!other) continue;
+    const mid = answer(session, sentence, words, other.row, scope);
+    const midPanel = sessionChoices(mid, sentence, words, scope);
+    const again = midPanel.groups.flatMap((g) => g.options).find((o) => o.key === row.key);
+    if (!again || !isPickable(again)) continue;
+    const v = answer(mid, sentence, words, again, scope).verdict;
+    if (v?.kind === 'wrong') {
+      const at = `${where}, picked ${row.label} after another miss`;
+      put('miss 2 text', v.text, at);
+      put('miss 2 test', v.test, at);
+    }
+  }
+  return firsts;
+}
 
 for (const lesson of COURSE_LESSONS) {
   const scope = scopeThrough(COURSE_LESSONS, lesson.number);
@@ -81,7 +166,6 @@ for (const lesson of COURSE_LESSONS) {
         );
       }
       for (const selection of selections) {
-        situations += 1;
         const where = `${sentence.id}, step ${k}, ${
           selection.kind === 'span'
             ? `“${words
@@ -90,59 +174,51 @@ for (const lesson of COURSE_LESSONS) {
                 .join(' ')}”`
             : `node ${selection.id}`
         }`;
-        const session = fresh(build, selection);
-        let panel;
-        try {
-          panel = sessionChoices(session, sentence, words, scope);
-        } catch (error) {
-          put('ENUMERATION ERROR', `${where}: ${error.message}`, where);
-          continue;
-        }
-        put('panel prompt', panel.prompt, where);
-        put('panel blocked', panel.blocked, where);
-        if (panel.singledOut) put(`say it (${panel.singledOut.kind})`, panel.singledOut.text, where);
-        for (const action of panel.actions ?? []) put('action label', action.label, where);
-        for (const group of panel.groups) {
-          if (group.roleReason) put('group reason', group.roleReason, where);
-          for (const option of group.options) {
-            if (option.note) put(`note (${option.state})`, option.note, `${where}, ${option.key}`);
+        harvest(fresh(build, selection), sentence, words, scope, where);
+      }
+    }
+  }
+}
+
+/* ---------------------------------------------------- off-path walks */
+
+// Learners wander. Each walk starts from an empty build and takes LEGAL
+// picks in a random order — random selections, random pickable rows,
+// wrong answers included — harvesting every situation on the way. This is
+// where the strings live that no canonical enumeration reaches: panels over
+// half-built structure, misses against off-path trees, say-it tests on
+// selections the course never steers into.
+if (walks > 0) {
+  for (const lesson of COURSE_LESSONS) {
+    const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+    for (const sentence of lesson.sentences) {
+      const words = sentence.words;
+      for (let walk = 0; walk < walks; walk++) {
+        const rand = mulberry32(walk * 7919 + sentence.id.length * 104729 + lesson.number);
+        const among = (list) => list[Math.floor(rand() * list.length)];
+        let session = fresh(emptyBuild(), { kind: 'none' });
+        for (let step = 0; step < 14; step++) {
+          // A random selection: a word, a contiguous run, or a built node.
+          const nodes = Object.keys(session.build.constituents);
+          const roll = rand();
+          let selection;
+          if (roll < 0.4 || nodes.length === 0) {
+            const i = Math.floor(rand() * words.length);
+            selection = { kind: 'span', span: [i, i] };
+          } else if (roll < 0.7) {
+            const a = Math.floor(rand() * words.length);
+            const b = Math.floor(rand() * words.length);
+            selection = { kind: 'span', span: [Math.min(a, b), Math.max(a, b)] };
+          } else {
+            selection = { kind: 'node', id: among(nodes) };
           }
-        }
-        const rows = panel.groups.flatMap((g) => g.options).filter(isPickable);
-        const firsts = rows.map((row) => ({
-          row,
-          after: answer(session, sentence, words, row, scope),
-        }));
-        for (const { row, after } of firsts) {
-          const v = after.verdict;
-          if (!v) continue;
-          const at = `${where}, picked ${row.label}`;
-          const kind = v.kind === 'wrong' ? 'miss 1' : v.kind;
-          put(`${kind} text`, v.text, at);
-          put(`${kind} test`, v.test, at);
-        }
-        // A second miss on each wrong row, reached the way a learner
-        // reaches it: a DIFFERENT wrong answer to the SAME question first —
-        // misses are counted per question, so the other wrong answer must
-        // come from the same group or the second pick is still a first miss.
-        const wrongs = firsts.filter((f) => f.after.verdict?.kind === 'wrong');
-        const groupOf = (key) =>
-          panel.groups.find((g) => g.options.some((o) => o.key === key))?.id;
-        for (const { row } of wrongs) {
-          const other = wrongs.find(
-            (f) => f.row.key !== row.key && groupOf(f.row.key) === groupOf(row.key),
-          );
-          if (!other) continue;
-          const mid = answer(session, sentence, words, other.row, scope);
-          const midPanel = sessionChoices(mid, sentence, words, scope);
-          const again = midPanel.groups.flatMap((g) => g.options).find((o) => o.key === row.key);
-          if (!again || !isPickable(again)) continue;
-          const v = answer(mid, sentence, words, again, scope).verdict;
-          if (v?.kind === 'wrong') {
-            const at = `${where}, picked ${row.label} after another miss`;
-            put('miss 2 text', v.text, at);
-            put('miss 2 test', v.test, at);
-          }
+          session = { ...session, selection, verdict: null };
+          const where = `${sentence.id}, walk ${walk} step ${step}`;
+          const firsts = harvest(session, sentence, words, scope, where);
+          if (!firsts || firsts.length === 0) continue;
+          // Continue down one of the tried branches — right or wrong, the
+          // walk keeps whatever the transaction returned.
+          session = among(firsts).after;
         }
       }
     }
@@ -177,7 +253,10 @@ for (const [kind, byText] of corpus) {
     if (/text$/.test(kind) && !/[.?!”]$/.test(text.trim())) {
       problem(kind, text, example, 'a verdict should end like a sentence');
     }
-    if (kind === 'miss 1 text' && !/^“.+”/.test(text)) {
+    // A first miss names the words it grades — either opening on the quoted
+    // subject (the ladder's template) or quoting the group in the way (a
+    // structural refusal, which skips the ladder by design).
+    if (kind === 'miss 1 text' && !/“.+”/.test(text)) {
       problem(kind, text, example, 'a first miss should name the words it grades');
     }
     if (kind === 'miss 1 text' && truthy.test(text)) {
@@ -236,9 +315,7 @@ if (corpusPath) {
 }
 
 const distinct = [...corpus.values()].reduce((n, m) => n + m.size, 0);
-console.log(
-  `${situations} situations, ${distinct} distinct strings across ${corpus.size} kinds`,
-);
+console.log(`${situations} situations, ${distinct} distinct strings across ${corpus.size} kinds`);
 if (problems.length > 0) {
   console.error(`\nFAIL — ${problems.length} problem(s):`);
   for (const p of problems) console.error(`  ${p}`);

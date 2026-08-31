@@ -109,8 +109,11 @@ above is one of those two rules applied somewhere.
 - The mechanical audit cannot judge meaning; re-run the corpus read after
   any copy or transform change, and keep the "Say it" sections honest with
   a native ear (or a model standing in for one, as this evaluation did).
-- The enumeration covers canonical-path states plus every single-word
-  opening selection. Off-path builds reuse the same composers, but their
-  exact strings are not enumerated.
+- The default enumeration covers canonical-path states plus every
+  single-word opening selection; `--walks=N` adds seeded random walks —
+  legal picks in shuffled orders, wrong answers included — which is where
+  the off-path strings live (panels over half-built structure, structural
+  refusals actually picked, misses carrying earlier rungs). The audit runs
+  with walks in this repo's checks.
 - Per the course's own rule: none of this proves a hint is pedagogically
   true — a qualified person reading the corpus is still the real audit.

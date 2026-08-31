@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { frontedPhrase, nominal, punctuation, vtr } from './fixtures.ts';
+import type { Word } from './types.ts';
 import {
   cleft,
   demonstrations,
   front,
   passive,
+  passiveFor,
   performed,
   pseudoCleft,
   substitute,
@@ -143,5 +145,142 @@ describe('the note at the top of the module', () => {
       demonstrations(vtr.words, [2, 3]).map((d) => d.kind),
       ['substitute', 'front', 'cleft', 'pseudo-cleft'],
     );
+  });
+});
+
+describe('the say-it guards, pinned', () => {
+  // The corpus sweep found these classes; the fixes live in cleftable(),
+  // tidyRest(), and passiveFor()'s strict decomposition. Each pin below is
+  // one class, held still so a regression fails here before it reaches the
+  // 150,000-string corpus read.
+  type Spec = [string, Word['upos']] | [string, Word['upos'], Partial<Word>];
+  const word = (text: string, upos: Word['upos'], extra: Partial<Word> = {}): Word => ({
+    i: 0,
+    text,
+    upos,
+    xpos: extra.xpos ?? (upos === 'VERB' ? 'VBD' : upos === 'PUNCT' ? ',' : 'NN'),
+    lemma: extra.lemma ?? text.toLowerCase(),
+    ...extra,
+  });
+  const sentenceOf = (...specs: Spec[]): Word[] =>
+    specs.map(([text, upos, extra], i) => ({ ...word(text, upos, extra), i }));
+
+  it('declines a cleft whose remainder opens or closes on a conjunction', () => {
+    // "It was the bread that and the cheese vanished." — first-conjunct pull.
+    const w = sentenceOf(
+      ['The', 'DET'],
+      ['bread', 'NOUN'],
+      ['and', 'CCONJ'],
+      ['the', 'DET'],
+      ['cheese', 'NOUN'],
+      ['vanished', 'VERB'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(cleft(w, [0, 1]), null);
+  });
+
+  it('declines a remainder that strands a participle against another verb', () => {
+    // "the child standing by waved" — a reduced relative torn open.
+    const w = sentenceOf(
+      ['The', 'DET'],
+      ['child', 'NOUN'],
+      ['standing', 'VERB'],
+      ['by', 'ADP'],
+      ['the', 'DET'],
+      ['gate', 'NOUN'],
+      ['waved', 'VERB'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(cleft(w, [4, 5]), null, 'pulling “the gate” strands “standing by … waved”');
+  });
+
+  it('keeps both commas when an appositive is singled out whole', () => {
+    const w = sentenceOf(
+      ['The', 'DET'],
+      ['treasurer', 'NOUN'],
+      [',', 'PUNCT'],
+      ['a', 'DET'],
+      ['banker', 'NOUN'],
+      [',', 'PUNCT'],
+      ['resigned', 'VERB'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(cleft(w, [0, 4])!.text, 'It was the treasurer, a banker, that resigned.');
+  });
+
+  it('does not mistake a serial list’s commas for an appositive', () => {
+    const w = sentenceOf(
+      ['The', 'DET'],
+      ['boat', 'NOUN'],
+      ['carried', 'VERB'],
+      ['food', 'NOUN'],
+      [',', 'PUNCT'],
+      ['water', 'NOUN'],
+      [',', 'PUNCT'],
+      ['and', 'CCONJ'],
+      ['blankets', 'NOUN'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(cleft(w, [3, 8])!.text, 'It was food, water, and blankets that the boat carried.');
+  });
+
+  it('matches the sentence’s tense', () => {
+    const w = sentenceOf(
+      ['These', 'DET'],
+      ['apples', 'NOUN'],
+      ['are', 'VERB', { xpos: 'VBD' }], // fixtures default verbs to a past tag
+      ['ripe', 'ADJ'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(cleft(w, [0, 1])!.text, 'It is these apples that are ripe.');
+  });
+
+  it('declines a negative quantifier, which no cleft can single out', () => {
+    const w = sentenceOf(
+      ['Nobody', 'PRON', { lemma: 'nobody' }],
+      ['complained', 'VERB'],
+      ['loudly', 'ADV'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(cleft(w, [0, 0]), null);
+  });
+
+  it('the passive declines a sentence that does not decompose exactly', () => {
+    // "The clerk did file the deeds" — the auxiliary would leak into the
+    // by-phrase as "by the clerk did".
+    const w = sentenceOf(
+      ['The', 'DET'],
+      ['clerk', 'NOUN'],
+      ['did', 'AUX'],
+      ['file', 'VERB', { lemma: 'file' }],
+      ['the', 'DET'],
+      ['deeds', 'NOUN'],
+      ['.', 'PUNCT'],
+    );
+    assert.equal(passiveFor(w, [3], [4, 5]), null);
+  });
+
+  it('the passive agrees with the promoted run’s head, not its insides', () => {
+    const plural = sentenceOf(
+      ['A', 'DET'],
+      ['farmer', 'NOUN'],
+      ['grew', 'VERB', { lemma: 'grow' }],
+      ['some', 'DET'],
+      ['potatoes', 'NOUN'],
+      ['.', 'PUNCT'],
+    );
+    const grown = passiveFor(plural, [2], [3, 4]);
+    assert.ok(performed(grown));
+    assert.match(grown.text, /^Some potatoes were grown by/);
+    const pp = sentenceOf(
+      ['She', 'PRON', { lemma: 'she' }],
+      ['smiled', 'VERB', { lemma: 'smile' }],
+      ['at', 'ADP'],
+      ['us', 'PRON', { lemma: 'we' }],
+      ['.', 'PUNCT'],
+    );
+    const smiled = passiveFor(pp, [1], [2, 3]);
+    assert.ok(performed(smiled));
+    assert.match(smiled.text, /^At us was smiled by/);
   });
 });
