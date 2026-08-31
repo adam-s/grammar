@@ -118,10 +118,6 @@ const INTRODUCTION: LessonDoc = {
         'The words _raced past the barn_ identify which horse the sentence is about.',
     },
     {
-      kind: 'prose',
-      text: 'You knew every word before you started. The difficulty was seeing which words belonged together and what role each group played.',
-    },
-    {
       kind: 'section',
       eyebrow: 'the stakes',
       title: 'A grammar dispute led to a $5 million settlement',
