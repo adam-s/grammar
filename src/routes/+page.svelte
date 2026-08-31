@@ -752,7 +752,7 @@
   {ws}
   bind:active
   content={middleView === 'diagram' ? frame : undefined}
-  onmarquee={middleView === 'diagram' && !solved ? onmarquee : undefined}
+  onmarquee={middleView === 'diagram' && !solved && !tutorialActive ? onmarquee : undefined}
   tabs={['Sentences']}
   inspectorKind="navigation"
   inspectorTitle="Sentences"
@@ -798,7 +798,7 @@
         selectedId={middleView === 'diagram' ? sentenceId : null}
         completed={[...completed]}
         onselect={(id) => openSentence(id, closeDrawer)}
-        onreset={startOver}
+        onreset={tutorialActive ? undefined : startOver}
       />
       <div class="stack-end">
         <LessonNav
@@ -883,6 +883,12 @@
            defaulted to the natural depth painted the labels rows above every
            calculation whenever the mark exceeded what was built, as it does
            for a whole tutorial run. -->
+      <!-- While the guided run is on stage — paused included — the canvas is
+           its instrument, not the learner's: a selection slipped in during a
+           pause replaces the one the run just made, and its next pick asks a
+           palette that is answering a different question. The run's own
+           gestures call the handlers directly, so these gates close only the
+           learner's path. -->
       <Diagram
         {words}
         constituents={visibleBuild.constituents}
@@ -891,9 +897,9 @@
         selection={visibleSelection}
         {draft}
         {preview}
-        interactive={!solved}
+        interactive={!solved && !tutorialActive}
         onpick={(s) => {
-          if (solved) return;
+          if (solved || tutorialActive) return;
           clearFeedback();
           selection = s;
         }}
