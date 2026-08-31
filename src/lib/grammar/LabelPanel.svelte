@@ -881,7 +881,7 @@
   }
 
   @media (max-width: 700px) {
-    :global(main:has(.popup) [role='toolbar']) {
+    :global(main:has(.popup) [role='toolbar'][aria-label]) {
       visibility: hidden;
       pointer-events: none;
     }

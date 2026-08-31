@@ -74,6 +74,24 @@ export const PREDICT_DOCS: readonly LessonDoc[] = [
       },
       {
         kind: 'section',
+        eyebrow: 'same form, different jobs',
+        title: 'A noun phrase can be subject or object',
+      },
+      {
+        kind: 'label-key',
+        form: 'NP',
+        function: 'directObject',
+        formText: 'The words form a noun phrase.',
+        functionText: 'That noun phrase is paired directly with the verb as its object.',
+        rows: [
+          { form: 'NP', function: 'subject' },
+          { form: 'NP', function: 'directObject' },
+        ],
+        example:
+          'In _She repaired the engine_, _She_ and _the engine_ both have the form **NP**. _She_ functions as **subject**; _the engine_ functions as **direct object**.',
+      },
+      {
+        kind: 'section',
         eyebrow: 'the evidence',
         title: 'A pronoun can show the noun-phrase boundary',
       },

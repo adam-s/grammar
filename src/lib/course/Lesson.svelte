@@ -10,6 +10,7 @@
   import { diagramSize } from '../grammar/Diagram.svelte';
   import { FIXTURES } from '../grammar/fixtures.ts';
   import { canonicalReading } from '../grammar/types.ts';
+  import FormFunctionKey from './FormFunctionKey.svelte';
   import InlineText from './InlineText.svelte';
   import LessonHero from './LessonHero.svelte';
   import StaticFigure from './StaticFigure.svelte';
@@ -101,11 +102,33 @@
       <p class="subject"><InlineText text={block.text} /></p>
     {:else if block.kind === 'readings'}
       <div class="readings">
-        {#each block.rows as row (row.bracketed)}
-          <p class="bracketed">{row.bracketed}</p>
-          <p class="means"><InlineText text={row.means} /></p>
-        {/each}
+        <table>
+          <caption>Two possible groupings and what each one means</caption>
+          <thead>
+            <tr>
+              <th scope="col">Grouping</th>
+              <th scope="col">What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each block.rows as row (row.bracketed)}
+              <tr>
+                <td class="bracketed">{row.bracketed}</td>
+                <td class="means"><InlineText text={row.means} /></td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       </div>
+    {:else if block.kind === 'label-key'}
+      <FormFunctionKey
+        form={block.form}
+        function={block.function}
+        formText={block.formText}
+        functionText={block.functionText}
+        rows={block.rows}
+        example={block.example}
+      />
     {:else if block.kind === 'diagram'}
       <figure class="figure">
         <StaticFigure
@@ -222,6 +245,12 @@
     margin: var(--space-1) 0 0;
   }
 
+  /* A label key needs room for its two explanations, but no sentence row. */
+  .lesson > :global(.form-function-key) {
+    width: min(48rem, calc(100% + 2 * var(--page-pad)));
+    max-width: 48rem;
+  }
+
   /* ------------------------------------------------------------- openings */
 
   .opening {
@@ -303,47 +332,86 @@
   /* --------------------------------------------------------- two readings */
 
   .readings {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: baseline;
-    width: min(var(--figure), calc(100% + 2 * var(--page-pad)));
-    max-width: var(--figure);
+    width: min(48rem, calc(100% + 2 * var(--page-pad)));
+    max-width: 48rem;
     margin-top: 26px;
-    padding: 20px 22px;
-    gap: 10px 20px;
-    border-radius: var(--radius-md);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
     background: var(--sunken);
   }
 
-  .bracketed {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 13.5px;
-    line-height: 1.5;
+  .readings table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .readings caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
     white-space: nowrap;
   }
 
+  .readings th,
+  .readings td {
+    padding: 13px 16px;
+    border-right: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .readings th:first-child,
+  .readings td:first-child {
+    width: 43%;
+  }
+
+  .readings th:last-child,
+  .readings td:last-child {
+    border-right: 0;
+  }
+
+  .readings th {
+    color: var(--ink-faint);
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 650;
+    letter-spacing: 0.035em;
+  }
+
+  .readings tbody tr {
+    border-top: 1px solid var(--border);
+  }
+
+  .bracketed {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    font-weight: 550;
+    line-height: 1.55;
+  }
+
   .means {
-    margin: 0;
     color: var(--ink-muted);
     font-family: var(--font-sans);
-    font-size: 12.5px;
-    line-height: 1.5;
+    font-size: 13.5px;
+    line-height: 1.55;
   }
 
   @media (max-width: 640px) {
-    /* One scroller for the pair, not one per row: the two bracketings are only
-       legible against each other, so they have to move together. */
-    .readings {
-      grid-template-columns: max-content;
-      gap: 2px 0;
-      overflow-x: auto;
+    .readings th,
+    .readings td {
+      padding: 11px 12px;
     }
-    .bracketed {
-      white-space: pre;
+
+    .readings th {
+      font-size: 10.5px;
     }
+
+    .bracketed,
     .means {
-      margin-bottom: 12px;
+      font-size: 12.5px;
     }
   }
 

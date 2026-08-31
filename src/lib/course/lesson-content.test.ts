@@ -53,6 +53,17 @@ test('no diagram shows a label the lesson has not reached', () => {
         `${doc.id} draws ${sentenceId} at scope ${through ?? 'none'}, not ${lesson.number}`,
       );
     }
+    const scope = scopeThrough(COURSE_LESSONS, lesson.number);
+    for (const block of doc.blocks) {
+      if (block.kind !== 'label-key') continue;
+      for (const row of [{ form: block.form, function: block.function }, ...block.rows]) {
+        assert.ok(scope.has(`form:${row.form}`), `${doc.id} label key shows untaught ${row.form}`);
+        assert.ok(
+          scope.has(`func:${row.function}`),
+          `${doc.id} label key shows untaught ${row.function}`,
+        );
+      }
+    }
   }
 });
 

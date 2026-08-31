@@ -1,4 +1,4 @@
-import type { Func } from '../grammar/types.ts';
+import type { Form, Func } from '../grammar/types.ts';
 
 export type LessonBlock =
   | { kind: 'section'; eyebrow: string; title: string }
@@ -6,6 +6,19 @@ export type LessonBlock =
   | { kind: 'bridge'; text: string }
   | { kind: 'sentence'; text: string }
   | { kind: 'readings'; rows: { bracketed: string; means: string }[] }
+  | {
+      /**
+       * The diagram's visual grammar, isolated from a full sentence. It uses
+       * the production node label so this key cannot drift from the builder.
+       */
+      kind: 'label-key';
+      form: Form;
+      function: Func;
+      formText: string;
+      functionText: string;
+      rows: { form: Form; function: Func }[];
+      example: string;
+    }
   | {
       kind: 'diagram';
       sentenceId: string;

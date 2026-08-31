@@ -69,8 +69,26 @@ const INTRODUCTION: LessonDoc = {
         'This guide follows much of his approach, with coding agents helping to turn sentence diagrams into interactive tools.',
     },
     {
+      kind: 'section',
+      eyebrow: 'reading the diagram',
+      title: 'Form and function answer different questions',
+    },
+    {
       kind: 'prose',
-      text: 'A central part of that approach is the distinction between form and function. A form-and-function diagram shows what each word or group of words is and what job it does in the sentence. A noun phrase, for example, may function as a subject in one sentence and an object in another. This distinction makes the sentence’s structure and meaning easier to see.',
+      text: 'Each diagram label tells you what a word or group of words **is** and what job it **does here**. Grammar calls those two answers **form** and **function**.',
+    },
+    {
+      kind: 'label-key',
+      form: 'NP',
+      function: 'subject',
+      formText: 'The words form a noun phrase.',
+      functionText: 'That noun phrase is the subject of the sentence.',
+      rows: [
+        { form: 'NP', function: 'subject' },
+        { form: 'VP', function: 'predicate' },
+      ],
+      example:
+        'In the first diagram, _the horse raced past the barn_ has the form **NP** and the function **subject**.',
     },
     {
       kind: 'section',

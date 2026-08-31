@@ -37,7 +37,7 @@
   } from '$lib/grammar/measure.ts';
   import { GuidedPointer } from '$lib/workspace/guided-pointer.svelte.ts';
   import PointerLayer from '$lib/workspace/PointerLayer.svelte';
-  import { DRAG_QUERY, useMediaQuery } from '$lib/workspace/responsive.svelte.ts';
+  import { DRAG_QUERY, PHONE_QUERY, useMediaQuery } from '$lib/workspace/responsive.svelte.ts';
   import type { SelectionGestureHooks } from '$lib/workspace/selection-gesture.ts';
   import { emptyBuild, nodeOver, type BuildState } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
@@ -384,6 +384,8 @@
   const guidedPointer = new GuidedPointer();
   /** A pointer capability, not a viewport width — see DRAG_QUERY. */
   const dragCapable = useMediaQuery(DRAG_QUERY);
+  /** Mobile has a shorter label because its sentence actions share one bar. */
+  const phone = useMediaQuery(PHONE_QUERY);
 
   /**
    * The tutorial's selection gestures, wired to the SAME handlers the real
@@ -996,7 +998,7 @@
          the first announcement lands. -->
     <div class="sr-only" role="status" aria-live="polite">{liveNote}</div>
     {#if middleView === 'diagram' && !tutorialActive}
-      <div class="canvas-controls" data-stage-occluder>
+      <div class="canvas-controls" role="toolbar" aria-label="Sentence actions">
         <!-- Actions stay put on the solution view, merely disabled — a
              control that vanishes when the view flips reads as a glitch;
              one that dims reads as "not here, not now". -->
@@ -1019,7 +1021,13 @@
             onclick={() => void tutorialRef?.play()}
           >
             <GraduationCap size={15} strokeWidth={1.9} aria-hidden="true" />
-            {runStatus === 'idle' ? posture.label : 'Watch it again'}
+            {phone.matches
+              ? runStatus === 'idle'
+                ? 'Guide'
+                : 'Again'
+              : runStatus === 'idle'
+                ? posture.label
+                : 'Watch it again'}
           </button>
         {/if}
         <div class="solution-toggle" role="group" aria-label="Diagram state">
@@ -1223,8 +1231,8 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* The canvas's top-right controls: Back, then the view toggle. The row is
-     positioned; its members just sit in it, cut from the same cloth. */
+  /* The sentence actions sit at the top-right on a roomy canvas. On a phone,
+     the same row becomes a second toolbar above the camera tools. */
   .canvas-controls {
     display: flex;
     position: absolute;
@@ -1313,8 +1321,51 @@
 
   @media (max-width: 700px) {
     .canvas-controls {
-      top: max(60px, calc(env(safe-area-inset-top) + 60px));
-      right: 8px;
+      top: auto;
+      right: auto;
+      bottom: 72px;
+      left: 50%;
+      box-sizing: border-box;
+      max-width: calc(100% - 16px);
+      gap: 2px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--raised);
+      box-shadow: 0 6px 22px oklch(0 0 0 / 32%);
+      transform: translateX(-50%);
+    }
+    .undo-step,
+    .canvas-controls .launch,
+    .solution-toggle button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+    .undo-step {
+      width: 44px;
+    }
+    .canvas-controls .launch {
+      padding: 0 12px;
+    }
+    .undo-step:hover:not(:disabled),
+    .canvas-controls .launch:hover:not(:disabled),
+    .solution-toggle button:hover {
+      background: color-mix(in oklab, var(--ink) 9%, transparent);
+    }
+    .solution-toggle {
+      gap: 2px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+    .solution-toggle button {
+      padding: 0 10px;
     }
   }
 </style>
