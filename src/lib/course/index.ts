@@ -6,6 +6,7 @@ export { default as SentenceGraphs } from './SentenceGraphs.svelte';
 export { COURSE_LESSONS, COURSE_STAGES, lessonById, lessonNeighbours } from './course.ts';
 export { lessonDoc, type LessonDoc } from './lesson-content.ts';
 export { scopeThrough, targetReading, coversSentence, type FullScope } from './scope.ts';
+export { launchPosture, type LaunchPosture } from './launch-posture.ts';
 export { lessonHref } from './routes.ts';
 export { replaySentence, type RenderStep, type SentenceReplay } from './sentence-renderer.ts';
 export type { CourseLesson, CourseStage } from './types.ts';

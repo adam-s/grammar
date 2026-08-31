@@ -111,6 +111,15 @@ await page.waitForTimeout(400);
 const steps = await page.evaluate(() => window.__grammar.plan());
 const half = Math.max(1, Math.floor(steps.length / 2));
 
+/* 0 — a fresh record gets the full invitation */
+{
+  const arrowAtLauncher = await page.locator('.start-here').count();
+  const label = (await page.locator('button.launch').textContent())?.trim();
+  if (arrowAtLauncher === 0 || label !== 'Watch how it is built')
+    fail(`fresh record should invite ("${label}", arrow ${arrowAtLauncher})`);
+  else pass('a fresh record points "Start here" at the launcher');
+}
+
 /* 1 — half a build, one wrong answer, reload, everything back */
 {
   // One deliberate wrong answer first, so the record has a refusal to keep.
@@ -174,6 +183,10 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   else pass('the sentence list shows the checkmark');
   const keys = await storedKeys();
   if (!keys.includes(DONE_KEY)) fail('no completion record was stored');
+  const label = (await page.locator('button.launch').textContent())?.trim();
+  if (label !== 'See one built')
+    fail(`a finish should quiet the launcher — it says "${label}"`);
+  else pass('the first finish quiets the launcher to "See one built"');
 }
 
 /* 4 — completion and the finished build survive a reload */
@@ -196,6 +209,11 @@ const half = Math.max(1, Math.floor(steps.length / 2));
   const { nodes, completed } = await driver();
   if (nodes !== 0) fail('start over left nodes on the diagram');
   else pass('start over clears the diagram');
+  const wordsArrow = await page.locator('.words-start').count();
+  const launcherArrow = await page.locator('.start-here').count();
+  if (wordsArrow === 0 || launcherArrow > 0)
+    fail(`an experienced empty canvas should point at the words (words ${wordsArrow}, launcher ${launcherArrow})`);
+  else pass('an experienced learner’s "Start here" points at the words');
   if (!completed.includes(sentenceId)) fail('start over erased the completion — history died');
   else pass('start over keeps the completion');
   const keys = await storedKeys();

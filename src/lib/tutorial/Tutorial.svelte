@@ -95,6 +95,14 @@
      * measurement.
      */
     onplacement?: (menu: Rect | null) => void;
+    /**
+     * How the idle launcher presents itself: its label, whether the "Start
+     * here" arrow hangs on it, and how much room it takes. DECIDED elsewhere
+     * — the page derives it from the learner's evidence — and rendered here
+     * dumbly, so this component never learns what a lesson or a learner
+     * record is. The default is the full invitation.
+     */
+    launcher?: { label: string; arrow: boolean; tone: 'invite' | 'quiet' };
   };
 
   let {
@@ -110,6 +118,7 @@
     onactive,
     onpoint,
     onplacement,
+    launcher = { label: 'Watch how it is built', arrow: true, tone: 'invite' },
   }: Props = $props();
 
   const ws = getWorkspace();
@@ -556,8 +565,8 @@
 </script>
 
 {#if (run.status === 'idle' || run.status === 'stopped' || run.status === 'done') && !obscured}
-  <div class="launch-home" class:first={run.status === 'idle'}>
-    {#if run.status === 'idle'}
+  <div class="launch-home" class:first={run.status === 'idle' && launcher.arrow}>
+    {#if run.status === 'idle' && launcher.arrow}
       <div class="start-here" aria-hidden="true">
         <span>Start here</span>
         <svg viewBox="0 0 76 32" role="presentation">
@@ -566,9 +575,9 @@
         </svg>
       </div>
     {/if}
-    <button class="launch" type="button" onclick={play}>
+    <button class="launch" class:quiet={launcher.tone === 'quiet'} type="button" onclick={play}>
       <GraduationCap size={15} strokeWidth={1.9} aria-hidden="true" />
-      {run.status === 'idle' ? 'Watch how it is built' : 'Watch it again'}
+      {run.status === 'idle' ? launcher.label : 'Watch it again'}
     </button>
   </div>
 {/if}
@@ -701,6 +710,16 @@
   .launch:hover {
     color: var(--ink);
     border-color: var(--border-strong);
+  }
+  /* Quiet help, not an invitation: same pill, less of it. */
+  .launch.quiet {
+    padding: 5px 11px;
+    color: var(--ink-faint);
+    font-size: 11px;
+    box-shadow: none;
+  }
+  .launch.quiet:hover {
+    color: var(--ink);
   }
 
   /* Sized by its words: the explanation is the point of the run, so the box
