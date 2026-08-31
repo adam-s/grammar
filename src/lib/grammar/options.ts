@@ -772,9 +772,11 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
   };
 
   /**
-   * What verb form the clause has. A separate axis from what kind of clause it
-   * is, so it is a separate group; `finite` stands as the answer until someone
-   * changes it, and so never interrupts.
+   * What verb form the clause has. A separate axis from what kind of clause
+   * it is, so it is a separate group. Neither row is chosen until the
+   * learner answers: an omitted finiteness still reads as finite in a
+   * FINISHED tree, but omission in a work in progress means the question
+   * has not been answered yet.
    */
   const finiteness: OptionGroup = {
     id: 'finiteness',
@@ -791,7 +793,7 @@ function nodePanel(state: BuildState, words: Word[], id: string, scope: ChapterS
       key: `fin:${value}`,
       label,
       note,
-      state: ((c.finiteness ?? 'finite') === value ? 'chosen' : 'available') as OptionState,
+      state: (c.finiteness === value ? 'chosen' : 'available') as OptionState,
       finiteness: value as Finiteness,
     })),
   };
@@ -1114,10 +1116,9 @@ function withhold(groups: OptionGroup[], scope: ChapterScope): OptionGroup[] {
     options: g.options.map((o) => {
       const decision = decisionOf(o);
       if (decision === null || scope.has(decision)) return o;
-      // A row already applied to the node stays chosen. Every clause is finite
-      // unless someone says otherwise, so the finiteness group arrives with an
-      // answer long before any lesson teaches the question — and a palette that
-      // called that answer untaught would be denying what is on the screen.
+      // A row already applied to the node stays chosen — a palette that
+      // called a given answer untaught would be denying what is on the
+      // screen.
       if (o.state === 'chosen') return o;
       return { ...o, state: 'untaught' as OptionState, note: 'not taught yet' };
     }),

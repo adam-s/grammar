@@ -574,3 +574,39 @@ describe('editing commands: the blocked-repair path', () => {
     );
   });
 });
+
+describe('re-picking an answer is confirmation, not a rebuild', () => {
+  it('a chosen phrase form keeps the node, its identity, and its function', () => {
+    let s = pick(on(emptySession(), [2, 2]), 'form:Det');
+    s = pick(on(s, [3, 3]), 'form:N');
+    s = pick(on(s, [2, 3]), 'form:NP');
+    const npId = Object.keys(s.build.constituents).find(
+      (id) => s.build.constituents[id]!.form === 'NP',
+    )!;
+    // Confirm while the node still has an open question: praised, unchanged.
+    s = { ...s, selection: { kind: 'node', id: npId }, verdict: null };
+    let before = s.build;
+    s = pick(s, 'form:NP');
+    assert.equal(s.verdict?.kind, 'correct', 'the confirmation is graded, and praised');
+    assert.deepEqual(s.build, before, 'and the build is untouched');
+
+    // Confirm once the node is finished: closes like any settled question,
+    // and the node — identity, function, everything hung on it — survives.
+    s = { ...s, selection: { kind: 'node', id: npId }, verdict: null };
+    s = pick(s, 'func:directObject');
+    s = { ...s, selection: { kind: 'node', id: npId }, verdict: null };
+    before = s.build;
+    const after = pick(s, 'form:NP');
+    assert.deepEqual(after.build, before, 'the build is untouched');
+    assert.equal(after.build.constituents[npId]!.function, 'directObject', 'the job survives');
+    assert.equal(after.selection.kind, 'none', 'a finished node closes on confirmation');
+  });
+
+  it('a chosen word class re-picked changes nothing either', () => {
+    const s = pick(on(emptySession(), [1, 1]), 'form:V');
+    const before = s.build;
+    const again = pick(s, 'form:V');
+    assert.equal(again.verdict?.kind, 'correct');
+    assert.deepEqual(again.build, before);
+  });
+});

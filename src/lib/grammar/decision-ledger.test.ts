@@ -211,6 +211,8 @@ describe('the nested lesson-2 subject, state by state', () => {
     span(0, 5);
     assert.ok(choices(panel()).includes('form:S'));
     pick('form:S');
+    assert.equal(panel().step, 'finiteness', 'the sentence asks for its verb shape');
+    pick('fin:finite');
     assert.equal(s.selection.kind, 'none', 'the build is done and the palette is closed');
   });
 

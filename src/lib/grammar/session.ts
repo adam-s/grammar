@@ -766,6 +766,12 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
           ? duplicateStackTest
           : (FORMAL_TEST[o.form] ?? sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`)),
       apply: (b) => {
+        // Re-picking the node's own form is confirmation, not a rename.
+        // Renaming used to run anyway — unwrap then re-wrap — which quietly
+        // REPLACED the node: a new id, its function gone, everything hung on
+        // its identity dropped, all for clicking the answer a second time.
+        // A confirmed answer changes nothing.
+        if (!stack && id && loose && loose.form === o.form && loose.word === undefined) return b;
         // `wrap` always puts a node OVER what is there, so renaming means
         // taking the old one away first. The row says which this is.
         const bare = !stack && id && loose && loose.parent === null && loose.word === undefined;

@@ -827,8 +827,11 @@ export function setFiniteness(state: BuildState, id: string, finiteness: Finiten
   const c = state.constituents[id];
   if (!c || (c.form !== 'S' && c.form !== 'Cl')) return state;
   const cs = cloneMap(state.constituents);
-  if (finiteness === 'finite') delete cs[id]!.finiteness;
-  else cs[id]!.finiteness = finiteness;
+  // Stored even when the answer is 'finite'. A finished tree READS an
+  // omitted finiteness as finite, but a build in progress must not claim an
+  // answer nobody gave — that is the chosen-but-not-stored defect the voice
+  // question had.
+  cs[id]!.finiteness = finiteness;
   return { ...state, constituents: cs };
 }
 

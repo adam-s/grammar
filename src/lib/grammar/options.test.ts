@@ -4,6 +4,7 @@ import {
   emptyBuild,
   nodeOver,
   roots,
+  setFiniteness,
   setFunction,
   setOnlyVerbType,
   setVoice,
@@ -426,6 +427,26 @@ describe('the live question is the one on screen', () => {
       group(p, 'voice')!.options.find((option) => option.voice === 'active')!.state,
       'available',
     );
+  });
+
+  it('does not answer the finiteness question for the learner', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [0, 3], 'S');
+    const p = optionsFor(s, W, { kind: 'node', id: nodeOver(s, [0, 3])! });
+    assert.equal(group(p, 'finiteness')!.answered, null);
+    assert.equal(
+      group(p, 'finiteness')!.options.find((option) => option.finiteness === 'finite')!.state,
+      'available',
+    );
+  });
+
+  it('records an explicit finite answer', () => {
+    let s = emptyBuild();
+    s = wrap(s, W, [0, 3], 'S');
+    const id = nodeOver(s, [0, 3])!;
+    s = setFiniteness(s, id, 'finite');
+    const p = optionsFor(s, W, { kind: 'node', id });
+    assert.equal(group(p, 'finiteness')!.answered?.finiteness, 'finite');
   });
 
   it('records an explicit active answer', () => {
