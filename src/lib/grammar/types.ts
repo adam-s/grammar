@@ -33,6 +33,18 @@ export type Upos =
   | 'X';
 
 /**
+ * Words as a learner reads them: joined with spaces, except that punctuation
+ * closes up against the word before it. Every piece of copy that quotes a
+ * run of the sentence joins through here — a second join(' ') is how
+ * “the surgeon , a stranger” reaches the screen.
+ */
+export const joinWords = (words: readonly { text: string }[]): string =>
+  words
+    .map((w) => w.text)
+    .join(' ')
+    .replace(/\s+([.,;:!?])/g, '$1');
+
+/**
  * One surface word. `i` IS the word order — it is the array index and the
  * address (`w0`, `w1`, ...). Words never move; nothing may reorder this list.
  */

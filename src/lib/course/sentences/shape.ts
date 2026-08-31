@@ -104,7 +104,9 @@ export const flatName =
     n(
       'NP',
       fn,
-      parts.map((part) => w('N', 'flat', part)),
+      // NNP, because these ARE proper nouns — and the transforms rely on the
+      // tag to keep a name's capital when a test moves it mid-sentence.
+      parts.map((part) => w('N', 'flat', part, { xpos: 'NNP' })),
     );
 
 /**
@@ -356,7 +358,8 @@ export const apposName =
   (name: string, other: Phrase, closing = true): Phrase =>
   (fn) =>
     n('NP', fn, [
-      w('N', 'head', name),
+      // NNP: a name keeps its capital wherever a transform moves it.
+      w('N', 'head', name, { xpos: 'NNP' }),
       pt(','),
       other('appositive'),
       ...(closing ? [pt(',')] : []),

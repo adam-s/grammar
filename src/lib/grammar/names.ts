@@ -316,19 +316,21 @@ export const FORM_TESTS: Record<Form, FormTest> = {
   },
   VP: {
     short: 'starts at the verb, runs to the end of what it governs',
-    asked: 'Does it start at the verb and run to the end of what the verb governs?',
+    asked:
+      'Does it start at the verb and run to the end of what the verb governs? Then it is a verb phrase.',
   },
   PP: {
     short: 'a preposition plus the noun phrase after it',
-    asked: 'Does it start with a preposition and take a noun phrase after it?',
+    asked:
+      'Does it start with a preposition and take a noun phrase after it? Then it is a prepositional phrase.',
   },
   AdjP: {
     short: 'put “very” in front of the whole run',
-    asked: 'Can you put “very” in front of the whole run?',
+    asked: 'Can you put “very” in front of the whole run? Then it is an adjective phrase.',
   },
   AdvP: {
     short: 'the whole run tells you how, when, or where',
-    asked: 'Does the whole run tell you how, when, or where?',
+    asked: 'Does the whole run tell you how, when, or where? Then it is an adverb phrase.',
   },
   Cl: {
     short: 'has its own subject and verb, inside a bigger sentence',
@@ -349,30 +351,36 @@ export const FORMAL_TEST: Record<string, string> = Object.fromEntries(
 );
 
 /** The question that finds each function. */
+/**
+ * One whole sentence per function: the question it answers, or what it does.
+ * Whole sentences on purpose — these are shown alone as first-miss hints and
+ * as row notes, and a fragment glued into a frame (“The premodifier answers:
+ * sits before the head”) read as broken English in both places.
+ */
 export const FUNCTION_TEST: Record<Func, string> = {
-  subject: 'WHO or WHAT does it?',
-  predicate: 'everything said about the subject',
-  directObject: 'the verb — WHAT?',
-  indirectObject: 'to WHOM, or for whom?',
-  subjectComplement: 'renames or describes the subject',
-  objectComplement: 'renames or describes the direct object',
-  adverbial: 'how, when, where, or why',
-  head: 'the word the phrase is named after',
-  auxiliary: 'is, have, will — the main verb still follows it',
-  determiner: 'the, a, this, my — points the noun out',
-  premodifier: 'sits before the head and narrows it',
-  postmodifier: 'sits after the head and narrows it',
-  complement: 'completes the preposition or adjective',
-  coordinate: 'joined to an equal by and / but / or',
-  coordinator: 'and, but, or — the word doing the joining',
-  prenucleus: 'moved to the front, and answers to a gap further in',
-  postnucleus: 'moved to the end, and belongs to something earlier',
-  placeholderSubject: 'it holds the subject slot; the real one is elsewhere',
-  extraposed: 'the real content, moved to the end because it is long',
-  displaced: 'what the sentence is about, sitting behind the verb',
-  flat: 'part of a name, with no head to argue about',
-  particle: 'the “up” in “looked up the word” — it belongs to the verb',
-  supplement: 'set off from the sentence, and fills no slot in it',
-  appositive: 'renames the noun beside it',
-  marker: 'introduces the clause and joins it on',
+  subject: 'The subject answers: WHO or WHAT does it?',
+  predicate: 'The predicate is everything said about the subject.',
+  directObject: 'The direct object answers: the verb — WHAT?',
+  indirectObject: 'The indirect object answers: to WHOM, or for whom?',
+  subjectComplement: 'The subject complement renames or describes the subject.',
+  objectComplement: 'The object complement renames or describes the direct object.',
+  adverbial: 'The adverbial answers: how, when, where, or why?',
+  head: 'The head is the word the phrase is named after.',
+  auxiliary: 'An auxiliary helps the main verb — is, have, will — and the main verb still follows.',
+  determiner: 'The determiner points the noun out — the, a, this, my.',
+  premodifier: 'A premodifier sits before the head and narrows it.',
+  postmodifier: 'A postmodifier sits after the head and narrows it.',
+  complement: 'The complement completes the preposition or adjective.',
+  coordinate: 'A coordinate is joined to an equal by and / but / or.',
+  coordinator: 'The coordinator is the word doing the joining — and, but, or.',
+  prenucleus: 'The fronted phrase is moved to the front, and answers to a gap further in.',
+  postnucleus: 'The tail phrase is moved to the end, and belongs to something earlier.',
+  placeholderSubject: 'The placeholder subject holds the subject slot; the real one is elsewhere.',
+  extraposed: 'The extraposed part is the real content, moved to the end because it is long.',
+  displaced: 'The displaced subject is what the sentence is about, sitting behind the verb.',
+  flat: 'A flat piece is part of a name, with no head to argue about.',
+  particle: 'The particle belongs to the verb — the “up” in “looked up the word”.',
+  supplement: 'A supplement is set off from the sentence, and fills no slot in it.',
+  appositive: 'An appositive renames the noun beside it.',
+  marker: 'The marker introduces the clause and joins it on.',
 };

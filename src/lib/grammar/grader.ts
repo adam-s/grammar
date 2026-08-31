@@ -15,8 +15,9 @@
  */
 import { verbs } from './clause.ts';
 import { label } from './audits.ts';
-import { FORMAL_TEST } from './names.ts';
-import { analysesOf, isPhraseForm, isWordForm } from './types.ts';
+import { FORMAL_TEST, clauseKindName } from './names.ts';
+import { VERB_TYPE_CLAIM } from './rules.ts';
+import { analysesOf, isPhraseForm, isWordForm, joinWords } from './types.ts';
 import type { BuildState, Span } from './builder.ts';
 import type {
   AuxKind,
@@ -39,8 +40,13 @@ export type Outcome =
   | { kind: 'wrong'; reason: string; test?: string };
 
 /** Plain-language names. A learner reads these; "is not a N" is not English. */
+/** “a” or “an”, decided by the sound the phrase starts with — near enough. */
+const an = (phrase: string): string => (/^[aeiou]/i.test(phrase) ? `an ${phrase}` : `a ${phrase}`);
+
 export const PLAIN: Record<string, string> = {
   S: 'a sentence',
+  Nom: 'a nominal',
+  DP: 'a determinative phrase',
   NP: 'a noun phrase',
   VP: 'a verb phrase',
   PP: 'a prepositional phrase',
@@ -118,10 +124,7 @@ export function gradeForm(
   const here = level
     ? [...all].filter((f) => (level === 'word' ? isWordForm(f) : isPhraseForm(f)))
     : [...all];
-  const words = sentence.words
-    .slice(span[0], span[1] + 1)
-    .map((w) => w.text)
-    .join(' ');
+  const words = joinWords(sentence.words.slice(span[0], span[1] + 1));
 
   if (all.size === 0) {
     return {
@@ -180,10 +183,7 @@ export function gradeFunction(
       ),
     )
   ) {
-    const words = sentence.words
-      .slice(span[0], span[1] + 1)
-      .map((w) => w.text)
-      .join(' ');
+    const words = joinWords(sentence.words.slice(span[0], span[1] + 1));
     return {
       kind: 'wrong',
       reason: `“${words}” is ${obligatory ? 'an optional' : 'an obligatory'} adverbial here.`,
@@ -197,15 +197,24 @@ export function gradeFunction(
       .map((c) => c.function)
       .filter((f): f is Func => f != null),
   );
-  const words = sentence.words
-    .slice(span[0], span[1] + 1)
-    .map((w) => w.text)
-    .join(' ');
+  const words = joinWords(sentence.words.slice(span[0], span[1] + 1));
   if (truths.size === 1) {
     const truth = [...truths][0]!;
     return {
       kind: 'wrong',
       reason: `“${words}” is not the ${label(fn)} here — it is the ${label(truth)}.`,
+    };
+  }
+  if (truths.size === 0) {
+    // The second miss has to teach something the first did not. When no
+    // reading gives this node any role at all, the truth IS that fact —
+    // restating the refusal would be a ladder rung that goes nowhere.
+    return {
+      kind: 'wrong',
+      reason:
+        form === 'S'
+          ? `“${words}” is the whole sentence — nothing outside it gives it a job.`
+          : `“${words}” has no job of its own here — the job belongs to the larger group it sits in.`,
     };
   }
   return { kind: 'wrong', reason: `“${words}” is not the ${label(fn)} here.` };
@@ -246,9 +255,19 @@ export function gradeVerbType(sentence: SentenceEntry, wordIndex: number, type: 
           };
     }
   }
+  // The readings know what this verb actually is, and the second miss has
+  // earned that truth — a claim-shaped restatement teaches nothing new.
+  const truth = ordered(sentence)
+    .map((r) => {
+      const verb = verbs(r.constituents).find((id) => r.constituents[id]!.span[0] === wordIndex);
+      return verb ? r.constituents[verb]!.verbType : undefined;
+    })
+    .find((t): t is VerbType => t != null);
   return {
     kind: 'wrong',
-    reason: `Not ${PLAIN[type] ?? type} here.`,
+    reason: truth
+      ? `This verb is not ${VERB_TYPE_CLAIM[type]} — it is ${VERB_TYPE_CLAIM[truth]}.`
+      : `This verb is not ${VERB_TYPE_CLAIM[type]} here.`,
     test: VERB_TYPE_TEST,
   };
 }
@@ -471,7 +490,21 @@ export function gradeClauseKind(sentence: SentenceEntry, span: Span, kind: Claus
           };
     }
   }
-  return { kind: 'wrong', reason: 'Not that kind of clause here.', test: CLAUSE_KIND_TEST };
+  const truth = ordered(sentence)
+    .flatMap((r) =>
+      Object.values(r.constituents).filter(
+        (c) => c.form === 'Cl' && c.span[0] === span[0] && c.span[1] === span[1],
+      ),
+    )
+    .map((c) => c.clauseKind)
+    .find((k): k is ClauseKind => k != null);
+  return {
+    kind: 'wrong',
+    reason: truth
+      ? `This is not ${an(clauseKindName(kind))} — it is ${an(clauseKindName(truth))}.`
+      : 'Not that kind of clause here.',
+    test: CLAUSE_KIND_TEST,
+  };
 }
 
 /** The test for finiteness: can the verb change for tense on its own? */
@@ -500,7 +533,22 @@ export function gradeFiniteness(
           };
     }
   }
-  return { kind: 'wrong', reason: 'Not that verb form here.', test: FINITENESS_TEST };
+  const truth = ordered(sentence)
+    .flatMap((r) =>
+      Object.values(r.constituents).filter(
+        (c) =>
+          (c.form === 'S' || c.form === 'Cl') && c.span[0] === span[0] && c.span[1] === span[1],
+      ),
+    )
+    .map((c) => c.finiteness ?? 'finite')
+    .find((f): f is Finiteness => f != null);
+  return {
+    kind: 'wrong',
+    reason: truth
+      ? `This clause is not ${finiteness} — it is ${truth}.`
+      : 'Not that verb form here.',
+    test: FINITENESS_TEST,
+  };
 }
 
 export type Hint =

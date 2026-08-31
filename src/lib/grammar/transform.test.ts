@@ -33,10 +33,26 @@ describe('the tests you perform', () => {
     assert.equal(pseudoCleft(w, [2, 3])!.text, 'What she repaired was the engine');
   });
 
-  it('runs the test on a run that is NOT one thing, and lets it sound wrong', () => {
-    // "repaired the" is not a constituent, and the point is that the learner
-    // hears that rather than being told it.
-    assert.equal(cleft(w, [1, 2])!.text, 'It was repaired the that she engine');
+  it('runs the test on a verbless run that is NOT one thing, and lets it sound wrong', () => {
+    // "engine" without its determiner is not the whole constituent, and the
+    // point is that the learner hears that rather than being told it.
+    assert.equal(cleft(w, [3, 3])!.text, 'It was engine that she repaired the');
+  });
+
+  it('declines a run with nothing noun-ish to sit between “it was” and “that”', () => {
+    // A bare determiner cannot cleft even as a demonstration of failure.
+    assert.equal(cleft(w, [2, 2]), null);
+  });
+
+  it('declines a run containing a verb, where the test cannot pass even for a right answer', () => {
+    // "repaired the engine" is a perfectly good verb phrase, and its cleft —
+    // *It was repaired the engine that she* — sounds wrong anyway. A test
+    // that fails for a correct selection is not evidence, so it is not run.
+    assert.equal(cleft(w, [1, 3]), null);
+    assert.equal(pseudoCleft(w, [1, 3]), null);
+    // The same rule declines the non-constituent "repaired the": no cleft is
+    // better than one whose verdict means nothing.
+    assert.equal(cleft(w, [1, 2]), null);
   });
 
   it('keeps the closing punctuation at the end, wherever the words go', () => {

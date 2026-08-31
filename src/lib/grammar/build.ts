@@ -27,6 +27,7 @@ import type {
   Word,
   WordForm,
 } from './types.ts';
+import { joinWords } from './types.ts';
 
 export interface SpecNode {
   /** null only for a punctuation token, which has no form because it has no node. */
@@ -255,8 +256,5 @@ export function build(
 
 /** Render the word list back to a sentence, so fixture text cannot drift. */
 export function textOf(words: Word[]): string {
-  return words
-    .map((x) => x.text)
-    .join(' ')
-    .replace(/\s+([.,;:!?])/g, '$1');
+  return joinWords(words);
 }

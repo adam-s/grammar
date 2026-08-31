@@ -79,18 +79,29 @@ export function regularS(lemma: string): string {
   return `${lemma}s`;
 }
 
+/**
+ * A one-syllable verb ending vowel-consonant doubles that consonant before
+ * -ed and -ing: *stop* → *stopped*, *plan* → *planning*. Without this the
+ * rules produced *stoped* and *planed* — words that put a wrong spelling in
+ * front of a learner with a straight face.
+ */
+const doublesFinal = (lemma: string): boolean => /^[^aeiou]*[aeiou][bcdfgklmnprstvz]$/.test(lemma);
+
 /** *repair* → *repaired*, *like* → *liked*, *carry* → *carried*. */
 export function regularPast(lemma: string): string {
   if (lemma.endsWith('e')) return `${lemma}d`;
   if (lemma.length > 1 && lemma.endsWith('y') && consonant(lemma[lemma.length - 2]!)) {
     return `${lemma.slice(0, -1)}ied`;
   }
+  if (doublesFinal(lemma)) return `${lemma}${lemma[lemma.length - 1]}ed`;
   return `${lemma}ed`;
 }
 
 /** *repair* → *repairing*, *like* → *liking*. */
 export function regularIng(lemma: string): string {
-  return lemma.endsWith('e') && !lemma.endsWith('ee') ? `${lemma.slice(0, -1)}ing` : `${lemma}ing`;
+  if (lemma.endsWith('e') && !lemma.endsWith('ee')) return `${lemma.slice(0, -1)}ing`;
+  if (doublesFinal(lemma)) return `${lemma}${lemma[lemma.length - 1]}ing`;
+  return `${lemma}ing`;
 }
 
 /* ------------------------------------------------------------- irregular */
@@ -111,25 +122,53 @@ export const IRREGULAR: readonly VerbForms[] = [
     ing: 'being',
     also: ['am', 'are', 'were'],
   },
+  { lemma: 'become', s: 'becomes', past: 'became', participle: 'become', ing: 'becoming' },
   { lemma: 'break', s: 'breaks', past: 'broke', participle: 'broken', ing: 'breaking' },
+  { lemma: 'bring', s: 'brings', past: 'brought', participle: 'brought', ing: 'bringing' },
+  { lemma: 'burst', s: 'bursts', past: 'burst', participle: 'burst', ing: 'bursting' },
   { lemma: 'buy', s: 'buys', past: 'bought', participle: 'bought', ing: 'buying' },
+  { lemma: 'catch', s: 'catches', past: 'caught', participle: 'caught', ing: 'catching' },
   { lemma: 'come', s: 'comes', past: 'came', participle: 'come', ing: 'coming' },
+  { lemma: 'cost', s: 'costs', past: 'cost', participle: 'cost', ing: 'costing' },
   { lemma: 'do', s: 'does', past: 'did', participle: 'done', ing: 'doing' },
+  { lemma: 'draw', s: 'draws', past: 'drew', participle: 'drawn', ing: 'drawing' },
+  { lemma: 'fall', s: 'falls', past: 'fell', participle: 'fallen', ing: 'falling' },
+  { lemma: 'feel', s: 'feels', past: 'felt', participle: 'felt', ing: 'feeling' },
   { lemma: 'find', s: 'finds', past: 'found', participle: 'found', ing: 'finding' },
+  { lemma: 'fly', s: 'flies', past: 'flew', participle: 'flown', ing: 'flying' },
   { lemma: 'forget', s: 'forgets', past: 'forgot', participle: 'forgotten', ing: 'forgetting' },
+  { lemma: 'freeze', s: 'freezes', past: 'froze', participle: 'frozen', ing: 'freezing' },
   { lemma: 'give', s: 'gives', past: 'gave', participle: 'given', ing: 'giving' },
   { lemma: 'go', s: 'goes', past: 'went', participle: 'gone', ing: 'going' },
+  { lemma: 'grow', s: 'grows', past: 'grew', participle: 'grown', ing: 'growing' },
   { lemma: 'have', s: 'has', past: 'had', participle: 'had', ing: 'having' },
   { lemma: 'hold', s: 'holds', past: 'held', participle: 'held', ing: 'holding' },
   { lemma: 'know', s: 'knows', past: 'knew', participle: 'known', ing: 'knowing' },
+  { lemma: 'lay', s: 'lays', past: 'laid', participle: 'laid', ing: 'laying' },
+  { lemma: 'lead', s: 'leads', past: 'led', participle: 'led', ing: 'leading' },
   { lemma: 'leave', s: 'leaves', past: 'left', participle: 'left', ing: 'leaving' },
   { lemma: 'make', s: 'makes', past: 'made', participle: 'made', ing: 'making' },
+  { lemma: 'meet', s: 'meets', past: 'met', participle: 'met', ing: 'meeting' },
   { lemma: 'put', s: 'puts', past: 'put', participle: 'put', ing: 'putting' },
+  { lemma: 'read', s: 'reads', past: 'read', participle: 'read', ing: 'reading' },
+  { lemma: 'ring', s: 'rings', past: 'rang', participle: 'rung', ing: 'ringing' },
+  { lemma: 'rise', s: 'rises', past: 'rose', participle: 'risen', ing: 'rising' },
   { lemma: 'run', s: 'runs', past: 'ran', participle: 'run', ing: 'running' },
   { lemma: 'say', s: 'says', past: 'said', participle: 'said', ing: 'saying' },
   { lemma: 'see', s: 'sees', past: 'saw', participle: 'seen', ing: 'seeing' },
   { lemma: 'sell', s: 'sells', past: 'sold', participle: 'sold', ing: 'selling' },
+  { lemma: 'send', s: 'sends', past: 'sent', participle: 'sent', ing: 'sending' },
+  { lemma: 'set', s: 'sets', past: 'set', participle: 'set', ing: 'setting' },
+  { lemma: 'show', s: 'shows', past: 'showed', participle: 'shown', ing: 'showing' },
+  { lemma: 'sing', s: 'sings', past: 'sang', participle: 'sung', ing: 'singing' },
+  { lemma: 'sink', s: 'sinks', past: 'sank', participle: 'sunk', ing: 'sinking' },
+  { lemma: 'sleep', s: 'sleeps', past: 'slept', participle: 'slept', ing: 'sleeping' },
+  { lemma: 'spread', s: 'spreads', past: 'spread', participle: 'spread', ing: 'spreading' },
+  { lemma: 'stand', s: 'stands', past: 'stood', participle: 'stood', ing: 'standing' },
+  { lemma: 'swim', s: 'swims', past: 'swam', participle: 'swum', ing: 'swimming' },
+  { lemma: 'swing', s: 'swings', past: 'swung', participle: 'swung', ing: 'swinging' },
   { lemma: 'take', s: 'takes', past: 'took', participle: 'taken', ing: 'taking' },
+  { lemma: 'teach', s: 'teaches', past: 'taught', participle: 'taught', ing: 'teaching' },
   { lemma: 'tell', s: 'tells', past: 'told', participle: 'told', ing: 'telling' },
   { lemma: 'think', s: 'thinks', past: 'thought', participle: 'thought', ing: 'thinking' },
   { lemma: 'write', s: 'writes', past: 'wrote', participle: 'written', ing: 'writing' },
