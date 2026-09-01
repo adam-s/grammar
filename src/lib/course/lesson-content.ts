@@ -67,7 +67,7 @@ const INTRODUCTION: LessonDoc = {
       kind: 'credit',
       text:
         "Max Morenberg's _Doing Grammar_ is the book I have always used to refresh my understanding of syntax. " +
-        'This guide follows much of his approach, with coding agents helping to turn sentence diagrams into interactive tools.',
+        'This guide is inspired by his approach, with coding agents helping to turn sentence diagrams into interactive tools.',
     },
     {
       kind: 'section',
