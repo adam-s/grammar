@@ -397,8 +397,17 @@
 </script>
 
 <!-- Releasing outside the words still ends the drag, and a cancelled pointer
-     (the browser reclaiming the touch) must not leave a drag armed. -->
-<svelte:window onpointerup={up} onpointercancel={up} onpointermove={trackDrag} />
+     (the browser reclaiming the touch) must not leave a drag armed. touchend
+     and touchcancel commit too: iOS Safari has been seen keeping the touch
+     stream alive while dropping the pointer stream's ending, and `up` is
+     idempotent — whichever event arrives first wins, the rest are no-ops. -->
+<svelte:window
+  onpointerup={up}
+  onpointercancel={up}
+  onpointermove={trackDrag}
+  ontouchend={up}
+  ontouchcancel={up}
+/>
 
 <svg
   bind:this={host}
