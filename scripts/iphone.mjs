@@ -77,14 +77,18 @@ console.log('chromium · iPhone 14 · touch drag');
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [from] });
   for (let i = 1; i <= 6; i++) {
     const x = from.x + ((to.x - from.x) * i) / 6;
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: from.y }] });
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x, y: from.y }],
+    });
     await page.waitForTimeout(30);
   }
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await page.waitForTimeout(400);
   const sel = await selection(page);
-  if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 1) ok('touch drag selects the span');
-  else bad('touch drag selects the span', `selection is ${JSON.stringify(sel)}`);
+  if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 1) {
+    ok('touch drag selects the span');
+  } else bad('touch drag selects the span', `selection is ${JSON.stringify(sel)}`);
   await browser.close();
 }
 
@@ -95,7 +99,10 @@ console.log('chromium · iPhone 14 · Det + Nom by touch');
   const browser = await chromium.launch({ headless: true });
   const ctx = await browser.newContext({ ...devices['iPhone 14'], defaultBrowserType: undefined });
   const page = await ctx.newPage();
-  await page.goto(`${BASE}/lessons/05-find-the-head`, { waitUntil: 'networkidle', timeout: 30_000 });
+  await page.goto(`${BASE}/lessons/05-find-the-head`, {
+    waitUntil: 'networkidle',
+    timeout: 30_000,
+  });
   await page.waitForFunction(() => window.__grammar, null, { timeout: 20_000 });
   await page.evaluate(() => window.__grammar.openSentence('c05-b'));
   await page.waitForTimeout(600);
@@ -121,7 +128,10 @@ console.log('chromium · iPhone 14 · Det + Nom by touch');
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [from] });
     for (let i = 1; i <= 8; i++) {
       const x = from.x + ((to.x - from.x) * i) / 8;
-      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: from.y }] });
+      await cdp.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: [{ x, y: from.y }],
+      });
       await page.waitForTimeout(30);
     }
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
@@ -132,9 +142,9 @@ console.log('chromium · iPhone 14 · Det + Nom by touch');
         window.__grammar.panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:NP')
           ?.state ?? 'absent',
     );
-    if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 2)
+    if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 2) {
       ok('drag over Det + Nom selects the whole span');
-    else bad('drag over Det + Nom', `selection is ${JSON.stringify(sel)}`);
+    } else bad('drag over Det + Nom', `selection is ${JSON.stringify(sel)}`);
     if (np === 'available' || np === 'suggested') ok(`NP is ${np} for the span`);
     else bad('NP offered for Det + Nom', `form:NP is ${np}`);
   }
@@ -156,8 +166,9 @@ console.log('chromium · desktop · mouse drag');
   await page.mouse.up();
   await page.waitForTimeout(400);
   const sel = await selection(page);
-  if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 1) ok('mouse drag selects the span');
-  else bad('mouse drag selects the span', `selection is ${JSON.stringify(sel)}`);
+  if (sel?.kind === 'span' && sel.span[0] === 0 && sel.span[1] === 1) {
+    ok('mouse drag selects the span');
+  } else bad('mouse drag selects the span', `selection is ${JSON.stringify(sel)}`);
   await browser.close();
 }
 
@@ -172,7 +183,11 @@ const VIEWPORTS = [
 for (const [label, width, height] of VIEWPORTS) {
   console.log(`webkit · ${label} · layout`);
   const browser = await webkit.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width, height }, hasTouch: true, isMobile: true });
+  const page = await browser.newPage({
+    viewport: { width, height },
+    hasTouch: true,
+    isMobile: true,
+  });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));

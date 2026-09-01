@@ -309,17 +309,26 @@
 
   /* ------------------------------------------------------------ selection */
 
+  let host = $state<SVGSVGElement | null>(null);
   let anchor = $state<number | null>(null);
+
+  /** Distance from a point to a rect along one axis; zero inside it. */
+  const gapX = (b: DOMRect, x: number) => Math.max(b.left - x, 0, x - b.right);
+  const gapY = (b: DOMRect, y: number) => Math.max(b.top - y, 0, y - b.bottom);
+
+  function begin(i: number) {
+    anchor = i;
+    ondraft([i, i], false);
+  }
 
   function down(i: number, e: PointerEvent) {
     if (e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
-    anchor = i;
-    ondraft([i, i], false);
+    begin(i);
     // Deliberately NOT setPointerCapture: capture redirects every later pointer
     // event to this one word, so `pointerenter` on its neighbours never fires
-    // and a drag can only ever select the word it started on.
+    // and a drag could only ever select the word it started on.
   }
 
   function move(i: number) {
@@ -331,19 +340,59 @@
    * A touch implicitly captures the pointer to the word it landed on, so the
    * neighbours' `pointerenter` — which is how a mouse drag grows the span —
    * never fires and a phone could only ever select one word. While a drag is
-   * live, find the word under the pointer by position instead: hit-testing
-   * does not care who holds the capture.
+   * live, follow the nearest word by horizontal distance instead: hit-testing
+   * by position cares about neither capture nor a finger drifting off the row.
    */
   function trackDrag(e: PointerEvent) {
-    if (anchor == null) return;
-    const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-word]');
-    if (hit) move(Number((hit as SVGElement).dataset.word));
+    if (anchor == null || !host) return;
+    let best: number | null = null;
+    let bestD = 60;
+    for (const g of host.querySelectorAll<SVGGElement>('[data-word]')) {
+      const d = gapX((g.querySelector('text') ?? g).getBoundingClientRect(), e.clientX);
+      if (d < bestD) {
+        bestD = d;
+        best = Number(g.dataset.word);
+      }
+    }
+    if (best != null) move(best);
   }
 
   function up() {
     if (anchor == null) return;
     anchor = null;
     ondraft(draft, true);
+  }
+
+  /**
+   * Fat-finger arbitration. The hit rectangles grow to finger size on a
+   * phone, but the diagram's rows sit closer together than a finger — so a
+   * tag's target overlaps the word under it and a bar's overlaps its
+   * neighbour, and whichever element is painted last wins: a tap meant for
+   * "Det" selected the word, a tap meant for one bar selected the next.
+   * For touch, the raw target is therefore ignored and the tap goes to the
+   * NEAREST visible label — resolved in the capture phase, before any
+   * element-level handler can act on the wrong element. A mouse is precise
+   * enough to keep the ordinary targets.
+   */
+  function resolveTouch(e: PointerEvent) {
+    if (!interactive || !host || e.pointerType !== 'touch' || !e.isPrimary) return;
+    let best: SVGGElement | null = null;
+    let bestD = 40; // farther than this and the finger meant the canvas
+    for (const g of host.querySelectorAll<SVGGElement>('[data-word], [data-node]')) {
+      for (const t of g.querySelectorAll('text')) {
+        const b = t.getBoundingClientRect();
+        const d = Math.hypot(gapX(b, e.clientX), gapY(b, e.clientY));
+        if (d < bestD) {
+          bestD = d;
+          best = g;
+        }
+      }
+    }
+    if (!best) return; // nothing near: the finger meant the canvas
+    e.stopPropagation();
+    e.preventDefault();
+    if (best.dataset.word != null) begin(Number(best.dataset.word));
+    else onpick({ kind: 'node', id: best.dataset.node! });
   }
 </script>
 
@@ -352,6 +401,7 @@
 <svelte:window onpointerup={up} onpointercancel={up} onpointermove={trackDrag} />
 
 <svg
+  bind:this={host}
   class="diagram"
   class:readonly={!interactive}
   class:fluid
@@ -361,6 +411,7 @@
   preserveAspectRatio="xMidYMid meet"
   role="group"
   aria-label="Sentence structure"
+  onpointerdowncapture={resolveTouch}
 >
   <g transform="translate({PAD + frame.inset},{PAD})">
     <!-- What picking the hovered label would produce. The contextual palette
