@@ -49,6 +49,31 @@
   const touches = new SvelteMap<number, { x: number; y: number }>();
   let lastTouch: { x: number; y: number } | null = null;
   let lastPinch: Pinch | null = null;
+  /**
+   * The phone's road to a marquee: hold a finger still on empty canvas and
+   * the box arms; then the same finger sweeps it. A finger that moves first
+   * is a pan, a second finger is a pinch — both cancel the hold.
+   */
+  let press: { id: number; at: Point; timer: ReturnType<typeof setTimeout> } | null = null;
+
+  function cancelPress() {
+    if (!press) return;
+    clearTimeout(press.timer);
+    press = null;
+  }
+
+  function armMarquee() {
+    if (!press || !touches.has(press.id)) return;
+    // The pointer leaves the pan machinery and becomes the marquee's.
+    touches.delete(press.id);
+    dragging = false;
+    lastTouch = null;
+    marqueeStart = press.at;
+    marqueeBox = null;
+    marqueePointer = press.id;
+    onmarquee?.(null, false);
+    press = null;
+  }
 
   const vp = $derived(ws.viewport);
 
@@ -111,11 +136,15 @@
       touches.set(e.pointerId, p);
       stage!.setPointerCapture(e.pointerId);
       dragging = true;
+      cancelPress();
       if (touches.size >= 2) {
         lastPinch = pinch([...touches.values()]);
         lastTouch = null;
       } else {
         lastTouch = p;
+        if (ws.tool === 'select') {
+          press = { id: e.pointerId, at: p, timer: setTimeout(armMarquee, 400) };
+        }
       }
       return;
     }
@@ -142,6 +171,10 @@
   function onpointermove(e: PointerEvent) {
     if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
       const p = local(e);
+      // A finger that travels before the hold matures meant to pan.
+      if (press?.id === e.pointerId && Math.hypot(p.x - press.at.x, p.y - press.at.y) > 10) {
+        cancelPress();
+      }
       touches.set(e.pointerId, p);
       if (touches.size >= 2) {
         const next = pinch([...touches.values()]);
@@ -168,6 +201,7 @@
   }
 
   function endDrag(e: PointerEvent) {
+    if (press?.id === e.pointerId) cancelPress();
     if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
       touches.delete(e.pointerId);
       if (stage!.hasPointerCapture(e.pointerId)) stage!.releasePointerCapture(e.pointerId);

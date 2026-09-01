@@ -310,22 +310,42 @@
   /* ------------------------------------------------------------ selection */
 
   let host = $state<SVGSVGElement | null>(null);
-  let anchor = $state<number | null>(null);
+  /** The span the live drag grows from: a word's own index, or a node's span. */
+  let anchor = $state<Span | null>(null);
+  /**
+   * A node press that has not moved yet. A tap selects the node, exactly as
+   * before — but dragging FROM a node grows a span seeded with the node's
+   * whole span, which is how a phone (or a mouse) says "this tag and that
+   * one together": drag Det across to N, release, and the palette offers NP
+   * over both. Cleared the moment the drag grows past the node.
+   */
+  let pendingNode = $state<string | null>(null);
+  let downAt: { x: number; y: number } | null = null;
 
   /** Distance from a point to a rect along one axis; zero inside it. */
   const gapX = (b: DOMRect, x: number) => Math.max(b.left - x, 0, x - b.right);
   const gapY = (b: DOMRect, y: number) => Math.max(b.top - y, 0, y - b.bottom);
 
-  function begin(i: number) {
-    anchor = i;
+  function beginWord(i: number) {
+    anchor = [i, i];
+    pendingNode = null;
     ondraft([i, i], false);
+  }
+
+  function beginNode(id: string) {
+    const span = constituents[id]?.span;
+    if (!span) return;
+    anchor = [span[0], span[1]];
+    pendingNode = id;
+    // No draft yet: a tap should read as a node selection, not a span flash.
   }
 
   function down(i: number, e: PointerEvent) {
     if (e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
-    begin(i);
+    downAt = { x: e.clientX, y: e.clientY };
+    beginWord(i);
     // Deliberately NOT setPointerCapture: capture redirects every later pointer
     // event to this one word, so `pointerenter` on its neighbours never fires
     // and a drag could only ever select the word it started on.
@@ -333,7 +353,13 @@
 
   function move(i: number) {
     if (anchor == null) return;
-    ondraft([Math.min(anchor, i), Math.max(anchor, i)], false);
+    const span: Span = [Math.min(anchor[0], i), Math.max(anchor[1], i)];
+    if (pendingNode != null) {
+      // Still within the pressed node: it may yet be a tap.
+      if (span[0] === anchor[0] && span[1] === anchor[1]) return;
+      pendingNode = null;
+    }
+    ondraft(span, false);
   }
 
   /**
@@ -345,6 +371,14 @@
    */
   function trackDrag(e: PointerEvent) {
     if (anchor == null || !host) return;
+    // A resting finger jitters; a pressed node stays a tap until real motion.
+    if (
+      pendingNode != null &&
+      downAt &&
+      Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) < 12
+    ) {
+      return;
+    }
     let best: number | null = null;
     let bestD = 60;
     for (const g of host.querySelectorAll<SVGGElement>('[data-word]')) {
@@ -359,8 +393,12 @@
 
   function up() {
     if (anchor == null) return;
+    const tapped = pendingNode;
     anchor = null;
-    ondraft(draft, true);
+    pendingNode = null;
+    downAt = null;
+    if (tapped != null) onpick({ kind: 'node', id: tapped });
+    else ondraft(draft, true);
   }
 
   /**
@@ -391,8 +429,9 @@
     if (!best) return; // nothing near: the finger meant the canvas
     e.stopPropagation();
     e.preventDefault();
-    if (best.dataset.word != null) begin(Number(best.dataset.word));
-    else onpick({ kind: 'node', id: best.dataset.node! });
+    downAt = { x: e.clientX, y: e.clientY };
+    if (best.dataset.word != null) beginWord(Number(best.dataset.word));
+    else beginNode(best.dataset.node!);
   }
 </script>
 
@@ -494,9 +533,11 @@
         aria-label={labelParts.accessibleName}
         aria-pressed={interactive ? on : undefined}
         onpointerdown={(e) => {
-          if (!interactive) return;
+          if (!interactive || e.button !== 0) return;
           e.stopPropagation();
-          onpick({ kind: 'node', id });
+          e.preventDefault();
+          downAt = { x: e.clientX, y: e.clientY };
+          beginNode(id);
         }}
         onkeydown={(e) => {
           // Space as well as Enter. A thing that says `role="button"` has to

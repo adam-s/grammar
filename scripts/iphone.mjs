@@ -151,6 +151,123 @@ console.log('chromium · iPhone 14 · Det + Nom by touch');
   await browser.close();
 }
 
+/* -------- Chromium: dragging tag-to-tag selects the pair for NP */
+
+console.log('chromium · iPhone 14 · drag Det tag to N tag');
+{
+  const browser = await chromium.launch({ headless: true });
+  const ctx = await browser.newContext({ ...devices['iPhone 14'], defaultBrowserType: undefined });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/lessons/05-find-the-head`, {
+    waitUntil: 'networkidle',
+    timeout: 30_000,
+  });
+  await page.waitForFunction(() => window.__grammar, null, { timeout: 20_000 });
+  await page.evaluate(() => {
+    const g = window.__grammar;
+    g.openSentence('c05-d'); // The clock near the door stopped.
+  });
+  await page.waitForTimeout(600);
+  const tags = await page.evaluate(() => {
+    const g = window.__grammar;
+    g.selectSpan([3, 3]);
+    g.pick('form:Det');
+    g.selectSpan([4, 4]);
+    g.pick('form:N');
+    return Object.fromEntries(Object.entries(g.build.constituents).map(([id, c]) => [c.form, id]));
+  });
+  await page.waitForTimeout(800);
+  const at = async (id) =>
+    center(await page.locator(`[data-node="${id}"] text`).first().boundingBox());
+  const from = await at(tags.Det);
+  const to = await at(tags.N);
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [from] });
+  for (let i = 1; i <= 8; i++) {
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x: from.x + ((to.x - from.x) * i) / 8, y: from.y }],
+    });
+    await page.waitForTimeout(30);
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(400);
+  const sel = await selection(page);
+  const np = await page.evaluate(
+    () =>
+      window.__grammar.panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:NP')
+        ?.state ?? 'absent',
+  );
+  if (sel?.kind === 'span' && sel.span[0] === 3 && sel.span[1] === 4) {
+    ok('tag-to-tag drag selects “the door”');
+  } else bad('tag-to-tag drag', `selection is ${JSON.stringify(sel)}`);
+  if (np === 'available' || np === 'suggested') ok(`NP is ${np} for the pair`);
+  else bad('NP offered for the pair', `form:NP is ${np}`);
+  await browser.close();
+}
+
+/* ------- Chromium: long-press marquee boxes Det and N together */
+
+console.log('chromium · iPhone 14 · long-press marquee');
+{
+  const browser = await chromium.launch({ headless: true });
+  const ctx = await browser.newContext({ ...devices['iPhone 14'], defaultBrowserType: undefined });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/lessons/05-find-the-head`, {
+    waitUntil: 'networkidle',
+    timeout: 30_000,
+  });
+  await page.waitForFunction(() => window.__grammar, null, { timeout: 20_000 });
+  await page.evaluate(() => {
+    const g = window.__grammar;
+    g.openSentence('c05-d');
+    g.selectSpan([3, 3]);
+    g.pick('form:Det');
+    g.selectSpan([4, 4]);
+    g.pick('form:N');
+  });
+  await page.waitForTimeout(1000);
+  const box = await page.evaluate(() => {
+    const rects = [...document.querySelectorAll('[data-node] text')].map((t) =>
+      t.getBoundingClientRect(),
+    );
+    return {
+      x1: Math.min(...rects.map((r) => r.left)) - 50,
+      y1: Math.min(...rects.map((r) => r.top)) - 50,
+      x2: Math.max(...rects.map((r) => r.right)) + 30,
+      y2: Math.max(...rects.map((r) => r.bottom)) + 8,
+    };
+  });
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: box.x1, y: box.y1 }],
+  });
+  await page.waitForTimeout(550); // the hold that arms the box
+  for (let i = 1; i <= 8; i++) {
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [
+        { x: box.x1 + ((box.x2 - box.x1) * i) / 8, y: box.y1 + ((box.y2 - box.y1) * i) / 8 },
+      ],
+    });
+    await page.waitForTimeout(30);
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(500);
+  const sel = await selection(page);
+  const np = await page.evaluate(
+    () =>
+      window.__grammar.panel.groups.flatMap((g) => g.options).find((o) => o.key === 'form:NP')
+        ?.state ?? 'absent',
+  );
+  if (sel?.kind === 'nodes' && sel.ids.length === 2) ok('marquee selects both tags');
+  else bad('marquee selects both tags', `selection is ${JSON.stringify(sel)}`);
+  if (np === 'available' || np === 'suggested') ok(`NP is ${np} for the boxed pair`);
+  else bad('NP offered for the boxed pair', `form:NP is ${np}`);
+  await browser.close();
+}
+
 /* --------------------------------- Chromium: mouse drag still works */
 
 console.log('chromium · desktop · mouse drag');
