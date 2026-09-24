@@ -326,5 +326,21 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    /* On a lesson page the text scrolls up under the Lessons and Sentences
+       pills, and with nothing behind them the two collided mid-word. A band
+       of the page's own colour, fading out, gives the pills a backing and the
+       text somewhere to go. The diagram canvas keeps its floating pills: its
+       dotted field is meant to show through. */
+    .stage:has(> .document)::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 30;
+      height: calc(max(8px, env(safe-area-inset-top)) + 58px);
+      background: linear-gradient(var(--canvas) 72%, transparent);
+      pointer-events: none;
+      content: '';
+    }
   }
 </style>

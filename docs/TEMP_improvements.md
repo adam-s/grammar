@@ -57,25 +57,22 @@ If only ten things get done, these give the most back.
    lesson 27). Function marks such as _Subj_, _H_ and _DO_ are the smallest
    and carry the most meaning.
    (measured · high)
-6. **Stop the floating buttons covering the text.** On a phone, the "Lessons"
-   and "Sentences" pills float over lesson text as it scrolls under them, with
-   no backing. (seen · medium)
-7. **Get a person to review the sentences.** `course-readiness` reports 0 of
+6. **Get a person to review the sentences.** `course-readiness` reports 0 of
    400 readings reviewed and says not to present the course as assessment
    until someone has. There is also no way to record a sign-off per sentence
    without a code change. (measured · high)
-8. **Fix the docs that point at things that are gone.** CLAUDE.md sends
+7. **Fix the docs that point at things that are gone.** CLAUDE.md sends
    readers to a README section that was removed; four files cite a deleted
    `docs/learner-record.md`; `undo.md` says the Back button is not drawn.
    See [Docs that drifted](#docs-that-drifted). (doc · medium)
-9. **Make saving honest.** Every storage error is swallowed, and the event
+8. **Make saving honest.** Every storage error is swallowed, and the event
    trace is rewritten in full on every pick with nothing ever evicted. When
    the browser's quota fills, drafts and checkmarks stop saving without a
    word. (code · high)
-10. **Load the fonts the CSS names.** `theme.css` asks for "Inter var" and
-    "Source Serif 4", and nothing loads either, so every device shows a
-    different fallback. The label-width maths assumes a fixed monospace
-    advance, so fallback fonts also move the layout. (code, verified · medium)
+9. **Load the fonts the CSS names.** `theme.css` asks for "Inter var" and
+   "Source Serif 4", and nothing loads either, so every device shows a
+   different fallback. The label-width maths assumes a fixed monospace
+   advance, so fallback fonts also move the layout. (code, verified · medium)
 
 ---
 
