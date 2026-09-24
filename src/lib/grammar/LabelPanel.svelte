@@ -592,6 +592,14 @@
 {/if}
 
 <style>
+  /* The chooser takes focus itself (tabindex -1) so a keyboard learner lands
+     inside it; it is a container, not a control, and needs no ring of its
+     own. Its buttons keep theirs. Without this, opening a sentence straight
+     from its address and then tapping drew the app's focus ring round the
+     whole phone sheet. */
+  .popup:focus-visible {
+    outline: none;
+  }
   .popup {
     position: absolute;
     z-index: 30;
