@@ -19,6 +19,8 @@
  */
 import { chromium } from 'playwright';
 
+import { agentShot } from './agent-images.mjs';
+
 const base = process.argv.find((a) => a.startsWith('http')) ?? 'http://localhost:5199';
 const onlyArg = process.argv.find((a) => a.startsWith('--lessons='))?.split('=')[1];
 /** Repeat each selected lesson N times — the stall reproducer: it shows up
@@ -152,8 +154,7 @@ for (const [lesson, sentenceId] of runsWanted) {
       fail(
         `${where}: stalled at "${stuck.eyebrow}" (“${stuck.big}”; selection ${stuck.selection}; popup ${stuck.popup}; pointer ${stuck.pointer} moving=${stuck.pointerMoving})`,
       );
-      await page
-        .screenshot({ path: `test-results/tutorial-stall-${lesson.replace('#', '-')}.png` })
+      await agentShot(page, `test-results/tutorial-stall-${lesson.replace('#', '-')}.png`)
         .catch(() => {});
       await page
         .locator('button.halt')

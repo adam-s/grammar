@@ -14,6 +14,7 @@
     "test": "node --test \"src/lib/**/*.test.ts\"",
     "all": "npm run lint && npm run check && npm run test && npm run build && npm run course:sentences && npm run course:readiness",
     "snapshot": "node scripts/snapshot.mjs",
+    "ux-review": "node scripts/ux-review.mjs",
     "course:sentences": "node scripts/check-sentences.mjs",
     "course:readiness": "node scripts/course-readiness.mjs",
     "course:release": "npm run all && node scripts/course-readiness.mjs --require-reviewed"
@@ -32,6 +33,7 @@
     "playwright-core": "^1.62.1",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
+    "sharp": "^0.35.4",
     "svelte": "^5.56.1",
     "svelte-check": "^4.3.3",
     "tailwindcss": "^4.1.13",

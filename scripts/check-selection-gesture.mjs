@@ -27,6 +27,8 @@
 import { mkdirSync, rmSync } from 'node:fs';
 import { chromium } from 'playwright';
 
+import { agentShot } from './agent-images.mjs';
+
 const base = process.argv[2] ?? 'http://localhost:5199';
 const SHOTS = new URL('../test-results/selection-gesture/', import.meta.url).pathname;
 rmSync(SHOTS, { recursive: true, force: true });
@@ -158,14 +160,14 @@ async function waitForRunEnd(page, where, capMs = 150000) {
     );
   } catch {
     fail(where, `run still going after ${capMs}ms`);
-    await page.screenshot({ path: `${SHOTS}${where.replaceAll(/\W+/g, '-')}-stuck.png` });
+    await agentShot(page, `${SHOTS}${where.replaceAll(/\W+/g, '-')}-stuck.png`);
   }
   const stopped = await page.evaluate(
     () => document.querySelector('.banner .big')?.textContent ?? null,
   );
   if (stopped) {
     fail(where, `the tutorial failed on screen: "${stopped}"`);
-    await page.screenshot({ path: `${SHOTS}${where.replaceAll(/\W+/g, '-')}-stuck.png` });
+    await agentShot(page, `${SHOTS}${where.replaceAll(/\W+/g, '-')}-stuck.png`);
   }
 }
 
@@ -228,7 +230,7 @@ const browser = await chromium.launch();
         null,
         { timeout: 60000, polling: 60 },
       )
-      .then(() => page.screenshot({ path: `${SHOTS}01-mid-drag.png` }))
+      .then(() => agentShot(page, `${SHOTS}01-mid-drag.png`))
       .catch(() => fail(where, 'never saw a held pointer over a 2+ word draft'));
     const midMarquee = page
       .waitForFunction(
@@ -240,7 +242,7 @@ const browser = await chromium.launch();
         null,
         { timeout: 120000, polling: 60 },
       )
-      .then(() => page.screenshot({ path: `${SHOTS}01-mid-marquee.png` }))
+      .then(() => agentShot(page, `${SHOTS}01-mid-marquee.png`))
       .catch(() => fail(where, 'never saw a driven marquee box mid-sweep'));
     await waitForRunEnd(page, where);
     await Promise.all([midDrag, midMarquee]);
@@ -402,7 +404,7 @@ const browser = await chromium.launch();
       }
       if (a.sel !== b.sel) fail(where, `paused draft changed ${a.sel}→${b.sel}`);
       if (!b.dip) fail(where, 'pause released the pressed pointer');
-      await page.screenshot({ path: `${SHOTS}02-paused-mid-drag.png` });
+      await agentShot(page, `${SHOTS}02-paused-mid-drag.png`);
       await page.locator('button[aria-label="Play tutorial"]').click();
     } catch {
       fail(where, 'never reached a mid-drag moment to pause');
@@ -428,7 +430,7 @@ const browser = await chromium.launch();
       else if (Math.abs(a.marquee.w - b.marquee.w) > 1 || Math.abs(a.marquee.h - b.marquee.h) > 1) {
         fail(where, 'paused marquee kept growing');
       }
-      await page.screenshot({ path: `${SHOTS}02-paused-mid-marquee.png` });
+      await agentShot(page, `${SHOTS}02-paused-mid-marquee.png`);
 
       // With NP and VP on the reserved canvas: the learner's own tight box.
       const marks = await page.evaluate(() =>
@@ -490,7 +492,7 @@ const browser = await chromium.launch();
       if (cleared.dip) fail(where, 'Stop left the pointer pressed');
       if (cleared.banner) fail(where, 'Stop left the banner up');
       if (cleared.lit > 0) fail(where, `Stop left ${cleared.lit} labels lit`);
-      await page.screenshot({ path: `${SHOTS}02-after-stop.png` });
+      await agentShot(page, `${SHOTS}02-after-stop.png`);
     } catch {
       fail(where, 'never reached a mid-marquee moment to pause');
     }
@@ -667,7 +669,7 @@ const browser = await chromium.launch();
       Object.values(window.__grammar?.build.constituents ?? {}).map((c) => c.form),
     );
     if (!built.includes('S')) fail(where, `phone run ended without S built (${built.join(',')})`);
-    await page.screenshot({ path: `${SHOTS}05-phone-after.png` });
+    await agentShot(page, `${SHOTS}05-phone-after.png`);
   }
   await stopSampler(page);
   if (errors.length) fail(where, `console errors: ${errors[0]}`);
@@ -704,7 +706,7 @@ for (const width of [320, 500, 700]) {
     if (!samples.some((s) => s.hint?.includes('Click a word'))) {
       fail(where, 'no "Click a word" caption');
     }
-    if (width === 320) await page.screenshot({ path: `${SHOTS}06-320-caption.png` });
+    if (width === 320) await agentShot(page, `${SHOTS}06-320-caption.png`);
     if ((await page.locator('button.halt').count()) > 0) {
       await page.locator('button.halt').click();
     } else {
@@ -776,7 +778,7 @@ for (const width of [320, 500, 700]) {
         null,
         { timeout: 60000, polling: 60 },
       );
-      await page.screenshot({ path: `${SHOTS}08-dark-mid-drag.png` });
+      await agentShot(page, `${SHOTS}08-dark-mid-drag.png`);
       await page.waitForFunction(() => !!document.querySelector('div.marquee'), null, {
         timeout: 90000,
         polling: 60,
@@ -789,7 +791,7 @@ for (const width of [320, 500, 700]) {
       if (/rgba?\(.*,\s*0\)|transparent/.test(style.border)) {
         fail(where, `marquee border invisible in dark (${style.border})`);
       }
-      await page.screenshot({ path: `${SHOTS}08-dark-mid-marquee.png` });
+      await agentShot(page, `${SHOTS}08-dark-mid-marquee.png`);
     } catch {
       fail(where, 'never reached the drag/marquee in dark');
     }
@@ -841,7 +843,7 @@ for (const width of [320, 500, 700]) {
       null,
       { timeout: 120000, polling: 60 },
     );
-    await page.screenshot({ path: `${SHOTS}09-hero-mid-drag.png` });
+    await agentShot(page, `${SHOTS}09-hero-mid-drag.png`);
   } catch {
     fail(where, 'the hero never dragged — no held pointer over a growing span');
   }
@@ -893,7 +895,7 @@ for (const width of [320, 500, 700]) {
   } catch {
     fail(where, 'the overlay hero never pressed on a lit word');
   }
-  await page.screenshot({ path: `${SHOTS}09-hero-overlay.png` });
+  await agentShot(page, `${SHOTS}09-hero-overlay.png`);
   await page.evaluate(() => clearInterval(window.__heroTimer));
   await page.locator('button[aria-label="Close demonstration"]').click();
   await page.waitForTimeout(300);
@@ -919,7 +921,7 @@ for (const width of [320, 500, 700]) {
   const quietAfterStop = async (page, where, phase) => {
     if ((await page.locator('button.halt').count()) === 0) {
       fail(where, `${phase}: the Stop button is missing when the test requires it`);
-      await page.screenshot({ path: `${SHOTS}stop-missing-${phase.replaceAll(/\W+/g, '-')}.png` });
+      await agentShot(page, `${SHOTS}stop-missing-${phase.replaceAll(/\W+/g, '-')}.png`);
       return;
     }
     await page.locator('button.halt').click();
@@ -976,9 +978,7 @@ for (const width of [320, 500, 700]) {
     // state.
     if ((await page.locator('button.launch').count()) === 0) {
       fail(where, `${phase}: still no launcher when the relaunch check needs it`);
-      await page.screenshot({
-        path: `${SHOTS}relaunch-missing-${phase.replaceAll(/\W+/g, '-')}.png`,
-      });
+      await agentShot(page, `${SHOTS}relaunch-missing-${phase.replaceAll(/\W+/g, '-')}.png`);
       await page.evaluate(() => window.__grammar.reset());
       await page.waitForTimeout(400);
       return;
@@ -1070,9 +1070,7 @@ for (const width of [320, 500, 700]) {
     for (const [phase, reach] of phases) {
       if ((await page.locator('button.launch').count()) === 0) {
         fail(where, `${phase}: no launcher to start the phase`);
-        await page.screenshot({
-          path: `${SHOTS}launch-missing-${phase.replaceAll(/\W+/g, '-')}.png`,
-        });
+        await agentShot(page, `${SHOTS}launch-missing-${phase.replaceAll(/\W+/g, '-')}.png`);
         await page.evaluate(() => window.__grammar.reset());
         await page.waitForTimeout(400);
         continue;

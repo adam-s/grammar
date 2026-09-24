@@ -32,12 +32,18 @@
  *                             [--action=label-sweep] [--every=6]
  *                             [--viewport=desktop|tablet|mobile]
  *                             [--scale=1.5]
+ *                             [--keep-days=3]   (0 keeps old runs)
+ *
+ * Images are saved through agent-images.mjs: captured at --scale, then
+ * fitted to a 1568px edge as palette PNGs, so no reader shrinks them further.
  */
 import { chromium } from 'playwright-core';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { agentShot, pruneRuns } from './agent-images.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -68,6 +74,14 @@ const SWEEP_VIEWPORT = args.viewport ?? 'desktop';
 const SHOT_SCALE = Number(args.scale ?? 1.5);
 const OUT = resolve(ROOT, '.snapshots', LABEL);
 mkdirSync(OUT, { recursive: true });
+/**
+ * Runs are regenerable and pile up (599 MB once). Delete this tool's labels
+ * untouched for --keep-days (default 3; 0 keeps everything). ux-review
+ * manages its own ux-* runs.
+ */
+const KEEP_DAYS = Number(args['keep-days'] ?? 3);
+const PRUNED = pruneRuns(resolve(ROOT, '.snapshots'), (d) => !d.startsWith('ux-'), KEEP_DAYS, [OUT]);
+if (PRUNED) console.log(`pruned ${PRUNED} snapshot runs older than ${KEEP_DAYS} days`);
 
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
@@ -161,10 +175,10 @@ async function contentClip(page, also = []) {
   return width > 40 && height > 40 ? { x, y, width, height } : null;
 }
 
-/** A sweep screenshot: cropped to the content when there is any. */
+/** A sweep screenshot: cropped to the content when there is any, sized for its reader. */
 async function shot(page, path, also = []) {
   const clip = await contentClip(page, also);
-  await page.screenshot({ path, ...(clip ? { clip } : {}) });
+  await agentShot(page, path, clip ? { clip } : {});
 }
 
 async function handle(page) {
@@ -196,7 +210,7 @@ async function capture(browser, sentenceId, viewport) {
     return { sentenceId, viewport: viewport.name, error: `navigation failed: ${err.message}` };
   }
 
-  await page.screenshot({ path: resolve(OUT, `${sentenceId}-${viewport.name}.png`) });
+  await agentShot(page, resolve(OUT, `${sentenceId}-${viewport.name}.png`));
 
   const metrics = await page.evaluate(() => {
     const h = document.documentElement;
@@ -524,7 +538,7 @@ async function heroCheck(browser) {
     maxNodes = Math.max(maxNodes, seen.nodes);
     if (i % 6 === 0) {
       const name = `hero-${String(i).padStart(2, '0')}.png`;
-      await page.locator('.hero').screenshot({ path: resolve(OUT, name) });
+      await agentShot(page.locator('.hero'), resolve(OUT, name));
       shots.push(name);
     }
     await page.waitForTimeout(700);
