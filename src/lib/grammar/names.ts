@@ -387,6 +387,23 @@ export const FORMAL_TEST: Record<string, string> = Object.fromEntries(
   Object.entries(FORM_TESTS).map(([f, t]) => [f, t.asked]),
 );
 
+/**
+ * The test for a label the learner just picked WRONGLY, worded for that moment.
+ *
+ * `asked` ends by concluding — "Then it is a verb." — which is right when it
+ * follows the correct answer and backwards when it follows "“Birds” is not a
+ * verb." So the first miss names the test and asks it, and stops there:
+ * "The test for a verb: does it change for tense — walk / walked / walking?"
+ * The learner runs it on their own word and watches it fail.
+ */
+export function firstMissTest(form: Form, named: string): string | undefined {
+  const asked = FORMAL_TEST[form];
+  if (!asked) return undefined;
+  const question = asked.replace(/\s*Then it is [^.]*\.\s*$/, '');
+  if (question === asked) return asked;
+  return `The test for ${named}: ${question.charAt(0).toLowerCase()}${question.slice(1)}`;
+}
+
 /** The question that finds each function. */
 /**
  * One whole sentence per function: the question it answers, or what it does.

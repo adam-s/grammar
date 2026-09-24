@@ -164,11 +164,6 @@ If only ten things get done, these give the most back.
 
 ### Feedback
 
-- **The first-miss hint reads backwards.** "“Birds” is not a verb. Does it
-  change for tense — walk / walked / walking? Then it is a verb." The last
-  sentence states the rule for the answer the learner did not pick. Try:
-  "A verb changes for tense: walk, walked, walking. _Birds_ doesn't." (seen ·
-  medium)
 - **A right answer that finishes the selection says nothing.** The verdict is
   dropped as the chooser closes. (code · medium)
 - **There is no hint on demand.** `suggest.ts` computes evidence, and

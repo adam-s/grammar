@@ -17,6 +17,7 @@ import {
   FORM_TEST,
   FORM_TESTS,
   FORMAL_TEST,
+  firstMissTest,
 } from './names.ts';
 import { CLAUSE_KINDS } from './node-variants.ts';
 
@@ -83,5 +84,16 @@ test('the short line is a reminder and the long one is a question', () => {
     const t = FORM_TESTS[f]!;
     assert.ok(t.short.length < t.asked.length, `${f}: the reminder is not shorter`);
     assert.match(t.asked, /\?/, `${f}: the long form should ask something`);
+  }
+});
+
+test('a first miss asks the test and never concludes the wrong label', () => {
+  // "“Birds” is not a verb." followed by "…? Then it is a verb." told the
+  // learner the rule for the answer they had just been refused.
+  for (const f of [...PHRASE_FORMS, ...WORD_FORMS]) {
+    const line = firstMissTest(f, 'a thing');
+    assert.ok(line, `${f} has no first-miss test`);
+    assert.doesNotMatch(line, /Then it is/, `${f}: "${line}"`);
+    assert.match(line, /\?$/, `${f}: the first miss should end on its question`);
   }
 });

@@ -61,7 +61,7 @@ import {
   type Outcome,
 } from './grader.ts';
 import {
-  FORMAL_TEST,
+  firstMissTest,
   FORM_TEST,
   FUNCTION_TEST,
   auxKindName,
@@ -764,7 +764,7 @@ function ask(session: Session, sentence: SentenceEntry, words: Word[], o: LabelO
         ? CROSSING_TEST
         : duplicateStack
           ? duplicateStackTest
-          : (FORMAL_TEST[o.form] ?? sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`)),
+          : (firstMissTest(o.form, named) ?? sentenceCase(`${named} ${FORM_TEST[o.form] ?? ''}`)),
       apply: (b) => {
         // Re-picking the node's own form is confirmation, not a rename.
         // Renaming used to run anyway — unwrap then re-wrap — which quietly
