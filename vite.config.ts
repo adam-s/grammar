@@ -10,7 +10,7 @@ export default defineConfig({
       // suites saving screenshots, agents appending to their handoff log —
       // must not reload every open page. Nothing here is ever imported by
       // the app; watching it only breaks whoever is using the dev server.
-      ignored: ['**/build/**', '**/test-results/**', '**/docs/**'],
+      ignored: ['**/build/**', '**/dist/**', '**/test-results/**', '**/docs/**'],
     },
   },
 });
