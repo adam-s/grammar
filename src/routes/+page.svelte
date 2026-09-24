@@ -39,7 +39,17 @@
   } from '$lib/grammar/measure.ts';
   import { GuidedPointer } from '$lib/workspace/guided-pointer.svelte.ts';
   import PointerLayer from '$lib/workspace/PointerLayer.svelte';
-  import { DRAG_QUERY, PHONE_QUERY, useMediaQuery } from '$lib/workspace/responsive.svelte.ts';
+  import {
+    DRAG_QUERY,
+    PHONE_QUERY,
+    prefersReducedMotion,
+    useMediaQuery,
+  } from '$lib/workspace/responsive.svelte.ts';
+  import { createCameraMotion } from '$lib/workspace/camera-motion.ts';
+  import { planSelectionVisibility, usableViewport } from '$lib/workspace/selection-visibility.ts';
+  import { progressToward } from '$lib/grammar/grader.ts';
+  import FinishedCard from '$lib/course/FinishedCard.svelte';
+  import { nextStep, type NextStep } from '$lib/course/next-step.ts';
   import type { SelectionGestureHooks } from '$lib/workspace/selection-gesture.ts';
   import { emptyBuild, nodeOver, type BuildState } from '$lib/grammar/builder.ts';
   import { FIXTURES } from '$lib/grammar/fixtures.ts';
@@ -353,6 +363,32 @@
   /** The part of the answer this lesson actually asks for. */
   const target = $derived(scope ? targetReading(canonicalReading(sentence), scope) : null);
   /**
+   * Is the learner's own build finished? The same grade that earns the
+   * checkmark, read live, so the page can say so the moment it happens.
+   */
+  const finished = $derived(owner !== null && earnsCompletion(session.build, sentence, target));
+  /**
+   * How much of the lesson's question the learner has answered, in labels —
+   * "3 of 5". Counted toward every reading the lesson could accept, so a
+   * learner building the second reading of an ambiguous sentence is not told
+   * they are short, and read as full once the sentence is finished, so the
+   * count and the checkmark can never disagree. `progressToward` explains the
+   * counting; `progress.test.ts` holds it to rising with every step.
+   */
+  const progress = $derived.by(() => {
+    if (!scope) return null;
+    let best = { done: 0, total: 0 };
+    for (const reading of sentence.readings) {
+      if (reading.status === 'blocked') continue;
+      const p = progressToward(session.build, targetReading(reading, scope));
+      if (best.total === 0 || p.done * best.total > best.done * p.total) best = p;
+    }
+    if (best.total === 0) return null;
+    return finished ? { done: best.total, total: best.total } : best;
+  });
+  /** Where the finished card sends the learner. */
+  const next = $derived(owner ? nextStep(COURSE_LESSONS, owner.id, sentence.id, completed) : null);
+  /**
    * What the empty canvas says first. The introduction is the one lesson
    * where watching is the way in and earns the full invitation; everywhere
    * else the launcher is a quiet toolbar control and "Start here" points at
@@ -660,6 +696,87 @@
     };
   });
 
+  /* ------------------------------------------------------------ finishing */
+
+  /** The card can be put away; it comes back the next time a sentence is finished. */
+  let finishedHidden = $state(false);
+  /** Plain on purpose: bookkeeping for the effect below, never rendered. */
+  let finishedFor = '';
+  let wasFinished = false;
+  $effect(() => {
+    const now = finished;
+    const id = sentence.id;
+    untrack(() => {
+      // Opening a sentence that was already finished shows the card but is
+      // not a new finish: no announcement, no camera move.
+      if (id !== finishedFor) {
+        finishedFor = id;
+        wasFinished = now;
+        finishedHidden = false;
+        return;
+      }
+      if (now && !wasFinished) void celebrate();
+      if (!now) finishedHidden = false;
+      wasFinished = now;
+    });
+  });
+
+  async function celebrate() {
+    liveNote = '';
+    await tick();
+    liveNote = 'Sentence finished. Every label this lesson asks for is in place.';
+    await tick();
+    frameFinished();
+  }
+
+  const camera = createCameraMotion(
+    () => ws.viewport,
+    (viewport) => {
+      ws.viewport = viewport;
+    },
+  );
+
+  /**
+   * Show the finished tree whole, clear of everything floating over the
+   * stage: the card, the sentence actions, the camera tools, the shell's
+   * pills. The camera used to stay wherever the last pick left it, which on a
+   * laptop put the words under the zoom bar at the very moment of finishing.
+   * Anything that floats declares itself (`data-stage-chrome`, or the older
+   * `data-stage-occluder`); its side of the stage decides which edge it
+   * narrows.
+   */
+  function frameFinished() {
+    const stage = document.querySelector<HTMLElement>('main');
+    if (!stage) return;
+    const box = stage.getBoundingClientRect();
+    let top = 12;
+    let bottom = box.height - 12;
+    for (const el of stage.querySelectorAll<HTMLElement>(
+      '.reopen, [data-stage-occluder], [data-stage-chrome]',
+    )) {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      if ((r.top + r.bottom) / 2 - box.top < box.height / 2) {
+        top = Math.max(top, r.bottom - box.top + 12);
+      } else {
+        bottom = Math.min(bottom, r.top - box.top - 12);
+      }
+    }
+    const safe = usableViewport(
+      { w: box.width, h: box.height },
+      { top, bottom, left: 16, right: box.width - 16 },
+    );
+    const plan = planSelectionVisibility(ws.viewport, frame, safe, 'fit');
+    if (plan.changed) {
+      camera.moveTo(plan.viewport, { duration: 280, immediate: prefersReducedMotion() });
+    }
+  }
+
+  function goNext(step: Exclude<NextStep, null>) {
+    if (step.kind === 'sentence') openSentence(step.id);
+    else selectLesson(step.id);
+  }
+
   /* --------------------------------------------------------------- events */
 
   function ondraft(span: Span | null, done: boolean) {
@@ -942,6 +1059,29 @@
   <title>{lesson.title} · Grammar</title>
 </svelte:head>
 
+{#snippet progressChip()}
+  {#if progress}
+    <!-- What "done" looks like, without giving away what the labels are.
+         In the sentence actions on a phone; on a wider screen, its own
+         corner, because the actions row grows toward the lesson-1 launcher
+         and a longer row ran into it at 1280px. -->
+    <span
+      class="progress"
+      class:complete={finished}
+      class:corner={!phone.matches}
+      data-stage-chrome
+      title="Labels this lesson asks for, placed so far"
+    >
+      <span aria-hidden="true"
+        >{phone.matches
+          ? `${progress.done}/${progress.total}`
+          : `${progress.done} of ${progress.total} labels`}</span
+      >
+      <span class="sr-only">{progress.done} of {progress.total} labels placed</span>
+    </span>
+  {/if}
+{/snippet}
+
 <Workspace
   {items}
   {ws}
@@ -1008,7 +1148,8 @@
          the first announcement lands. -->
     <div class="sr-only" role="status" aria-live="polite">{liveNote}</div>
     {#if middleView === 'diagram' && !tutorialActive}
-      <div class="canvas-controls" role="toolbar" aria-label="Sentence actions">
+      <div class="canvas-controls" role="toolbar" aria-label="Sentence actions" data-stage-chrome>
+        {#if phone.matches}{@render progressChip()}{/if}
         <!-- Actions stay put on the solution view, merely disabled — a
              control that vanishes when the view flips reads as a glitch;
              one that dims reads as "not here, not now". -->
@@ -1055,6 +1196,16 @@
           >
         </div>
       </div>
+    {/if}
+    {#if middleView === 'diagram' && !tutorialActive && !phone.matches}{@render progressChip()}{/if}
+    {#if middleView === 'diagram' && finished && !finishedHidden && !solved && !tutorialActive && shown.selection.kind === 'none'}
+      <FinishedCard
+        labels={progress?.total ?? 0}
+        {next}
+        compact={phone.matches}
+        onnext={goNext}
+        ondismiss={() => (finishedHidden = true)}
+      />
     {/if}
     {#if middleView === 'diagram' && !solved && tutorialBeats.length > 0}
       <!-- Keyed on the sentence: a finished or stopped run belongs to the
@@ -1289,6 +1440,33 @@
     opacity: 0.4;
     cursor: default;
   }
+  .progress {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--panel) 94%, transparent);
+    color: var(--ink-muted);
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 2px 10px oklch(0 0 0 / 18%);
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+  }
+  .progress.corner {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 46;
+    min-height: 32px;
+    box-sizing: border-box;
+  }
+  .progress.complete {
+    border-color: color-mix(in oklab, var(--success) 50%, var(--border));
+    color: var(--ink);
+  }
   .solution-toggle {
     display: flex;
     gap: 2px;
@@ -1347,6 +1525,13 @@
     }
     .undo-step {
       width: 44px;
+    }
+    .progress {
+      padding: 0 8px;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
     }
     .canvas-controls .launch {
       padding: 0 12px;

@@ -25,7 +25,13 @@
   ];
 </script>
 
-<div class="bar" class:ready={ws.stageReady} role="toolbar" aria-label="Canvas tools">
+<div
+  class="bar"
+  class:ready={ws.stageReady}
+  role="toolbar"
+  aria-label="Canvas tools"
+  data-stage-chrome
+>
   {#each tools as t (t.id)}
     {@const on = ws.tool === t.id}
     <button

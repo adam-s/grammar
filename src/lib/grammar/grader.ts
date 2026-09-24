@@ -623,19 +623,9 @@ export function gradeBuild(
  * builds that pair the same nodes are the same answer even if one numbered them
  * 1 and the other 7.
  */
-function facts(cs: ConstituentMap): Set<string> {
+function facts(cs: ConstituentMap, name: NodeName = pathName): Set<string> {
   const out = new Set<string>();
-  const path = (id: string): string => {
-    const steps: string[] = [];
-    let cur: string | null = id;
-    let guard = 0;
-    while (cur && guard++ < 200) {
-      steps.unshift(cs[cur]!.form);
-      cur = cs[cur]!.parent;
-    }
-    const c = cs[id]!;
-    return `${steps.join('>')}@${c.span[0]}-${c.span[1]}`;
-  };
+  const path = (id: string): string => name(cs, id);
 
   for (const id of Object.keys(cs)) {
     const c = cs[id]!;
@@ -657,6 +647,62 @@ function facts(cs: ConstituentMap): Set<string> {
     }
   }
   return out;
+}
+
+/** How a fact names its node. */
+type NodeName = (cs: ConstituentMap, id: string) => string;
+
+/** By its path from the root: what grading needs (see `facts`). */
+const pathName: NodeName = (cs, id) => {
+  const steps: string[] = [];
+  let cur: string | null = id;
+  let guard = 0;
+  while (cur && guard++ < 200) {
+    steps.unshift(cs[cur]!.form);
+    cur = cs[cur]!.parent;
+  }
+  const c = cs[id]!;
+  return `${steps.join('>')}@${c.span[0]}-${c.span[1]}`;
+};
+
+/**
+ * By its own form and words only. A learner may build from the top or the
+ * bottom, and a path does not exist until the node above it does, so a count
+ * of path facts would sit still and then jump. Named locally, every label a
+ * learner places counts the moment it is placed.
+ */
+const localName: NodeName = (cs, id) => {
+  const c = cs[id]!;
+  return `${c.form}@${c.span[0]}-${c.span[1]}`;
+};
+
+/**
+ * How much of `reading` this build already says, counted in the labels a
+ * learner places: each node's form, its job, and every further decision the
+ * reading makes about it. What the build says beyond the reading is ignored;
+ * the progress is toward this question, not a grade of the whole tree.
+ *
+ * It is a count, not a verdict. The builder never admits a wrong answer, so
+ * every label on the board is one the grader accepted, and a build that
+ * `matchesReading` has placed every label: `done === total`. The reverse
+ * almost always holds too, but completion is still decided by
+ * `matchesReading`, never by this.
+ */
+export function progressToward(
+  build: BuildState,
+  reading: Reading,
+): { done: number; total: number } {
+  const got = facts(build.constituents, localName);
+  let best = { done: 0, total: 0 };
+  for (const constituents of analysesOf(reading)) {
+    const want = facts(constituents, localName);
+    let done = 0;
+    for (const f of want) if (got.has(f)) done++;
+    if (best.total === 0 || done * best.total > best.done * want.size) {
+      best = { done, total: want.size };
+    }
+  }
+  return best;
 }
 
 function compare(build: BuildState, reading: Reading): string[] {

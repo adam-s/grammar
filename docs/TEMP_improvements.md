@@ -39,14 +39,11 @@ If only ten things get done, these give the most back.
    who clicks _Birds_ is asked for its word class, although lesson 1 is about
    where the sentence splits. Put one line above the words: the lesson's
    question for this sentence, and what "done" looks like. (seen · high)
-2. **Give a finished sentence a moment and a next step.** Completion is a
-   small check in a list that is inside a closed drawer on phones and tablets.
-   There is no message, no announcement and no "Next sentence" button. Worse,
-   at the moment of finishing the camera does not reframe: on a 1440×900
-   laptop the words of _Birds sing_ sit under the zoom toolbar, with the tree
-   above them and empty space above that (seen, with real chooser clicks). On
-   a phone the words are hidden under the bottom bars (seen, same journey).
-   (seen · high)
+2. **Keep the words in view while the tree grows.** Finishing now reframes
+   the whole tree above the toolbars and says so, with a next step. Before
+   that moment, the camera still stays where the last pick left it: at
+   1280×720, one step from done, the words of _Birds sing_ sit under the zoom
+   bar. (seen · medium)
 3. **Put the open sentence in the URL.** Opening a sentence leaves the URL on
    the lesson. Reloading, the phone's Back gesture and sharing a link all drop
    the learner out of the sentence. (seen · high)
@@ -115,6 +112,8 @@ If only ten things get done, these give the most back.
 ### Knowing what to do
 
 - **The lesson's question is invisible in the workspace.** See First ten #1.
+  A label count ("3 of 5 labels") now says what "done" looks like, without
+  saying what the labels are. The lesson's question itself is still unsaid.
   (seen · high)
 - **Every label is offered in every lesson.** In lesson 1 the chooser offers
   all fourteen word classes and every phrase type. The course README says the
@@ -191,7 +190,6 @@ If only ten things get done, these give the most back.
 
 ### Finishing and moving on
 
-- **Completion is silent.** See First ten #2. (seen · high)
 - **"Start this sentence again" has no confirm and undo can't cross it.** One
   mis-tap erases a draft for good. (code · medium)
 - **No redo.** Deliberately out of scope in `undo.md`; revisit if learners ask.
