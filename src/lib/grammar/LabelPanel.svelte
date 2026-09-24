@@ -3,8 +3,8 @@
    * A contextual two-pane label palette.
    *
    * The left pane contains the grammatical decisions; the equally sized right
-   * pane contains the labels for the active decision. Context, suggestions,
-   * feedback, and the one description currently worth reading share a stable
+   * pane contains the labels for the active decision. Context, feedback, and
+   * the one description currently worth reading share a stable
    * header across both panes. The palette itself stays in screen space while
    * its anchor follows the selected SVG element through pan and zoom.
    */

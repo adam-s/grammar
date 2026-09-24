@@ -22,7 +22,7 @@ nothing. Thirty-six lessons of a rule that always worked, and it stops here.
 | #   | Sentence                                    | The step                                      |
 | --- | ------------------------------------------- | --------------------------------------------- |
 | 1   | The contractors dredged the harbour.        | **the active**, so the turn is visible        |
-| 2   | Those deeds were filed.                     | no agent at all — and no active version       |
+| 2   | Those deeds were filed.                     | no agent at all — the filer is left unstated  |
 | 3   | The path was cleared.                       | agentless again, shortest frame               |
 | 4   | The harbour was dredged by the contractors. | **the same event, turned around**             |
 | 5   | The ledger was audited by the inspector.    | a plain transitive passive with an agent      |

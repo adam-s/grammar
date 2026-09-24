@@ -1,8 +1,9 @@
 /**
  * Lesson 27 — Attachment changes meaning. Two kinds of ambiguity, not one.
  *
- * This is the only lesson in the course whose sentences carry two readings, and
- * the model holds both rather than working around them. What the built set did
+ * This is the lesson built on sentences that carry two readings (`c37-g` and
+ * `c40-a` carry two as well), and the model holds both rather than working
+ * around them. What the built set did
  * not do is vary the ambiguity: all ten were verb, noun phrase, prepositional
  * phrase, so a learner could pattern-match through without asking what attaches
  * where.

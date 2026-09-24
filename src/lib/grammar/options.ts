@@ -248,6 +248,11 @@ export interface OptionGroup {
    * on the row you are pointing at is a lesson.
    *
    * Notes that carry evidence or a block reason take priority whatever this says.
+   *
+   * The learner's chooser never shows any of them: `quizView` strips every
+   * note so no row can carry evidence about the answer, and the verb-type
+   * examples go with the rest. This describes the analysis, and the developer
+   * and reference renderers that read it.
    */
   notes: 'always' | 'ondemand';
   /**

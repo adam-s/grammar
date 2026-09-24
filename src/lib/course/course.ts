@@ -227,9 +227,9 @@ export const COURSE_STAGES: CourseStage[] = [
         stage: 'Phrases',
         title: 'Adjectives before nouns',
         // An adjective before a noun modifies the NOUN, not the phrase, so it
-        // needs a layer to share with it. `Nom` is that layer, and it arrives
-        // here because this is the first sentence that cannot be drawn without
-        // one.
+        // needs a layer to share with it. `Nom` is that layer. Lesson 5 taught
+        // it as the head noun's own layer; this is the first lesson where an
+        // adjective has to share it.
         teaches: ['func:premodifier', 'fuse:premodifier'],
         sentences: LESSON_16,
       },

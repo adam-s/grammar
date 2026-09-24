@@ -525,16 +525,12 @@ contract instead of the deleted template; "the research note" cites where it
 can still be read; `undo.md`, `form-and-function.md`, `optional-lessons.md`,
 `difficulty.md` and the course README match the code again. Still open:
 
-- `course.ts` says `Nom` "arrives" at lesson 16; lesson 5 teaches it.
-- `lesson-27.ts` says it is the only lesson with two-reading sentences;
-  `c37-g` and `c40-a` also have two.
-- `options.ts` says verb types are "told apart by their example"; the
-  examples are stripped before display. `LabelPanel`'s header still promises
-  "suggestions".
-- `37-passive-voice/sentences.md` says "no active version"; its dossier says
-  not to say that.
 - The course README names `~/Projects/Temp/grammar` and a list of blog
   sources. Those are facts about the author's machine, not the project.
+- The chooser strips every option's note so no row carries evidence about the
+  answer, and the six verb-type examples go with them, although `options.ts`
+  calls them the thing that tells the types apart. Deciding whether teaching
+  notes (not evidence) should survive is a product call.
 
 ## Engineering
 
