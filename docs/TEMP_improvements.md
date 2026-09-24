@@ -52,11 +52,13 @@ If only ten things get done, these give the most back.
    That was the owner's choice on 30 August (it used to follow the OS), so it
    stays unless the owner reopens it. A phone in dark mode at night gets a
    white screen. (seen · owner's call)
-5. **Make phone diagrams readable.** On a phone, lesson-page diagram labels
-   render as small as 6px tall, with a median of about 10px (measured on
-   lesson 27). Function marks such as _Subj_, _H_ and _DO_ are the smallest
-   and carry the most meaning.
-   (measured · high)
+5. **Make the function marks readable on phones.** Lesson figures now keep
+   the app's readability floor and scroll sideways when they are wider than
+   the screen (lessons 39 and 40 do on an iPhone 13), so node labels stay near
+   10px. The function marks (_Subj_, _H_, _DO_) are drawn at 8.25px and still
+   come out near 6px, and they carry the most meaning. Enlarging them means
+   changing the node-label geometry, not just a font size. The phone hero
+   poster keeps its own sizing. (measured · high)
 6. **Get a person to review the sentences.** `course-readiness` reports 0 of
    400 readings reviewed and says not to present the course as assessment
    until someone has. There is also no way to record a sign-off per sentence
@@ -240,12 +242,11 @@ If only ten things get done, these give the most back.
 - **Section eyebrows are lowercase paragraphs** ("the problem", "the
   stakes"), not part of the heading, so they are lost to screen-reader
   heading navigation. (seen · low)
-- **Figures need a phone treatment.** Wide trees shrink until their labels
-  fall under the readability floor (First ten #5). Options: let a figure
-  scroll sideways at full size with a clear cue; tap to open a figure
-  full-screen with pinch-zoom; or draw a narrow-screen alternative (see
-  [Other ways to draw a sentence](#other-ways-to-draw-a-sentence)).
-  (measured · high)
+- **Figures scroll sideways on phones when they must.** A wide figure keeps the
+  readability floor and scrolls in its own box, which is a focusable region
+  with a "Swipe sideways" cue. A narrow-screen view that doesn't need scrolling
+  (see [Other ways to draw a sentence](#other-ways-to-draw-a-sentence)) would
+  still be better. (seen · medium)
 
 ## Accessibility
 

@@ -135,6 +135,7 @@
           sentence={sentenceById(block.sentenceId)}
           reading={readingFor(block.sentenceId, block.through, block.plus, block.readingId)}
           focus={block.focus}
+          readable
         />
         {#if block.caption}
           <figcaption><InlineText text={block.caption} /></figcaption>
@@ -156,6 +157,7 @@
                 sentence={sentenceById(side.sentenceId)}
                 reading={readingFor(side.sentenceId, block.through, block.plus, side.readingId)}
                 frameWidth={comparisonFrameWidth(own, widths)}
+                readable
               />
               <p class="side-caption"><InlineText text={side.caption} /></p>
             </div>

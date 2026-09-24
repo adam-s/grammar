@@ -85,73 +85,10 @@ for (const dark of [false, true]) {
       fail(where, `poster is ${closed.posterHeight}px tall in a ${h}px viewport`);
     }
 
-    // ── Open: an opaque, viewport-true modal with its focus inside.
-    await page.locator('button.watch').click();
-    await page.waitForTimeout(400);
-    const opened = await page.evaluate(() => {
-      const demo = document.querySelector('.demo');
-      if (!demo) return null;
-      const style = getComputedStyle(demo);
-      const box = demo.getBoundingClientRect();
-      return {
-        background: style.backgroundColor,
-        maxWidth: style.maxWidth,
-        box: { x: box.x, y: box.y, w: Math.round(box.width), h: Math.round(box.height) },
-        focusOnPlay:
-          document.activeElement?.getAttribute('aria-label')?.includes('demonstration') ?? false,
-      };
-    });
-    if (!opened) fail(where, 'activation did not open the takeover');
-    else {
-      if (/rgba\(.*,\s*0\)|transparent/.test(opened.background)) {
-        fail(where, `takeover background is transparent (${opened.background})`);
-      }
-      if (opened.maxWidth !== 'none') fail(where, `takeover max-width is ${opened.maxWidth}`);
-      if (
-        Math.abs(opened.box.w - w) > 1 ||
-        Math.abs(opened.box.h - h) > 1 ||
-        opened.box.x !== 0 ||
-        opened.box.y !== 0
-      ) {
-        fail(where, `takeover box ${JSON.stringify(opened.box)} does not cover ${w}x${h}`);
-      }
-      if (!opened.focusOnPlay) fail(where, 'focus did not enter the modal');
-    }
-
-    // Tab stays inside the modal.
-    await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab');
-    const stillInside = await page.evaluate(
-      () => !!document.activeElement?.closest('.demo-controls'),
-    );
-    if (!stillInside) fail(where, 'Tab escaped the modal');
-
-    // ── Close mid-motion: gone at once, focus home, nothing resumes.
-    await page.locator('button[aria-label="Close demonstration"]').click();
-    await page.waitForTimeout(120);
-    const closedAgain = await page.evaluate(() => ({
-      demo: !!document.querySelector('.demo'),
-      pointer: !!document.querySelector('.pointer-layer .pointer'),
-      focusOnLaunch: document.activeElement?.classList.contains('watch') ?? false,
-    }));
-    if (closedAgain.demo) fail(where, 'takeover survived close');
-    if (closedAgain.pointer) fail(where, 'pointer survived close');
-    if (!closedAgain.focusOnLaunch) fail(where, 'focus did not return to the launch control');
-    await page.waitForTimeout(900);
-    const later = await page.evaluate(() => ({
-      demo: !!document.querySelector('.demo'),
-      pointer: !!document.querySelector('.pointer-layer .pointer'),
-    }));
-    if (later.demo || later.pointer) fail(where, 'demonstration work resumed after close');
-
-    // ── Reopen: a clean first decision.
-    await page.locator('button.watch').click();
-    await page.waitForTimeout(300);
-    const reopened = await page.evaluate(
-      () => document.querySelectorAll('.demo .world .node').length,
-    );
-    if (reopened !== 0) fail(where, `reopened with ${reopened} labels already built`);
-    await page.locator('button[aria-label="Close demonstration"]').click();
+    // The takeover this used to open, close and reopen (`button.watch`, a
+    // full-screen demonstration) was removed in 4c9a36e; the phone hero is
+    // the still poster checked above. Those scenes waited for a control that
+    // no longer exists and crashed this script before it could report.
 
     if (consoleErrors.length) fail(where, `console errors: ${consoleErrors[0]}`);
     await page.close();
@@ -165,4 +102,4 @@ if (failures.length > 0) {
   for (const line of failures) console.error(`  ${line}`);
   process.exit(1);
 }
-console.log(`CLEAN — poster and takeover verified at ${WIDTHS.length} widths, light and dark.`);
+console.log(`CLEAN — poster verified at ${WIDTHS.length} widths, light and dark.`);

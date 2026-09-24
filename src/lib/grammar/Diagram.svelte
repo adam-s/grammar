@@ -208,6 +208,13 @@
      * shapes that were never drawn at the same size.
      */
     frameWidth?: number;
+    /**
+     * The smallest scale a fluid drawing may be shown at. Below it the box
+     * stops shrinking and overflows instead, for its container to scroll.
+     * A lesson figure fitted to a phone's width used to render its 13px
+     * labels at six pixels and its qualifiers at four. 0 means no floor.
+     */
+    minScale?: number;
     onpick?: (sel: Selection) => void;
     ondraft?: (span: Span | null, done: boolean) => void;
   };
@@ -223,6 +230,7 @@
     fluid = false,
     trim = false,
     frameWidth = 0,
+    minScale = 0,
     onpick = () => {},
     ondraft = () => {},
   }: Props = $props();
@@ -249,6 +257,14 @@
     return { w, h: size.h, inset: (w - size.w) / 2 };
   });
   const trimInset = $derived(trim ? 18 : 0);
+  /* Both edges, because a fluid figure is also capped in height: with only a
+     minimum width, a tall tree would meet its height cap and shrink anyway. */
+  const floorStyle = $derived(
+    fluid && minScale > 0
+      ? `min-width:${Math.ceil((frame.w - trimInset * 2) * minScale)}px;` +
+          `min-height:${Math.ceil((frame.h - trimInset * 2) * minScale)}px`
+      : undefined,
+  );
   /**
    * The arcs, placed from the same layout the tree uses. A node with no box —
    * one the layout could not place — drops its whole arc rather than half of it.
@@ -455,6 +471,7 @@
   class:fluid
   width={fluid ? undefined : size.w}
   height={fluid ? undefined : size.h}
+  style={floorStyle}
   viewBox="{trimInset} {trimInset} {frame.w - trimInset * 2} {frame.h - trimInset * 2}"
   preserveAspectRatio="xMidYMid meet"
   role="group"
