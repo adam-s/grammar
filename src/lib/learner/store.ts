@@ -5,8 +5,11 @@
  * exported, or cleared as a whole.
  *
  * Storage can be absent (server render) or refuse to work (private windows,
- * full quotas). Every call catches, so the worst storage failure the learner
- * can experience is the app forgetting — never the app breaking.
+ * full quotas). Every call catches, so a storage failure never breaks the app.
+ * It used to be the whole story: failures were swallowed, and a learner whose
+ * store filled up kept working while nothing was kept. Writes now say whether
+ * they happened, and `saveKey` makes room and reports, so the page can tell
+ * the learner.
  */
 const PREFIX = 'grammar:';
 const SNAPSHOT_PREFIX = `${PREFIX}session:`;
@@ -44,12 +47,45 @@ export function readKey(key: string): string | null {
   }
 }
 
-export function writeKey(key: string, value: string): void {
+/** Write one key. True if it was stored; false if storage is absent, full or forbidden. */
+export function writeKey(key: string, value: string): boolean {
   try {
-    storage()?.setItem(key, value);
+    const s = storage();
+    if (!s) return false;
+    s.setItem(key, value);
+    return true;
   } catch {
     // A full or forbidden store loses this save, not the session.
+    return false;
   }
+}
+
+/** What a save achieved, for the page to tell the learner. */
+export type Saved = 'saved' | 'freed' | 'failed';
+
+/**
+ * Save a record key, making room if the store is full.
+ *
+ * The step histories (traces) are the record's most expendable part: they
+ * serve undo across a reload and the replay bench, and they are by far the
+ * largest thing stored. So when a write does not fit, every trace but `keep`
+ * (the open sentence's) and the one being written is cleared, and the write
+ * is tried once more. Drafts and checkmarks are never cleared to make room.
+ * `'freed'` means it worked after clearing; `'failed'` means nothing helped.
+ */
+export function saveKey(key: string, value: string, keep: string): Saved {
+  if (writeKey(key, value)) return 'saved';
+  const s = storage();
+  if (!s) return 'failed';
+  let freed = 0;
+  for (const own of ownKeys()) {
+    if (own.startsWith(TRACE_PREFIX) && own !== keep && own !== key) {
+      removeKey(own);
+      freed++;
+    }
+  }
+  if (freed === 0) return 'failed';
+  return writeKey(key, value) ? 'freed' : 'failed';
 }
 
 export function removeKey(key: string): void {

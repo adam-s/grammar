@@ -61,15 +61,10 @@ If only ten things get done, these give the most back.
    400 readings reviewed and says not to present the course as assessment
    until someone has. There is also no way to record a sign-off per sentence
    without a code change. (measured · high)
-7. **Fix the docs that point at things that are gone.** CLAUDE.md sends
-   readers to a README section that was removed; four files cite a deleted
-   `docs/learner-record.md`; `undo.md` says the Back button is not drawn.
-   See [Docs that drifted](#docs-that-drifted). (doc · medium)
-8. **Make saving honest.** Every storage error is swallowed, and the event
-   trace is rewritten in full on every pick with nothing ever evicted. When
-   the browser's quota fills, drafts and checkmarks stop saving without a
-   word. (code · high)
-9. **Load the fonts the CSS names.** `theme.css` asks for "Inter var" and
+7. **Finish the doc repairs.** Most drifted docs were fixed on 24 September
+   (see [Docs that drifted](#docs-that-drifted)); a few code comments still
+   say things the code no longer does. (doc · low)
+8. **Load the fonts the CSS names.** `theme.css` asks for "Inter var" and
    "Source Serif 4", and nothing loads either, so every device shows a
    different fallback. The label-width maths assumes a fixed monospace
    advance, so fallback fonts also move the layout. (code, verified · medium)
@@ -111,7 +106,10 @@ If only ten things get done, these give the most back.
 
 - **The lesson's question is invisible in the workspace.** See First ten #1.
   A label count ("3 of 5 labels") now says what "done" looks like, without
-  saying what the labels are. The lesson's question itself is still unsaid.
+  saying what the labels are. The lesson's question itself is still unsaid,
+  and the two together can mislead: a learner in lesson 1 who labels _The_ as
+  a determiner sees "0 of 5 labels", because lesson 1 does not ask about
+  determiners, and may think the pick did not count.
   (seen · high)
 - **Every label is offered in every lesson.** In lesson 1 the chooser offers
   all fourteen word classes and every phrase type. The course README says the
@@ -273,12 +271,13 @@ If only ten things get done, these give the most back.
 
 ## Saving, progress and sharing
 
-- **Storage failure is silent.** See First ten #9. Show a quiet banner when a
-  save fails. (code · high)
-- **The trace grows without bound across sentences.** Each sentence keeps up
-  to 1,000 events, and 400 sentences' worth can plausibly reach the ~5 MB
-  localStorage quota. Cap the total, evict the oldest finished traces first,
-  and keep drafts and completions safe. (code · high)
+- **The trace still grows until the store is full.** Saving is now honest: a
+  failed write clears other sentences' step histories (never drafts or
+  checkmarks), retries once, and tells the learner either way, with an export
+  when nothing helps. But nothing caps the histories before that moment, so a
+  long course fills the store and loses every other history at once. A
+  per-sentence size cap, or evicting the oldest finished sentences first,
+  would spread the loss. (code · low)
 - **No sync between tabs.** Two tabs overwrite each other. Listen for the
   `storage` event. (code · low)
 - **Export exists, import doesn't.** A learner can't move progress to another
@@ -543,10 +542,15 @@ can still be read; `undo.md`, `form-and-function.md`, `optional-lessons.md`,
   `course:readiness` run that posts the review count. CI runs only lint,
   check, test and build, so the sentence length ceiling and ledger sync are
   never enforced there. (doc · medium)
-- **`check-selection-gesture.mjs` has been broken since the phone full-screen
-  demo was removed.** It waits for `button.watch`, which no longer exists
-  anywhere in `src`, and stops at its "hero overlay 390" block. It isn't in
-  `package.json` or CI, so nothing noticed. (verified · medium)
+- **`check-selection-gesture.mjs` fails three scenes, and did before today.**
+  Now that it runs to the end (the dead overlay scene is gone), it reports:
+  the desktop full run never has both labels pressed after the marquee; a
+  tight real marquee in the pause/stop scene selects nothing; and the
+  reduced-motion run ends without the `S` node built. The same three fail on
+  commit 7976fda, before any of this review's changes, so they are old
+  failures that the crash was hiding. Not yet investigated. Its dark scene is
+  also timing-sensitive: it clicks Stop after a run that may already have
+  finished. (verified · medium)
 - **`check-tutorial-sweep.mjs` passes when it checks nothing.** A `--lessons`
   filter that matches no lesson (for example `01-introduction` instead of `01`)
   sweeps zero lessons and prints "CLEAN". A check should fail on an empty set.

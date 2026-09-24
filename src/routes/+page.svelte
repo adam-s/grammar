@@ -103,10 +103,11 @@
     exportRecord,
     readKey,
     removeKey,
+    saveKey,
     snapshotKey,
     traceKey,
-    writeKey,
   } from '$lib/learner/store.ts';
+  import SaveNotice from '$lib/learner/SaveNotice.svelte';
   import {
     appendEntry,
     decodeTrace,
@@ -914,6 +915,25 @@
    * they earn nothing.
    */
   let trace: Trace | null = null;
+
+  /**
+   * Whether saving is working, as the learner should hear it. Every record
+   * write goes through `save`; a full store makes room from old step
+   * histories ('freed'), and a store that cannot keep anything says so
+   * ('failed'), with a way to export the work. A later save that goes
+   * through clears a failure, so the notice leaves once storage recovers.
+   */
+  let saveState = $state<'freed' | 'failed' | null>(null);
+  let saveDismissed = $state<'freed' | 'failed' | null>(null);
+  function save(key: string, value: string) {
+    const result = saveKey(key, value, traceKey(sentence.id));
+    if (result === 'saved') {
+      if (saveState === 'failed') saveState = null;
+      return;
+    }
+    // A failure outranks a note that space was made.
+    if (result === 'failed' || saveState !== 'failed') saveState = result;
+  }
   /** Bumped on every append so `canUndo` — the one reader the plain `trace`
       variable has — knows to look again. */
   let traceSeq = $state(0);
@@ -921,7 +941,7 @@
     if (!trace) return;
     trace = appendEntry(trace, entry);
     traceSeq += 1;
-    writeKey(traceKey(trace.sentenceId), encodeTrace(trace));
+    save(traceKey(trace.sentenceId), encodeTrace(trace));
   }
   /** A committed learner selection, worth a line in the story. */
   function traceSelect(sel: Selection) {
@@ -988,7 +1008,7 @@
     if (completed.has(sentence.id)) return;
     if (!earnsCompletion(graded, sentence, target)) return;
     completed.add(sentence.id);
-    writeKey(completionKey(), encodeCompletion(completed));
+    save(completionKey(), encodeCompletion(completed));
     traceAppend({ kind: 'complete' });
   }
 
@@ -1006,7 +1026,7 @@
     // later pick to record from. The active-run guard refuses persistence if
     // that structural boundary is ever broken during teardown.
     if (tutorialActive) return;
-    writeKey(snapshotKey(sentence.id), encodeSnapshot(session, words));
+    save(snapshotKey(sentence.id), encodeSnapshot(session, words));
     recordCompletion(session.build);
   }
 
@@ -1296,6 +1316,13 @@
         onhover={(o) => (preview = o?.form ?? null)}
         onclose={closePalette}
         onaction={act}
+      />
+    {/if}
+    {#if saveState && saveState !== saveDismissed}
+      <SaveNotice
+        state={saveState}
+        onexport={downloadRecord}
+        ondismiss={() => (saveDismissed = saveState)}
       />
     {/if}
     <PointerLayer pointer={guidedPointer} />
