@@ -54,6 +54,13 @@ instance, it is a fact wearing a rule's clothes; write the principle instead.
 - **Look before claiming.** A visual change is not done until you have rendered
   it and read the result. A description of what the code should produce is not
   evidence of what it produces.
+- **Judge the experience where it is used.** Anything a learner sees is looked
+  at on a phone and a laptop, through the learner's own steps, before it is
+  called done. Passing checks say the known faults are absent, not that the
+  experience is good.
+- **Size evidence for its reader.** An image bigger than its reader's limit is
+  shrunk before anyone sees it, so the extra pixels cost and buy nothing. Judge
+  small detail from a crop, never from a shrunken whole.
 - **Say when the ground moved.** If the working tree, branch, or a running
   process is not what you last described, lead with that rather than continuing
   as though it were.
