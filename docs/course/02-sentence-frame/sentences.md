@@ -56,7 +56,7 @@ The set does not include a possessive subject such as _Mara's phone buzzed_. A
 possessive would put another noun before the verb in a common, compact way, but
 the grammar model does not yet represent that structure. The limitation is also
 recorded in [the course difficulty notes](../difficulty.md) and the
-[project README](../../../README.md#what-the-model-still-cannot-say).
+[architecture notes](../../architecture.md#what-the-model-still-cannot-say).
 
 _The lock on the shed rusted_ fills that place for now without claiming support
 the model does not have.

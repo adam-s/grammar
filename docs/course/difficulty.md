@@ -35,12 +35,12 @@ times.
 | lessons asking for two                                        | 12                   | **0**     |
 | lessons asking for six or more                                | 5                    | **16**    |
 | transitions that discard **all** of what the step before used | 184                  | **0**     |
-| structural shapes the course uses                             | 88 trees / 43 shapes | 71 shapes |
+| structural shapes the course uses                             | 88 trees / 43 shapes | 70 shapes |
 | decisions taught and never exercised                          | 2                    | **0**     |
 
 **Read that row carefully.** 184 was measured under set inclusion — a transition
 counted as a discard if it dropped **any** earlier lesson its predecessor used.
-Under that definition the corpus still has **76**, and `measure-course.mjs` still
+Under that definition the corpus still has **77** (re-measured 24 September 2026), and `measure-course.mjs` still
 reports them, because inclusion turned out to be unsatisfiable (see the contract
 below). The 0 is the weaker and satisfiable rule the test enforces: no transition
 drops more than half. The two numbers measure different things and both are here
@@ -79,8 +79,8 @@ last one used and adds to it, or puts a familiar shape in an unfamiliar job, or
 nests one taught thing inside another.
 
 None of that needs a longer sentence. Lesson 21 teaches the postmodifier and
-lesson 16 taught the premodifier, and **not one of lesson 21's ten sentences uses
-both**. _The old lock on the shed rusted_ is seven words — shorter than _The clerk
+lesson 16 taught the premodifier, and **not one of lesson 21's ten sentences used
+both** when this was written. One does now. _The old lock on the shed rusted_ is seven words — shorter than _The clerk
 showed the visitor from the ministry a map_, already in that lesson — and asks for
 more.
 
@@ -173,9 +173,9 @@ Not checkable, and better said than faked:
 
 ## What the course never touches
 
-The units are what `measure-course.mjs` reports: **7 structural shapes**
+The units are what `measure-course.mjs` reports: **8 structural shapes**
 (`parent > child/function`, the string `consistency.test.ts` uses) and **3 node
-properties**, which are not shapes and are counted apart. Ten in all, every one
+properties**, which are not shapes and are counted apart. Eleven in all (re-measured 24 September 2026), every one
 proved by a fixture and used by no lesson. The count was 16 and 5 before the
 course corpus was converted; the eleven that closed are named below.
 
@@ -188,7 +188,7 @@ Three constructions were called unbuildable. **One was a form list one entry
 short**: a clause as subject complement, _The trouble was that the gate failed_,
 now lesson 30's. **Two are still open, and both are design questions rather than
 missing entries**, recorded here and in
-[the README](../../README.md#what-the-model-still-cannot-say):
+[the architecture notes](../architecture.md#what-the-model-still-cannot-say):
 
 - **the possessive.** An `NP` cannot fill a determiner slot, a `DP`'s head must be
   a `Det`, and a `DP` has no complement, so _Mara's phone_ has no representation.
@@ -266,8 +266,8 @@ sentences four hundred at a time.
   planned and unwritten. That is another course-sized job.
 - **Whether lessons grow past ten.** Ten is tight for a late lesson with
   thirty-eight things behind it to compose.
-- **Where fusion is taught.** Lesson 6 for the determiner case and 16 for the
-  premodifier case are the natural homes, but neither is promised to it.
-- **Whether the proposals replace the corpus.** The 44 `sentences.md` files are
-  proposals with no parse. Nothing should replace a built sentence until a person
-  has read the proposal and its reading.
+- ~~Where fusion is taught.~~ Decided: lesson 6 teaches `fuse:determiner` and
+  lesson 16 `fuse:premodifier` (`course.ts`).
+- ~~Whether the proposals replace the corpus.~~ Decided: they did. The corpus
+  was rebuilt from the `sentences.md` proposals (see the top of this page), and
+  every sentence still waits for a person to read it.

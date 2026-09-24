@@ -1,7 +1,7 @@
 # Lesson 40 — Final synthesis
 
 Researched 30 August 2026. An author's dossier, not learner copy. See the
-[authoring template](../../lesson-blog-page-template.md).
+[lesson contract](../../lesson/README.md).
 
 **Status:** Research pass complete. This pass read the learner page, all ten
 live practice entries, the three fixtures cited by the page, the sentence

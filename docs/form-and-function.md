@@ -1,5 +1,10 @@
 # Form and function
 
+**Status (24 September 2026): half shipped.** Lesson 1 and lesson 9 carry the
+label key, drawn by the shared renderer. Still open: lesson 3 never says "V is
+the form, head is the job", and lesson 20 is still titled _Form is not
+function_ and opens as a definition rather than a synthesis.
+
 This is a design proposal for teaching the distinction between form and
 function earlier in the course. The distinction already appears in the first
 lesson and in the sentence builder, but its full explanation currently waits

@@ -23,7 +23,8 @@ npm run all      # lint, types, tests, build and the course checks
 npm run ux-review -- --url=http://localhost:5173   # walk the learner journeys on a laptop and a phone
 ```
 
-How to judge those runs, and fix what they show, is in
+How the app is put together is in [docs/architecture.md](docs/architecture.md);
+how to judge the review runs, and fix what they show, is in
 [docs/ux-review.md](docs/ux-review.md).
 
 SvelteKit 2 · Svelte 5 (runes) · TypeScript · Tailwind 4 · adapter-static.

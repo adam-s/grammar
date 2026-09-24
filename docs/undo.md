@@ -1,8 +1,10 @@
 # Undo
 
-This is the working plan for a Back button. The mechanism is built and
-tested; the button is not yet drawn. The event trace
-(`docs/learner-record.md`) records every moment of a session and replays it
+This was the working plan for a Back button, and it has shipped: the button
+sits in the sentence actions, ⌘Z / Ctrl+Z works on the diagram, and a live
+region says "Took back the last step." The plan below is kept because its
+rules are still the rules. The event trace
+([learner-record.md](learner-record.md)) records every moment of a session and replays it
 through the app's own transaction, so undo is not a new history mechanism —
 it is one new kind of moment in a history that already exists, and that
 moment's rules now live in the trace module with the rest.
@@ -40,8 +42,7 @@ confuses in practice, the answer is copy, not a mutable checkmark.
 
 Each of these was once a gap; each is now a rule with a test in the trace
 suite. The machinery is BUILT — the `undo` entry kind, its replay semantics,
-and the `undoDepth` the button will read all live in the trace module. What
-remains is the button itself.
+and the `undoDepth` the button reads all live in the trace module.
 
 - **Only the learner's timeline steps back.** Replay keeps a history of the
   learner's distinct builds. A guided run's picks land on its scratch and

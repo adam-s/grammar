@@ -1,7 +1,7 @@
 # Lesson 15 — The six types, one procedure
 
-Researched 30 August 2026. An author's dossier, not learner copy. See [the authoring
-template](../../lesson-blog-page-template.md).
+Researched 30 August 2026. An author's dossier, not learner copy. See [the lesson
+contract](../../lesson/README.md).
 
 **Status:** Research complete; learner-page revision remains. This pass read the
 current learner-facing page, the ten live practice sentences, the relevant

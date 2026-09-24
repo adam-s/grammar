@@ -519,43 +519,21 @@ it.
 
 ## Docs that drifted
 
-Each of these is a doc that disagrees with the code or with another doc.
+Fixed on 24 September 2026: the architecture notes are back as
+[architecture.md](architecture.md) and CLAUDE.md, AGENTS.md and the README
+point to them; `learner-record.md` is restored; the dossiers point to the lesson
+contract instead of the deleted template; "the research note" cites where it
+can still be read; `undo.md`, `form-and-function.md`, `optional-lessons.md`,
+`difficulty.md` and the course README match the code again. Still open:
 
-- `CLAUDE.md` and `AGENTS.md` say `README.md` explains the layout and the
-  labelling model. It no longer does; commit 4c9a36e removed those sections.
-  `difficulty.md` and `02-sentence-frame/sentences.md` link to the removed
-  section.
-- `docs/learner-record.md` was deleted but is cited by `undo.md`,
-  `learner/record.ts`, `scripts/check-replay.mjs` and
-  `scripts/check-learner-record.mjs`.
-- `docs/lesson-blog-page-template.md` was deleted; eight lesson dossiers still
-  link to it.
-- "The research note" is cited in `course/README.md` and `lesson/README.md`
-  and exists nowhere.
-- `undo.md` says the Back button "is not yet drawn". It is drawn, with ⌘Z and
-  a live region.
-- `course/README.md` still says practice sets "neither escalate nor
-  accumulate". `difficulty.md` reports accumulation is now enforced.
-- `difficulty.md`'s numbers have moved: 71 shapes is now 70; 76 set-inclusion
-  discards is now 77; ten unused shapes and properties is now eleven. Two of
-  its "Still to decide" items are decided. Its claim that no lesson-21
-  sentence has both a pre- and a postmodifier is no longer true.
-- Lesson 2's and lesson 38's titles differ between `course.ts` and the
-  course README and ledger.
 - `course.ts` says `Nom` "arrives" at lesson 16; lesson 5 teaches it.
-- The course README says a participial leaves its object empty; `c35-a`
-  leaves the subject empty, and `lesson-35.ts` says so.
-- The course README says lesson 39 is lesson 33 with commas added; the two
-  sets now share no sentence.
 - `lesson-27.ts` says it is the only lesson with two-reading sentences;
   `c37-g` and `c40-a` also have two.
-- The coverage table is missing `marker`, `gap`, `anchor` and the `aux:*`
-  kinds.
-- `form-and-function.md` still calls itself "a design proposal"; half of it
-  shipped.
 - `options.ts` says verb types are "told apart by their example"; the
   examples are stripped before display. `LabelPanel`'s header still promises
   "suggestions".
+- `37-passive-voice/sentences.md` says "no active version"; its dossier says
+  not to say that.
 - The course README names `~/Projects/Temp/grammar` and a list of blog
   sources. Those are facts about the author's machine, not the project.
 

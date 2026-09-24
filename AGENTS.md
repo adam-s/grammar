@@ -1,9 +1,9 @@
 # Grammar — agent guide
 
 An app for building sentence diagrams, and for finding out whether the person
-building one actually knows how. What it is and how it is put together is
-[README.md](README.md). This file is the working agreement, and it is short on
-purpose.
+building one actually knows how. What it is: [README.md](README.md); how it is
+put together: [docs/architecture.md](docs/architecture.md). This file is the
+working agreement, and it is short on purpose.
 
 Keep it that way. Everything here is a **principle** — never a path, a constant,
 a symbol name, or a recipe. Specifics rot: they get renamed on the next refactor

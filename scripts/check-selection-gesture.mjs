@@ -866,48 +866,10 @@ for (const width of [320, 500, 700]) {
   note(`${where}: recorded and judged`);
 }
 
-{
-  const where = 'hero overlay 390';
-  const { page, errors } = await newPage(browser, { width: 390, height: 844 });
-  await page.goto(`${base}/lessons/01-introduction`, { waitUntil: 'networkidle' });
-  await page.locator('button.watch').click();
-  await page.waitForTimeout(500);
-  await page.evaluate(() => {
-    const w = window;
-    w.__heroSamples = [];
-    w.__heroTimer = setInterval(() => {
-      const demo = document.querySelector('.demo');
-      if (!demo) return;
-      const pointerEl = demo.querySelector('.pointer-layer .pointer');
-      w.__heroSamples.push({
-        dip: !!pointerEl?.classList.contains('dip'),
-        sel: demo.querySelectorAll('.world g.word.sel').length,
-      });
-      if (w.__heroSamples.length > 6000) w.__heroSamples.shift();
-    }, 30);
-  });
-  try {
-    await page.waitForFunction(
-      () => (window.__heroSamples ?? []).some((s) => s.dip && s.sel >= 1),
-      null,
-      { timeout: 60000, polling: 60 },
-    );
-  } catch {
-    fail(where, 'the overlay hero never pressed on a lit word');
-  }
-  await agentShot(page, `${SHOTS}09-hero-overlay.png`);
-  await page.evaluate(() => clearInterval(window.__heroTimer));
-  await page.locator('button[aria-label="Close demonstration"]').click();
-  await page.waitForTimeout(300);
-  const closed = await page.evaluate(() => ({
-    demo: !!document.querySelector('.demo'),
-    pointer: !!document.querySelector('.pointer-layer .pointer'),
-  }));
-  if (closed.demo || closed.pointer) fail(where, 'overlay hero left debris after close');
-  if (errors.length) fail(where, `console errors: ${errors[0]}`);
-  await page.close();
-  note(`${where}: recorded and judged`);
-}
+// The phone's full-screen demonstration overlay ('hero overlay 390') was
+// removed in 4c9a36e: the phone hero is now a still poster, checked by
+// check-mobile-hero.mjs. Its scene waited for a `button.watch` that no longer
+// exists, and it stopped this whole script there until it was taken out.
 
 /* ============================================================== SCENE 10
  * Stop is a hard cancellation boundary. The shipped race: Stop aborted the

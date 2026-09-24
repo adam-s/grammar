@@ -8,13 +8,14 @@ its lesson's scope and rebuilt through the real palette before it counts.
 The labelling interaction this sits on is documented in
 `src/lib/grammar/options.ts`, whose tests are its specification.
 
-[difficulty.md](difficulty.md) measures what the sentences do NOT yet do: no
-lesson gets harder as it goes, and the composition that exists is unordered and
-thin. Read it before writing more of them.
+[difficulty.md](difficulty.md) measures how the sentences get harder. Each
+lesson now keeps most of what the one before it used (a test enforces it), but
+picks still fall within 35 of the 40 lessons. Read it before writing more of
+them.
 
 [optional-lessons.md](optional-lessons.md) proposes a second kind of lesson,
-numbered `03a` and `18a`, for the things settled by meaning rather than by a
-test. They teach no label, are never graded, and can be skipped without
+numbered like `03a`, `18a`, `24a` and `37a`, for the things settled by meaning
+rather than by a test. They teach no label, are never graded, and can be skipped without
 consequence. None exists in the data yet.
 
 ## How the order is enforced
@@ -24,7 +25,9 @@ Prose does not fail. Now each lesson declares the labels it is the **first** to
 teach, cumulative scope is the union of every lesson up to it, and three things
 follow from that one field:
 
-- The palette greys a label from a later lesson instead of offering it.
+- A lesson's target, and so its completion check and its guided run, uses
+  only labels taught so far. The open builder still offers every valid label;
+  see the progression contract below.
 - Every lesson sentence is pruned to what its lesson has taught and rebuilt
   through the real palette. A sentence that needs a forward concept fails.
 - No label may be claimed by two lessons, because then it has no first one.
@@ -40,15 +43,15 @@ visible and unlabelled.
 
 ### Stage 1 — See the frame
 
-| #   | Lesson                   | One new idea                                                                        | The turn                                       |
-| --- | ------------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
-| 1   | Introduction             | subject and predicate make the sentence frame                                       | the same words can make two structures         |
-| 2   | A sentence has two parts | none — the same cut, on a longer subject                                            | the subject is a run of words                  |
-| 3   | Find the main verb       | the tense test finds the verb at the predicate's center; naming it is naming a head | several words work together as one noun phrase |
-| 4   | Noun phrases             | replace the whole run with _it_ or _they_                                           | one word controls the phrase                   |
-| 5   | Find the head            | a phrase is named after its head                                                    | a small word points the noun out               |
-| 6   | Determiners              | a determiner starts or limits a noun phrase                                         | one word can stand for a whole noun phrase     |
-| 7   | Pronouns                 | a pronoun can fill a noun phrase by itself                                          | some verbs need nothing after them             |
+| #   | Lesson                                                  | One new idea                                                                        | The turn                                       |
+| --- | ------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 1   | Introduction                                            | subject and predicate make the sentence frame                                       | the same words can make two structures         |
+| 2   | A subject and predicate give a sentence its basic shape | none — the same cut, on a longer subject                                            | the subject is a run of words                  |
+| 3   | Find the main verb                                      | the tense test finds the verb at the predicate's center; naming it is naming a head | several words work together as one noun phrase |
+| 4   | Noun phrases                                            | replace the whole run with _it_ or _they_                                           | one word controls the phrase                   |
+| 5   | Find the head                                           | a phrase is named after its head                                                    | a small word points the noun out               |
+| 6   | Determiners                                             | a determiner starts or limits a noun phrase                                         | one word can stand for a whole noun phrase     |
+| 7   | Pronouns                                                | a pronoun can fill a noun phrase by itself                                          | some verbs need nothing after them             |
 
 Lesson 4 no longer tries to teach noun phrases, heads, and determiners at once.
 Those are three observable decisions, so they get three lessons.
@@ -106,12 +109,12 @@ paraphrase. The grader treats the second reading as meaning, not as failure.
 adjective phrase with something inside it, an adverbial the verb can do
 without, a preposition whose complement is another preposition, and the same
 phrase doing two jobs. That looked wrong until this repo's own research note
-was reread — a unit built around a label and practised in a block is precisely
+(retired in 42fa065; `git show 42fa065^:docs/lesson/what-the-evidence-says.md`) was reread — a unit built around a label and practised in a block is precisely
 what measures badly, and interleaved practice is what measures well. A lesson
 that adds a test rather than a term is the shape the evidence supports.
 
-All twelve have their ten, and [difficulty.md](difficulty.md) measures what
-those ten do not yet do: they neither escalate nor accumulate.
+All twelve have their ten, and [difficulty.md](difficulty.md) measures how
+they build on each other.
 
 ### Stage 4 — Put clauses inside clauses
 
@@ -137,15 +140,15 @@ evidence it is doing a noun's work.
 
 ### Stage 5 — Handle reduced and marked structures
 
-| #   | Lesson                                | One new idea                                                                     | The turn                                                      |
-| --- | ------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| 34  | Infinitive clauses                    | infinitival _to_ marks a verb without tense                                      | an _-ing_ or _-ed_ verb can modify a noun                     |
-| 35  | Participial clauses                   | a participial modifier leaves its OBJECT empty, not its subject                  | an _-ing_ clause can fill a noun-shaped slot                  |
-| 36  | Gerund clauses                        | an _-ing_ clause can function where an NP can                                    | a sentence can change voice without changing its participants |
-| 37  | Passive voice                         | passive voice changes which participant is the subject                           | some sentence-edge words belong to no clause slot             |
-| 38  | Interjections and sentence-edge words | an interjection stands outside the clause frame                                  | punctuation suggests structure but cannot decide it           |
-| 39  | Punctuation is evidence               | punctuation helps test a reading but does not determine one                      | a long sentence combines every earlier system                 |
-| 40  | Final synthesis                       | the same verb-first procedure scales to nested, coordinated, ambiguous sentences | find and defend a second reading                              |
+| #   | Lesson                       | One new idea                                                                     | The turn                                                      |
+| --- | ---------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 34  | Infinitive clauses           | infinitival _to_ marks a verb without tense                                      | an _-ing_ or _-ed_ verb can modify a noun                     |
+| 35  | Participial clauses          | an _-ed_ participial leaves its object empty; an _-ing_ one, its subject         | an _-ing_ clause can fill a noun-shaped slot                  |
+| 36  | Gerund clauses               | an _-ing_ clause can function where an NP can                                    | a sentence can change voice without changing its participants |
+| 37  | Passive voice                | passive voice changes which participant is the subject                           | some sentence-edge words belong to no clause slot             |
+| 38  | Interjections and edge words | an interjection stands outside the clause frame                                  | punctuation suggests structure but cannot decide it           |
+| 39  | Punctuation is evidence      | punctuation helps test a reading but does not determine one                      | a long sentence combines every earlier system                 |
+| 40  | Final synthesis              | the same verb-first procedure scales to nested, coordinated, ambiguous sentences | find and defend a second reading                              |
 
 The last stage is deliberately late. Infinitives and participles depend on the
 learner already separating a verb from tense, and the passive depends on a firm
@@ -154,10 +157,11 @@ are evidence for structure, not a substitute for finding it.
 
 Two things authoring stage 5 settled:
 
-**A reduced participial leaves its object empty, not its subject.** _The engine
-repaired after the flood_ — the engine is the thing repaired. That is the
-contrast with lesson 31, where the empty slot is the subject, and it is what
-lesson 35 actually teaches.
+**An _-ed_ participial leaves its object empty.** _The engine repaired after
+the flood_ — the engine is the thing repaired. That is the contrast with
+lesson 31, where the empty slot is the subject. An _-ing_ participial leaves
+its subject empty instead — _The child standing by the gate waved_ (`c35-a`) —
+so lesson 35 teaches both, and which slot is empty is the decision.
 
 **The model makes no voice claim about a reduced participial.** It means a
 passive and it has no _be_ to hang the claim on, and the audits are right to
@@ -165,9 +169,13 @@ refuse one. `fix-garden-path` keeps the same silence. If that is ever worth
 saying, it needs a passive that does not require an auxiliary, which is a model
 decision and not a content one.
 
-Lesson 39's sentences are lesson 33's with a comma added, on purpose: a comma
-is a reason to try a reading and not the reading itself, and that is only
-visible against the same sentence without one.
+Lesson 39 was first drafted as lesson 33's sentences with a comma added, on
+purpose: a comma is a reason to try a reading and not the reading itself, and
+that is only visible against the same sentence without one. The rebuilt sets
+no longer share a sentence: lesson 39 now gathers commas the course has
+already built (a list, an appositive, fronted clauses) around the pair that is
+why it exists, _The visitors who had missed their train waited_ against _The
+visitors, who had missed their train, waited_.
 
 ## The progression contract
 
@@ -202,32 +210,35 @@ For lessons 1–15 this table is no longer the authority — `teaches` in
 `src/lib/course/course.ts` is, and a test refuses to let one label have two
 first lessons. This is the readable copy.
 
-| Inventory                                               | First taught                       |
-| ------------------------------------------------------- | ---------------------------------- |
-| Phrase forms: S, NP, VP                                 | 1                                  |
-| Phrase forms: AdjP, PP, AdvP                            | 10, 14, 14                         |
-| Phrase forms: Nom, DP, Cl                               | 5, 6, 28                           |
-| Word forms: V, N, Det, Pron                             | 3, 5, 6, 7                         |
-| Word forms: Adj, P, Adv                                 | 10, 14, 14                         |
-| Word forms: Num, Aux, Part, Conj, Subord, Interj        | 23, 24, 25, 26, 29, 38             |
-| Clause functions: subject, predicate                    | 1                                  |
-| Clause functions: direct object, subject complement     | 9, 10                              |
-| Clause functions: indirect object, object complement    | 12, 13                             |
-| Clause function: adverbial, including obligatory        | 14                                 |
-| Phrase function: head                                   | 3, on the verb; generalised at 5   |
-| Phrase functions: determiner, complement                | 6, 14                              |
-| Phrase functions: premodifier, postmodifier, appositive | 16, 21, 22                         |
-| Phrase functions: flat, coordinate, coordinator         | 22, 26, 26                         |
-| Phrase functions: placeholder, extraposed, displaced    | 30                                 |
-| Phrase functions: prenucleus, postnucleus               | 31, 32                             |
-| Verb types: Vint, Vtr, Vlink, Vbe, Vg, Vc               | 8–13                               |
-| Clause kinds: nominal, adverbial, relative, comparative | 28, 29, 31, 32                     |
-| Clause kinds: interrogative, exclamative                | 31, 39                             |
-| Fused functions: determiner-head, premodifier-head      | 6, 16                              |
-| Clause finiteness: finite, infinitival, participial, -ing | 28, 34, 35, 36                   |
-| Voice: active, passive                                  | 37                                 |
-| Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA    | 8–15                               |
-| Ambiguity and alternate readings                        | 1, demonstrated fully in 27 and 40 |
+| Inventory                                                 | First taught                       |
+| --------------------------------------------------------- | ---------------------------------- |
+| Phrase forms: S, NP, VP                                   | 1                                  |
+| Phrase forms: AdjP, PP, AdvP                              | 10, 14, 14                         |
+| Phrase forms: Nom, DP, Cl                                 | 5, 6, 28                           |
+| Word forms: V, N, Det, Pron                               | 3, 5, 6, 7                         |
+| Word forms: Adj, P, Adv                                   | 10, 14, 14                         |
+| Word forms: Num, Aux, Part, Conj, Subord, Interj          | 23, 24, 25, 26, 29, 38             |
+| Clause functions: subject, predicate                      | 1                                  |
+| Clause functions: direct object, subject complement       | 9, 10                              |
+| Clause functions: indirect object, object complement      | 12, 13                             |
+| Clause function: adverbial, including obligatory          | 14                                 |
+| Phrase function: head                                     | 3, on the verb; generalised at 5   |
+| Phrase functions: determiner, complement                  | 6, 14                              |
+| Phrase functions: premodifier, postmodifier, appositive   | 16, 21, 22                         |
+| Phrase functions: flat, coordinate, coordinator           | 22, 26, 26                         |
+| Phrase functions: placeholder, extraposed, displaced      | 30                                 |
+| Phrase functions: prenucleus, postnucleus                 | 31, 32                             |
+| Verb types: Vint, Vtr, Vlink, Vbe, Vg, Vc                 | 8–13                               |
+| Clause kinds: nominal, adverbial, relative, comparative   | 28, 29, 31, 32                     |
+| Clause function: marker (the subordinator's job)          | 29                                 |
+| Gap and comparative anchor                                | 31, 32                             |
+| Auxiliary kinds: modal, perfect, progressive, do; passive | 24; 37                             |
+| Clause kinds: interrogative, exclamative                  | 31, 39                             |
+| Fused functions: determiner-head, premodifier-head        | 6, 16                              |
+| Clause finiteness: finite, infinitival, participial, -ing | 28, 34, 35, 36                     |
+| Voice: active, passive                                    | 37                                 |
+| Clause patterns: SV, SVO, SVC, SVA, SVOO, SVOC, SVOA      | 8–15                               |
+| Ambiguity and alternate readings                          | 1, demonstrated fully in 27 and 40 |
 
 `head` moved from 5 to 3 because the palette makes you give every word a job,
 and the job of the verb at the centre of a predicate is head. Lesson 5

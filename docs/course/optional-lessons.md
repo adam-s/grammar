@@ -72,10 +72,12 @@ same event.
 ## Why they earn their place
 
 **They defuse a shortcut the course cannot otherwise reach.** The palette's own
-hint for the subject is _WHO or WHAT does it?_ The first course sentence whose
-subject does not do anything arrives at lesson 37. A learner spends thirty-six
-lessons with a rule that happens to work, and an optional lesson at 3a is where
-they can be shown it is a rule about meaning wearing a test's clothes.
+hint for the subject is _WHO or WHAT does it?_ It fails sooner than this page
+first claimed (lesson 37): _That room seemed empty_ (lesson 10), _The answer was
+obvious_ (lesson 11) and _Our keys are on that table_ (lesson 14) all have
+subjects that do nothing. A learner meets those with a rule that seems to work
+everywhere else, and an optional lesson at 3a is where they can be shown it is
+a rule about meaning wearing a test's clothes.
 
 **They give the refusals a home.** The model refuses to split adverbs by meaning
 for a stated reason: _He ran quickly_ and _He ran yesterday_ are the same tree,
@@ -93,7 +95,7 @@ add anything. Four earned one.
 
 |                                     | Follows                    | About                               | Why it earns a place                                                                          |
 | ----------------------------------- | -------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------- |
-| [`03a`](03a-doer-and-subject/)      | Find the main verb         | the subject is not always the doer  | the app's own subject hint is the notional definition, and it never fails before lesson 37    |
+| [`03a`](03a-doer-and-subject/)      | Find the main verb         | the subject is not always the doer  | the app's own subject hint is the notional definition, and it already fails in lessons 10–14  |
 | [`18a`](18a-kinds-of-adverb/)       | Adverbs and adverb phrases | manner, time, place and frequency   | the model refuses this split for a good reason nobody but a code reader ever sees             |
 | [`24a`](24a-what-the-helper-means/) | Auxiliary verbs            | prediction, possibility, obligation | `aux:modal` is one label over several unrelated meanings, and _should_ is genuinely ambiguous |
 | [`37a`](37a-same-event/)            | Passive voice              | why choose one voice                | the passive lets you not say who did it, and no tree records why                              |

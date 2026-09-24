@@ -138,7 +138,8 @@ same-spelling contrast that the earlier dossier said it lacked.
 | “Meaning tells the answer.”                                | _look up_ has an obvious conventional meaning, while _climb up_ is spatial. | Literal _pick up_ still has a particle; the course needs one sentence explaining that semantic opacity is not the test.                                                                                                                  |
 | “A corpus search for verb + up finds particles.”           | Joined order creates that surface pattern for both `c25-h` and `c25-j`.     | A corpus query needs the object/PP structure and the local meaning checked by hand. Recent corpus studies explicitly discard preposition look-alikes and other false string matches rather than treating a window search as an analysis. |
 
-The current set is better designed than the old research note reports, but it
+The current set is better designed than the old research note (retired in
+42fa065) reports, but it
 has a genuine remaining limit: it repeats separable transitive constructions.
 That is appropriate for a focused first lesson if the page says so. Do not add
 an intransitive or an idiosyncratically inseparable case merely to make the

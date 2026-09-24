@@ -80,6 +80,15 @@ for (const [lesson, sentenceId] of lessons) {
     runsWanted.push([repeat > 1 ? `${lesson}#${r + 1}` : lesson, sentenceId]);
   }
 }
+// A check that checked nothing has not passed. `--lessons=01-introduction`
+// once matched no lesson (they are numbers: 01, 27) and printed CLEAN.
+if (runsWanted.length === 0) {
+  console.error(
+    `No lesson matched --lessons=${onlyArg}. Lessons are two-digit numbers: ${lessons.map(([l]) => l).join(', ')}.`,
+  );
+  await browser.close();
+  process.exit(1);
+}
 
 for (const [lesson, sentenceId] of runsWanted) {
   const where = `lesson ${lesson} (${sentenceId})`;

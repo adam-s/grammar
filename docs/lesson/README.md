@@ -197,7 +197,7 @@ graded.
 7. Check the practice set for shortcuts and accidental answer patterns.
 8. Render every visual at desktop and narrow widths.
 9. Read the page beside several references, then as a standalone search result
-    and as part of the course.
+   and as part of the course.
 
 The sentences still come before the final prose because a visualization must be
 based on an accepted parse. The page structure can be planned earlier; its
@@ -205,7 +205,8 @@ claims cannot outrun its evidence.
 
 ## Why the parts remain separate
 
-The earlier research note rejected a blocked sequence in which a learner reads
+The earlier research note (retired in 42fa065; `git show 42fa065^:docs/lesson/what-the-evidence-says.md`)
+rejected a blocked sequence in which a learner reads
 an explanation and is then allowed to try. That conclusion still applies to
 practice design. It does not require the reference explanation itself to be
 interactive.

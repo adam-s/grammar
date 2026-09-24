@@ -1,9 +1,8 @@
 # Lesson 35 — Participial clauses
 
 Research pass updated 30 August 2026. This is an author's dossier, not a page
-for a learner. The [shared lesson contract](../../lesson/README.md) and the
-[authoring template](../../lesson-blog-page-template.md) govern the eventual
-revision.
+for a learner. The [shared lesson contract](../../lesson/README.md) governs
+the eventual revision.
 
 **Status:** Research is complete. The learner page, practice, fixtures, and
 visual acceptance were not changed in this pass. This dossier measures the ten

@@ -1,7 +1,7 @@
 # Lesson 12 — Two objects
 
 Researched 28 August 2026 and rebuilt 30 August 2026. An author's dossier, not
-learner copy. See [the authoring template](../../lesson-blog-page-template.md).
+learner copy. See [the lesson contract](../../lesson/README.md).
 
 **Status:** Research complete; learner-page revision remains. The current page,
 ten live practice sentences, cited fixture, and lessons 9–15 were inspected for
