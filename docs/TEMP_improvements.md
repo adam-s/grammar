@@ -44,9 +44,10 @@ If only ten things get done, these give the most back.
    that moment, the camera still stays where the last pick left it: at
    1280×720, one step from done, the words of _Birds sing_ sit under the zoom
    bar. (seen · medium)
-3. **Put the open sentence in the URL.** Opening a sentence leaves the URL on
-   the lesson. Reloading, the phone's Back gesture and sharing a link all drop
-   the learner out of the sentence. (seen · high)
+3. **Link to a sentence from outside.** The open sentence is now in the
+   address (`?s=c09-c`), so reload, Back and shared links land on it. Lessons
+   and sentences in the lists are still buttons, so they can't be opened in
+   a new tab or long-pressed to copy; see Lesson pages. (seen · medium)
 4. **Dark mode: decided.** The app starts light whatever the device prefers.
    That was the owner's choice on 30 August (it used to follow the OS), so it
    stays unless the owner reopens it. A phone in dark mode at night gets a

@@ -118,7 +118,7 @@
     type Trace,
     type TraceMoment,
   } from '$lib/learner/trace.ts';
-  import { version } from '$app/environment';
+  import { browser, version } from '$app/environment';
 
   const ws = new WorkspaceState();
   // The workspace does not know what it is drawing. This is the one place that
@@ -834,19 +834,52 @@
     preview = null;
   }
 
-  let previousRouteLessonId = $state('');
+  /**
+   * The open sentence lives in the address as `?s=<id>`, so a reload, the
+   * phone's Back gesture and a shared link all land on it. It used to live
+   * only in component state, and each of those dropped the learner back on
+   * the lesson page. Read only in the browser: a prerendered page has no
+   * query, and SvelteKit refuses to read one while prerendering. An id that
+   * names no sentence is ignored rather than trusted.
+   */
+  const urlSentence = $derived.by(() => {
+    if (!browser) return null;
+    const id = page.url.searchParams.get('s');
+    return id && POOL.some((s) => s.id === id) ? id : null;
+  });
+
+  /**
+   * Follow the address: a new lesson, or Back and Forward across `?s=`.
+   * Plain bookkeeping, and a no-op when the page already shows what the
+   * address says — `openSentence` updates both at once, and must not have its
+   * first selection closed by the echo.
+   */
+  let seenRoute = '';
   $effect(() => {
-    if (routeLessonId === previousRouteLessonId) return;
-    previousRouteLessonId = routeLessonId;
-    middleView = 'lesson';
-    closePalette();
+    const route = routeLessonId;
+    const wanted = urlSentence;
+    untrack(() => {
+      const newLesson = route !== seenRoute;
+      seenRoute = route;
+      if (wanted) {
+        if (sentenceId === wanted && middleView === 'diagram') return;
+        closePalette();
+        sentenceId = wanted;
+        middleView = 'diagram';
+      } else if (newLesson || middleView !== 'lesson') {
+        closePalette();
+        middleView = 'lesson';
+      }
+    });
   });
 
   function selectLesson(id: string, closeDrawer?: () => void) {
     middleView = 'lesson';
     closePalette();
     closeDrawer?.();
-    if (id !== lessonId) {
+    // Same lesson, but the address still names a sentence: drop it, so the
+    // address says what the page shows and Back returns to the sentence.
+    if (id !== lessonId || urlSentence) {
       void goto(resolve('/lessons/[lessonId]', { lessonId: id }), {
         noScroll: true,
         keepFocus: true,
@@ -855,9 +888,20 @@
   }
 
   function openSentence(id: string, closeDrawer?: () => void) {
+    // State first, synchronously: the driver hook and the sweeps open a
+    // sentence and act on it in the same breath.
     sentenceId = id;
     middleView = 'diagram';
     closeDrawer?.();
+    if (browser && page.url.searchParams.get('s') !== id) {
+      // The path IS resolved — the rule's point, the base path, holds — but
+      // resolve() cannot carry a query, and the rule only accepts its bare call.
+      // eslint-disable-next-line svelte/no-navigation-without-resolve
+      void goto(`${resolve('/lessons/[lessonId]', { lessonId })}/?s=${encodeURIComponent(id)}`, {
+        noScroll: true,
+        keepFocus: true,
+      });
+    }
   }
 
   /**
@@ -1056,7 +1100,9 @@
 <svelte:window {onkeydown} />
 
 <svelte:head>
-  <title>{lesson.title} · Grammar</title>
+  <title
+    >{middleView === 'diagram' ? `${sentence.text} — ${lesson.title}` : lesson.title} · Grammar</title
+  >
 </svelte:head>
 
 {#snippet progressChip()}
