@@ -461,7 +461,10 @@
           <span class="eyebrow">Say it</span>{performed.text}
         </p>
       {:else}
-        <p class="information" class:status={!!verdict}>
+        <!-- Hidden from assistive technology while it shows a verdict: the
+             live region above already said it, and reading the chooser would
+             otherwise repeat it word for word. -->
+        <p class="information" class:status={!!verdict} aria-hidden={verdict ? 'true' : undefined}>
           {#if verdict}
             <!-- Tone in shape as well as colour: a mark a reader who cannot
                  see red from green still reads at a glance. -->

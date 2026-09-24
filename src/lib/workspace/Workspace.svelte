@@ -169,20 +169,17 @@
       </div>
     {/if}
     {#if !leftOpen}
-      <button class="reopen left" type="button" aria-label="Expand left sidebar" onclick={openLeft}>
-        <ChevronRight size={14} strokeWidth={2} />
+      <!-- Named by what they show: a voice-control user says "tap Lessons",
+           and a name like "Expand left sidebar" would not answer (WCAG 2.5.3). -->
+      <button class="reopen left" type="button" aria-expanded="false" onclick={openLeft}>
+        <ChevronRight size={14} strokeWidth={2} aria-hidden="true" />
         <span>{title}</span>
       </button>
     {/if}
     {#if inspector && !rightOpen}
-      <button
-        class="reopen right"
-        type="button"
-        aria-label="Expand right sidebar"
-        onclick={openRight}
-      >
+      <button class="reopen right" type="button" aria-expanded="false" onclick={openRight}>
         <span>{rightLabel}</span>
-        <ChevronLeft size={14} strokeWidth={2} />
+        <ChevronLeft size={14} strokeWidth={2} aria-hidden="true" />
       </button>
     {/if}
   </main>

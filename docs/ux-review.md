@@ -115,6 +115,10 @@ The rules that keep "seen" honest:
   (`scripts/ios-sim.mjs`) before calling them fixed.
 - **A dirty tree is part of the evidence.** The report header names the
   commit and how many files were uncommitted.
+- **Don't edit while a "before" run is capturing.** The dev server reloads
+  the page mid-run, and the last journeys quietly capture the fixed code. It
+  happened once: a baseline's keyboard journey showed a fix made while the
+  run was still going.
 
 ## Images sized for the reader
 
@@ -153,12 +157,12 @@ exception: it is made for people and sites, at the size they need.
 
 What this changed, measured on the same eight-device run (24 September 2026):
 
-|                | before                                             | after                                             |
-| -------------- | -------------------------------------------------- | ------------------------------------------------- |
-| device views   | ≈316k tokens, 22.9 MB; 54 of 137 shrunk by the reader | ≈224k tokens, 7.8 MB; none shrunk                 |
-| strips         | 19 images, all shrunk, the worst to a quarter       | 54 images, none shrunk                            |
-| detail crops   | none                                               | 132, ≈127k tokens, read only on demand            |
-| disk, one run  | 35 MB                                              | 14 MB                                             |
+|               | before                                                | after                                  |
+| ------------- | ----------------------------------------------------- | -------------------------------------- |
+| device views  | ≈316k tokens, 22.9 MB; 54 of 137 shrunk by the reader | ≈224k tokens, 7.8 MB; none shrunk      |
+| strips        | 19 images, all shrunk, the worst to a quarter         | 54 images, none shrunk                 |
+| detail crops  | none                                                  | 132, ≈127k tokens, read only on demand |
+| disk, one run | 35 MB                                                 | 14 MB                                  |
 
 The strips cost more tokens than before because they are now legible: eight
 devices take about three images per checkpoint instead of one image shrunk to

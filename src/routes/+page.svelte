@@ -972,10 +972,6 @@
           >
         </div>
       </div>
-    {:else}
-      <p class="empty">
-        Nothing here yet — see <code>src/routes/+page.svelte</code>.
-      </p>
     {/if}
   {/snippet}
 
@@ -1218,16 +1214,6 @@
     font-weight: var(--panel-section-font-weight);
     letter-spacing: var(--panel-section-letter-spacing);
     text-transform: uppercase;
-  }
-  .empty {
-    margin: 8px;
-    font-size: 11px;
-    color: var(--ink-faint);
-    line-height: 1.5;
-  }
-  code {
-    font-family: var(--font-mono);
-    font-size: 10px;
   }
 
   .board {

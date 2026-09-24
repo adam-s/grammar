@@ -50,8 +50,10 @@ If only ten things get done, these give the most back.
 3. **Put the open sentence in the URL.** Opening a sentence leaves the URL on
    the lesson. Reloading, the phone's Back gesture and sharing a link all drop
    the learner out of the sentence. (seen · high)
-4. **Follow the device's dark mode.** An iPhone set to dark mode gets the light
-   theme; dark is opt-in through Settings. (seen · medium)
+4. **Dark mode: decided.** The app starts light whatever the device prefers.
+   That was the owner's choice on 30 August (it used to follow the OS), so it
+   stays unless the owner reopens it. A phone in dark mode at night gets a
+   white screen. (seen · owner's call)
 5. **Make phone diagrams readable.** On a phone, lesson-page diagram labels
    render as small as 6px tall, with a median of about 10px (measured on
    lesson 27). Function marks such as _Subj_, _H_ and _DO_ are the smallest
@@ -170,9 +172,6 @@ If only ten things get done, these give the most back.
   sentence states the rule for the answer the learner did not pick. Try:
   "A verb changes for tense: walk, walked, walking. _Birds_ doesn't." (seen ·
   medium)
-- **Screen readers hear every verdict twice.** The verdict is written into a
-  `status` region and again into a paragraph beside it. (seen in the
-  accessibility tree · medium)
 - **A right answer that finishes the selection says nothing.** The verdict is
   dropped as the chooser closes. (code · medium)
 - **There is no hint on demand.** `suggest.ts` computes evidence, and
@@ -207,11 +206,6 @@ If only ten things get done, these give the most back.
   on screen during practice. Move GitHub and the site link into Settings or
   the lesson list, and give the space to "Sentences" and "Lessons". (seen ·
   medium)
-- **The "Lessons" and "Sentences" pills are named "Expand left sidebar" and
-  "Expand right sidebar".** Voice control users say what they see ("tap
-  Sentences") and nothing answers (WCAG 2.5.3, label in name). On a phone,
-  "Sentences" can be reached no other way. Found because a review journey
-  could not find the control by name. (seen · medium)
 - **Lesson and sentence lists are drawers behind pills, and they start
   closed.** That is right for space. But combined with silent completion, it
   means a phone learner never sees their progress unless they go looking.
@@ -266,10 +260,6 @@ If only ten things get done, these give the most back.
 
 ## Accessibility
 
-- **Space doesn't choose a focused label.** The canvas's window-level key
-  handler calls `preventDefault` on Space to arm the hand tool, even when a
-  button inside the chooser has focus. Enter still works. Only skip the
-  hand tool when focus is on a button. (seen, code · medium)
 - **No keyboard way to select several words.** Enter on a word selects that
   word only; there is no Shift+Arrow to extend. Grouping words, the core
   move of the app, is mouse- and touch-only. (code · high)
@@ -432,10 +422,10 @@ accepted answers, and the third should be discussed, never marked wrong.
 
 - **Adverbial phrase meaning**: time, place, manner, frequency, duration,
   degree, reason, instrument. Each sentence's parse would store the accepted
-  set, for example `late → {time}` or `since noon → {time}` but `since the
-  rain → {time, reason}`. A pick outside the set gets "Most readers take this
-  as time: it answers _when?_" instead of an ✕. It is logged, but it is
-  never a miss.
+  set, for example `late → {time}` or `since noon → {time}` but
+  `since the rain → {time, reason}`. A pick outside the set gets "Most
+  readers take this as time: it answers _when?_" instead of an ✕. It is
+  logged, but it is never a miss.
 - **Modal meaning** (24a): ability, permission, obligation, possibility,
   prediction. _should_ genuinely has two.
 
@@ -476,14 +466,14 @@ Plain language first, the term second:
 
 ### Showing meaning on the existing tree
 
-| Option | What it looks like | For | Against |
-| --- | --- | --- | --- |
-| **Qualifier slot** | `A` with _time_ in the upper-right corner, where _Rel part_ sits today | Uses the house label grammar; compact | Looks as authoritative as graded syntax unless styled differently (italic, lighter, lowercase) |
-| **Question tag** | `A · when?` | Explains itself; doubles as the probe; plain English | Longer; wraps on phones |
-| **Meaning tier** | A second row of brackets under the words: `[yesterday]` → _time_ | Keeps the tree pure syntax; reads left to right on a phone | A second thing to look at; far from the node on tall trees |
-| **Lens switch** | One tree, three buttons: _Structure / Jobs / Meaning_ | Each view answers one question; less clutter | Hides information; learners may not find the switch |
-| **Colour** | Time blue, place green, … | Fast to scan | Never alone (colour-blind, dark mode); the diagram already uses colour for form |
-| **Icons** | Clock, pin | Instantly recognised | Decorative; icons for reason or concession don't exist |
+| Option             | What it looks like                                                     | For                                                        | Against                                                                                        |
+| ------------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Qualifier slot** | `A` with _time_ in the upper-right corner, where _Rel part_ sits today | Uses the house label grammar; compact                      | Looks as authoritative as graded syntax unless styled differently (italic, lighter, lowercase) |
+| **Question tag**   | `A · when?`                                                            | Explains itself; doubles as the probe; plain English       | Longer; wraps on phones                                                                        |
+| **Meaning tier**   | A second row of brackets under the words: `[yesterday]` → _time_       | Keeps the tree pure syntax; reads left to right on a phone | A second thing to look at; far from the node on tall trees                                     |
+| **Lens switch**    | One tree, three buttons: _Structure / Jobs / Meaning_                  | Each view answers one question; less clutter               | Hides information; learners may not find the switch                                            |
+| **Colour**         | Time blue, place green, …                                              | Fast to scan                                               | Never alone (colour-blind, dark mode); the diagram already uses colour for form                |
+| **Icons**          | Clock, pin                                                             | Instantly recognised                                       | Decorative; icons for reason or concession don't exist                                         |
 
 **Recommendation:** use the question tag in the chooser and the qualifier
 slot in the drawing, styled in italics so it reads as a gloss rather than a
@@ -599,8 +589,6 @@ Each of these is a doc that disagrees with the code or with another doc.
 - **Dev pages ship to production.** `build/replay/index.html` and
   `build/node-variants/index.html` are in the build, although the replay page
   says it "ships in no build". (verified · medium)
-- **Developer text in the UI**: "Nothing here yet — see
-  `src/routes/+page.svelte`." (verified · low)
 - **Tutorial failure text shows internal ids**, such as "The click selected
   one label (n7), not …". (code · low)
 - **No `+error.svelte`.** A bad lesson URL gets SvelteKit's default page.

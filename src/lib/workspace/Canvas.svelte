@@ -236,12 +236,18 @@
   const typing = (t: EventTarget | null) =>
     t instanceof HTMLElement &&
     (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
+  /* Space on a focused button presses it, as it does everywhere else; holding
+     Space for the hand tool only applies when focus is not on a control. The
+     window-level handler used to take Space from every button, so a keyboard
+     learner could not choose a label with it. */
+  const control = (t: EventTarget | null) =>
+    t instanceof Element && !!t.closest('button, a[href], [role="button"], [role="option"]');
 
   function onkeydown(e: KeyboardEvent) {
     if (typing(e.target)) return;
     const mod = e.metaKey || e.ctrlKey;
 
-    if (e.code === 'Space' && !e.repeat) {
+    if (e.code === 'Space' && !e.repeat && !control(e.target)) {
       e.preventDefault();
       ws.spaceDown = true;
       return;
